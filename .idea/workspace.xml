@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a1392abd-cc6b-40ae-9319-c6dd3aca85fa" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="gesmusic" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Vue Single File Component" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1WOwBEIcYlA5C6pJa1IbjuYr8ht" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\wamp64\www\gesmusic\resources\js\components\modules\Producto" />
+      <recent name="C:\wamp64\www\gesmusic\resources\js\components\modules\Proyecto" />
+      <recent name="C:\Apache24\htdocs\gesmusic\resources\views\modulos\traza" />
+      <recent name="C:\Apache24\htdocs\gesmusic\resources\views\modulos\track" />
+      <recent name="C:\Apache24\htdocs\gesmusic\resources\views\modulos\tema" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Apache24\htdocs\gesmusic\resources\views\modulos\entrevistado" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner scope="XML" />
+      <method v="2" />
+    </configuration>
+    <configuration name="watch" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="watch" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.watch" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a1392abd-cc6b-40ae-9319-c6dd3aca85fa" name="Default Changelist" comment="" />
+      <created>1579033814319</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1579033814319</updated>
+      <workItem from="1579033820169" duration="7207000" />
+      <workItem from="1579061745528" duration="173000" />
+      <workItem from="1582067155189" duration="72000" />
+      <workItem from="1600694413742" duration="2642000" />
+      <workItem from="1600697087507" duration="46000" />
+      <workItem from="1600697225053" duration="1495000" />
+      <workItem from="1603307989610" duration="10934000" />
+      <workItem from="1603742408664" duration="17916000" />
+      <workItem from="1603900232730" duration="6488000" />
+      <workItem from="1603915092941" duration="5153000" />
+      <workItem from="1603930092275" duration="624000" />
+      <workItem from="1604063130108" duration="4561000" />
+      <workItem from="1604169683813" duration="40903000" />
+      <workItem from="1604284428718" duration="74621000" />
+      <workItem from="1604618256498" duration="2031000" />
+      <workItem from="1606658257271" duration="243000" />
+      <workItem from="1606658934772" duration="13451000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="413" y="115" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1604180350631">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="413" y="115" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.738@0.0.1366.738" timestamp="1604180350631" />
+    <state x="413" y="123" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1604367418288">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="413" y="123" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1366.738@0.0.1366.738" timestamp="1604367418288" />
+    <state width="1345" height="158" key="GridCell.Tab.0.bottom" timestamp="1606679523585">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="158" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1606679523585" />
+    <state width="1345" height="158" key="GridCell.Tab.0.center" timestamp="1606679523584">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="158" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1606679523584" />
+    <state width="1345" height="158" key="GridCell.Tab.0.left" timestamp="1606679523584">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="158" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1606679523584" />
+    <state width="1345" height="158" key="GridCell.Tab.0.right" timestamp="1606679523584">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1345" height="158" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1606679523584" />
+    <state x="517" y="292" key="NewPhpFileDialog" timestamp="1604174760625">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="517" y="292" key="NewPhpFileDialog/0.0.1366.738@0.0.1366.738" timestamp="1604174760625" />
+  </component>
+</project>

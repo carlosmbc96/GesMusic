@@ -185,7 +185,7 @@ export default {
   background-color: rgb(76, 196, 177, 0.8) !important;
 }
 .iziToast-color-yellow {
-  background-color: rgba(240, 193, 39, 0.8) !important;
+  background-color: rgba(255, 226, 59, 0.8) !important;
 }
 #question .iziToast-message.slideIn {
   margin-top: -7px !important;

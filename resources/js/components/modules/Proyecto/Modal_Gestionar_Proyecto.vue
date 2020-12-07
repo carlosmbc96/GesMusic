@@ -198,8 +198,8 @@ export default {
   props: ["action", "project", "projects_list"],
   data() {
     let validate_length = (rule, value, callback) => {
-      if (value.replace(/ /g, "").length > 8) {
-        callback(new Error("Máximo 8 caracteres"));
+      if (value.replace(/ /g, "").length > 9) {
+        callback(new Error("Máximo 9 caracteres"));
       } else callback();
     };
     let validate_codig_unique = (rule, value, callback) => {
@@ -245,7 +245,7 @@ export default {
             trigger: "change",
           },
           {
-            pattern: "^[a-zA-Z0-9 ]*$",
+            pattern: "^[-a-zA-Z0-9 ]*$",
             message: "Caracter no válido",
             trigger: "change",
           },
@@ -294,7 +294,7 @@ export default {
             trigger: "change",
           },
           {
-            pattern: "^[a-zA-Z0-9 ]*$",
+            pattern: "^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
             message: "Caracter no válido",
             trigger: "change",
           },

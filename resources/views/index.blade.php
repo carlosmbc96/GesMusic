@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Bismusic</title>
+	<title>GesMusic</title>
 	<!-- BEGIN GLOBAL MANDATORY STYLES -->
 	<link rel="shortcut icon" href="../assets/images/logo-ConvertImage.ico" type="image/icon">
 	<link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />

@@ -254,7 +254,6 @@
                         show-search
                         :disabled="disabled"
                         v-model="product_modal.estadodigProd"
-                        :default-value="estados[0].nombreTer"
                       >
                         <a-select-option
                           v-for="nomenclator in estados"
@@ -319,7 +318,6 @@
                       prop="statusComProd"
                     >
                       <a-select
-                        default-value="Por definir"
                         option-filter-prop="children"
                         :filter-option="filter_option"
                         show-search

@@ -124,13 +124,13 @@
         <e-column
           field="añoProd"
           headerText="Año"
-          width="100"
+          width="120"
           textAlign="Left"
         />
         <e-column
           field="estadodigProd"
           headerText="Estado de Digitalización"
-          width="150"
+          width="190"
           textAlign="Left"
         />
         <e-column
@@ -211,6 +211,7 @@ import {
   DataLabel,
   Tooltip,
   Legend,
+  logBase,
 } from "@syncfusion/ej2-vue-charts";
 import { ButtonPlugin } from "@syncfusion/ej2-vue-buttons";
 import { loadCldr, L10n, setCulture, Browser } from "@syncfusion/ej2-base";
@@ -379,7 +380,7 @@ export default {
         },
         "Search",
       ],
-       status_template: () => {
+      status_template: () => {
         return {
           template: Vue.component("columnTemplate", {
             template: `
@@ -401,7 +402,7 @@ export default {
                       slot="cancelText"
                       class="ant-btn ant-btn-sm cancel-text"
                     >No</a-button>
-                    <a-tooltip :title="data.proyecto == null ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
+                    <a-tooltip :title="data.proyecto == null ? 'No es posible cambiar el estado, para hacerlo debe activar el proyecto al que pertenece este producto' : 'Cambiar estado'" placement="left">
                       <a-switch style="width: 100% !important; display: inline-block !important" :style="color_status" :checked="checked" :loading="loading"
                       :disabled = "data.proyecto == null">
                          <span slot="checkedChildren">Activo</span>
@@ -410,7 +411,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
                 axios: axios,
@@ -421,6 +422,7 @@ export default {
             },
             created() {
               this.checked = this.data.deleted_at == null;
+              console.log(this.checked);
             },
             computed: {
               color_status() {
@@ -431,7 +433,6 @@ export default {
             },
             methods: {
               handle_visible_pop_change(visible) {
-
                 if (this.data.proyecto == null) this.visible_pop = false;
                 else this.visible_pop = visible;
               },
@@ -460,19 +461,21 @@ export default {
                 }
               },
               finally_method(action, error) {
-                  this.loading = false;
-                  if (!error) {
-                    this.$toast.success(
-                      "Se ha cambiado el estado del Producto a " + action,
-                      "¡Éxito!",
-                      { timeout: 2000 }
-                    );
-                    this.$parent.$parent.load_products()
-                  } else {
-                    this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                      timeout: 2000,
-                    });
-                  }
+                this.loading = false;
+                console.log(this.checked);
+                if (!error) {
+                  this.$parent.$parent.load_products();
+                  this.checked = !this.checked;
+                  this.$toast.success(
+                    "Se ha cambiado el estado del Producto a " + action,
+                    "¡Éxito!",
+                    { timeout: 2000 }
+                  );
+                } else {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                }
               },
             },
           }),
@@ -743,7 +746,7 @@ export default {
         )
       );
       this.$toast.question(
-        "¿Seguro, esta acción es irrevercible, eliminará de forma definitiva este producto del sistema?",
+        "¿Esta acción de borrado es irrevercible, se eliminará <br> este producto del proyecto al que está asociado y se borrará <br> del sistema?",
         "Confirmar",
         {
           timeout: 5000,
@@ -756,29 +759,67 @@ export default {
           position: "center",
           buttons: [
             [
-              "<button><b>YES</b></button>",
+              "<button>Si</button>",
               (instance, toast) => {
-                axios
-                  .delete(`productos/eliminar/${row_obj.data.id}`)
-                  .then((ress) => {
-                    this.refresh_table();
-                    this.$toast.success(
-                      "El producto ha sido eliminado correctamente",
-                      "¡Éxito!",
-                      { timeout: 3000 }
-                    );
-                  })
-                  .catch((err) => {
-                    this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                      timeout: 3000,
-                    });
-                  });
+                this.$toast.question("¿Seguro?", "Confirmar", {
+                  timeout: 5000,
+                  close: false,
+                  color: "red",
+                  overlay: true,
+                  displayMode: "once",
+                  zindex: 999999999,
+                  title: "Hey",
+                  position: "center",
+                  buttons: [
+                    [
+                      "<button>Si</button>",
+                      (instance, toast) => {
+                        axios
+                          .delete(`productos/eliminar/${row_obj.data.id}`)
+                          .then((ress) => {
+                            this.refresh_table();
+                            this.$emit("reload");
+                            this.$toast.success(
+                              "El producto ha sido eliminado correctamente",
+                              "¡Éxito!",
+                              { timeout: 3000 }
+                            );
+                          })
+                          .catch((err) => {
+                            this.$toast.error(
+                              "Ha ocurrido un error",
+                              "¡Error!",
+                              {
+                                timeout: 3000,
+                              }
+                            );
+                          });
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                      true,
+                    ],
+                    [
+                      "<button>No</button>",
+                      function (instance, toast) {
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                    ],
+                  ],
+                });
                 instance.hide({ transitionOut: "fadeOut" }, toast, "button");
               },
               true,
             ],
             [
-              "<button>NO</button>",
+              "<button>No</button>",
               function (instance, toast) {
                 instance.hide({ transitionOut: "fadeOut" }, toast, "button");
               },

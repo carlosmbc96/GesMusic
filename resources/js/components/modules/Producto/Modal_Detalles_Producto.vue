@@ -16,11 +16,9 @@
           Aceptar</a-button
         >
       </template>
-      <!-- Tabs -->
       <a-tabs default-active-key="1">
         <div slot="tabBarExtraContent">Detalles Producto</div>
-        <!-- Tab 1 -->
-        <a-tab-pane key="1">
+        <!-- <a-tab-pane key="1">
           <span slot="tab"> Generales </span>
           <a-row>
             <a-col span="12">
@@ -311,9 +309,7 @@
                     </div>
                   </div>
                 </div>
-                <!--end col-md-8-->
               </div>
-              <!--end row-->
             </div>
           </div>
           <div class="row">
@@ -330,15 +326,209 @@
               <p>{{ producto.descripIngPro }}</p>
             </div>
           </div>
-        </a-tab-pane>
+        </a-tab-pane> -->
+
         <!-- Tab 2 -->
-        <a-tab-pane key="2">
-          <span slot="tab"> Multimedias </span>
-          <a-divider><h4>Multimedia del proyecto</h4></a-divider>
+        <a-tab-pane key="1">
+          <span slot="tab"> Generales </span>
+          <!-- Datos Generales -->
+          <a-form-model>
+            <a-row>
+              <a-col span="11">
+                <div class="section-title">
+                  <h4>Datos Generales</h4>
+                </div>
+                <a-row>
+                  <a-col span="11">
+                    <a-upload
+                      @preview="handle_preview"
+                      :file-list="file_list"
+                      list-type="picture-card"
+                    >
+                      <div v-if="file_list.length < 1">
+                        <img />
+                      </div>
+                    </a-upload>
+                    <br />
+                    <a-modal
+                      :visible="preview_visible"
+                      :footer="null"
+                      @cancel="preview_cancel"
+                    >
+                      <img style="width: 100%" :src="preview_image" />
+                    </a-modal>
+                    <a-form-model-item
+                      style="width: 55% !important"
+                      label="Año"
+                    >
+                      <a-mentions readonly :placeholder="producto.añoProd">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item style="margin-top: 20px">
+                      <i
+                        class="fa fa-check-square-o hidden-xs"
+                        v-if="producto.producPrincProd === 1"
+                      />
+                      <i class="fa fa-square-o" v-else />
+                      ¿Producto principal del proyecto?
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col span="11" style="float: right">
+                    <a-form-model-item label="Código">
+                      <a-mentions readonly :placeholder="producto.codigProd">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item label="Título">
+                      <a-mentions readonly :placeholder="producto.tituloProd">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item label="Género musical">
+                      <a-mentions readonly :placeholder="producto.genMusicPro">
+                      </a-mentions>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <div class="section-title">
+                  <h4>Datos Gestión</h4>
+                </div>
+                <a-row style="margin-bottom: 30px">
+                  <a-col span="12">
+                    <a-form-model-item label="Estado de Digitalización">
+                      <a-mentions
+                        readonly
+                        :placeholder="producto.estadodigProd"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <div class="section-title">
+                  <h4>Datos Descripciones</h4>
+                </div>
+                <a-row>
+                  <a-form-model-item
+                    label="Descripción en español del producto"
+                  >
+                    <a-mentions
+                      style="height: 100px !important"
+                      readonly
+                      :placeholder="producto.descripEspPro"
+                    >
+                    </a-mentions>
+                  </a-form-model-item>
+                  <a-form-model-item label="Descripción en inglés del producto">
+                    <a-mentions
+                      style="height: 100px !important"
+                      readonly
+                      :placeholder="producto.descripIngPro"
+                    >
+                    </a-mentions>
+                  </a-form-model-item>
+                </a-row>
+              </a-col>
+              <a-col span="11" style="float: right">
+                <div class="section-title">
+                  <h4>Datos Comerciales</h4>
+                </div>
+                <a-row style="margin-bottom: 30px">
+                  <a-col span="11">
+                    <a-form-model-item label="Código de barra">
+                      <a-mentions readonly :placeholder="producto.codigBarProd">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item label="Estatus comercial">
+                      <a-mentions
+                        readonly
+                        :placeholder="producto.statusComProd"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item style="margin-top: 20px">
+                      <i
+                        class="fa fa-check-square-o hidden-xs"
+                        v-if="producto.activoCatalbisPro === 1"
+                      />
+                      <i class="fa fa-square-o" v-else />
+                      ¿Activo en el Catálogo de Bismusic?
+                    </a-form-model-item>
+                    <a-form-model-item>
+                     <i
+                        class="fa fa-check-square-o hidden-xs"
+                        v-if="producto.primeraPantProd === 1"
+                      />
+                      <i class="fa fa-square-o" v-else />
+                      ¿Estará en la Primera Pantalla?
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col span="11" style="float: right">
+                    <a-form-model-item label="Destinos comerciales">
+                      <a-mentions
+                        readonly
+                        :placeholder="producto.destinosComerPro"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item label="Sello discográfico">
+                      <a-mentions
+                        readonly
+                        :placeholder="producto.sellodiscProd"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item style="margin-top: 20px">
+                      <i
+                        class="fa fa-check-square-o hidden-xs"
+                        v-if="producto.catalDigitalPro === 1"
+                      />
+                      <i class="fa fa-square-o" v-else />
+                      ¿Estará en el Catálogo Digital?
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <div class="section-title">
+                  <h4>Gestión de Intérpretes</h4>
+                </div>
+                <a-form-model-item>
+                  <i
+                        class="fa fa-check-square-o hidden-xs"
+                        v-if="producto.variosInterpretesProd === 1"
+                      />
+                      <i class="fa fa-square-o" v-else />
+                      ¿El producto tiene varios intérpretes?
+                </a-form-model-item>
+                <a-form-model-item>
+                  <a-mentions
+                    v-for="interprete in producto.interpretesProd"
+                    :key="interprete"
+                    readonly
+                    :placeholder="interprete"
+                  >
+                  </a-mentions>
+                </a-form-model-item>
+                <div class="section-title" style="margin-top: 30px">
+                  <h4>Gestión de Autores</h4>
+                </div>
+                <a-form-model-item>
+                  <a-mentions
+                    v-for="autor in producto.autoresProd"
+                    :key="autor"
+                    readonly
+                    :placeholder="autor"
+                  >
+                  </a-mentions>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+          </a-form-model>
         </a-tab-pane>
         <a-tab-pane key="3">
+          <span slot="tab"> Multimedias </span>
+          <h4>Multimedias</h4>
+        </a-tab-pane>
+        <!-- Tab 5 -->
+        <a-tab-pane key="4">
           <span slot="tab"> Elementos </span>
-          <a-divider><h4>Elementos del proyecto</h4></a-divider>
+          <h4>Elementos</h4>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -442,6 +632,7 @@ export default {
       let list_help = this.producto.interpretesProd.split(".");
       this.producto.interpretesProd = list_help[0];
       this.producto.interpretesProd = this.producto.interpretesProd.split(" ");
+      this.producto.interpretesProd.pop();
     }
     if (this.producto.autoresProd !== null) {
       this.producto.autoresProd = this.producto.autoresProd.split(" ");

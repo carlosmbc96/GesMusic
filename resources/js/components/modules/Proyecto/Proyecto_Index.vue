@@ -458,7 +458,7 @@ export default {
         return {
           template: Vue.component("columnTemplate", {
             template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 60%!important" class="e-badge" :class="class_badge">{{ status }}</span>
+                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
             data: function () {
               return {
@@ -658,8 +658,8 @@ export default {
     panel_export_click(args) {
       let pdfExportProperties = {
         hierarchyExportMode: "Expanded",
-        fileName: "Reporte_Proyectos.pdf",
-        //   pageSize: 'Letter',
+				fileName: "Reporte_Proyectos.pdf",
+				pageOrientation: 'Landscape',
         header: {
           fromTop: 0,
           height: 120,
@@ -689,7 +689,7 @@ export default {
             {
               type: "Line",
               style: { penColor: "#731954", penSize: 1, dashStyle: "Solid" },
-              points: { x1: 0, y1: 70, x2: 435, y2: 70 },
+              points: { x1: 0, y1: 70, x2: 280, y2: 70 },
             },
             {
               type: "Text",
@@ -704,7 +704,7 @@ export default {
             {
               type: "Image",
               src: image,
-              position: { x: 445, y: 0 },
+              position: { x: 775, y: 0 },
               size: { height: 110, width: 250 },
             },
           ],
@@ -718,9 +718,8 @@ export default {
         },
       };
       let excelExportProperties = {
-        hierarchyExportMode: "None",
+        hierarchyExportMode: "Expanded",
         fileName: "",
-        //   pageSize: 'Letter',
         header: {
           headerRows: 3,
           rows: [

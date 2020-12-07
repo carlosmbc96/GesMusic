@@ -124,13 +124,13 @@
         <e-column
           field="añoProd"
           headerText="Año"
-          width="120"
+          width="110"
           textAlign="Left"
         />
         <e-column
           field="estadodigProd"
           headerText="Estado de Digitalización"
-          width="190"
+          width="160"
           textAlign="Left"
         />
         <e-column
@@ -148,7 +148,7 @@
         <e-column
           headerText="Estado"
           :template="status_template"
-          width="150"
+          width="140"
           textAlign="Center"
         />
         <e-column
@@ -600,10 +600,11 @@ export default {
     /*
      * Método con la lógica de los botones del panel de exportación
      */
-    panel_export_click(args) {
+   panel_export_click(args) {
       let pdfExportProperties = {
-        fileName: "Reporte_Productos.pdf",
-        //   pageSize: 'Letter',
+				fileName: "Reporte_Productos.pdf",
+				pageOrientation: 'Landscape',
+          pageSize: 'Note',
         header: {
           fromTop: 0,
           height: 120,
@@ -633,7 +634,7 @@ export default {
             {
               type: "Line",
               style: { penColor: "#731954", penSize: 1, dashStyle: "Solid" },
-              points: { x1: 0, y1: 70, x2: 435, y2: 70 },
+              points: { x1: 0, y1: 70, x2: 280, y2: 70 },
             },
             {
               type: "Text",
@@ -648,7 +649,7 @@ export default {
             {
               type: "Image",
               src: image,
-              position: { x: 445, y: 0 },
+              position: { x: 580, y: 0 },
               size: { height: 110, width: 250 },
             },
           ],
@@ -670,7 +671,7 @@ export default {
             {
               cells: [
                 {
-                  colSpan: 4,
+                  colSpan: 6,
                   value: "Reporte de Productos",
                   style: {
                     fontColor: "#731954",
@@ -685,7 +686,7 @@ export default {
             {
               cells: [
                 {
-                  colSpan: 4,
+                  colSpan: 6,
                   value: "Fecha del reporte: " + new moment().format("LLL"),
                   style: {
                     fontColor: "#808080",

@@ -691,7 +691,7 @@ export default {
         },
       },
       rules: {
-        //*
+        //* Validaciones de los campos del formulario
         proyecto_id: [
           {
             required: true,

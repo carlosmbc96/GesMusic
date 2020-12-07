@@ -128,14 +128,14 @@
         />
         <e-column
           headerText="Estado"
-          width="90"
+          width="150"
           :template="status_template"
           :visible="true"
           textAlign="Center"
         />
         <e-column
           headerText="Acciones"
-          width="100"
+          width="150"
           :commands="commands"
           :visible="true"
           textAlign="Center"
@@ -377,6 +377,7 @@ export default {
                       <p style="margin-bottom: 0!important">Confirme que desea cambiar <br> el estado de este proyecto a
                       <strong v-if="!checked" style="color: rgb(76, 196, 177)">Activo</strong>
                       <strong v-else style="color: rgb(243, 107, 100)">Inactivo</strong>
+                       <br>, esto hará que los productos asociados a <br> este proyecto también modifiquen su estado
                       </p>
                     </template>
                     <a-button
@@ -436,12 +437,13 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
+                  this.$parent.$parent.load_projects();
+                  this.checked = !this.checked;
                   this.$toast.success(
                     "Se ha cambiado el estado del Proyecto a " + action,
                     "¡Éxito!",
                     { timeout: 3000 }
                   );
-                  this.$parent.$parent.load_projects();
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
                     timeout: 3000,
@@ -801,7 +803,7 @@ export default {
         )
       );
       this.$toast.question(
-        "¿Seguro, esta acción es irrevercible, eliminará de forma definitiva este proyecto del sistema?",
+        "¿Esta acción de borrado es irrevercible, si elimina este proyecto, <br> eliminará también los productos asociados a este, desea continuar?",
         "Confirmar",
         {
           timeout: 5000,
@@ -814,29 +816,66 @@ export default {
           position: "center",
           buttons: [
             [
-              "<button><b>YES</b></button>",
+              "<button>Si</button>",
               (instance, toast) => {
-                axios
-                  .delete(`proyectos/eliminar/${row_obj.data.id}`)
-                  .then((ress) => {
-                    this.refresh_table();
-                    this.$toast.success(
-                      "El proyecto ha sido eliminado correctamente",
-                      "¡Éxito!",
-                      { timeout: 3000 }
-                    );
-                  })
-                  .catch((err) => {
-                    this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                      timeout: 3000,
-                    });
-                  });
+                this.$toast.question("¿Seguro?", "Confirmar", {
+                  timeout: 5000,
+                  close: false,
+                  color: "red",
+                  overlay: true,
+                  displayMode: "once",
+                  zindex: 9999,
+                  title: "Hey",
+                  position: "center",
+                  buttons: [
+                    [
+                      "<button>Si</button>",
+                      (instance, toast) => {
+                        axios
+                          .delete(`proyectos/eliminar/${row_obj.data.id}`)
+                          .then((ress) => {
+                            this.refresh_table();
+                            this.$toast.success(
+                              "El proyecto ha sido eliminado correctamente",
+                              "¡Éxito!",
+                              { timeout: 3000 }
+                            );
+                          })
+                          .catch((err) => {
+                            this.$toast.error(
+                              "Ha ocurrido un error",
+                              "¡Error!",
+                              {
+                                timeout: 3000,
+                              }
+                            );
+                          });
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                      true,
+                    ],
+                    [
+                      "<button>No</button>",
+                      function (instance, toast) {
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                    ],
+                  ],
+                });
                 instance.hide({ transitionOut: "fadeOut" }, toast, "button");
               },
               true,
             ],
             [
-              "<button>NO</button>",
+              "<button>No</button>",
               function (instance, toast) {
                 instance.hide({ transitionOut: "fadeOut" }, toast, "button");
               },

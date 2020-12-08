@@ -419,4 +419,7 @@ export default {
 .e-grid{
   border-radius: 5px !important;
 }
+.ant-form-item-label {
+	margin-bottom: -10px !important;
+}
 </style>

@@ -111,31 +111,31 @@
 				<e-column
 					field="codigProy"
 					headerText="Código"
-					width="150"
+					width="110"
 					textAlign="Left"
 				/>
 				<e-column
 					field="nombreProy"
 					headerText="Nombre"
-					width="230"
+					width="110"
 					textAlign="Left"
 				/>
 				<e-column
 					field="created_at"
 					headerText="Fecha Creación"
-					width="140"
+					width="110"
 					textAlign="Left"
 				/>
 				<e-column
 					headerText="Estado"
-					width="150"
+					width="105"
 					:template="status_template"
 					:visible="true"
 					textAlign="Center"
 				/>
 				<e-column
 					headerText="Acciones"
-					width="150"
+					width="140"
 					:commands="commands"
 					:visible="true"
 					textAlign="Center"
@@ -376,7 +376,7 @@ export default {
                       <p style="margin-bottom: 0!important">Confirme que desea cambiar <br> el estado de este proyecto a
                       <strong v-if="!checked" style="color: rgb(76, 196, 177)">Activo</strong>
                       <strong v-else style="color: rgb(243, 107, 100)">Inactivo</strong>
-                       <br>, esto hará que los productos asociados a <br> este proyecto también modifiquen su estado
+                       ,<br>esto hará que los productos asociados a <br> este proyecto también modifiquen su estado
                       </p>
                     </template>
                     <a-button
@@ -457,7 +457,7 @@ export default {
 				return {
 					template: Vue.component('columnTemplate', {
 						template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 60%!important" class="e-badge" :class="class_badge">{{ status }}</span>
+                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
 						data: function() {
 							return {
@@ -572,43 +572,43 @@ export default {
 								{
 									field: 'tituloProd',
 									headerText: 'Título',
-									width: '150',
+									width: '110',
 									textAlign: 'Left',
 								},
 								{
 									field: 'codigProd',
 									headerText: 'Código',
-									width: '120',
+									width: '110',
 									textAlign: 'Left',
 								},
 								{
 									field: 'estadodigProd',
 									headerText: 'Estado de Digitalización',
-									width: '150',
+									width: '135',
 									textAlign: 'Left',
 								},
 								{
 									field: 'añoProd',
 									headerText: 'Año',
-									width: '100',
+									width: '90',
 									textAlign: 'Left',
 								},
 								{
 									field: 'statusComProd',
 									headerText: 'Estatus Comercial',
-									width: '150',
+									width: '120',
 									textAlign: 'Left',
 								},
 								{
 									field: 'genMusicPro',
 									headerText: 'Género Musical',
-									width: '150',
+									width: '110',
 									textAlign: 'Left',
 								},
 								{
 									headerText: 'Estado',
 									template: this.status_child_template,
-									width: '150',
+									width: '105',
 									visible: true,
 									textAlign: 'Center',
 								},
@@ -655,129 +655,128 @@ export default {
 		 * Método con la lógica de los botones del panel de exportación
 		 */
 		panel_export_click(args) {
-			let pdfExportProperties = {
-				hierarchyExportMode: 'Expanded',
-				fileName: 'Reporte_Proyectos.pdf',
-				//   pageSize: 'Letter',
-				header: {
-					fromTop: 0,
-					height: 120,
-					contents: [
-						{
-							type: 'PageNumber',
-							pageNumberType: 'Number',
-							format: 'Página {$current} de {$total}', //optional
-							position: { x: 0, y: 0 },
-							style: {
-								textBrushColor: '#a9a9a9',
-								fontSize: 10,
-								hAlign: 'Center',
-								fontFamily: 'Calibri',
-							},
-						},
-						{
-							type: 'Text',
-							value: 'Reporte de Proyectos',
-							position: { x: 0, y: 40 },
-							style: {
-								textBrushColor: '#731954',
-								fontSize: 20,
-								fontFamily: 'Calibri',
-							},
-						},
-						{
-							type: 'Line',
-							style: { penColor: '#731954', penSize: 1, dashStyle: 'Solid' },
-							points: { x1: 0, y1: 70, x2: 435, y2: 70 },
-						},
-						{
-							type: 'Text',
-							value: 'Fecha del reporte: ' + new moment().format('LLL'),
-							position: { x: 0, y: 75 },
-							style: {
-								textBrushColor: '#808080',
-								fontSize: 12,
-								fontFamily: 'Calibri',
-							},
-						},
-						{
-							type: 'Image',
-							src: image,
-							position: { x: 445, y: 0 },
-							size: { height: 110, width: 250 },
-						},
-					],
-				},
-				theme: {
-					header: {
-						fontColor: '#731954',
-						bold: true,
-						borders: { color: '#731954', lineStyle: 'Thin' },
-					},
-				},
-			};
-			let excelExportProperties = {
-				hierarchyExportMode: 'None',
-				fileName: '',
-				//   pageSize: 'Letter',
-				header: {
-					headerRows: 3,
-					rows: [
-						{
-							cells: [
-								{
-									colSpan: 4,
-									value: 'Reporte de Proyectos',
-									style: {
-										fontColor: '#731954',
-										fontSize: 20,
-										fontFamily: 'Calibri',
-										hAlign: 'Center',
-										bold: true,
-									},
-								},
-							],
-						},
-						{
-							cells: [
-								{
-									colSpan: 4,
-									value: 'Fecha del reporte: ' + new moment().format('LLL'),
-									style: {
-										fontColor: '#808080',
-										fontSize: 12,
-										hAlign: 'Center',
-										fontFamily: 'Calibri',
-										bold: true,
-									},
-								},
-							],
-						},
-					],
-				},
-				theme: {
-					header: {
-						fontColor: '#731954',
-						bold: true,
-					},
-				},
-			};
-			if (args === 'pdf') {
-				this.$refs.gridObj.getColumns()[4].visible = false;
-				this.$refs.gridObj.pdfExport(pdfExportProperties);
-			} else if (args === 'excel') {
-				excelExportProperties.fileName = 'Reporte_Proyectos.xlsx';
-				this.$refs.gridObj.getColumns()[4].visible = false;
-				this.$refs.gridObj.excelExport(excelExportProperties);
-			} else if (args === 'csv') {
-				excelExportProperties.fileName = 'Reporte_Proyectos.csv';
-				this.$refs.gridObj.getColumns()[4].visible = false;
-				this.$refs.gridObj.csvExport(excelExportProperties);
-			} else if (args === 'print') {
-				this.$refs.gridObj.getColumns()[4].visible = false;
-				this.$refs.gridObj.print(pdfExportProperties);
-			}
-		},
+      let pdfExportProperties = {
+        hierarchyExportMode: "Expanded",
+				fileName: "Reporte_Proyectos.pdf",
+				pageOrientation: 'Landscape',
+        header: {
+          fromTop: 0,
+          height: 120,
+          contents: [
+            {
+              type: "PageNumber",
+              pageNumberType: "Number",
+              format: "Página {$current} de {$total}", //optional
+              position: { x: 0, y: 0 },
+              style: {
+                textBrushColor: "#a9a9a9",
+                fontSize: 10,
+                hAlign: "Center",
+                fontFamily: "Calibri",
+              },
+            },
+            {
+              type: "Text",
+              value: "Reporte de Proyectos",
+              position: { x: 0, y: 40 },
+              style: {
+                textBrushColor: "#731954",
+                fontSize: 20,
+                fontFamily: "Calibri",
+              },
+            },
+            {
+              type: "Line",
+              style: { penColor: "#731954", penSize: 1, dashStyle: "Solid" },
+              points: { x1: 0, y1: 70, x2: 280, y2: 70 },
+            },
+            {
+              type: "Text",
+              value: "Fecha del reporte: " + new moment().format("LLL"),
+              position: { x: 0, y: 75 },
+              style: {
+                textBrushColor: "#808080",
+                fontSize: 12,
+                fontFamily: "Calibri",
+              },
+            },
+            {
+              type: "Image",
+              src: image,
+              position: { x: 775, y: 0 },
+              size: { height: 110, width: 250 },
+            },
+          ],
+        },
+        theme: {
+          header: {
+            fontColor: "#731954",
+            bold: true,
+            borders: { color: "#731954", lineStyle: "Thin" },
+          },
+        },
+      };
+      let excelExportProperties = {
+        hierarchyExportMode: "Expanded",
+        fileName: "",
+        header: {
+          headerRows: 3,
+          rows: [
+            {
+              cells: [
+                {
+                  colSpan: 4,
+                  value: "Reporte de Proyectos",
+                  style: {
+                    fontColor: "#731954",
+                    fontSize: 20,
+                    fontFamily: "Calibri",
+                    hAlign: "Center",
+                    bold: true,
+                  },
+                },
+              ],
+            },
+            {
+              cells: [
+                {
+                  colSpan: 4,
+                  value: "Fecha del reporte: " + new moment().format("LLL"),
+                  style: {
+                    fontColor: "#808080",
+                    fontSize: 12,
+                    hAlign: "Center",
+                    fontFamily: "Calibri",
+                    bold: true,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        theme: {
+          header: {
+            fontColor: "#731954",
+            bold: true,
+          },
+        },
+      };
+      if (args === "pdf") {
+        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.pdfExport(pdfExportProperties);
+      } else if (args === "excel") {
+        excelExportProperties.fileName = "Reporte_Proyectos.xlsx";
+        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.excelExport(excelExportProperties);
+      } else if (args === "csv") {
+        excelExportProperties.fileName = "Reporte_Proyectos.csv";
+        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.csvExport(excelExportProperties);
+      } else if (args === "print") {
+        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.print(pdfExportProperties);
+      }
+    },
 		/*
 		 * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
 		 */
@@ -1001,4 +1000,5 @@ export default {
 .e-badge.e-badge-success[href]:not(.e-badge-ghost) {
 	color: white !important;
 }
+
 </style>

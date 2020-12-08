@@ -76,50 +76,50 @@
 				<e-column
 					field="codigProd"
 					headerText="Código"
-					width="120"
+					width="110"
 					textAlign="Left"
 				/>
 				<e-column
 					field="tituloProd"
 					headerText="Título"
-					width="150"
+					width="110"
 					textAlign="Left"
 				/>
 
 				<e-column
 					field="añoProd"
 					headerText="Año"
-					width="100"
+					width="90"
 					textAlign="Left"
 				/>
 				<e-column
 					field="estadodigProd"
 					headerText="Estado de Digitalización"
-					width="150"
+					width="135"
 					textAlign="Left"
 				/>
 				<e-column
 					field="statusComProd"
 					headerText="Estatus Comercial"
-					width="150"
+					width="120"
 					textAlign="Left"
 				/>
 				<e-column
 					field="genMusicPro"
 					headerText="Género Musical"
-					width="150"
+					width="110"
 					textAlign="Left"
 				/>
 				<e-column
 					v-if="visible_management"
 					headerText="Estado"
 					:template="status_template"
-					width="150"
+					width="105"
 					textAlign="Center"
 				/>
 				<e-column
 					headerText="Acciones"
-					width="150"
+					width="140"
 					:commands="commands"
 					:visible="true"
 					textAlign="Center"
@@ -572,7 +572,8 @@ export default {
 		panel_export_click(args) {
 			let pdfExportProperties = {
 				fileName: 'Reporte_Productos.pdf',
-				//   pageSize: 'Letter',
+				pageOrientation: 'Landscape',
+          pageSize: 'Note',
 				header: {
 					fromTop: 0,
 					height: 120,
@@ -639,7 +640,7 @@ export default {
 						{
 							cells: [
 								{
-									colSpan: 4,
+									colSpan: 6,
 									value: 'Reporte de Productos',
 									style: {
 										fontColor: '#731954',
@@ -654,7 +655,7 @@ export default {
 						{
 							cells: [
 								{
-									colSpan: 4,
+									colSpan: 6,
 									value: 'Fecha del reporte: ' + new moment().format('LLL'),
 									style: {
 										fontColor: '#808080',

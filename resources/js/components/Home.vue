@@ -180,7 +180,6 @@ export default {
 .inactive_row {
   color: rgb(243, 107, 100) !important;
 }
-
 .iziToast-color-green {
   background-color: rgb(76, 196, 177, 0.8) !important;
 }
@@ -416,5 +415,8 @@ export default {
   content: "\ec1c" !important;
   color: black !important;
   font-size: 15px !important;
+}
+.e-grid{
+  border-radius: 5px !important;
 }
 </style>

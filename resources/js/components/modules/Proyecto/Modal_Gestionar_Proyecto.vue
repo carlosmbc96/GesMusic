@@ -505,6 +505,9 @@ export default {
 			this.show = false;
 			this.$emit('close_modal', this.show);
 		},
+		reload_parent() {
+      this.$emit("refresh");
+    },
 		/*
 		 *Método que asigna el texto del botón y llena o no la varable project_modal en dependencia de la acción recivida por props
 		 */

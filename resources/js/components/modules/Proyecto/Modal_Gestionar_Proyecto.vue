@@ -181,7 +181,7 @@
 					</a-spin>
 				</a-tab-pane>
 				<!-- Fin del contenido del tab Generales -->
-				<a-tab-pane key="2">
+				<a-tab-pane key="2" v-if="action_modal==='editar'">
 					<span slot="tab"> Productos </span>
 					<a-col span="12">
 						<div class="section-title">

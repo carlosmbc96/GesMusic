@@ -547,7 +547,6 @@ import {
   Reorder,
 } from "@syncfusion/ej2-vue-grids";
 import { L10n, setCulture } from "@syncfusion/ej2-base";
-
 setCulture("es-ES");
 L10n.load({
   "es-ES": {
@@ -675,28 +674,23 @@ export default {
 .profile {
   background-color: transparent !important;
 }
-
 #modal_detalles_productos .ant-tabs-nav {
   float: right !important;
 }
-
 #modal_detalles_productos .ant-tabs-extra-content {
   float: left !important;
   color: rgba(0, 0, 0, 0.75);
   font-weight: 500;
   font-size: 20px;
 }
-
 #modal_detalles_productos .ant-divider-horizontal:before,
 #modal_detalles_productos .ant-divider-horizontal:after {
   border-color: rgb(145, 140, 140) !important;
 }
-
 #modal_detalles_productos .e-unboundcelldiv .e-control {
   background: transparent !important;
   border: none !important;
 }
-
 #modal_detalles_productos .e-headercontent,
 #modal_detalles_productos .e-sortfilter,
 #modal_detalles_productos thead,
@@ -718,35 +712,29 @@ export default {
 #modal_detalles_productos .e-toolbar-item {
   background-color: transparent !important;
 }
-
 #modal_detalles_productos .e-gridheader,
 #modal_detalles_productos .e-gridpager,
 #modal_detalles_productos .e-gridcontent,
 #modal_detalles_productos .e-toolbar {
   background-color: transparent !important;
 }
-
 #modal_detalles_productos .e-gridheader {
   border-bottom-color: darkgrey !important;
   border-top-color: darkgrey !important;
 }
-
 #modal_detalles_productos .e-grid td {
   border-color: darkgrey !important;
 }
-
 #modal_detalles_productos .e-pager,
 #modal_detalles_productos .e-toolbar {
   border-color: darkgrey !important;
 }
-
 #modal_detalles_productos .e-grid,
 #modal_detalles_productos .e-grid .e-headercontent,
 #modal_detalles_productos .e-grid .e-headercell,
 #modal_detalles_productos .e-search {
   border-color: darkgrey !important;
 }
-
 #modal_detalles_productos thead span,
 #modal_detalles_productos .e-icon-filter {
   color: #333 !important;

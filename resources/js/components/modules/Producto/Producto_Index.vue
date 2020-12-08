@@ -124,13 +124,13 @@
         <e-column
           field="añoProd"
           headerText="Año"
-          width="110"
+          width="120"
           textAlign="Left"
         />
         <e-column
           field="estadodigProd"
           headerText="Estado de Digitalización"
-          width="160"
+          width="190"
           textAlign="Left"
         />
         <e-column
@@ -148,7 +148,7 @@
         <e-column
           headerText="Estado"
           :template="status_template"
-          width="140"
+          width="150"
           textAlign="Center"
         />
         <e-column
@@ -288,7 +288,6 @@ selected_theme = selected_theme ? selected_theme : "Material";
 let theme = (
   selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
 ).replace(/-dark/i, "Dark");
-
 export default {
   name: "Proyecto_Index",
   data() {
@@ -436,7 +435,6 @@ export default {
                 if (this.data.proyecto == null) this.visible_pop = false;
                 else this.visible_pop = visible;
               },
-
               confirm_change_status() {
                 this.loading = true;
                 let error = false;
@@ -600,11 +598,10 @@ export default {
     /*
      * Método con la lógica de los botones del panel de exportación
      */
-   panel_export_click(args) {
+    panel_export_click(args) {
       let pdfExportProperties = {
-				fileName: "Reporte_Productos.pdf",
-				pageOrientation: 'Landscape',
-          pageSize: 'Note',
+        fileName: "Reporte_Productos.pdf",
+        //   pageSize: 'Letter',
         header: {
           fromTop: 0,
           height: 120,
@@ -634,7 +631,7 @@ export default {
             {
               type: "Line",
               style: { penColor: "#731954", penSize: 1, dashStyle: "Solid" },
-              points: { x1: 0, y1: 70, x2: 280, y2: 70 },
+              points: { x1: 0, y1: 70, x2: 435, y2: 70 },
             },
             {
               type: "Text",
@@ -649,7 +646,7 @@ export default {
             {
               type: "Image",
               src: image,
-              position: { x: 580, y: 0 },
+              position: { x: 445, y: 0 },
               size: { height: 110, width: 250 },
             },
           ],
@@ -671,7 +668,7 @@ export default {
             {
               cells: [
                 {
-                  colSpan: 6,
+                  colSpan: 4,
                   value: "Reporte de Productos",
                   style: {
                     fontColor: "#731954",
@@ -686,7 +683,7 @@ export default {
             {
               cells: [
                 {
-                  colSpan: 6,
+                  colSpan: 4,
                   value: "Fecha del reporte: " + new moment().format("LLL"),
                   style: {
                     fontColor: "#808080",
@@ -723,7 +720,6 @@ export default {
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
-
     /*
      * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
      */
@@ -915,30 +911,24 @@ export default {
 #producto_index .e-toolbar {
   background-color: transparent !important;
 }
-
 #producto_index .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-
 #producto_index .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-
 #producto_index td {
   border-color: lightgrey !important;
 }
-
 #producto_index .e-grid,
 #producto_index .e-toolbar,
 #producto_index .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-
 #producto_index .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-
 #producto_index thead span,
 #producto_index .e-icon-filter {
   color: rgb(115, 25, 84) !important;

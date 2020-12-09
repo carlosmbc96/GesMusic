@@ -124,31 +124,31 @@
         <e-column
           field="añoProd"
           headerText="Año"
-          width="90"
+          width="100"
           textAlign="Left"
         />
         <e-column
           field="estadodigProd"
           headerText="Estado de Digitalización"
-          width="135"
+          width="145"
           textAlign="Left"
         />
         <e-column
           field="statusComProd"
           headerText="Estatus Comercial"
-          width="120"
+          width="125"
           textAlign="Left"
         />
         <e-column
           field="genMusicPro"
           headerText="Género Musical"
-          width="110"
+          width="115"
           textAlign="Left"
         />
         <e-column
           headerText="Estado"
           :template="status_template"
-          width="105"
+          width="115"
           textAlign="Center"
         />
         <e-column

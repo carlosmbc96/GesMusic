@@ -89,32 +89,31 @@
 				<e-column
 					field="añoProd"
 					headerText="Año"
-					width="90"
+					width="95"
 					textAlign="Left"
 				/>
 				<e-column
 					field="estadodigProd"
 					headerText="Estado de Digitalización"
-					width="135"
+					width="145"
 					textAlign="Left"
 				/>
 				<e-column
 					field="statusComProd"
 					headerText="Estatus Comercial"
-					width="120"
+					width="125"
 					textAlign="Left"
 				/>
 				<e-column
 					field="genMusicPro"
 					headerText="Género Musical"
-					width="110"
+					width="114"
 					textAlign="Left"
 				/>
 				<e-column
-					v-if="visible_management"
 					headerText="Estado"
 					:template="status_template"
-					width="105"
+					width="115"
 					textAlign="Center"
 				/>
 				<e-column
@@ -394,6 +393,7 @@ export default {
 							finally_method(action, error) {
 								this.loading = false;
 								if (!error) {
+									this.checked=!this.checked
 									this.$toast.success(
 										'Se ha cambiado el estado del Producto a ' + action,
 										'¡Éxito!',

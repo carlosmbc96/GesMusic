@@ -411,7 +411,6 @@
 											:disabled="disabled"
 											v-model="variosInterpretesProd"
 											:value="variosInterpretesProd"
-											style="padding-bottom: 20px"
 											@change="cambiar_varios_interpretes"
 										>
 											¿El producto tiene varios intérpretes?
@@ -501,7 +500,7 @@
 										v-bind="index === 0 ? formItemLayout : {}"
 									>
 										<div class="ant-form-item-label">
-											<label class="ant-form-item">Autor</label>
+											<label id="autor" class="ant-form-item">Autor</label>
 										</div>
 										<a-select
 											option-filter-prop="children"
@@ -586,11 +585,11 @@
 									</a-col>
 								</a-row>
 							</a-row>
+							<a-row>
+							<a-col span="11">
 							<div class="section-title">
 								<h4>Datos Gestión</h4>
 							</div>
-							<a-row style="margin-bottom: 30px">
-								<a-col span="12">
 									<a-form-model-item
 										has-feedback
 										label="Estado de Digitalización"
@@ -613,7 +612,7 @@
 										</a-select>
 									</a-form-model-item>
 								</a-col>
-							</a-row>
+								</a-row>
 						</div>
 						<a-button
 							:disabled="disabled"
@@ -1069,7 +1068,9 @@ export default {
 		} else {
 			this.text_button = 'Crear';
 			this.text_header_button = 'Crear';
-			this.product_modal = {};
+			this.product.estadodigProd="En proceso"
+			this.product.statusComProd="Por definir"
+			this.product_modal = {...this.product};
 			this.producPrincProd = false;
 			this.activoCatalbisPro = false;
 			this.catalDigitalPro = false;
@@ -1812,5 +1813,8 @@ export default {
 	color: white;
 	background-color: rgb(243, 107, 100);
 	transition: all 0.3s;
+}
+#autor{
+	margin-bottom: 0 !important;
 }
 </style>

@@ -421,7 +421,6 @@ export default {
             },
             created() {
               this.checked = this.data.deleted_at == null;
-              console.log(this.checked);
             },
             computed: {
               color_status() {
@@ -460,7 +459,6 @@ export default {
               },
               finally_method(action, error) {
                 this.loading = false;
-                console.log(this.checked);
                 if (!error) {
                   this.$parent.$parent.load_products();
                   this.checked = !this.checked;

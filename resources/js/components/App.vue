@@ -18,7 +18,7 @@ import Login from './Login.vue'
         },
         data() {
             return {
-                login: true
+                login: true // conflicto
             }
         },
     }

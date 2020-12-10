@@ -8,7 +8,7 @@
 <script>
     import home from './Home'
     import login from './Login'
-import Login from './Login.vue'
+		import Login from './Login.vue'
 
     export default {
 
@@ -18,7 +18,7 @@ import Login from './Login.vue'
         },
         data() {
             return {
-                login: true // conflicto
+                login: true //permite entrar sin autentificación
             }
         },
     }

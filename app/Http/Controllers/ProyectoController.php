@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Proyecto;
 use App\Vocabulario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProyectoController extends Controller
 {
@@ -53,9 +54,18 @@ class ProyectoController extends Controller
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Proyecto
     {
-        $proyecto = Proyecto::create($request->all());
+        $proyecto = Proyecto::create([
+            "codigProy" => $request->codigProy,
+            "añoProy" => $request->añoProy,
+            "nombreProy" => $request->nombreProy,
+            "descripEsp" => $request->descripEsp,
+            "descripIng" => $request->descripIng,
+            "empresa_id" => $request->empresa_id,
+            "dirArbolProy" => $request->dirArbolProy,
+        ]);
+        Storage::disk('local')->makeDirectory($request->codigProy);
         if ($request->identificadorProy !== null) {
-            $proyecto->setIdentificadorProyAttribute($request->identificadorProy);
+            $proyecto->setIdentificadorProyAttribute($request->identificadorProy, $request->codigProy);
         } else
             $proyecto->setIdentificadorProyAttributeDefault();
         $proyecto->save();
@@ -66,11 +76,23 @@ class ProyectoController extends Controller
     {
         $proyecto = Proyecto::findOrFail($request->id);
         if ($request->identificadorProy !== null) {
-            $proyecto->setIdentificadorProyAttribute($request->identificadorProy);
+            if (substr($proyecto->identificadorProy, 20) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete(substr($proyecto->identificadorProy, 20));
+            }
+            $proyecto->setIdentificadorProyAttribute($request->identificadorProy, $request->codigProy);
         } else if ($request->img_default) {
+            Storage::disk('local')->delete(substr($proyecto->identificadorProy, 20));
             $proyecto->setIdentificadorProyAttributeDefault();
         }
-        return response()->json($proyecto->update($request->all()));
+        $proyecto->update([
+            "codigProy" => $request->codigProy,
+            "añoProy" => $request->añoProy,
+            "nombreProy" => $request->nombreProy,
+            "descripEsp" => $request->descripEsp,
+            "descripIng" => $request->descripIng,
+            "empresa_id" => $request->empresa_id
+        ]);
+        return response()->json($proyecto);
     }
 
     public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Proyecto
@@ -86,7 +108,12 @@ class ProyectoController extends Controller
 
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Proyecto
     {
-        return response()->json(Proyecto::withTrashed()->findOrFail($id)->forceDelete());
+        $proyecto = Proyecto::withTrashed()->findOrFail($id);
+        Storage::disk('local')->deleteDirectory($proyecto->codigProy);
+        if (substr($proyecto->identificadorProy, 20) !== "Logo ver vertical_Ltr Negras.png") {
+            Storage::disk('local')->delete(substr($proyecto->identificadorProy, 20));
+        }
+        return response()->json($proyecto->forceDelete());
     }
 
     public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Proyecto

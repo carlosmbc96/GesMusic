@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,17 +27,19 @@ class Proyecto extends Model
     ];
     //SECCIÓN DE FILLABLE
 
-    public function setIdentificadorProyAttribute($identificadorProy)
+    //SECCIÓN DE IMÁGENES
+    public function setIdentificadorProyAttribute($identificadorProy, $codigProy)
     {
-            $this->attributes['identificadorProy'] = '/BisMusic/Proyectos/' . Carbon::now()->second . $identificadorProy->getClientOriginalName();
-            $name = Carbon::now()->second . $identificadorProy->getClientOriginalName();
-            Storage::disk('local')->put($name, File::get($identificadorProy));
+        $this->attributes['identificadorProy'] = '/BisMusic/Proyectos/' . $codigProy . $identificadorProy->getClientOriginalName();
+        $name = $codigProy . $identificadorProy->getClientOriginalName();
+        Storage::disk('local')->put($name, File::get($identificadorProy));
     }
 
     public function setIdentificadorProyAttributeDefault()
     {
         $this->attributes['identificadorProy'] = '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png';
     }
+    //SECCIÓN DE IMÁGENES
 
     //SECCIÓN DE RELACIONES
     public function empresa()

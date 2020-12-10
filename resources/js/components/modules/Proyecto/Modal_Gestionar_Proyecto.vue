@@ -481,7 +481,7 @@ export default {
 			form_data.append('id', this.project_modal.id);
 			form_data.append(
 				'dirArbolProy',
-				`/BisMusic/Proyectos/${this.project_modal.nombreProy}`
+				`/BisMusic/Proyectos/${this.project_modal.codigProy}`
 			);
 			if (this.file_list.length !== 0) {
 				if (this.file_list[0].uid !== this.project_modal.id) {

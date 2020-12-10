@@ -417,9 +417,13 @@ export default {
   font-size: 15px !important;
 }
 .e-grid{
-  border-radius: 5px !important;
+  border-radius: 5px 0 5px 5px !important;
 }
 .ant-form-item-label {
 	margin-bottom: -10px !important;
+}
+.iziToast-buttons button:focus{
+  outline: none !important;
+  box-shadow: none !important;
 }
 </style>

@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class Producto extends Model
 {
@@ -41,16 +42,20 @@ class Producto extends Model
     ];
     //SECCIÓN DE FILLABLE
 
-    public function setIdentificadorProdAttribute($identificadorProd){
+    //SECCIÓN DE IMÁGENES
+    public function setIdentificadorProdAttribute($identificadorProd, $codigProd)
+    {
         if ($identificadorProd) {
-            $this->attributes['identificadorProd'] = '/BisMusic/Proyectos/'.Carbon::now()->second.$identificadorProd->getClientOriginalName();
-            $name = Carbon::now()->second.$identificadorProd->getClientOriginalName();
-            \Storage::disk('local')->put($name, \File::get($identificadorProd));
+            $this->attributes['identificadorProd'] = '/BisMusic/Proyectos/' . $codigProd . $identificadorProd->getClientOriginalName();
+            $name = $codigProd . $identificadorProd->getClientOriginalName();
+            Storage::disk('local')->put($name, File::get($identificadorProd));
         }
     }
-     public function setIdentificadorProdAttributeDefault(){
-                $this->attributes['identificadorProd'] = '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png';
-        }
+    public function setIdentificadorProdAttributeDefault()
+    {
+        $this->attributes['identificadorProd'] = '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png';
+    }
+    //SECCIÓN DE IMÁGENES
 
     //SECCIÓN DE RELACIONES
     //Relación de Many to One Productos - Proyectos
@@ -101,28 +106,26 @@ class Producto extends Model
     // Query Scope que devuelve los registros de una consulta Específica del Modelo Proyecto
     public function scopeBusqSelect($query, $atributo, $valorbuscado)
     {
-        if (($atributo) && ($valorbuscado))
-        {
-            return $query->where($atributo,'like',"%$valorbuscado%");
+        if (($atributo) && ($valorbuscado)) {
+            return $query->where($atributo, 'like', "%$valorbuscado%");
         }
     }
 
     // Query Scope que devuelve los registros de una consulta General del Modelo Producto
     public function scopeBusqGeneral($query, $valorbuscado)
     {
-        if ($valorbuscado)
-        {
+        if ($valorbuscado) {
             return $query
-                ->orwhere('codigProd','like',"%$valorbuscado%")
-                ->orwhere('tituloProd','like',"%$valorbuscado%")
-                ->orwhere('añoProd','like',"%$valorbuscado%")
-                ->orwhere('sellodiscProd','like',"%$valorbuscado%")
-                ->orwhere('estadodigProd','like',"%$valorbuscado%")
-                ->orwhere('statusComProd','like',"%$valorbuscado%")
-                ->orwhere('destinosComerPro','like',"%$valorbuscado%")
-                ->orwhere('genMusicPro','like',"%$valorbuscado%")
-                ->orwhere('interpretesProd','like',"%$valorbuscado%")
-                ->orwhere('autoresProd','like',"%$valorbuscado%");
+                ->orwhere('codigProd', 'like', "%$valorbuscado%")
+                ->orwhere('tituloProd', 'like', "%$valorbuscado%")
+                ->orwhere('añoProd', 'like', "%$valorbuscado%")
+                ->orwhere('sellodiscProd', 'like', "%$valorbuscado%")
+                ->orwhere('estadodigProd', 'like', "%$valorbuscado%")
+                ->orwhere('statusComProd', 'like', "%$valorbuscado%")
+                ->orwhere('destinosComerPro', 'like', "%$valorbuscado%")
+                ->orwhere('genMusicPro', 'like', "%$valorbuscado%")
+                ->orwhere('interpretesProd', 'like', "%$valorbuscado%")
+                ->orwhere('autoresProd', 'like', "%$valorbuscado%");
         }
     }
     //SECCIÓN DE QUERY SCOPE

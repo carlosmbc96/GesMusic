@@ -21,6 +21,9 @@ class Parametro extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "parametros" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE QUERY SCOPE
     // Query Scope que devuelve el Total de Registros del Modelo Parametro

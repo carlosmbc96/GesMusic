@@ -963,7 +963,7 @@ export default {
 			if (this.product_modal.identificadorProd !== null) {
 				if (
 					this.product_modal.identificadorProd !==
-					'/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png'
+					'/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png'
 				) {
 					this.file_list.push({
 						uid: this.product_modal.id,
@@ -976,7 +976,7 @@ export default {
 					this.file_list.push({
 						uid: 1,
 						name: 'Logo ver vertical_Ltr Negras.png',
-						url: '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png',
+						url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
 					});
 			}
 			this.varios_int = this.product_modal.variosInterpretesProd;
@@ -1081,7 +1081,7 @@ export default {
 			this.file_list.push({
 				uid: 1,
 				name: 'Logo ver vertical_Ltr Negras.png',
-				url: '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png',
+				url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
 			});
 			this.autoresProd = [
 				{
@@ -1346,10 +1346,18 @@ export default {
 					'activoCatalbisPro',
 					this.product_modal.activoCatalbisPro
 				);
+				let founded= false
+				let project=""
 				form_data.append('primeraPantProd', this.product_modal.primeraPantProd);
+				for (let i = 0; i < this.projects.length && !founded; i++) {
+					if (this.projects[i].id === this.product_modal.proyecto_id)  {
+						project=this.projects[i].codigProy
+						founded=true
+					}					
+				}
 				form_data.append(
 					'dirArbolProd',
-					`/BisMusic/Proyectos/Productos/${this.product_modal.nombreProy}`
+					`/BisMusic/Proyectos/${project}/${this.product_modal.codigProd}`
 				);
 				if (this.file_list.length !== 0) {
 					if (this.file_list[0].uid !== this.product_modal.id) {
@@ -1481,10 +1489,18 @@ export default {
 					'activoCatalbisPro',
 					this.product_modal.activoCatalbisPro
 				);
+				let founded = false
+				let project = ""
 				form_data.append('primeraPantProd', this.product_modal.primeraPantProd);
+				for (let i = 0; i < this.projects.length && !founded; i++) {
+					if (this.projects[i].id === this.product_modal.proyecto_id)  {
+						project=this.projects[i].codigProy
+						founded=true
+					}					
+				}
 				form_data.append(
 					'dirArbolProd',
-					`storage/BisMusic/Proyectos/Productos/${this.product_modal.nombreProy}`
+					`/BisMusic/Proyectos/${project}/${this.product_modal.codigProd}`
 				);
 				if (this.file_list.length !== 0) {
 					if (this.file_list[0].uid !== this.product_modal.id) {

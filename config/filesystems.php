@@ -45,7 +45,7 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => public_path('BisMusic/Proyectos'),
+            'root' => public_path('BisMusic'),
         ],
 
         'public' => [

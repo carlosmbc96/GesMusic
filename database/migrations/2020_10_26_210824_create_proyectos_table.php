@@ -11,7 +11,7 @@ class CreateProyectosTable extends Migration
         Schema::create('proyectos', function (Blueprint $table) {
             // Migración del Modelo Proyectos
             $table->id()->index();  // Identificador Único de la Tabla: Proyectos
-            $table->string('codigProy',8)->unique();  // Código Proyecto
+            $table->string('codigProy',9)->unique();  // Código Proyecto
             $table->string('nombreProy');  // Nombre Proyecto
             $table->string('identificadorProy')->nullable();  // Identificador del Proyecto
             $table->string('añoProy');  // Año Proyecto

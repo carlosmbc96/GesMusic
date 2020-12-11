@@ -25,10 +25,13 @@ class Traza extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "trazas" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES
     //Relación de Many to One Trazas - Usuarios
-    public function usuarios()
+    public function usuario()
     {
         return $this->belongsTo(Usuario::class); // Una Traza esta asociado a un Usuario
     }

@@ -4,11 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class Autor extends Model
 {
     // Método de Eliminación Lógica del Modelo Empresa
     use SoftDeletes;
+
 
 
     //SECCIÓN DE FILLABLE
@@ -25,7 +28,23 @@ class Autor extends Model
     ];
     //SECCIÓN DE FILLABLE
 
-    protected $table = "autores" ;
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "autores";
+    //SECCIÓN DE PROTECT TABLE
+
+    //SECCIÓN DE IMÁGENES
+    public function setFotoAutrAttribute($fotoAutr, $ciAutr)
+    {
+        $this->attributes['fotoAutr'] = '/BisMusic/Imagenes/Artistas/Autores/' . $ciAutr . $fotoAutr->getClientOriginalName();
+        $name = $ciAutr . $fotoAutr->getClientOriginalName();
+        Storage::disk('local')->put($name, File::get($fotoAutr));
+    }
+
+    public function setFotoAutrAttributeDefault()
+    {
+        $this->attributes['fotoAutr'] = '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png';
+    }
+    //SECCIÓN DE IMÁGENES
 
     //SECCIÓN DE QUERY SCOPE
     // Query Scope que devuelve el Total de Registros del Modelo Autor
@@ -60,23 +79,21 @@ class Autor extends Model
     // Query Scope que devuelve los registros de una consulta Específica del Modelo Autor
     public function scopeBusqSelect($query, $atributo, $valorbuscado)
     {
-        if (($atributo) && ($valorbuscado))
-        {
-            return $query->where($atributo,'like',"%$valorbuscado%");
+        if (($atributo) && ($valorbuscado)) {
+            return $query->where($atributo, 'like', "%$valorbuscado%");
         }
     }
 
     // Query Scope que devuelve los registros de una consulta General del Modelo Autor
     public function scopeBusqGeneral($query, $valorbuscado)
     {
-        if ($valorbuscado)
-        {
+        if ($valorbuscado) {
             return $query
-                ->orwhere('ciAutr','like',"%$valorbuscado%")
-                ->orwhere('nombresAutr','like',"%$valorbuscado%")
-                ->orwhere('apellidosAutr','like',"%$valorbuscado%")
-                ->orwhere('sexoAutr','like',"%$valorbuscado%")
-                ->orwhere('fallecidoAutr','like',"%$valorbuscado%");
+                ->orwhere('ciAutr', 'like', "%$valorbuscado%")
+                ->orwhere('nombresAutr', 'like', "%$valorbuscado%")
+                ->orwhere('apellidosAutr', 'like', "%$valorbuscado%")
+                ->orwhere('sexoAutr', 'like', "%$valorbuscado%")
+                ->orwhere('fallecidoAutr', 'like', "%$valorbuscado%");
         }
     }
     //SECCIÓN DE QUERY SCOPE

@@ -63,7 +63,7 @@ class ProyectoController extends Controller
             "empresa_id" => $request->empresa_id,
             "dirArbolProy" => $request->dirArbolProy,
         ]);
-        Storage::disk('local')->makeDirectory($request->codigProy);
+        Storage::disk('local')->makeDirectory('/Proyectos/'.$request->codigProy);
         if ($request->identificadorProy !== null) {
             $proyecto->setIdentificadorProyAttribute($request->identificadorProy, $request->codigProy);
         } else
@@ -76,12 +76,12 @@ class ProyectoController extends Controller
     {
         $proyecto = Proyecto::findOrFail($request->id);
         if ($request->identificadorProy !== null) {
-            if (substr($proyecto->identificadorProy, 20) !== "Logo ver vertical_Ltr Negras.png") {
-                Storage::disk('local')->delete(substr($proyecto->identificadorProy, 20));
+            if (substr($proyecto->identificadorProy, 29) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete('/Imagenes/Proyectos/'.substr($proyecto->identificadorProy, 29));
             }
             $proyecto->setIdentificadorProyAttribute($request->identificadorProy, $request->codigProy);
         } else if ($request->img_default) {
-            Storage::disk('local')->delete(substr($proyecto->identificadorProy, 20));
+            Storage::disk('local')->delete('/Imagenes/Proyectos/'.substr($proyecto->identificadorProy, 29));
             $proyecto->setIdentificadorProyAttributeDefault();
         }
         $proyecto->update([
@@ -109,9 +109,9 @@ class ProyectoController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Proyecto
     {
         $proyecto = Proyecto::withTrashed()->findOrFail($id);
-        Storage::disk('local')->deleteDirectory($proyecto->codigProy);
-        if (substr($proyecto->identificadorProy, 20) !== "Logo ver vertical_Ltr Negras.png") {
-            Storage::disk('local')->delete(substr($proyecto->identificadorProy, 20));
+        Storage::disk('local')->deleteDirectory('/Proyectos/'.$proyecto->codigProy);
+        if (substr($proyecto->identificadorProy, 29) !== "Logo ver vertical_Ltr Negras.png") {
+            Storage::disk('local')->delete('/Imagenes/Proyectos/'.substr($proyecto->identificadorProy, 29));
         }
         return response()->json($proyecto->forceDelete());
     }

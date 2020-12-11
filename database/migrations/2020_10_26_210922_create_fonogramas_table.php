@@ -11,7 +11,7 @@ class CreateFonogramasTable extends Migration
         Schema::create('fonogramas', function (Blueprint $table) {
             // Migración del Modelo Fonogramas
             $table->id()->index();  // Identificador Único de la Tabla: Fonogramas
-            $table->string('codigFong',8)->unique();  // Código Fonograma [FON0000]
+            $table->string('codigFong',9)->unique();  // Código Fonograma [FON0000]
             $table->string('tituloFong');  // Título Audiovisual
             $table->string('portadillaFong')->nullable();  // Url del Archivo de Portada del Audiovisual
             $table->string('clasficacionFong')->nullable();  // Clasificación Fonograma *nom

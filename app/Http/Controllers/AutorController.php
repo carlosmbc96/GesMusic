@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Autor;
+use App\Vocabulario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AutorController extends Controller
 {
@@ -12,9 +14,9 @@ class AutorController extends Controller
         $valorbuscado = $request->valorbuscado;
         $atributo = $request->atributo;
         if ( ($atributo) && ($valorbuscado) ) {
-            $autores=Autor::BusqSelect($atributo, $valorbuscado)->paginate(5);
+            $autores=Autor::BusqSelect($atributo, $valorbuscado)->get();
         } else if($valorbuscado){
-            $autores=Autor::BusqGeneral($valorbuscado)->paginate(5);
+            $autores=Autor::BusqGeneral($valorbuscado)->get();
         } else {
             $autores=Autor::withTrashed()->get();
         }
@@ -51,26 +53,63 @@ class AutorController extends Controller
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Autor
     {
-        return response()->json(Autor::create($request->all()));
+        $autor = Autor::create([
+            "ciAutr" => $request->ciAutr,
+            "nombresAutr" => $request->nombresAutr,
+            "apellidosAutr" => $request->apellidosAutr,
+            "sexoAutr" => $request->sexoAutr,
+            "fallecidoAutr" => $request->fallecidoAutr,
+            "obrasCatEditAutr" => $request->obrasCatEditAutr,
+            "reseñaBiogAutr" => $request->reseñaBiogAutr,
+        ]);
+        if ($request->fotoAutr !== null) {
+            $autor->setFotoAutrAttribute($request->fotoAutr, $request->ciAutr);
+        } else
+            $autor->setFotoAutrAttributeDefault();
+        $autor->save();
+        return response()->json($autor);
     }
 
-    public function update(Request $request,Autor $autor, $id)  // Update | Método que Actualiza un Registro Específico del Modelo:Autor
+    public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Autor
     {
-        return response()->json(Autor::findOrFail($id)->update($request->all()));
+        $autor = Autor::findOrFail($request->id);
+        if ($request->fotoAutr !== null) {
+            if (substr($autor->fotoAutr, 37) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 37));
+            }
+            $autor->setFotoAutrAttribute($request->fotoAutr, $request->codigProy);
+        } else if ($request->img_default) {
+            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 37));
+            $autor->setFotoAutrAttributeDefault();
+        }
+        $autor->update([
+            "ciAutr" => $request->ciAutr,
+            "nombresAutr" => $request->nombresAutr,
+            "apellidosAutr" => $request->apellidosAutr,
+            "sexoAutr" => $request->sexoAutr,
+            "fallecidoAutr" => $request->fallecidoAutr,
+            "obrasCatEditAutr" => $request->obrasCatEditAutr,
+            "reseñaBiogAutr" => $request->reseñaBiogAutr,
+        ]);
+        return response()->json($autor);
     }
 
-    public function destroyLog(Autor $autor, $id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Autor
+    public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Autor
     {
         return response()->json(Autor::findOrFail($id)->delete());
     }
 
-    public function destroyFis(Autor $autor, $id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Autor
+    public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Autor
     {
-        return response()->json(Autor::findOrFail($id)->forceDelete());
+        $autor = Autor::withTrashed()->findOrFail($id);
+        if (substr($autor->fotoAutr, 37) !== "Logo ver vertical_Ltr Negras.png") {
+            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 37));
+        }
+        return response()->json($autor->forceDelete());
     }
 
-    public function restoreLog(Autor $autor, $id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Autor
+    public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Autor
     {
-        return response()->json(Autor::findOrFail($id)->restore());
+        return response()->json(Autor::onlyTrashed()->findOrFail($id)->restore());
     }
 }

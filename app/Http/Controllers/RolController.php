@@ -16,7 +16,7 @@ class RolController extends Controller
         } else if($valorbuscado){
             $roles=Rol::BusqGeneral($valorbuscado)->paginate(5);
         } else {
-            $roles=Rol::All()->paginate(5);
+            $roles=Rol::withTrashed()->get();
         }
         $relaciones = $request->relations; //  Aqui se accede al objeto relations que viene por parámetros
         //  En este bloque If se verifica que exista un objeto relaciones, en caso de que exista se accede a la primera posición del arreglo, si es all lo que contiene entonces se devuelven todas las relaciones para el modelo en cuestión.

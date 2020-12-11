@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Usuario;
+use App\Vocabulario;
 use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
@@ -16,7 +17,7 @@ class UsuarioController extends Controller
         } else if($valorbuscado){
             $usuarios=Usuario::BusqGeneral($valorbuscado)->paginate(5);
         } else {
-            $usuarios=Usuario::All()->paginate(5);
+            $usuarios=Usuario::withTrashed()->get();
         }
         $relaciones = $request->relations; //  Aqui se accede al objeto relations que viene por parámetros
         //  En este bloque If se verifica que exista un objeto relaciones, en caso de que exista se accede a la primera posición del arreglo, si es all lo que contiene entonces se devuelven todas las relaciones para el modelo en cuestión.

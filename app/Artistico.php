@@ -22,10 +22,13 @@ class Artistico extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "artisticos" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES
     //Relación de Many to One Nombres Artisticos - Interpretes
-    public function interpretes()
+    public function interprete()
     {
         return $this->belongsTo(Interprete::class); // Un Nombre Artistico esta asociado a un Interprete
     }

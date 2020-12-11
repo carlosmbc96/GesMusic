@@ -23,10 +23,13 @@ class Tema extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "temas" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES
     //Relación de Many to One Temas - Tracks
-    public function tracks()
+    public function track()
     {
         return $this->belongsTo(Track::class); // Un Tema tiene asociado un Track
     }

@@ -11,7 +11,7 @@ class CreateTracksTable extends Migration
         Schema::create('tracks', function (Blueprint $table) {
             // Migración del Modelo Tracks
             $table->id()->index();  // Identificador Único de la Tabla: Tracks
-            $table->string('estd',8)->nullable();  // Estado Track *nom
+            $table->string('estd',9)->nullable();  // Estado Track *nom
             $table->string('ordenTrk')->nullable();  // Orden Track Repertorio
             $table->string('tituloTrk');  // Titulo Track
             $table->string('isrcTrk',15)->unique();  // ISRC Track

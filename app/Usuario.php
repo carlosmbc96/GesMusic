@@ -25,6 +25,9 @@ class Usuario extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "usuarios" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES
     //Relación de One to Many Usuarios - Trazas
@@ -33,7 +36,7 @@ class Usuario extends Model
         return $this->hasMany(Traza::class); // Un Usuarios tiene muchas Trazas
     }
     //Relación de One to One Usuarios - Empleados
-    public function empleados()
+    public function empleado()
     {
         return $this->belongsTo(Empleado::class); // Un Empleado tiene un Usuario asociado
     }

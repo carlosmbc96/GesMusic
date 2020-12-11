@@ -26,20 +26,23 @@ class Elemento extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "elementos" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES
     //Relación de Many to One Elementos - Productos
-    public function productos()
+    public function producto()
     {
         return $this->belongsTo(Producto::class); // Un Elemento pertenece a un Producto
     }
     //Relación de Many to One Elementos - Productos
-    public function audiovisuales()
+    public function audiovisual()
     {
         return $this->belongsTo(Audiovisual::class); // Un Elemento pertenece a un Audiovisual
     }
     //Relación de Many to One Elementos - Productos
-     public function fonogramas()
+     public function fonograma()
     {
         return $this->belongsTo(Fonograma::class); // Un Elemento pertenece a un Fonograma
     }

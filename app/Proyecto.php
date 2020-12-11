@@ -12,7 +12,6 @@ class Proyecto extends Model
     // Método de Eliminación Lógica del Modelo Empresa
     use SoftDeletes;
 
-
     //SECCIÓN DE FILLABLE
     protected $fillable = [
         'codigProy',  // Código Proyecto
@@ -27,17 +26,21 @@ class Proyecto extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "proyectos";
+    //SECCIÓN DE PROTECT TABLE
+
     //SECCIÓN DE IMÁGENES
     public function setIdentificadorProyAttribute($identificadorProy, $codigProy)
     {
-        $this->attributes['identificadorProy'] = '/BisMusic/Proyectos/' . $codigProy . $identificadorProy->getClientOriginalName();
+        $this->attributes['identificadorProy'] = '/BisMusic/Imagenes/Proyectos/' . $codigProy . $identificadorProy->getClientOriginalName();
         $name = $codigProy . $identificadorProy->getClientOriginalName();
-        Storage::disk('local')->put($name, File::get($identificadorProy));
+        Storage::disk('local')->put('/Imagenes/Proyectos/'.$name, File::get($identificadorProy));
     }
 
     public function setIdentificadorProyAttributeDefault()
     {
-        $this->attributes['identificadorProy'] = '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png';
+        $this->attributes['identificadorProy'] = '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png';
     }
     //SECCIÓN DE IMÁGENES
 
@@ -52,8 +55,6 @@ class Proyecto extends Model
         return $this->hasMany(Producto::class); // Una Empresa tiene muchos Proyectos
     }
     //SECCIÓN DE RELACIONES
-
-
 
 
     //SECCIÓN DE QUERY SCOPE

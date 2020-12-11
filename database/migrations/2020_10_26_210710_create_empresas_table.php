@@ -11,7 +11,7 @@ class CreateEmpresasTable extends Migration
         Schema::create('empresas', function (Blueprint $table) {
             // Migración del Modelo Empresa
             $table->id()->index();  // Identificador Único de la Tabla: Empresa
-            $table->string('codEmpr',8)->unique();  // Código Empresa
+            $table->string('codEmpr',9)->unique();  // Código Empresa
             $table->string('logoEmpr')->nullable();  // Url del Archivo de Logo Empresa
             $table->string('nombreEmpr');  // Nombre Empresa
             $table->string('siglasEmpr')->nullable();  // Siglas Empresa

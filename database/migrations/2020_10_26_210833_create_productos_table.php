@@ -11,7 +11,7 @@ class CreateProductosTable extends Migration
         Schema::create('productos', function (Blueprint $table) {
             // Migración del Modelo Productos
             $table->id()->index();  // Identificador Único de la Tabla: Productos
-            $table->string('codigProd',8)->unique();  // Código Producto [B0000]
+            $table->string('codigProd',9)->unique();  // Código Producto [B0000]
             $table->string('tituloProd');  // Título Producto
             $table->string('identificadorProd')->nullable();  // Identificador del Producto
             $table->string('añoProd');  // Año Producto *nom

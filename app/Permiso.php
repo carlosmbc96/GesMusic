@@ -20,6 +20,9 @@ class Permiso extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "permisos" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE QUERY SCOPE
     // Query Scope que devuelve el Total de Registros del Modelo Permiso

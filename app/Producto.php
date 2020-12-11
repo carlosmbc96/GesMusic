@@ -4,14 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class Producto extends Model
 {
     // Método de Eliminación Lógica del Modelo Empresa
     use SoftDeletes;
-
 
     //SECCIÓN DE FILLABLE
     // Atributos del Modelo Producto
@@ -46,16 +45,20 @@ class Producto extends Model
     public function setIdentificadorProdAttribute($identificadorProd, $codigProd)
     {
         if ($identificadorProd) {
-            $this->attributes['identificadorProd'] = '/BisMusic/Proyectos/' . $codigProd . $identificadorProd->getClientOriginalName();
+            $this->attributes['identificadorProd'] = '/BisMusic/Imagenes/Productos/' . $codigProd . $identificadorProd->getClientOriginalName();
             $name = $codigProd . $identificadorProd->getClientOriginalName();
-            Storage::disk('local')->put($name, File::get($identificadorProd));
+            Storage::disk('local')->put('/Imagenes/Productos/'.$name, File::get($identificadorProd));
         }
     }
     public function setIdentificadorProdAttributeDefault()
     {
-        $this->attributes['identificadorProd'] = '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png';
+        $this->attributes['identificadorProd'] = '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png';
     }
     //SECCIÓN DE IMÁGENES
+
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "productos";
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES
     //Relación de Many to One Productos - Proyectos

@@ -104,14 +104,14 @@ Route::delete('/tracks/{id}','TrackController@destroyLog')->name('tracks.elimina
  */
 // RUTAS DEL RECURSO: AUTOR
 //Route::resource('autores','AutorController'); // Ruta que Lista todos los Recursos de la Clase Autores
-Route::post('/autores/listar','AutorController@index')->name('autores.listar'); // Ruta que Lista todos los Registros del Modelo Autor
-Route::get('/autores/create','AutorController@create')->name('autores.crear'); // Ruta que Muestra un Formulario para Crear un Registro del Modelo Autor
-Route::post('/autores','AutorController@store')->name('autores.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Autor
-Route::get('/autores/{id}','AutorController@show')->name('autores.mostrar'); // Ruta que Muestra un Registro Específico del Modelo Autor
-Route::get('/autores/{id}/edit','AutorController@edit')->name('autores.editar'); // Ruta que Edita un Registro Específico del Modelo Autor
-Route::put('/autores/{id}','AutorController@update')->name('autores.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Autor
-Route::delete('/autores/{id}','AutorController@destroyLog')->name('autores.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Autor
-
+Route::get('/autores/restaurar/{id}','AutorController@restoreLog');
+Route::post('/autores/listar','AutorController@index'); // Ruta que Lista todos los Registros del Modelo Producto
+Route::post('/autores','AutorController@store'); // Ruta que Guarda el Nuevo Registro del Modelo Producto
+Route::get('/autores/{id}','AutorController@show'); // Ruta que Muestra un Registro Específico del Modelo Producto
+Route::post('/autores/editar','AutorController@update'); // Ruta que Guarda un Registro Específico del Modelo Producto
+Route::delete('/autores/desactivar/{id}','AutorController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
+Route::delete('/autores/eliminar/{id}','AutorController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
+Route::post('/autores/nomencladores','AutorController@nomenclators'); 
 // RUTAS DEL RECURSO: INTERPRETE
 //Route::resource('interpretes','InterpreteController'); // Ruta que Lista todos los Recursos de la Clase Interpretes
 Route::post('/interpretes/listar','InterpreteController@index')->name('interpretes.listar'); // Ruta que Lista todos los Registros del Modelo Interprete

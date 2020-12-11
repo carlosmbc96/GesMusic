@@ -527,7 +527,7 @@ export default {
 				if (this.project_modal.identificadorProy !== null) {
 					if (
 						this.project_modal.identificadorProy !==
-						'/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png'
+						'/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png'
 					) {
 						this.file_list.push({
 							uid: this.project_modal.id,
@@ -540,14 +540,14 @@ export default {
 						this.file_list.push({
 							uid: 1,
 							name: 'Logo ver vertical_Ltr Negras.png',
-							url: '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png',
+							url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
 						});
 				}
 			} else {
 				this.file_list.push({
 					uid: 1,
 					name: 'Logo ver vertical_Ltr Negras.png',
-					url: '/BisMusic/Proyectos/Logo ver vertical_Ltr Negras.png',
+					url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
 				});
 				this.text_button = 'Crear';
 				this.text_header_button = 'Crear';

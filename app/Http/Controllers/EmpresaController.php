@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Empresa;
+use App\Vocabulario;
 use Illuminate\Http\Request;
 
 class EmpresaController extends Controller
@@ -16,7 +17,7 @@ class EmpresaController extends Controller
         } else if($valorbuscado){
             $empresas=Empresa::BusqGeneral($valorbuscado)->paginate(5);
         } else {
-            $empresas=Empresa::All()->paginate(5);
+            $empresas=Empresa::withTrashed()->get();
         }
         $relaciones = $request->relations; //  Aqui se accede al objeto relations que viene por parámetros
         //  En este bloque If se verifica que exista un objeto relaciones, en caso de que exista se accede a la primera posición del arreglo, si es all lo que contiene entonces se devuelven todas las relaciones para el modelo en cuestión.

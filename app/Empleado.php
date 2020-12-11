@@ -32,6 +32,9 @@ class Empleado extends Model
     ];
     //SECCIÓN DE FILLABLE
 
+    //SECCIÓN DE PROTECT TABLE
+    protected $table = "empleados" ;
+    //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES
     //Relación de One to One Empleados - Usuarios
@@ -40,7 +43,7 @@ class Empleado extends Model
         return $this->hasOne(Usuario::class); // Un Usuarios tiene un Empleado asociado
     }
     //Relación de Many to One Temas - Tracks
-    public function empresas()
+    public function empresa()
     {
         return $this->belongsTo(Empresa::class); // Un Empleado esta asociado a una Empresa
     }

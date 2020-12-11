@@ -16,7 +16,7 @@ class VocabularioController extends Controller
         } else if($valorbuscado){
             $vocabularios=Vocabulario::BusqGeneral($valorbuscado)->paginate(5);
         } else {
-            $vocabularios=Vocabulario::All()->paginate(5);
+            $vocabularios=Vocabulario::withTrashed()->get();
         }
         $relaciones = $request->relations; //  Aqui se accede al objeto relations que viene por parámetros
         //  En este bloque If se verifica que exista un objeto relaciones, en caso de que exista se accede a la primera posición del arreglo, si es all lo que contiene entonces se devuelven todas las relaciones para el modelo en cuestión.

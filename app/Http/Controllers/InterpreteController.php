@@ -12,9 +12,9 @@ class InterpreteController extends Controller
         $valorbuscado = $request->valorbuscado;
         $atributo = $request->atributo;
         if ( ($atributo) && ($valorbuscado) ) {
-            $interpretes=Interprete::BusqSelect($atributo, $valorbuscado)->paginate(5);
+            $interpretes=Interprete::withTrashed()->BusqSelect($atributo, $valorbuscado)->paginate(5);
         } else if($valorbuscado){
-            $interpretes=Interprete::BusqGeneral($valorbuscado)->paginate(5);
+            $interpretes=Interprete::withTrashed()->BusqGeneral($valorbuscado)->paginate(5);
         } else {
             $interpretes=Interprete::withTrashed()->get();
         }
@@ -48,23 +48,23 @@ class InterpreteController extends Controller
         return response()->json(Interprete::create($request->all()));
     }
 
-    public function update(Request $request,Interprete $interprete, $id)  // Update | Método que Actualiza un Registro Específico del Modelo:Interprete
+    public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Interprete
     {
-        return response()->json(Interprete::findOrFail($id)->update($request->all()));
+        return response()->json(Interprete::findOrFail($request->id)->update($request->all()));
     }
 
-    public function destroyLog(Interprete $interprete, $id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Interprete
+    public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Interprete
     {
         return response()->json(Interprete::findOrFail($id)->delete());
     }
 
-    public function destroyFis(Interprete $interprete, $id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Interprete
+    public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Interprete
     {
-        return response()->json(Interprete::findOrFail($id)->forceDelete());
+        return response()->json(Interprete::withTrashed()->findOrFail($id)->forceDelete());
     }
 
-    public function restoreLog(Interprete $interprete, $id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Interprete
+    public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Interprete
     {
-        return response()->json(Interprete::findOrFail($id)->restore());
+        return response()->json(Interprete::onlyTrashed()->findOrFail($id)->restore());
     }
 }

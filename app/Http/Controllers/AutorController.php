@@ -14,9 +14,9 @@ class AutorController extends Controller
         $valorbuscado = $request->valorbuscado;
         $atributo = $request->atributo;
         if ( ($atributo) && ($valorbuscado) ) {
-            $autores=Autor::BusqSelect($atributo, $valorbuscado)->get();
+            $autores=Autor::withTrashed()->BusqSelect($atributo, $valorbuscado)->get();
         } else if($valorbuscado){
-            $autores=Autor::BusqGeneral($valorbuscado)->get();
+            $autores=Autor::withTrashed()->BusqGeneral($valorbuscado)->get();
         } else {
             $autores=Autor::withTrashed()->get();
         }
@@ -74,12 +74,12 @@ class AutorController extends Controller
     {
         $autor = Autor::findOrFail($request->id);
         if ($request->fotoAutr !== null) {
-            if (substr($autor->fotoAutr, 37) !== "Logo ver vertical_Ltr Negras.png") {
-                Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 37));
+            if (substr($autor->fotoAutr, 36) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
             }
             $autor->setFotoAutrAttribute($request->fotoAutr, $request->codigProy);
         } else if ($request->img_default) {
-            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 37));
+            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
             $autor->setFotoAutrAttributeDefault();
         }
         $autor->update([
@@ -102,8 +102,8 @@ class AutorController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Autor
     {
         $autor = Autor::withTrashed()->findOrFail($id);
-        if (substr($autor->fotoAutr, 37) !== "Logo ver vertical_Ltr Negras.png") {
-            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 37));
+        if (substr($autor->fotoAutr, 36) !== "Logo ver vertical_Ltr Negras.png") {
+            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
         }
         return response()->json($autor->forceDelete());
     }

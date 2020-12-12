@@ -37,7 +37,7 @@ class Autor extends Model
     {
         $this->attributes['fotoAutr'] = '/BisMusic/Imagenes/Artistas/Autores/' . $ciAutr . $fotoAutr->getClientOriginalName();
         $name = $ciAutr . $fotoAutr->getClientOriginalName();
-        Storage::disk('local')->put($name, File::get($fotoAutr));
+        Storage::disk('local')->put('Imagenes/Artistas/Autores/'.$name, File::get($fotoAutr));
     }
 
     public function setFotoAutrAttributeDefault()

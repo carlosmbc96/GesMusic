@@ -55,6 +55,7 @@ class AutorController extends Controller
     {
         $autor = Autor::create([
             "ciAutr" => $request->ciAutr,
+            "codigAutr" => $request->codigAutr,
             "nombresAutr" => $request->nombresAutr,
             "apellidosAutr" => $request->apellidosAutr,
             "sexoAutr" => $request->sexoAutr,
@@ -63,7 +64,7 @@ class AutorController extends Controller
             "reseñaBiogAutr" => $request->reseñaBiogAutr,
         ]);
         if ($request->fotoAutr !== null) {
-            $autor->setFotoAutrAttribute($request->fotoAutr, $request->ciAutr);
+            $autor->setFotoAutrAttribute($request->fotoAutr, $request->codigAutr);
         } else
             $autor->setFotoAutrAttributeDefault();
         $autor->save();
@@ -84,6 +85,7 @@ class AutorController extends Controller
         }
         $autor->update([
             "ciAutr" => $request->ciAutr,
+            "codigAutr" => $request->codigAutr,
             "nombresAutr" => $request->nombresAutr,
             "apellidosAutr" => $request->apellidosAutr,
             "sexoAutr" => $request->sexoAutr,

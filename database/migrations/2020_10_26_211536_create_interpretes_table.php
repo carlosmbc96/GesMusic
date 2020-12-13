@@ -10,6 +10,7 @@ class CreateInterpretesTable extends Migration
     {
         Schema::create('interpretes', function (Blueprint $table) {
             $table->id()->index();  // Identificador Único de la Tabla: Intérpretes
+            $table->string('codigInterp',9)->unique();  // Código Autor
             $table->string('nombreInterp');  // Nombre Intérprete
             $table->text('reseñaBiogInterp')->nullable();  // Reseña Biográfica Intérprete
 

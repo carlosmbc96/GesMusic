@@ -282,7 +282,7 @@ export default {
 						trigger: 'change',
 					},
 					{
-						pattern: '^[a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:]*$',
+						pattern: '^[a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ\n,.;:¿?!¡()]*$',
 						message: 'Caracter no válido',
 						trigger: 'change',
 					},
@@ -294,7 +294,7 @@ export default {
 						trigger: 'change',
 					},
 					{
-						pattern: "^[a-zA-Z0-9',.;: ]*$",
+						pattern: "^[a-zA-Z0-9',.;: \n]*$",
 						message: 'Caracter no válido',
 						trigger: 'change',
 					},

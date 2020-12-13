@@ -15,6 +15,7 @@ class Interprete extends Model
     // Atributos del Modelo Interprete
     protected $fillable = [
         'nombreInterp',  // Nombre Intérprete
+        'codigInterp',  // Código Intérprete
         'reseñaBiogInterp',  // Reseña Biográfica Intérprete
     ];
     //SECCIÓN DE FILLABLE
@@ -78,7 +79,8 @@ class Interprete extends Model
         if ($valorbuscado)
         {
             return $query
-                ->orwhere('nombreInterp','like',"%$valorbuscado%");
+                ->orwhere('nombreInterp','like',"%$valorbuscado%")
+                ->orwhere('codigInterp','like',"%$valorbuscado%");
         }
     }
     //SECCIÓN DE QUERY SCOPE

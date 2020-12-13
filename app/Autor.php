@@ -18,6 +18,7 @@ class Autor extends Model
     // Atributos del Modelo Autor
     protected $fillable = [
         'ciAutr',  // Número Identidad Autor
+        'codigAutr',  // Código Autor
         'fotoAutr',  // Url del Archivo de Foto Autor
         'nombresAutr',  // Nombres Autor
         'apellidosAutr',  // Apellidos Autor
@@ -33,10 +34,10 @@ class Autor extends Model
     //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE IMÁGENES
-    public function setFotoAutrAttribute($fotoAutr, $ciAutr)
+    public function setFotoAutrAttribute($fotoAutr, $codigAutr)
     {
-        $this->attributes['fotoAutr'] = '/BisMusic/Imagenes/Artistas/Autores/' . $ciAutr . $fotoAutr->getClientOriginalName();
-        $name = $ciAutr . $fotoAutr->getClientOriginalName();
+        $this->attributes['fotoAutr'] = '/BisMusic/Imagenes/Artistas/Autores/' . $codigAutr . $fotoAutr->getClientOriginalName();
+        $name = $codigAutr . $fotoAutr->getClientOriginalName();
         Storage::disk('local')->put('Imagenes/Artistas/Autores/'.$name, File::get($fotoAutr));
     }
 
@@ -90,6 +91,7 @@ class Autor extends Model
         if ($valorbuscado) {
             return $query
                 ->orwhere('ciAutr', 'like', "%$valorbuscado%")
+                ->orwhere('codigAutr', 'like', "%$valorbuscado%")
                 ->orwhere('nombresAutr', 'like', "%$valorbuscado%")
                 ->orwhere('apellidosAutr', 'like', "%$valorbuscado%")
                 ->orwhere('sexoAutr', 'like', "%$valorbuscado%")

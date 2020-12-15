@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class Fonograma extends Model
 {
@@ -32,8 +34,22 @@ class Fonograma extends Model
     //SECCIÓN DE FILLABLE
 
     //SECCIÓN DE PROTECT TABLE
-    protected $table = "fonogramas" ;
+    protected $table = "fonogramas";
     //SECCIÓN DE PROTECT TABLE
+
+    //SECCIÓN DE IMÁGENES
+    public function setPortadillaFongAttribute($portadillaFong, $codigFong)
+    {
+        $this->attributes['portadillaFong'] = '/BisMusic/Imagenes/Fonogramas/' . $codigFong . $portadillaFong->getClientOriginalName();
+        $name = $codigFong . $portadillaFong->getClientOriginalName();
+        Storage::disk('local')->put('/Imagenes/Fonogramas/' . $name, File::get($portadillaFong));
+    }
+
+    public function setPortadillaFongAttributeDefault()
+    {
+        $this->attributes['portadillaFong'] = '/BisMusic/Imagenes/Fonogramas/Logo ver vertical_Ltr Negras.png';
+    }
+    //SECCIÓN DE IMÁGENES
 
     //SECCIÓN DE RELACIONES
     //Relación de One to Many Fonogramas - Elementos
@@ -78,25 +94,23 @@ class Fonograma extends Model
     // Query Scope que devuelve los registros de una consulta Específica del Modelo Fonograma
     public function scopeBusqSelect($query, $atributo, $valorbuscado)
     {
-        if (($atributo) && ($valorbuscado))
-        {
-            return $query->where($atributo,'like',"%$valorbuscado%");
+        if (($atributo) && ($valorbuscado)) {
+            return $query->where($atributo, 'like', "%$valorbuscado%");
         }
     }
 
     // Query Scope que devuelve los registros de una consulta General del Modelo Fonograma
     public function scopeBusqGeneral($query, $valorbuscado)
     {
-        if ($valorbuscado)
-        {
+        if ($valorbuscado) {
             return $query
-                ->orwhere('codigFong','like',"%$valorbuscado%")
-                ->orwhere('tituloFong','like',"%$valorbuscado%")
-                ->orwhere('clasficacionFong','like',"%$valorbuscado%")
-                ->orwhere('territorioFong','like',"%$valorbuscado%")
-                ->orwhere('dueñoDerchFong','like',"%$valorbuscado%")
-                ->orwhere('nacioDueñoDerchFong','like',"%$valorbuscado%")
-                ->orwhere('propiedadFong','like',"%$valorbuscado%");
+                ->orwhere('codigFong', 'like', "%$valorbuscado%")
+                ->orwhere('tituloFong', 'like', "%$valorbuscado%")
+                ->orwhere('clasficacionFong', 'like', "%$valorbuscado%")
+                ->orwhere('territorioFong', 'like', "%$valorbuscado%")
+                ->orwhere('dueñoDerchFong', 'like', "%$valorbuscado%")
+                ->orwhere('nacioDueñoDerchFong', 'like', "%$valorbuscado%")
+                ->orwhere('propiedadFong', 'like', "%$valorbuscado%");
         }
     }
     //SECCIÓN DE QUERY SCOPE

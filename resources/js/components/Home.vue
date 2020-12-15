@@ -189,10 +189,10 @@ export default {
 #question .iziToast-message.slideIn {
   margin-top: -7px !important;
 }
-.iziToast{
+.iziToast {
   border-radius: 5px !important;
 }
-.iziToast-progressbar{
+.iziToast-progressbar {
   width: 99% !important;
 }
 .iziToast-color-red {
@@ -416,14 +416,60 @@ export default {
   color: black !important;
   font-size: 15px !important;
 }
-.e-grid{
+.e-grid {
   border-radius: 5px 0 5px 5px !important;
 }
 .ant-form-item-label {
-	margin-bottom: -10px !important;
+  margin-bottom: -10px !important;
 }
-.iziToast-buttons button:focus{
+.iziToast-buttons button:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+.page-sidebar
+  .page-sidebar-menu.page-sidebar-menu-compact
+  > li
+  > .sub-menu
+  > li
+  > a,
+.page-sidebar-closed.page-sidebar-fixed
+  .page-sidebar:hover
+  .page-sidebar-menu.page-sidebar-menu-compact
+  > li
+  > .sub-menu
+  > li
+  > a {
+  padding-left: 22px;
+}
+.page-sidebar .page-sidebar-menu .sub-menu > li.active > a,
+.page-sidebar .page-sidebar-menu .sub-menu > li.open > a,
+.page-sidebar .page-sidebar-menu .sub-menu > li:hover > a,
+.page-sidebar-closed.page-sidebar-fixed
+  .page-sidebar:hover
+  .page-sidebar-menu
+  .sub-menu
+  > li.active
+  > a,
+.page-sidebar-closed.page-sidebar-fixed
+  .page-sidebar:hover
+  .page-sidebar-menu
+  .sub-menu
+  > li.open
+  > a,
+.page-sidebar-closed.page-sidebar-fixed
+  .page-sidebar:hover
+  .page-sidebar-menu
+  .sub-menu
+  > li:hover
+  > a {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+.page-sidebar-closed .page-sidebar .page-sidebar-menu:hover .sub-menu,
+.page-sidebar-closed
+  .page-sidebar-closed.page-sidebar-fixed
+  .page-sidebar:hover
+  .page-sidebar-menu:hover
+  .sub-menu {
+  background: rgb(115, 25, 84, 0.2) !important;
 }
 </style>

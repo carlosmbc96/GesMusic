@@ -32,7 +32,7 @@ Route::delete('/empresas/{id}','EmpresaController@destroyLog')->name('empresas.e
 
 // RUTAS DEL RECURSO: PROYECTO
 Route::get('/proyectos/restaurar/{id}','ProyectoController@restoreLog');
-Route::post('/proyectos/nomencladores','ProyectoController@nomenclators'); 
+Route::post('/proyectos/nomencladores','ProyectoController@nomenclators');
 Route::post('/proyectos/listar','ProyectoController@index')->name('proyectos.listar'); // Ruta que Lista todos los Registros del Modelo Proyecto
 Route::post('/proyectos','ProyectoController@store')->name('proyectos.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Proyecto
 //Route::get('/proyectos/{id}','ProyectoController@show'); // Ruta que Muestra un Registro Específico del Modelo Proyecto
@@ -49,19 +49,19 @@ Route::post('/productos','ProductoController@store')->name('productos.guardar');
 Route::post('/productos/editar','ProductoController@update')->name('productos.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Producto
 Route::delete('/productos/desactivar/{id}','ProductoController@destroyLog')->name('productos.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/productos/eliminar/{id}','ProductoController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
-Route::post('/productos/nomencladores','ProductoController@nomenclators'); 
+Route::post('/productos/nomencladores','ProductoController@nomenclators');
 
 
 // RUTAS DEL RECURSO: FONOGRAMA
-//Route::resource('fonogramas','FonogramaController'); // Ruta que Lista todos los Recursos de la Clase Fonogramas
-/* Route::get('/fonogramas','FonogramaController@index')->name('fonogramas.listar'); // Ruta que Lista todos los Registros del Modelo Fonograma
-Route::get('/fonogramas/create','FonogramaController@create')->name('fonogramas.crear'); // Ruta que Muestra un Formulario para Crear un Registro del Modelo Fonograma
-Route::post('/fonogramas','FonogramaController@store')->name('fonogramas.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Fonograma
-Route::get('/fonogramas/{id}','FonogramaController@show')->name('fonogramas.mostrar'); // Ruta que Muestra un Registro Específico del Modelo Fonograma
-Route::get('/fonogramas/{id}/edit','FonogramaController@edit')->name('fonogramas.editar'); // Ruta que Edita un Registro Específico del Modelo Fonograma
-Route::put('/fonogramas/{id}','FonogramaController@update')->name('fonogramas.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Fonograma
-Route::delete('/fonogramas/{id}','FonogramaController@destroyLog')->name('fonogramas.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Fonograma
-
+Route::get('/fonogramas/restaurar/{id}','FonogramaController@restoreLog');
+Route::post('/fonogramas/listar','FonogramaController@index'); // Ruta que Lista todos los Registros del Modelo Producto
+Route::post('/fonogramas','FonogramaController@store');
+//Route::post('/fonogramas/{id}','FonogramaController@show'); // Ruta que Muestra un Registro Específico del Modelo Producto
+Route::post('/fonogramas/editar','FonogramaController@update'); // Ruta que Guarda un Registro Específico del Modelo Producto
+Route::delete('/fonogramas/desactivar/{id}','FonogramaController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
+Route::delete('/fonogramas/eliminar/{id}','FonogramaController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
+Route::post('/fonogramas/nomencladores','FonogramaController@nomenclators');
+/*
 // RUTAS DEL RECURSO: AUDIOVISUAL
 //Route::resource('audiovisuales','AudiovisualController'); // Ruta que Lista todos los Recursos de la Clase Audiovisuales
 Route::get('/audiovisuales','AudiovisualController@index')->name('audiovisuales.listar'); // Ruta que Lista todos los Registros del Modelo Audiovisual

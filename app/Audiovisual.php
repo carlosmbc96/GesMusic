@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class Audiovisual extends Model
 {
@@ -40,8 +42,22 @@ class Audiovisual extends Model
     //SECCIÓN DE FILLABLE
 
     //SECCIÓN DE PROTECT TABLE
-    protected $table = "audiovisuales" ;
+    protected $table = "audiovisuales";
     //SECCIÓN DE PROTECT TABLE
+
+    //SECCIÓN DE IMÁGENES
+    public function setPortadillaAudAttribute($portadillaAud, $codigAud)
+    {
+        $this->attributes['portadillaAud'] = '/BisMusic/Imagenes/Audiovisuales/' . $codigAud . $portadillaAud->getClientOriginalName();
+        $name = $codigAud . $portadillaAud->getClientOriginalName();
+        Storage::disk('local')->put('/Imagenes/Audiovisuales/' . $name, File::get($portadillaAud));
+    }
+
+    public function setPortadillaAudAttributeDefault()
+    {
+        $this->attributes['portadillaAud'] = '/BisMusic/Audiovisuales/Logo ver vertical_Ltr Negras.png';
+    }
+    //SECCIÓN DE IMÁGENES
 
     //SECCIÓN DE RELACIONES
     //Relación de One to Many Audiovisuales - Elementos
@@ -96,27 +112,25 @@ class Audiovisual extends Model
     // Query Scope que devuelve los registros de una consulta Específica del Modelo Audiovisual
     public function scopeBusqSelect($query, $atributo, $valorbuscado)
     {
-        if (($atributo) && ($valorbuscado))
-        {
-            return $query->where($atributo,'like',"%$valorbuscado%");
+        if (($atributo) && ($valorbuscado)) {
+            return $query->where($atributo, 'like', "%$valorbuscado%");
         }
     }
 
     // Query Scope que devuelve los registros de una consulta General del Modelo Audiovisual
     public function scopeBusqGeneral($query, $valorbuscado)
     {
-        if ($valorbuscado)
-        {
+        if ($valorbuscado) {
             return $query
-                ->orwhere('codigAud','like',"%$valorbuscado%")
-                ->orwhere('isrcAud','like',"%$valorbuscado%")
-                ->orwhere('tituloAud','like',"%$valorbuscado%")
-                ->orwhere('clasifAud','like',"%$valorbuscado%")
-                ->orwhere('generoAud','like',"%$valorbuscado%")
-                ->orwhere('añoFinAud','like',"%$valorbuscado%")
-                ->orwhere('paisGrabAud','like',"%$valorbuscado%")
-                ->orwhere('idiomaAud','like',"%$valorbuscado%")
-                ->orwhere('propiedadAud','like',"%$valorbuscado%");
+                ->orwhere('codigAud', 'like', "%$valorbuscado%")
+                ->orwhere('isrcAud', 'like', "%$valorbuscado%")
+                ->orwhere('tituloAud', 'like', "%$valorbuscado%")
+                ->orwhere('clasifAud', 'like', "%$valorbuscado%")
+                ->orwhere('generoAud', 'like', "%$valorbuscado%")
+                ->orwhere('añoFinAud', 'like', "%$valorbuscado%")
+                ->orwhere('paisGrabAud', 'like', "%$valorbuscado%")
+                ->orwhere('idiomaAud', 'like', "%$valorbuscado%")
+                ->orwhere('propiedadAud', 'like', "%$valorbuscado%");
         }
     }
     //SECCIÓN DE QUERY SCOPE

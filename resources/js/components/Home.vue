@@ -181,10 +181,16 @@ export default {
   color: rgb(243, 107, 100) !important;
 }
 .iziToast-color-green {
-  background-color: rgb(76, 196, 177, 0.8) !important;
+  background-color: #70D0C1 !important;
 }
-.iziToast-color-yellow {
-  background-color: rgba(219, 197, 0, 0.8) !important;
+.iziToast-color-blue {
+  background-color: #8F4776 !important;
+}
+.iziToast-color-grey {
+  background-color: #C9D34D !important;
+}
+.iziToast-color-orange {
+  background-color: #F3C552 !important;
 }
 #question .iziToast-message.slideIn {
   margin-top: -7px !important;
@@ -196,7 +202,7 @@ export default {
   width: 99% !important;
 }
 .iziToast-color-red {
-  background-color: rgb(243, 107, 100, 0.8) !important;
+  background-color: #F58983 !important;
 }
 .page-sidebar .page-sidebar-menu > li.open > a,
 .page-sidebar .page-sidebar-menu > li:hover > a,
@@ -471,5 +477,63 @@ export default {
   .page-sidebar-menu:hover
   .sub-menu {
   background: rgb(115, 25, 84, 0.2) !important;
+}
+.ant-popover-placement-left .ant-popover-inner {
+  background-color: #F9E2A9e0 !important;
+}
+.ant-popover-placement-top .ant-popover-inner {
+  background-color: #C7A3BBe0 !important;
+}
+.ant-popover-placement-leftBottom .ant-popover-inner {
+  background-color: #FAC4C1e0 !important;
+}
+.ant-popover-placement-leftBottom .ant-popover-arrow {
+  border-top-color: #FAC4C1 !important;
+  border-right-color: #FAC4C1!important;
+  border-bottom-color: transparent !important;
+  border-left-color: transparent  !important;
+}
+.ant-popover-placement-top .ant-popover-arrow {
+  border-top-color: transparent !important;
+  border-right-color: #C7A3BB !important;
+  border-bottom-color: #C7A3BB !important;
+  border-left-color: transparent !important;
+}
+.ant-popover-placement-bottom .ant-popover-inner {
+  background-color: #E4E9A6e0 !important;
+}
+.ant-popover-placement-bottom .ant-popover-arrow {
+  border-top-color: #E4E9A6 !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-left-color: #E4E9A6 !important;
+}
+.ant-popover-placement-left .ant-popover-arrow {
+  border-top-color: #F9E2A9 !important;
+  border-right-color: #F9E2A9 !important;
+  border-bottom-color: transparent !important;
+  border-left-color: transparent !important;
+}
+.ant-popover-placement-topRight .ant-popover-inner {
+  background-color: #B7E7E0e0 !important;
+}
+.ant-popover-placement-topRight .ant-popover-arrow {
+  border-top-color: transparent !important;
+  border-right-color:#B7E7E0 !important;
+  border-bottom-color: #B7E7E0 !important;
+  border-left-color: transparent !important;
+}
+.ant-popover-buttons > button {
+  background-color: rgb(243, 107, 100) !important;
+  color: white !important;
+}
+.ant-popover-buttons > button.ant-btn-primary {
+  background-color: rgb(46, 171, 229) !important;
+  color: white !important;
+}
+.ant-popover-message > .anticon {
+  position: absolute !important;
+  top: 5px !important;
+  font-size: 20px !important;
 }
 </style>

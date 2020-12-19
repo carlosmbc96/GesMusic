@@ -16,7 +16,12 @@
           cancel-text="No"
           :title="action_cancel_title"
         >
-          <a-icon slot="icon" type="exclamation-circle" theme="filled" style="color: #F0B727" />
+          <a-icon
+            slot="icon"
+            type="exclamation-circle"
+            theme="filled"
+            style="color: #f0b727"
+          />
           <a-button type="danger" key="back"> Cancelar </a-button>
         </a-popconfirm>
         <a-popconfirm
@@ -28,9 +33,9 @@
         >
           <a-icon
             slot="icon"
-						theme="filled"
+            theme="filled"
             type="check-circle"
-            style="color: #4CC4B1"
+            style="color: #4cc4b1"
           />
           <a-button
             :disabled="disabled"
@@ -48,146 +53,140 @@
         <!-- Contenido del tab Generales -->
         <a-tab-pane key="1">
           <span slot="tab"> Generales </span>
-          <a-spin :spinning="spinning">
-            <a-icon
-              slot="indicator"
-              style="font-size: 30px"
-              type="loading"
-              spin
-            />
-            <div>
+          <div>
+            <a-row>
+              <a-col span="12">
+                <div class="section-title">
+                  <h4>Datos Generales</h4>
+                </div>
+              </a-col>
+            </a-row>
+            <a-form-model
+              ref="general_form"
+              layout="horizontal"
+              :model="project_modal"
+              :rules="rules"
+            >
               <a-row>
+                <a-col span="6">
+                  <a-upload
+                    :disabled="disabled"
+                    :remove="remove_image"
+                    @preview="handle_preview"
+                    :file-list="file_list"
+                    list-type="picture-card"
+                    :before-upload="before_upload"
+                    @change="handle_change"
+                  >
+                    <div v-if="file_list.length < 1">
+                      <img v-if="preview_image" />
+                      <div v-else>
+                        <a-icon type="upload" />
+                        <div class="ant-upload-text">Cargar Identificador</div>
+                      </div>
+                    </div>
+                  </a-upload>
+                  <br />
+                  <a-modal
+                    :visible="preview_visible"
+                    :footer="null"
+                    @cancel="preview_cancel"
+                  >
+                    <img style="width: 100%" :src="preview_image" />
+                  </a-modal>
+                </a-col>
+                <a-col span="6">
+                  <a-form-model-item
+                    style="margin-right: 28% !important"
+                    prop="añoProy"
+                    has-feedback
+                    label="Año del proyecto"
+                  >
+                    <a-select
+                      :disabled="disabled"
+                      v-model="project_modal.añoProy"
+                      option-filter-prop="children"
+                      :filter-option="filter_option"
+                      show-search
+                    >
+                      <a-select-option
+                        v-for="nomenclator in list_nomenclators"
+                        :key="nomenclator.id"
+                        :value="nomenclator.nombreTer"
+                      >
+                        {{ nomenclator.nombreTer }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-col>
                 <a-col span="12">
-                  <div class="section-title">
-                    <h4>Datos Generales</h4>
+                  <a-form-model-item
+                    v-if="action_modal !== 'editar'"
+                    :validate-status="show_error"
+                    prop="codigProy"
+                    has-feedback
+                    label="Código"
+                    :help="show_used_error"
+                  >
+                    <a-input
+                      addon-before="PROY-"
+                      placeholder="0001"
+                      :disabled="action_modal === 'editar'"
+                      v-model="project_modal.codigProy"
+                    />
+                  </a-form-model-item>
+                  <a-form-model-item v-else label="Código">
+                    <a-input
+                      addon-before="PROY-"
+                      placeholder="0001"
+                      :disabled="action_modal === 'editar'"
+                      v-model="project_modal.codigProy"
+                    />
+                  </a-form-model-item>
+                  <div id="nombreProy">
+                    <a-form-model-item
+                      prop="nombreProy"
+                      has-feedback
+                      label="Nombre Completo"
+                    >
+                      <a-input
+                        :disabled="disabled"
+                        v-model="project_modal.nombreProy"
+                      />
+                    </a-form-model-item>
                   </div>
                 </a-col>
               </a-row>
-              <a-form-model
-                ref="general_form"
-                layout="horizontal"
-                :model="project_modal"
-                :rules="rules"
-              >
-                <a-row>
-                  <a-col span="6">
-                    <a-upload
+              <a-row>
+                <a-col span="12">
+                  <a-form-model-item
+                    has-feedback
+                    label="Descripción en Español del proyecto"
+                    prop="descripEsp"
+                  >
+                    <a-input
                       :disabled="disabled"
-                      :remove="remove_image"
-                      @preview="handle_preview"
-                      :file-list="file_list"
-                      list-type="picture-card"
-                      :before-upload="before_upload"
-                      @change="handle_change"
-                    >
-                      <div v-if="file_list.length < 1">
-                        <img v-if="preview_image" />
-                        <div v-else>
-                          <a-icon type="upload" />
-                          <div class="ant-upload-text">
-                            Cargar Identificador
-                          </div>
-                        </div>
-                      </div>
-                    </a-upload>
-                    <br />
-                    <a-modal
-                      :visible="preview_visible"
-                      :footer="null"
-                      @cancel="preview_cancel"
-                    >
-                      <img style="width: 100%" :src="preview_image" />
-                    </a-modal>
-                  </a-col>
-                  <a-col span="6">
-                    <a-form-model-item
-                      style="margin-right: 28% !important"
-                      prop="añoProy"
-                      has-feedback
-                      label="Año del proyecto"
-                    >
-                      <a-select
-                        :disabled="disabled"
-                        v-model="project_modal.añoProy"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
-                      >
-                        <a-select-option
-                          v-for="nomenclator in list_nomenclators"
-                          :key="nomenclator.id"
-                          :value="nomenclator.nombreTer"
-                        >
-                          {{ nomenclator.nombreTer }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-model-item>
-                  </a-col>
-                  <a-col span="12">
-                    <a-form-model-item
-                      v-if="action_modal !== 'editar'"
-                      :validate-status="show_error"
-                      prop="codigProy"
-                      has-feedback
-                      label="Código"
-                      :help="show_used_error"
-                    >
-                      <a-input
-                        :disabled="action_modal === 'editar'"
-                        v-model="project_modal.codigProy"
-                      />
-                    </a-form-model-item>
-                    <a-form-model-item v-else label="Código">
-                      <a-input
-                        :disabled="action_modal === 'editar'"
-                        v-model="project_modal.codigProy"
-                      />
-                    </a-form-model-item>
-                    <div id="nombreProy">
-                      <a-form-model-item
-                        prop="nombreProy"
-                        has-feedback
-                        label="Nombre Completo"
-                      >
-                        <a-input
-                          :disabled="disabled"
-                          v-model="project_modal.nombreProy"
-                        />
-                      </a-form-model-item>
-                    </div>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col span="12">
-                    <a-form-model-item
-                      has-feedback
-                      label="Descripción en Español del proyecto"
-                      prop="descripEsp"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="project_modal.descripEsp"
-                        type="textarea"
-                      />
-                    </a-form-model-item>
-                  </a-col>
-                  <a-col span="12">
-                    <a-form-model-item
-                      has-feedback
-                      label="Descripción en Inglés del proyecto"
-                      prop="descripIng"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="project_modal.descripIng"
-                        type="textarea"
-                      />
-                    </a-form-model-item>
-                  </a-col>
-                </a-row>
-              </a-form-model>
-            </div>
-          </a-spin>
+                      v-model="project_modal.descripEsp"
+                      type="textarea"
+                    />
+                  </a-form-model-item>
+                </a-col>
+                <a-col span="12">
+                  <a-form-model-item
+                    has-feedback
+                    label="Descripción en Inglés del proyecto"
+                    prop="descripIng"
+                  >
+                    <a-input
+                      :disabled="disabled"
+                      v-model="project_modal.descripIng"
+                      type="textarea"
+                    />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+            </a-form-model>
+          </div>
         </a-tab-pane>
         <!-- Fin del contenido del tab Generales -->
         <a-tab-pane key="2" v-if="action_modal === 'editar'">
@@ -222,14 +221,14 @@ export default {
    */
   props: ["action", "project", "projects_list"],
   data() {
-    let validate_length = (rule, value, callback) => {
+    /* let validate_length = (rule, value, callback) => {
       if (value.replace(/ /g, "").length > 9) {
         callback(new Error("Máximo 9 caracteres"));
       } else callback();
-    };
+    }; */
     let validate_codig_unique = (rule, value, callback) => {
       this.projects_list.forEach((element) => {
-        if (element.codigProy === value.replace(/ /g, "")) {
+        if (element.codigProy.substr(5) === value.replace(/ /g, "")) {
           callback(new Error("Código ya usado"));
         }
       });
@@ -242,7 +241,7 @@ export default {
       used: false,
       show_error: "",
       text_header_button: "",
-      valid_image: true,
+      valid_image: false,
       image_url: "", //*
       spinning: false, //*
       disabled: false, //*
@@ -253,9 +252,7 @@ export default {
       list_nomenclators: [], //*Contiene los nomencladores usados en la creación de un proyecto
       text_button: "", //*Toma los valores "Crear" o "Editar" en dependencia de action
       action_modal: this.action, //*Guarda el valor de la variable action recibida por props
-      project_modal: {
-        empresa_id: 1,
-      }, //*Contiene los datos del proyecto que serán guardados en la bd
+      project_modal: {}, //*Contiene los datos del proyecto que serán guardados en la bd
       show: true, //*Variable para mostrar u ocultar el modal
       waiting: false, //*Variable que indica que el proceso de guardar o crear no ha terminado
       vista_editar: true,
@@ -269,12 +266,12 @@ export default {
           },
           {
             whitespace: true,
-            message: "Inserte el código",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
-            pattern: "^[-a-zA-Z0-9 ]*$",
-            message: "Caracter no válido",
+            pattern: "^[0-9]*$",
+            message: "Solo números",
             trigger: "change",
           },
           {
@@ -282,8 +279,11 @@ export default {
             trigger: "change",
           },
           {
-            validator: validate_length,
+            len: 4,
+            message: "Formato de 4 números",
             trigger: "change",
+            /* validator: validate_length,
+            trigger: "change", */
           },
         ],
         descripEsp: [
@@ -305,7 +305,7 @@ export default {
             trigger: "change",
           },
           {
-            pattern: "^[a-zA-Z0-9',.;: \n]*$",
+            pattern: "^[a-zA-Z0-9'(?!),.;: \n]*$",
             message: "Caracter no válido",
             trigger: "change",
           },
@@ -341,9 +341,10 @@ export default {
   },
   computed: {
     /*
-     *Muestra u oculta el botón de guardar
+     *Muestra u oculta el botón de crear/editar
      */
     active() {
+      console.log(this.compare_object);
       if (this.text_button === "Editar") {
         return (
           !this.compare_object ||
@@ -356,7 +357,7 @@ export default {
           this.project_modal.codigProy &&
           this.project_modal.añoProy &&
           this.project_modal.nombreProy &&
-          this.valid_image
+          !this.valid_image
         );
     },
     /*
@@ -483,6 +484,7 @@ export default {
       if (this.action_modal === "editar") {
         form_data.append("id", this.project_modal.id);
       }
+      this.project_modal.codigProy = "PROY-" + this.project_modal.codigProy;
       form_data.append("codigProy", this.project_modal.codigProy);
       form_data.append("añoProy", this.project_modal.añoProy);
       form_data.append("descripEsp", this.project_modal.descripEsp);
@@ -516,7 +518,11 @@ export default {
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
-        this.$toast.success(this.action_close, "¡Éxito!", { timeout: 2000, color: "orange" });
+        this.$emit("actualizar");
+        this.$toast.success(this.action_close, "¡Éxito!", {
+          timeout: 2000,
+          color: "orange",
+        });
       } else {
         this.$refs.general_form.resetFields();
         this.show = false;
@@ -544,6 +550,7 @@ export default {
           this.project.descripEsp === null ? "" : this.project.descripEsp;
         this.project.descripIng =
           this.project.descripIng === null ? "" : this.project.descripIng;
+        this.project.codigProy = this.project.codigProy.substr(5);
         this.project_modal = { ...this.project };
         if (this.project_modal.identificadorProy !== null) {
           if (
@@ -570,6 +577,10 @@ export default {
           name: "Logo ver vertical_Ltr Negras.png",
           url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
         });
+        const date = new Date();
+        this.project.añoProy = date.getFullYear();
+        this.project.empresa_id = 1;
+        this.project_modal = { ...this.project };
         this.text_button = "Crear";
         this.text_header_button = "Crear";
         this.action_cancel_title = "¿Desea cancelar la creación del Proyecto?";
@@ -613,9 +624,6 @@ export default {
 </script>
 
 <style>
-#modal_gestionar_proyectos textarea {
-  height: 150px !important;
-}
 #modal_gestionar_proyectos .ant-upload-list-item,
 .ant-upload-list-item-undefined,
 .ant-upload-list-item-list-type-picture-card,
@@ -628,6 +636,9 @@ export default {
 }
 #modal_gestionar_proyectos .ant-select-search input {
   border-color: rgb(255, 255, 255) !important;
+}
+#modal_gestionar_proyectos textarea {
+  height: 150px !important;
 }
 #modal_gestionar_proyectos .ant-form-item-control {
   width: 80% !important;

@@ -140,7 +140,7 @@ class ProductoController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Producto
     {
         $producto = Producto::withTrashed()->findOrFail($id);
-        Storage::disk('local')->deleteDirectory('/Proyectos/'.$producto->proyecto->codigProy."/".$producto->codigProd);
+        Storage::disk('local')->deleteDirectory('/Proyectos/'.$producto->proyecto()->withTrashed()->get()[0]->codigProy."/".$producto->codigProd);
         if (substr($producto->identificadorProd, 29) !== "Logo ver vertical_Ltr Negras.png") {
             Storage::disk('local')->delete('/Imagenes/Productos/'.substr($producto->identificadorProd, 29));
         }

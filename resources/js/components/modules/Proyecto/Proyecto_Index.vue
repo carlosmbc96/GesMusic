@@ -117,18 +117,18 @@
         <e-column
           field="nombreProy"
           headerText="Nombre"
-          width="110"
+          width="150"
           textAlign="Left"
         />
         <e-column
-          field="created_at"
-          headerText="Fecha Creación"
-          width="110"
+          field="añoProy"
+          headerText="Año"
+          width="90"
           textAlign="Left"
         />
         <e-column
           headerText="Estado"
-          width="105"
+          width="115"
           :template="status_template"
           :visible="true"
           textAlign="Center"
@@ -327,32 +327,6 @@ export default {
       //* Variables de configuración de la tabla
       page_settings: { pageSizes: [5, 10, 20, 30], pageCount: 5, pageSize: 10 },
       filter_settings: { type: "Menu" },
-      commands: [
-        {
-          type: "Detalles",
-          buttonOption: {
-            iconCss: "e-icons e-eye-icon",
-            click: this.detail_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-        {
-          type: "Editar",
-          buttonOption: {
-            iconCss: "e-icons e-edit-icon",
-            click: this.edit_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-        {
-          type: "Borrado Físico",
-          buttonOption: {
-            iconCss: "e-icons e-delete-physical-icon",
-            click: this.del_physical_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-      ],
       toolbar: [
         {
           text: "Añadir Proyecto",
@@ -379,7 +353,7 @@ export default {
                       <p>¿Desea {{ action }} el Proyecto?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch style="width: 50%!important" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -599,13 +573,13 @@ export default {
                     `El Proyecto se ${action} correctamente`,
                     "¡Éxito!",
                     {
-                      timeout: 3000,
+                      timeout: 2000,
                       color: action === "inactivó" ? "blue" : "grey",
                     }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 3000,
+                    timeout: 2000,
                   });
                 }
               },

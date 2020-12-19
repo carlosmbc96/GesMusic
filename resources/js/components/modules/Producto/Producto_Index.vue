@@ -124,7 +124,7 @@
         <e-column
           field="añoProd"
           headerText="Año"
-          width="100"
+          width="95"
           textAlign="Left"
         />
         <e-column
@@ -142,7 +142,7 @@
         <e-column
           field="genMusicPro"
           headerText="Género Musical"
-          width="115"
+          width="114"
           textAlign="Left"
         />
         <e-column
@@ -153,8 +153,8 @@
         />
         <e-column
           headerText="Acciones"
-          width="140"
-          :commands="commands"
+          width="146"
+          :template="actions_template"
           :visible="true"
           textAlign="Center"
         />
@@ -344,32 +344,6 @@ export default {
       //* Variables de configuración de la tabla
       page_settings: { pageSizes: [5, 10, 20, 30], pageCount: 5, pageSize: 10 },
       filter_settings: { type: "Menu" },
-      commands: [
-        {
-          type: "Detalles",
-          buttonOption: {
-            iconCss: "e-icons e-eye-icon",
-            click: this.detail_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-        {
-          type: "Editar",
-          buttonOption: {
-            iconCss: "e-icons e-edit-icon",
-            click: this.edit_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-        {
-          type: "Borrado Físico",
-          buttonOption: {
-            iconCss: "e-icons e-delete-physical-icon",
-            click: this.del_physical_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-      ],
       toolbar: [
         {
           text: "Añadir Producto",
@@ -379,31 +353,174 @@ export default {
         },
         "Search",
       ],
+      actions_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `
+                <div>
+                <a-tooltip title="Detalles" placement="bottom">
+							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                </a-tooltip>
+                <a-tooltip title="Editar" placement="bottom">
+                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                </a-tooltip>
+                <a-popconfirm
+                    placement="leftBottom"
+                    @confirm="del_physical_btn_click"
+										ok-text="Si"
+                    cancel-text="No"
+                    title="¿Desea eliminar el Producto?"
+                >
+                <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
+                <a-tooltip title="Eliminar" placement="bottom">
+                <a-button size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
+                </a-tooltip>
+                </a-popconfirm>
+                </div>`,
+            data: function (axios) {
+              return {
+                data: {},
+              };
+            },
+            methods: {
+              /*
+               * Método con la lógica del botón detalles
+               */
+              detail_btn_click(args) {
+                this.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null)
+                  this.$parent.$parent.visible_details = true;
+              },
+              /*
+               * Método con la lógica del botón editar
+               */
+              edit_btn_click(args) {
+                this.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null) {
+                  this.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.visible_management = true;
+                }
+              },
+              /*
+               * Método con la lógica del botón borrado físico
+               */
+              del_physical_btn_click(args) {
+                this.$toast.question(
+                  "¿Esta acción de eliminación es irrevercible?",
+                  "Confirmación",
+                  {
+                    timeout: 5000,
+                    close: false,
+                    overlay: true,
+                    displayMode: "once",
+                    color: "#F8A6A2",
+                    zindex: 999,
+                    title: "Hey",
+                    position: "center",
+                    buttons: [
+                      [
+                        "<button>Si</button>",
+                        (instance, toast) => {
+                          this.$toast.question("¿Desea eliminar el Producto?", "Confirmación", {
+                            timeout: 5000,
+                            close: false,
+                            color: "#F58983",
+                            overlay: true,
+                            displayMode: "once",
+                            zindex: 9999,
+                            title: "Hey",
+                            position: "center",
+                            buttons: [
+                              [
+                                "<button>Si</button>",
+                                (instance, toast) => {
+                                  axios
+                                    .delete(
+                                      `productos/eliminar/${this.data.id}`
+                                    )
+                                    .then((ress) => {
+                                      this.$parent.$parent.refresh_table();
+                                      this.$toast.success(
+                                        "El producto ha sido eliminado correctamente",
+                                        "¡Éxito!",
+                                        { timeout: 2000, color: "red" }
+                                      );
+                                    })
+                                    .catch((err) => {
+                                      this.$toast.error(
+                                        "Ha ocurrido un error",
+                                        "¡Error!",
+                                        {
+                                          timeout: 2000,
+                                        }
+                                      );
+                                    });
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                                true,
+                              ],
+                              [
+                                "<button>No</button>",
+                                function (instance, toast) {
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                              ],
+                            ],
+                          });
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                        true,
+                      ],
+                      [
+                        "<button>No</button>",
+                        function (instance, toast) {
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                      ],
+                    ],
+                  }
+                );
+              },
+            },
+          }),
+        };
+      },
       status_template: () => {
         return {
           template: Vue.component("columnTemplate", {
             template: `
               <div>
                 <a-popconfirm
-                    placement="top"
+                    :placement="position"
                     @confirm="confirm_change_status"
-                    ok-text="Si"
+										ok-text="Si"
+                    cancel-text="No"
                     :visible="visible_pop"
-                    @visibleChange="handle_visible_pop_change"
-                >
+										@visibleChange="handle_visible_pop_change"
+								>
+								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
+								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p style="margin-bottom: 0!important">Confirme que desea cambiar <br> el estado de este producto a
-                      <strong v-if="!checked" style="color: rgb(76, 196, 177)">Activo</strong>
-                      <strong v-else style="color: rgb(243, 107, 100)">Inactivo</strong>
-                      </p>
+                      <p>¿Desea {{ action }} el Producto?</p>
                     </template>
-                    <a-button
-                      slot="cancelText"
-                      class="ant-btn ant-btn-sm cancel-text"
-                    >No</a-button>
-                    <a-tooltip :title="data.proyecto == null ? 'No es posible cambiar el estado, para hacerlo debe activar el proyecto al que pertenece este producto' : 'Cambiar estado'" placement="left">
-                      <a-switch style="width: 100% !important; display: inline-block !important" :style="color_status" :checked="checked" :loading="loading"
-                      :disabled = "data.proyecto == null">
+                    <a-tooltip :title="data.proyecto === null ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
+                      <a-switch :disabled="data.proyecto === null" style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -412,15 +529,19 @@ export default {
               </div>`,
             data: function (axios) {
               return {
+                action: "",
+                position: "",
                 data: {},
                 axios: axios,
+                visible_pop: false,
                 checked: false,
                 loading: false,
-                visible_pop: false,
               };
             },
             created() {
               this.checked = this.data.deleted_at == null;
+              this.position = this.checked ? "top" : "bottom";
+              this.action = this.checked ? "inactivar" : "activar";
             },
             computed: {
               color_status() {
@@ -431,30 +552,186 @@ export default {
             },
             methods: {
               handle_visible_pop_change(visible) {
-                if (this.data.proyecto == null) this.visible_pop = false;
-                else this.visible_pop = visible;
-              },
+								if (this.data.proyecto === null) this.visible_pop = false;
+								else this.visible_pop = visible;
+							},
               confirm_change_status() {
-                this.loading = true;
                 let error = false;
                 if (this.checked) {
-                  axios
-                    .delete("productos/desactivar/ " + this.data.id)
-                    .catch((errors) => {
-                      error = true;
-                    })
-                    .finally(() => {
-                      this.finally_method("Inactivo", error);
-                    });
+                  this.$toast.question(
+                    "¿Esta acción inactivará el Producto?",
+                    "Confirmación",
+                    {
+                      timeout: 5000,
+                      close: false,
+                      overlay: true,
+                      displayMode: "once",
+                      color: "#AB7598",
+                      zindex: 999,
+                      title: "Hey",
+                      position: "center",
+                      buttons: [
+                        [
+                          "<button>Si</button>",
+                          (instance, toast) => {
+                            this.$toast.question(
+                              "¿Desea inactivar el Producto?",
+                              "Confirmación",
+                              {
+                                timeout: 5000,
+                                close: false,
+                                color: "#8F4776",
+                                overlay: true,
+                                displayMode: "once",
+                                zindex: 9999,
+                                title: "Hey",
+                                position: "center",
+                                buttons: [
+                                  [
+                                    "<button>Si</button>",
+                                    (instance, toast) => {
+                                      this.loading = true;
+                                      axios
+                                        .delete(
+                                          "productos/desactivar/" + this.data.id
+                                        )
+                                        .catch((errors) => {
+                                          error = true;
+                                        })
+                                        .finally(() => {
+                                          this.finally_method(
+                                            "inactivó",
+                                            error
+                                          );
+                                        });
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                    true,
+                                  ],
+                                  [
+                                    "<button>No</button>",
+                                    function (instance, toast) {
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                  ],
+                                ],
+                              }
+                            );
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                          true,
+                        ],
+                        [
+                          "<button>No</button>",
+                          function (instance, toast) {
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                        ],
+                      ],
+                    }
+                  );
                 } else {
-                  axios
-                    .get("productos/restaurar/" + this.data.id)
-                    .catch((errors) => {
-                      error = true;
-                    })
-                    .finally(() => {
-                      this.finally_method("Activo", error);
-                    });
+                  this.$toast.question(
+                    "¿Esta acción ativará el Producto?",
+                    "Confirmación",
+                    {
+                      timeout: 5000,
+                      close: false,
+                      overlay: true,
+                      displayMode: "once",
+                      color: "#D7DE7A",
+                      zindex: 999,
+                      title: "Hey",
+                      position: "center",
+                      buttons: [
+                        [
+                          "<button>Si</button>",
+                          (instance, toast) => {
+                            this.$toast.question(
+                              "¿Desea activar el Producto?",
+                              "Confirmación",
+                              {
+                                timeout: 5000,
+                                close: false,
+                                color: "#C9D34D",
+                                overlay: true,
+                                displayMode: "once",
+                                zindex: 9999,
+                                title: "Hey",
+                                position: "center",
+                                buttons: [
+                                  [
+                                    "<button>Si</button>",
+                                    (instance, toast) => {
+                                      this.loading = true;
+                                      axios
+                                        .get(
+                                          "productos/restaurar/" + this.data.id
+                                        )
+                                        .catch((errors) => {
+                                          error = true;
+                                        })
+                                        .finally(() => {
+                                          this.finally_method("activó", error);
+                                        });
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                    true,
+                                  ],
+                                  [
+                                    "<button>No</button>",
+                                    function (instance, toast) {
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                  ],
+                                ],
+                              }
+                            );
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                          true,
+                        ],
+                        [
+                          "<button>No</button>",
+                          function (instance, toast) {
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                        ],
+                      ],
+                    }
+                  );
                 }
               },
               finally_method(action, error) {
@@ -463,9 +740,12 @@ export default {
                   this.$parent.$parent.load_products();
                   this.checked = !this.checked;
                   this.$toast.success(
-                    "Se ha cambiado el estado del Producto a " + action,
+                    `El Producto se ${action} correctamente`,
                     "¡Éxito!",
-                    { timeout: 2000 }
+                    {
+                      timeout: 2000,
+                      color: action === "inactivó" ? "blue" : "grey",
+                    }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
@@ -704,18 +984,18 @@ export default {
         },
       };
       if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
         excelExportProperties.fileName = "Reporte_Proyectos.xlsx";
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
         excelExportProperties.fileName = "Reporte_Proyectos.csv";
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
@@ -727,102 +1007,6 @@ export default {
     },
     excel_export_complete(args) {
       this.$refs.gridObj.getColumns()[4].visible = true;
-    },
-    /*
-     * Método con la lógica del botón borrado físico
-     */
-    del_physical_btn_click(args) {
-      let target = args.target;
-      if (target.classList.contains("e-delete-physical-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.$toast.question(
-        "¿Esta acción de borrado es irrevercible, se eliminará <br> este producto del proyecto al que está asociado y se borrará <br> del sistema?",
-        "Confirmar",
-        {
-          timeout: 5000,
-          close: false,
-          overlay: true,
-          displayMode: "once",
-          id: "question",
-          zindex: 999,
-          title: "Hey",
-          position: "center",
-          buttons: [
-            [
-              "<button>Si</button>",
-              (instance, toast) => {
-                this.$toast.question("¿Seguro?", "Confirmar", {
-                  timeout: 5000,
-                  close: false,
-                  color: "red",
-                  overlay: true,
-                  displayMode: "once",
-                  zindex: 999999999,
-                  title: "Hey",
-                  position: "center",
-                  buttons: [
-                    [
-                      "<button>Si</button>",
-                      (instance, toast) => {
-                        axios
-                          .delete(`productos/eliminar/${row_obj.data.id}`)
-                          .then((ress) => {
-                            this.refresh_table();
-                            this.$emit("reload");
-                            this.$toast.success(
-                              "El producto ha sido eliminado correctamente",
-                              "¡Éxito!",
-                              { timeout: 3000 }
-                            );
-                          })
-                          .catch((err) => {
-                            this.$toast.error(
-                              "Ha ocurrido un error",
-                              "¡Error!",
-                              {
-                                timeout: 3000,
-                              }
-                            );
-                          });
-                        instance.hide(
-                          { transitionOut: "fadeOut" },
-                          toast,
-                          "button"
-                        );
-                      },
-                      true,
-                    ],
-                    [
-                      "<button>No</button>",
-                      function (instance, toast) {
-                        instance.hide(
-                          { transitionOut: "fadeOut" },
-                          toast,
-                          "button"
-                        );
-                      },
-                    ],
-                  ],
-                });
-                instance.hide({ transitionOut: "fadeOut" }, toast, "button");
-              },
-              true,
-            ],
-            [
-              "<button>No</button>",
-              function (instance, toast) {
-                instance.hide({ transitionOut: "fadeOut" }, toast, "button");
-              },
-            ],
-          ],
-        }
-      );
     },
     /*
      * Método con la lógica del botón detalles

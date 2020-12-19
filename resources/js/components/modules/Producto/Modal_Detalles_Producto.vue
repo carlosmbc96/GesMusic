@@ -409,20 +409,25 @@
                   <a-form-model-item
                     label="Descripción en español del producto"
                   >
-                    <a-mentions
-                      style="height: 100px !important"
-                      readonly
-                      :placeholder="producto.descripEspPro"
-                    >
-                    </a-mentions>
+                    <div id="esp">
+                      <a-mentions
+                        class=""
+                        style="height: 150px !important"
+                        readonly
+                        :placeholder="producto.descripEspPro"
+                      >
+                      </a-mentions>
+                    </div>
                   </a-form-model-item>
                   <a-form-model-item label="Descripción en inglés del producto">
-                    <a-mentions
-                      style="height: 100px !important"
-                      readonly
-                      :placeholder="producto.descripIngPro"
-                    >
-                    </a-mentions>
+                    <div id="ing">
+                      <a-mentions
+                        style="height: 150px !important"
+                        readonly
+                        :placeholder="producto.descripIngPro"
+                      >
+                      </a-mentions>
+                    </div>
                   </a-form-model-item>
                 </a-row>
               </a-col>
@@ -452,7 +457,7 @@
                       ¿Activo en el Catálogo de Bismusic?
                     </a-form-model-item>
                     <a-form-model-item>
-                     <i
+                      <i
                         class="fa fa-check-square-o hidden-xs"
                         v-if="producto.primeraPantProd === 1"
                       />
@@ -490,11 +495,11 @@
                 </div>
                 <a-form-model-item>
                   <i
-                        class="fa fa-check-square-o hidden-xs"
-                        v-if="producto.variosInterpretesProd === 1"
-                      />
-                      <i class="fa fa-square-o" v-else />
-                      ¿El producto tiene varios intérpretes?
+                    class="fa fa-check-square-o hidden-xs"
+                    v-if="producto.variosInterpretesProd === 1"
+                  />
+                  <i class="fa fa-square-o" v-else />
+                  ¿El producto tiene varios intérpretes?
                 </a-form-model-item>
                 <a-form-model-item>
                   <a-mentions
@@ -711,6 +716,12 @@ export default {
 #modal_detalles_productos .e-tbar-btn,
 #modal_detalles_productos .e-toolbar-item {
   background-color: transparent !important;
+}
+#esp textarea {
+  height: 150px !important;
+}
+#ing textarea {
+  height: 150px !important;
 }
 #modal_detalles_productos .e-gridheader,
 #modal_detalles_productos .e-gridpager,

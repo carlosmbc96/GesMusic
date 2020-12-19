@@ -447,6 +447,11 @@ export default {
   > a {
   padding-left: 22px;
 }
+.has-error .ant-input-group-addon {
+    color: currentColor !important;
+    background-color: #fff !important;
+    border: 1px solid #d9d9d9 !important;
+}
 .page-sidebar .page-sidebar-menu .sub-menu > li.active > a,
 .page-sidebar .page-sidebar-menu .sub-menu > li.open > a,
 .page-sidebar .page-sidebar-menu .sub-menu > li:hover > a,

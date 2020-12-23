@@ -18,6 +18,7 @@
       :tooltip="tooltip"
       :load="load"
       :legendSettings="{ visible: false }"
+			width='60%' height='60%'
       v-if="projects_list.length !== 0"
     >
       <e-series-collection>
@@ -47,8 +48,7 @@
                 export_view = !export_view;
               }
             "
-          ></span
-        ></a-tooltip>
+          /></a-tooltip>
         <span><a-icon class="e-icon-export" type="export" /></span>
       </div>
       <transition
@@ -617,10 +617,10 @@ export default {
             template: `
                 <div>
                 <a-tooltip title="Detalles" placement="bottom">
-							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-button>
                 </a-tooltip>
                 <a-tooltip title="Editar" placement="bottom">
-                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-button>
                 </a-tooltip>
                 <a-popconfirm
                     placement="leftBottom"
@@ -631,7 +631,7 @@ export default {
                 >
                 <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
                 <a-tooltip title="Eliminar" placement="bottom">
-                <a-button size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
+                <a-button size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-button>
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
@@ -771,9 +771,9 @@ export default {
     };
   },
   created() {
-    this.load_projects();
+		this.load_projects();
   },
-  methods: {
+	methods: {
     /*
      * Método para modificar el estilo de las filas de la tabla
      */
@@ -839,14 +839,8 @@ export default {
             }
           });
           this.series_data.sort((x, y) => {
-            return x.years - y.years;
+            return parseInt(x.years) - parseInt(y.years);
           });
-          if (
-            this.series_data.length > 0 &&
-            this.series_data[this.series_data.length - 1].proyects < 5
-          ) {
-            this.primary_y_axis.interval = 5;
-          }
           axios.post("/productos/listar").then((res) => {
             this.products_childs = {
               dataSource: res.data,

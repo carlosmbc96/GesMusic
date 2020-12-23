@@ -17,7 +17,8 @@
       :width="width"
       :tooltip="tooltip"
       :load="load"
-      :legendSettings="{ visible: false }"
+			width='60%' height='60%'
+			:legendSettings="{ visible: false }"
       v-if="products_list.length !== 0"
     >
       <e-series-collection>
@@ -836,12 +837,6 @@ export default {
           this.series_data.sort((x, y) => {
             return x.years - y.years;
           });
-          if (
-            this.series_data.length > 0 &&
-            this.series_data[this.series_data.length - 1].products < 5
-          ) {
-            this.primary_y_axis.interval = 5;
-          }
           this.$refs.gridObj.refresh();
         });
     },

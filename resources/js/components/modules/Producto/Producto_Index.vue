@@ -14,7 +14,8 @@
       :primaryXAxis="primary_x_axis"
       :primaryYAxis="primary_y_axis"
       :chartArea="chart_area"
-      :width="width"
+      width="50%"
+      height="60%"
       :tooltip="tooltip"
       :load="load"
       :legendSettings="{ visible: false }"
@@ -305,8 +306,8 @@ export default {
       },
       tooltip: {
         enable: true,
-        header: "Proyectos por Año",
-        format: "${point.x} : ${point.y} Proyectos",
+        header: "Productos por Año",
+        format: "${point.x} : ${point.y} Productos",
         fill: "rgba(115, 25, 84, 0.9)",
         border: { width: 0 },
       },
@@ -421,60 +422,64 @@ export default {
                       [
                         "<button>Si</button>",
                         (instance, toast) => {
-                          this.$toast.question("¿Desea eliminar el Producto?", "Confirmación", {
-                            timeout: 5000,
-                            close: false,
-                            color: "#F58983",
-                            overlay: true,
-                            displayMode: "once",
-                            zindex: 9999,
-                            title: "Hey",
-                            position: "center",
-                            buttons: [
-                              [
-                                "<button>Si</button>",
-                                (instance, toast) => {
-                                  axios
-                                    .delete(
-                                      `productos/eliminar/${this.data.id}`
-                                    )
-                                    .then((ress) => {
-                                      this.$parent.$parent.refresh_table();
-                                      this.$toast.success(
-                                        "El producto ha sido eliminado correctamente",
-                                        "¡Éxito!",
-                                        { timeout: 2000, color: "red" }
-                                      );
-                                    })
-                                    .catch((err) => {
-                                      this.$toast.error(
-                                        "Ha ocurrido un error",
-                                        "¡Error!",
-                                        {
-                                          timeout: 2000,
-                                        }
-                                      );
-                                    });
-                                  instance.hide(
-                                    { transitionOut: "fadeOut" },
-                                    toast,
-                                    "button"
-                                  );
-                                },
-                                true,
+                          this.$toast.question(
+                            "¿Desea eliminar el Producto?",
+                            "Confirmación",
+                            {
+                              timeout: 5000,
+                              close: false,
+                              color: "#F58983",
+                              overlay: true,
+                              displayMode: "once",
+                              zindex: 9999,
+                              title: "Hey",
+                              position: "center",
+                              buttons: [
+                                [
+                                  "<button>Si</button>",
+                                  (instance, toast) => {
+                                    axios
+                                      .delete(
+                                        `productos/eliminar/${this.data.id}`
+                                      )
+                                      .then((ress) => {
+                                        this.$parent.$parent.refresh_table();
+                                        this.$toast.success(
+                                          "El producto ha sido eliminado correctamente",
+                                          "¡Éxito!",
+                                          { timeout: 1000, color: "red" }
+                                        );
+                                      })
+                                      .catch((err) => {
+                                        this.$toast.error(
+                                          "Ha ocurrido un error",
+                                          "¡Error!",
+                                          {
+                                            timeout: 1000,
+                                          }
+                                        );
+                                      });
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                  true,
+                                ],
+                                [
+                                  "<button>No</button>",
+                                  function (instance, toast) {
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                ],
                               ],
-                              [
-                                "<button>No</button>",
-                                function (instance, toast) {
-                                  instance.hide(
-                                    { transitionOut: "fadeOut" },
-                                    toast,
-                                    "button"
-                                  );
-                                },
-                              ],
-                            ],
-                          });
+                            }
+                          );
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -552,9 +557,9 @@ export default {
             },
             methods: {
               handle_visible_pop_change(visible) {
-								if (this.data.proyecto === null) this.visible_pop = false;
-								else this.visible_pop = visible;
-							},
+                if (this.data.proyecto === null) this.visible_pop = false;
+                else this.visible_pop = visible;
+              },
               confirm_change_status() {
                 let error = false;
                 if (this.checked) {
@@ -743,13 +748,13 @@ export default {
                     `El Producto se ${action} correctamente`,
                     "¡Éxito!",
                     {
-                      timeout: 2000,
+                      timeout: 1000,
                       color: action === "inactivó" ? "blue" : "grey",
                     }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 2000,
+                    timeout: 1000,
                   });
                 }
               },
@@ -879,8 +884,8 @@ export default {
     panel_export_click(args) {
       let pdfExportProperties = {
         fileName: "Reporte_Productos.pdf",
-        pageOrientation: 'Landscape',
-          pageSize: 'Note',
+        pageOrientation: "Landscape",
+        pageSize: "Note",
         header: {
           fromTop: 0,
           height: 120,
@@ -987,11 +992,11 @@ export default {
         this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
-        excelExportProperties.fileName = "Reporte_Proyectos.xlsx";
+        excelExportProperties.fileName = "Reporte_Productos.xlsx";
         this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
-        excelExportProperties.fileName = "Reporte_Proyectos.csv";
+        excelExportProperties.fileName = "Reporte_Productos.csv";
         this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {

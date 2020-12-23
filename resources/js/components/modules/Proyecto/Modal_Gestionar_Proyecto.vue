@@ -10,6 +10,7 @@
     >
       <template slot="footer">
         <a-popconfirm
+          :getPopupContainer="(trigger) => trigger.parentNode"
           placement="left"
           @confirm="handle_cancel('cancelar')"
           ok-text="Si"
@@ -25,6 +26,7 @@
           <a-button type="danger" key="back"> Cancelar </a-button>
         </a-popconfirm>
         <a-popconfirm
+          :getPopupContainer="(trigger) => trigger.parentNode"
           placement="topRight"
           @confirm="validate()"
           ok-text="Si"
@@ -103,6 +105,7 @@
                     label="Año del proyecto"
                   >
                     <a-select
+                      :getPopupContainer="(trigger) => trigger.parentNode"
                       :disabled="disabled"
                       v-model="project_modal.añoProy"
                       option-filter-prop="children"
@@ -241,7 +244,7 @@ export default {
       used: false,
       show_error: "",
       text_header_button: "",
-      valid_image: false,
+      valid_image: true,
       image_url: "", //*
       spinning: false, //*
       disabled: false, //*
@@ -271,7 +274,7 @@ export default {
           },
           {
             pattern: "^[0-9]*$",
-            message: "Solo números",
+            message: "Solo dígitos",
             trigger: "change",
           },
           {
@@ -280,7 +283,7 @@ export default {
           },
           {
             len: 4,
-            message: "Formato de 4 números",
+            message: "Formato de 4 dígitos",
             trigger: "change",
             /* validator: validate_length,
             trigger: "change", */
@@ -344,7 +347,6 @@ export default {
      *Muestra u oculta el botón de crear/editar
      */
     active() {
-      console.log(this.compare_object);
       if (this.text_button === "Editar") {
         return (
           !this.compare_object ||
@@ -357,7 +359,7 @@ export default {
           this.project_modal.codigProy &&
           this.project_modal.añoProy &&
           this.project_modal.nombreProy &&
-          !this.valid_image
+          this.valid_image
         );
     },
     /*
@@ -373,6 +375,10 @@ export default {
     },
   },
   methods: {
+    /* container(node) {
+      console.log(node._self);
+      () => node._self
+    }, */
     validate() {
       if (!this.used) {
         this.$refs.general_form.validate((valid) => {
@@ -408,7 +414,7 @@ export default {
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
-            timeout: 2000,
+            timeout: 1000,
           });
         });
     },
@@ -435,7 +441,7 @@ export default {
             this.$toast.success(
               "El Proyecto se modificó correctamente",
               "¡Éxito!",
-              { timeout: 2000 }
+              { timeout: 1000 }
             );
             this.handle_cancel();
           })
@@ -443,7 +449,7 @@ export default {
             this.text_button = "Editar";
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 2000,
+              timeout: 1000,
             });
           });
       } else {
@@ -460,7 +466,7 @@ export default {
             this.$toast.success(
               "El Proyecto se creó correctamente",
               "¡Éxito!",
-              { timeout: 2000 }
+              { timeout: 1000 }
             );
             this.handle_cancel();
           })
@@ -468,7 +474,7 @@ export default {
             this.text_button = "Crear";
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 2000,
+              timeout: 1000,
             });
           });
       }
@@ -520,7 +526,7 @@ export default {
         this.$emit("close_modal", this.show);
         this.$emit("actualizar");
         this.$toast.success(this.action_close, "¡Éxito!", {
-          timeout: 2000,
+          timeout: 1000,
           color: "orange",
         });
       } else {

@@ -10,6 +10,7 @@
     >
       <template slot="footer">
         <a-popconfirm
+          :getPopupContainer="(trigger) => trigger.parentNode"
           placement="left"
           @confirm="handle_cancel('cancelar')"
           ok-text="Si"
@@ -25,6 +26,7 @@
           <a-button type="danger" key="back"> Cancelar </a-button>
         </a-popconfirm>
         <a-popconfirm
+          :getPopupContainer="(trigger) => trigger.parentNode"
           placement="topRight"
           @confirm="validate()"
           ok-text="Si"
@@ -80,6 +82,7 @@
                     has-feedback
                   >
                     <a-select
+                      :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -98,6 +101,7 @@
                   </a-form-model-item>
                   <a-form-model-item has-feedback label="Nombre">
                     <a-select
+                      :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -180,6 +184,7 @@
                       prop="añoProd"
                     >
                       <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
                         show-search
@@ -245,6 +250,7 @@
                       prop="genMusicPro"
                     >
                       <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
                         show-search
@@ -303,6 +309,7 @@
                         prop="estadodigProd"
                       >
                         <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
                           show-search
@@ -345,6 +352,7 @@
                       prop="statusComProd"
                     >
                       <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
                         show-search
@@ -382,6 +390,7 @@
                   <a-col span="11" style="float: right">
                     <a-form-model-item label="Destinos comerciales">
                       <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
                         :disabled="disabled"
                         mode="multiple"
                         v-model="product_modal.destinosComerPro"
@@ -401,6 +410,7 @@
                       prop="sellodiscProd"
                     >
                       <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
                         show-search
@@ -452,6 +462,7 @@
                           <label>Intérprete</label>
                         </div>
                         <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
                           show-search
@@ -477,6 +488,7 @@
                           <label>Roles</label>
                         </div>
                         <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
                           :disabled="disabled"
                           mode="multiple"
                           v-model="interprete.role"
@@ -528,6 +540,7 @@
                       <label id="autor" class="ant-form-item">Autor</label>
                     </div>
                     <a-select
+                      :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -621,6 +634,7 @@
                     prop="estadodigProd"
                   >
                     <a-select
+                      :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -1356,6 +1370,7 @@ export default {
           this.product_modal.destinosComerPro = destinos;
         }
         this.product_modal.codigProd = "PROD-" + this.product_modal.codigProd;
+        console.log(this.product_modal.codigProd);
         let form_data = new FormData();
         form_data.append("codigProd", this.product_modal.codigProd);
         form_data.append("añoProd", this.product_modal.añoProd);
@@ -1418,7 +1433,7 @@ export default {
             this.$toast.success(
               "Se ha modificado el producto correctamente",
               "¡Éxito!",
-              { timeout: 2000 }
+              { timeout: 1000 }
             );
             this.handle_cancel();
           })
@@ -1426,7 +1441,7 @@ export default {
             this.waiting = false;
             this.text_button = "Editar";
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 2000,
+              timeout: 1000,
             });
           });
       } else {
@@ -1559,7 +1574,7 @@ export default {
             this.$toast.success(
               "Se ha creado el producto correctamente",
               "¡Éxito!",
-              { timeout: 2000 }
+              { timeout: 1000 }
             );
             this.handle_cancel();
           })
@@ -1567,7 +1582,7 @@ export default {
             this.waiting = false;
             this.text_button = "Crear";
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 2000,
+              timeout: 1000,
             });
           });
       }
@@ -1596,7 +1611,7 @@ export default {
         this.show = false;
         this.$emit("close_modal", this.show);
         this.$toast.success(this.action_close, "¡Éxito!", {
-          timeout: 2000,
+          timeout: 1000,
           color: "orange",
         });
       } else {

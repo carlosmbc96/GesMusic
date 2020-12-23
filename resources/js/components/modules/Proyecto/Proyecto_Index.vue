@@ -14,7 +14,8 @@
       :primaryXAxis="primary_x_axis"
       :primaryYAxis="primary_y_axis"
       :chartArea="chart_area"
-      :width="width"
+      width="50%"
+      height="60%"
       :tooltip="tooltip"
       :load="load"
       :legendSettings="{ visible: false }"
@@ -573,13 +574,13 @@ export default {
                     `El Proyecto se ${action} correctamente`,
                     "¡Éxito!",
                     {
-                      timeout: 2000,
+                      timeout: 1000,
                       color: action === "inactivó" ? "blue" : "grey",
                     }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 2000,
+                    timeout: 1000,
                   });
                 }
               },
@@ -700,9 +701,9 @@ export default {
                                     .then((ress) => {
                                       this.$parent.$parent.refresh_table();
                                       this.$toast.success(
-                                        "El proyecto ha sido eliminado correctamente",
+                                        "El Proyecto ha sido eliminado correctamente",
                                         "¡Éxito!",
-                                        { timeout: 2000, color: "red" }
+                                        { timeout: 1000, color: "red" }
                                       );
                                     })
                                     .catch((err) => {
@@ -711,7 +712,7 @@ export default {
                                         "Ha ocurrido un error",
                                         "¡Error!",
                                         {
-                                          timeout: 2000,
+                                          timeout: 1000,
                                         }
                                       );
                                     });

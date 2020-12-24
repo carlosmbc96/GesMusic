@@ -25,9 +25,9 @@
         <e-series
           :dataSource="series_data"
           type="Column"
-          xName="sex"
+          xName="status"
           yName="autors"
-          name="Sexo"
+          name="Estados"
           :marker="marker"
           :animation="animation_series"
         />
@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
+        <span><a-icon class="e-icon-export" type="export"/></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -319,7 +319,7 @@ export default {
       series_data: [],
       primary_x_axis: {
         valueType: "Category",
-        title: "Sexos",
+        title: "Estado",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -380,7 +380,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -462,7 +462,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -483,7 +483,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -548,7 +548,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -569,7 +569,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -611,7 +611,7 @@ export default {
             template: `<div>
                 <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
-            data: function () {
+            data: function() {
               return {
                 data: {},
               };
@@ -653,7 +653,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -745,7 +745,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -766,7 +766,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -847,85 +847,24 @@ export default {
           this.autors_list = response.data;
           this.series_data = [];
           this.autors_list.forEach((autor) => {
-            let index = this.series_data.findIndex(
-              (serie) => serie.sex === parseInt(autor.sexoAutr.toString())
+            let index = this.series_data.findIndex((serie) =>
+              autor.deleted_at != null
+                ? serie.status === "Inactivo"
+                : serie.status === "Activo"
             );
             if (index != -1) {
               this.series_data[index].autors += 1;
             } else {
               this.series_data.push({
-                sex: parseInt(autor.sexoAutr.toString()),
+                status: autor.deleted_at != null ? "Inactivo" : "Activo",
                 autors: 1,
               });
             }
           });
-          this.series_data.sort((x, y) => {
-            return x.sex - y.sex;
+          this.series_data.sort(function(a, b) {
+              return a.status > b.status ? 1 : -1;
           });
-          if (
-            this.series_data.length > 0 &&
-            this.series_data[this.series_data.length - 1].autors < 5
-          ) {
-            this.primary_y_axis.interval = 5;
-          }
-          /* axios.post("/productos/listar").then((res) => {
-            this.products_childs = {
-              dataSource: res.data,
-              queryString: "proyecto_id",
-              ref: "childGrid",
-              columns: [
-                {
-                  field: "tituloProd",
-                  headerText: "Título",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  field: "codigProd",
-                  headerText: "Código",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  field: "estadodigProd",
-                  headerText: "Estado de Digitalización",
-                  width: "135",
-                  textAlign: "Left",
-                },
-                {
-                  field: "añoProd",
-                  headerText: "Año",
-                  width: "90",
-                  textAlign: "Left",
-                },
-                {
-                  field: "statusComProd",
-                  headerText: "Estatus Comercial",
-                  width: "120",
-                  textAlign: "Left",
-                },
-                {
-                  field: "genMusicPro",
-                  headerText: "Género Musical",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  headerText: "Estado",
-                  template: this.status_child_template,
-                  width: "105",
-                  visible: true,
-                  textAlign: "Center",
-                },
-              ],
-              load: function () {
-                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
-                  "id"
-                ];
-              },
-            };
-            this.$refs.gridObj.refresh();
-          }); */
+          this.$refs.gridObj.refresh();
         });
     },
     /*

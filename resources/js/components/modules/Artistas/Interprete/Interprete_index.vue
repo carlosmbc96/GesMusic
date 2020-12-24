@@ -26,8 +26,8 @@
           :dataSource="series_data"
           type="Column"
           xName="status"
-          yName="interpetres"
-          name="Estados"
+          yName="interpretes"
+          name="Estado"
           :marker="marker"
           :animation="animation_series"
         />
@@ -292,7 +292,7 @@ export default {
       series_data: [],
       primary_x_axis: {
         valueType: "Category",
-        title: "Estados",
+        title: "Estado",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -815,86 +815,25 @@ export default {
         .then((response) => {
           this.interpretes_list = response.data;
           this.series_data = [];
-          /* this.interpretes_list.forEach((autor) => {
-            let index = this.series_data.findIndex(
-              (serie) => serie.sex === parseInt(autor.sexoAutr.toString())
+          this.interpretes_list.forEach((inter) => {
+            let index = this.series_data.findIndex((serie) =>
+              inter.deleted_at != null
+                ? serie.status === "Inactivo"
+                : serie.status === "Activo"
             );
             if (index != -1) {
-              this.series_data[index].autors += 1;
+              this.series_data[index].interpretes += 1;
             } else {
               this.series_data.push({
-                sex: parseInt(autor.sexoAutr.toString()),
-                autors: 1,
+                status: inter.deleted_at != null ? "Inactivo" : "Activo",
+                interpretes: 1,
               });
             }
-          }); */
-          /* this.series_data.sort((x, y) => {
-            return x.sex - y.sex;
           });
-          if (
-            this.series_data.length > 0 &&
-            this.series_data[this.series_data.length - 1].autors < 5
-          ) {
-            this.primary_y_axis.interval = 5;
-          } */
-          /* axios.post("/productos/listar").then((res) => {
-            this.products_childs = {
-              dataSource: res.data,
-              queryString: "proyecto_id",
-              ref: "childGrid",
-              columns: [
-                {
-                  field: "tituloProd",
-                  headerText: "Título",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  field: "codigProd",
-                  headerText: "Código",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  field: "estadodigProd",
-                  headerText: "Estado de Digitalización",
-                  width: "135",
-                  textAlign: "Left",
-                },
-                {
-                  field: "añoProd",
-                  headerText: "Año",
-                  width: "90",
-                  textAlign: "Left",
-                },
-                {
-                  field: "statusComProd",
-                  headerText: "Estatus Comercial",
-                  width: "120",
-                  textAlign: "Left",
-                },
-                {
-                  field: "genMusicPro",
-                  headerText: "Género Musical",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  headerText: "Estado",
-                  template: this.status_child_template,
-                  width: "105",
-                  visible: true,
-                  textAlign: "Center",
-                },
-              ],
-              load: function () {
-                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
-                  "id"
-                ];
-              },
-            };
-            this.$refs.gridObj.refresh();
-          }); */
+          this.series_data.sort(function(a, b) {
+              return a.status > b.status ? 1 : -1;
+          });
+					this.$refs.gridObj.refresh();
         });
     },
     /*

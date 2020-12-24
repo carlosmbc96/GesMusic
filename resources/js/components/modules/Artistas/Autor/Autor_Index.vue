@@ -308,7 +308,7 @@ export default {
       },
       tooltip: {
         enable: true,
-        header: "Autores por Sexo",
+        header: "Autores por Estados",
         format: "${point.x} : ${point.y} Autores",
         fill: "rgba(115, 25, 84, 0.9)",
         border: { width: 0 },

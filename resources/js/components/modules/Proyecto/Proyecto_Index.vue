@@ -19,7 +19,6 @@
       :tooltip="tooltip"
       :load="load"
       :legendSettings="{ visible: false }"
-			width='60%' height='60%'
       v-if="projects_list.length !== 0"
     >
       <e-series-collection>
@@ -354,7 +353,7 @@ export default {
                       <p>¿Desea {{ action }} el Proyecto?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 50%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch style="width: 55%!important" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>

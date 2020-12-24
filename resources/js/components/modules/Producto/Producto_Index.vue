@@ -18,7 +18,6 @@
       height="60%"
       :tooltip="tooltip"
       :load="load"
-			width='60%' height='60%'
 			:legendSettings="{ visible: false }"
       v-if="products_list.length !== 0"
     >
@@ -291,7 +290,7 @@ let theme = (
   selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
 ).replace(/-dark/i, "Dark");
 export default {
-  name: "Proyecto_Index",
+  name: "Producto_Index",
   data() {
     return {
       //* Variables de configuración del gráfico

@@ -82,7 +82,6 @@
                     has-feedback
                   >
                     <a-select
-                      :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -101,7 +100,6 @@
                   </a-form-model-item>
                   <a-form-model-item has-feedback label="Nombre">
                     <a-select
-                      :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search

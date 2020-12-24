@@ -10,7 +10,7 @@ class CreateAutoresTable extends Migration
     {
         Schema::create('autores', function (Blueprint $table) {
             $table->id()->index();  // Identificador Único de la Tabla: Autores
-            $table->integer('ciAutr')->unique();  // Número Identidad Autor
+            $table->string('ciAutr',11)->unique();  // Número Identidad Autor
             $table->string('codigAutr',9)->unique();  // Código Autor
             $table->string('fotoAutr')->nullable();  // Url del Archivo de Foto Autor
             $table->string('nombresAutr');  // Nombres Autor

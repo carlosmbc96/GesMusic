@@ -1,6 +1,6 @@
 <template>
-  <div id="producto_index">
-    <h1 style="color: white !important">Productos</h1>
+  <div id="autor_index">
+    <h1 style="color: white !important">Autores</h1>
     <hr style="border-color: white !important; margin-bottom: 0 !important" />
 
     <!-- Inicio Sección de Analítica | Gráficas -->
@@ -14,21 +14,20 @@
       :primaryXAxis="primary_x_axis"
       :primaryYAxis="primary_y_axis"
       :chartArea="chart_area"
-      width="50%"
-      height="60%"
       :tooltip="tooltip"
       :load="load"
-			width='60%' height='60%'
-			:legendSettings="{ visible: false }"
-      v-if="products_list.length !== 0"
+      :legendSettings="{ visible: false }"
+      width="50%"
+      height="60%"
+      v-if="autors_list.length !== 0"
     >
       <e-series-collection>
         <e-series
           :dataSource="series_data"
           type="Column"
-          xName="years"
-          yName="products"
-          name="Año"
+          xName="sex"
+          yName="autors"
+          name="Sexo"
           :marker="marker"
           :animation="animation_series"
         />
@@ -90,15 +89,14 @@
     <ejs-grid
       id="datatable"
       ref="gridObj"
-      :dataSource="products_list"
       locale="es-ES"
+      :dataSource="autors_list"
       :toolbar="toolbar"
       :toolbarClick="click_toolbar"
       :allowPaging="true"
       :pageSettings="page_settings"
       :allowFiltering="true"
       :filterSettings="filter_settings"
-      :allowSelection="false"
       :allowTextWrap="true"
       :allowSorting="true"
       :pdfExportComplete="pdf_export_complete"
@@ -111,51 +109,53 @@
     >
       <e-columns>
         <e-column
-          field="codigProd"
+          field="codigAutr"
           headerText="Código"
+          width="115"
+          textAlign="Left"
+        />
+        <e-column
+          field="ciAutr"
+          headerText="Carnet de Identidad"
+          width="130"
+          textAlign="Left"
+        />
+        <e-column
+          field="nombresAutr"
+          headerText="Nombre"
+          width="120"
+          textAlign="Left"
+        />
+        <e-column
+          field="apellidosAutr"
+          headerText="Apellidos"
+          width="128"
+          textAlign="Left"
+        />
+        <e-column
+          field="sexoAutr"
+          headerText="Sexo"
           width="110"
           textAlign="Left"
         />
         <e-column
-          field="tituloProd"
-          headerText="Título"
-          width="110"
-          textAlign="Left"
-        />
-
-        <e-column
-          field="añoProd"
-          headerText="Año"
-          width="95"
-          textAlign="Left"
-        />
-        <e-column
-          field="estadodigProd"
-          headerText="Estado de Digitalización"
-          width="145"
-          textAlign="Left"
-        />
-        <e-column
-          field="statusComProd"
-          headerText="Estatus Comercial"
+          :displayAsCheckBox="true"
+          field="fallecidoAutr"
+          headerText="Fallecido"
           width="125"
-          textAlign="Left"
-        />
-        <e-column
-          field="genMusicPro"
-          headerText="Género Musical"
-          width="114"
-          textAlign="Left"
+          textAlign="Center"
+          type="boolean"
         />
         <e-column
           headerText="Estado"
-          :template="status_template"
           width="115"
+          :template="status_template"
+          :visible="true"
           textAlign="Center"
         />
         <e-column
           headerText="Acciones"
-          width="146"
+          width="155"
           :template="actions_template"
           :visible="true"
           textAlign="Center"
@@ -166,17 +166,18 @@
 
     <!-- Inicio Sección de Modals -->
     <modal_detail
+      @refresh="refresh_table"
       v-if="visible_details"
-      :producto_prop="row_selected"
+      :author_prop="row_selected"
       @close_modal="visible_details = $event"
     />
     <modal_management
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :product="row_selected"
+      :author="row_selected"
       @close_modal="visible_management = $event"
-      :products_list="products_list"
+      :autors_list="autors_list"
     />
     <!-- Fin Sección de Modals -->
   </div>
@@ -187,9 +188,9 @@
  *Importaciones
  */
 import Vue from "vue";
-import axios from "../../../config/axios/axios";
-import modal_detail from "./Modal_Detalles_Producto";
-import modal_management from "./Modal_Gestionar_Producto";
+import axios from "../../../../config/axios/axios";
+import modal_detail from "./Modal_Detalles_Autor";
+import modal_management from "./Modal_Gestionar_Autor";
 import {
   GridPlugin,
   Edit,
@@ -202,6 +203,7 @@ import {
   Sort,
   Toolbar,
   Reorder,
+  DetailRow,
   PdfExport,
   ExcelExport,
   PdfExportProperties,
@@ -213,7 +215,6 @@ import {
   DataLabel,
   Tooltip,
   Legend,
-  logBase,
 } from "@syncfusion/ej2-vue-charts";
 import { ButtonPlugin } from "@syncfusion/ej2-vue-buttons";
 import { loadCldr, L10n, setCulture, Browser } from "@syncfusion/ej2-base";
@@ -222,7 +223,7 @@ import * as weekData from "cldr-data/supplemental/weekData.json";
 import * as timeZoneNames from "cldr-data/main/es/timeZoneNames.json";
 import * as numbers from "cldr-data/main/es/numbers.json";
 import * as gregorian from "cldr-data/main/es/ca-gregorian.json";
-import { image } from "../../../../../public/assets/logo_base64";
+import { image } from "../../../../../../public/assets/logo_base64";
 Vue.use(GridPlugin);
 Vue.use(ButtonPlugin);
 Vue.use(ChartPlugin);
@@ -291,7 +292,7 @@ let theme = (
   selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
 ).replace(/-dark/i, "Dark");
 export default {
-  name: "Proyecto_Index",
+  name: "Autor_Index",
   data() {
     return {
       //* Variables de configuración del gráfico
@@ -307,8 +308,8 @@ export default {
       },
       tooltip: {
         enable: true,
-        header: "Productos por Año",
-        format: "${point.x} : ${point.y} Productos",
+        header: "Autores por Sexo",
+        format: "${point.x} : ${point.y} Autores",
         fill: "rgba(115, 25, 84, 0.9)",
         border: { width: 0 },
       },
@@ -318,7 +319,7 @@ export default {
       series_data: [],
       primary_x_axis: {
         valueType: "Category",
-        title: "Años",
+        title: "Sexos",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -331,7 +332,7 @@ export default {
         labelStyle: { color: "white" },
       },
       primary_y_axis: {
-        title: "Productos",
+        title: "Autores",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -348,13 +349,286 @@ export default {
       filter_settings: { type: "Menu" },
       toolbar: [
         {
-          text: "Añadir Producto",
-          tooltipText: "Añadir Producto",
+          text: "Añadir Autor",
+          tooltipText: "Añadir Autor",
           prefixIcon: "e-add-icon",
           id: "add",
         },
         "Search",
       ],
+      status_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `
+              <div>
+                <a-popconfirm
+                    :placement="position"
+                    @confirm="confirm_change_status"
+										ok-text="Si"
+										cancel-text="No"
+								>
+								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
+								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
+                    <template slot="title">
+                      <p>¿Desea {{ action }} al Autor?</p>
+                    </template>
+                    <a-tooltip title="Cambiar estado" placement="left">
+                      <a-switch style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                         <span slot="checkedChildren">Activo</span>
+                         <span slot="unCheckedChildren">Inactivo</span>
+                      </a-switch>
+                    </a-tooltip>
+                </a-popconfirm>
+              </div>`,
+            data: function (axios) {
+              return {
+                action: "",
+                position: "",
+                data: {},
+                axios: axios,
+                checked: false,
+                loading: false,
+              };
+            },
+            created() {
+              this.checked = this.data.deleted_at == null;
+              this.position = this.checked ? "top" : "bottom";
+              this.action = this.checked ? "inactivar" : "activar";
+            },
+            computed: {
+              color_status() {
+                return !this.checked
+                  ? "background: rgb(243, 107, 100)!important"
+                  : "background: rgb(76, 196, 177)!important; border-color: transparent!important";
+              },
+            },
+            methods: {
+              confirm_change_status() {
+                let error = false;
+                if (this.checked) {
+                  this.$toast.question(
+                    "¿Esta acción inactivará al Autor?",
+                    "Confirmación",
+                    {
+                      timeout: 5000,
+                      close: false,
+                      overlay: true,
+                      displayMode: "once",
+                      color: "#AB7598",
+                      zindex: 999,
+                      title: "Hey",
+                      position: "center",
+                      buttons: [
+                        [
+                          "<button>Si</button>",
+                          (instance, toast) => {
+                            this.$toast.question(
+                              "¿Desea inactivar al Autor?",
+                              "Confirmación",
+                              {
+                                timeout: 5000,
+                                close: false,
+                                color: "#8F4776",
+                                overlay: true,
+                                displayMode: "once",
+                                zindex: 9999,
+                                title: "Hey",
+                                position: "center",
+                                buttons: [
+                                  [
+                                    "<button>Si</button>",
+                                    (instance, toast) => {
+                                      this.loading = true;
+                                      axios
+                                        .delete(
+                                          "autores/desactivar/" + this.data.id
+                                        )
+                                        .catch((errors) => {
+                                          error = true;
+                                        })
+                                        .finally(() => {
+                                          this.finally_method(
+                                            "inactivó",
+                                            error
+                                          );
+                                        });
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                    true,
+                                  ],
+                                  [
+                                    "<button>No</button>",
+                                    function (instance, toast) {
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                  ],
+                                ],
+                              }
+                            );
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                          true,
+                        ],
+                        [
+                          "<button>No</button>",
+                          function (instance, toast) {
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                        ],
+                      ],
+                    }
+                  );
+                } else {
+                  this.$toast.question(
+                    "¿Esta acción ativará al Autor?",
+                    "Confirmación",
+                    {
+                      timeout: 5000,
+                      close: false,
+                      overlay: true,
+                      displayMode: "once",
+                      color: "#D7DE7A",
+                      zindex: 999,
+                      title: "Hey",
+                      position: "center",
+                      buttons: [
+                        [
+                          "<button>Si</button>",
+                          (instance, toast) => {
+                            this.$toast.question(
+                              "¿Desea activar al Autor?",
+                              "Confirmación",
+                              {
+                                timeout: 5000,
+                                close: false,
+                                color: "#C9D34D",
+                                overlay: true,
+                                displayMode: "once",
+                                zindex: 9999,
+                                title: "Hey",
+                                position: "center",
+                                buttons: [
+                                  [
+                                    "<button>Si</button>",
+                                    (instance, toast) => {
+                                      this.loading = true;
+                                      axios
+                                        .get(
+                                          "autores/restaurar/" + this.data.id
+                                        )
+                                        .catch((errors) => {
+                                          error = true;
+                                        })
+                                        .finally(() => {
+                                          this.finally_method("activó", error);
+                                        });
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                    true,
+                                  ],
+                                  [
+                                    "<button>No</button>",
+                                    function (instance, toast) {
+                                      instance.hide(
+                                        { transitionOut: "fadeOut" },
+                                        toast,
+                                        "button"
+                                      );
+                                    },
+                                  ],
+                                ],
+                              }
+                            );
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                          true,
+                        ],
+                        [
+                          "<button>No</button>",
+                          function (instance, toast) {
+                            instance.hide(
+                              { transitionOut: "fadeOut" },
+                              toast,
+                              "button"
+                            );
+                          },
+                        ],
+                      ],
+                    }
+                  );
+                }
+              },
+              finally_method(action, error) {
+                this.loading = false;
+                if (!error) {
+                  this.$parent.$parent.load_autors();
+                  this.checked = !this.checked;
+                  this.$toast.success(
+                    `El Autor se ${action} correctamente`,
+                    "¡Éxito!",
+                    {
+                      timeout: 1000,
+                      color: action === "inactivó" ? "blue" : "grey",
+                    }
+                  );
+                } else {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 1000,
+                  });
+                }
+              },
+            },
+          }),
+        };
+      },
+      status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function () {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
       actions_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -371,7 +645,7 @@ export default {
                     @confirm="del_physical_btn_click"
 										ok-text="Si"
                     cancel-text="No"
-                    title="¿Desea eliminar el Producto?"
+                    title="¿Desea eliminar al Autor?"
                 >
                 <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
                 <a-tooltip title="Eliminar" placement="bottom">
@@ -424,7 +698,7 @@ export default {
                         "<button>Si</button>",
                         (instance, toast) => {
                           this.$toast.question(
-                            "¿Desea eliminar el Producto?",
+                            "¿Desea eliminar al Autor?",
                             "Confirmación",
                             {
                               timeout: 5000,
@@ -441,17 +715,18 @@ export default {
                                   (instance, toast) => {
                                     axios
                                       .delete(
-                                        `productos/eliminar/${this.data.id}`
+                                        `autores/eliminar/${this.data.id}`
                                       )
                                       .then((ress) => {
                                         this.$parent.$parent.refresh_table();
                                         this.$toast.success(
-                                          "El producto ha sido eliminado correctamente",
+                                          "El Autor ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
                                       })
                                       .catch((err) => {
+                                        console.log(err);
                                         this.$toast.error(
                                           "Ha ocurrido un error",
                                           "¡Error!",
@@ -507,272 +782,17 @@ export default {
           }),
         };
       },
-      status_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `
-              <div>
-                <a-popconfirm
-                    :placement="position"
-                    @confirm="confirm_change_status"
-										ok-text="Si"
-                    cancel-text="No"
-                    :visible="visible_pop"
-										@visibleChange="handle_visible_pop_change"
-								>
-								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
-								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
-                    <template slot="title">
-                      <p>¿Desea {{ action }} el Producto?</p>
-                    </template>
-                    <a-tooltip :title="data.proyecto === null ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
-                      <a-switch :disabled="data.proyecto === null" style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
-                         <span slot="checkedChildren">Activo</span>
-                         <span slot="unCheckedChildren">Inactivo</span>
-                      </a-switch>
-                    </a-tooltip>
-                </a-popconfirm>
-              </div>`,
-            data: function (axios) {
-              return {
-                action: "",
-                position: "",
-                data: {},
-                axios: axios,
-                visible_pop: false,
-                checked: false,
-                loading: false,
-              };
-            },
-            created() {
-              this.checked = this.data.deleted_at == null;
-              this.position = this.checked ? "top" : "bottom";
-              this.action = this.checked ? "inactivar" : "activar";
-            },
-            computed: {
-              color_status() {
-                return !this.checked
-                  ? "background: rgb(243, 107, 100)!important"
-                  : "background: rgb(76, 196, 177)!important; border-color: transparent!important";
-              },
-            },
-            methods: {
-              handle_visible_pop_change(visible) {
-                if (this.data.proyecto === null) this.visible_pop = false;
-                else this.visible_pop = visible;
-              },
-              confirm_change_status() {
-                let error = false;
-                if (this.checked) {
-                  this.$toast.question(
-                    "¿Esta acción inactivará el Producto?",
-                    "Confirmación",
-                    {
-                      timeout: 5000,
-                      close: false,
-                      overlay: true,
-                      displayMode: "once",
-                      color: "#AB7598",
-                      zindex: 999,
-                      title: "Hey",
-                      position: "center",
-                      buttons: [
-                        [
-                          "<button>Si</button>",
-                          (instance, toast) => {
-                            this.$toast.question(
-                              "¿Desea inactivar el Producto?",
-                              "Confirmación",
-                              {
-                                timeout: 5000,
-                                close: false,
-                                color: "#8F4776",
-                                overlay: true,
-                                displayMode: "once",
-                                zindex: 9999,
-                                title: "Hey",
-                                position: "center",
-                                buttons: [
-                                  [
-                                    "<button>Si</button>",
-                                    (instance, toast) => {
-                                      this.loading = true;
-                                      axios
-                                        .delete(
-                                          "productos/desactivar/" + this.data.id
-                                        )
-                                        .catch((errors) => {
-                                          error = true;
-                                        })
-                                        .finally(() => {
-                                          this.finally_method(
-                                            "inactivó",
-                                            error
-                                          );
-                                        });
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                    true,
-                                  ],
-                                  [
-                                    "<button>No</button>",
-                                    function (instance, toast) {
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                  ],
-                                ],
-                              }
-                            );
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                          true,
-                        ],
-                        [
-                          "<button>No</button>",
-                          function (instance, toast) {
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                        ],
-                      ],
-                    }
-                  );
-                } else {
-                  this.$toast.question(
-                    "¿Esta acción ativará el Producto?",
-                    "Confirmación",
-                    {
-                      timeout: 5000,
-                      close: false,
-                      overlay: true,
-                      displayMode: "once",
-                      color: "#D7DE7A",
-                      zindex: 999,
-                      title: "Hey",
-                      position: "center",
-                      buttons: [
-                        [
-                          "<button>Si</button>",
-                          (instance, toast) => {
-                            this.$toast.question(
-                              "¿Desea activar el Producto?",
-                              "Confirmación",
-                              {
-                                timeout: 5000,
-                                close: false,
-                                color: "#C9D34D",
-                                overlay: true,
-                                displayMode: "once",
-                                zindex: 9999,
-                                title: "Hey",
-                                position: "center",
-                                buttons: [
-                                  [
-                                    "<button>Si</button>",
-                                    (instance, toast) => {
-                                      this.loading = true;
-                                      axios
-                                        .get(
-                                          "productos/restaurar/" + this.data.id
-                                        )
-                                        .catch((errors) => {
-                                          error = true;
-                                        })
-                                        .finally(() => {
-                                          this.finally_method("activó", error);
-                                        });
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                    true,
-                                  ],
-                                  [
-                                    "<button>No</button>",
-                                    function (instance, toast) {
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                  ],
-                                ],
-                              }
-                            );
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                          true,
-                        ],
-                        [
-                          "<button>No</button>",
-                          function (instance, toast) {
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                        ],
-                      ],
-                    }
-                  );
-                }
-              },
-              finally_method(action, error) {
-                this.loading = false;
-                if (!error) {
-                  this.$parent.$parent.load_products();
-                  this.checked = !this.checked;
-                  this.$toast.success(
-                    `El Producto se ${action} correctamente`,
-                    "¡Éxito!",
-                    {
-                      timeout: 1000,
-                      color: action === "inactivó" ? "blue" : "grey",
-                    }
-                  );
-                } else {
-                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 1000,
-                  });
-                }
-              },
-            },
-          }),
-        };
-      },
       export_view: false, //* Vista del panel de exportaciones
-      products_list: [], //* Lista de productos que es cargada en la tabla
-      row_selected: {}, //* Fila de la tabla seleccionada | producto seleccionado
-      visible_details: false, //* variable para visualizar el modal de detalles del producto
-      visible_management: false, //* variable para visualizar el modal de gestión del producto
+      autors_list: [], //* Lista de autores que es cargada en la tabla
+      /* products_childs: {}, //* Objeto de productos hijos de los autores */
+      row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
+      visible_details: false, //* variable para visualizar el modal de detalles del autor
+      visible_management: false, //* variable para visualizar el modal de gestión del autor
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
     };
   },
   created() {
-    this.load_products();
+    this.load_autors();
   },
   methods: {
     /*
@@ -790,7 +810,7 @@ export default {
       if (args.column.headerText == "Estado") {
         if (args.data["deleted_at"] != null) {
           args.style = { backgroundColor: "#f36b64" };
-          args.value = "Inactivo";
+          args.value = "Incativo";
         } else {
           args.style = { backgroundColor: "#4cc4b1" };
           args.value = "Activo";
@@ -818,31 +838,94 @@ export default {
       }
     },
     /*
-     * Método que carga los productos de la bd
+     * Método que carga los autores de la bd
      */
-    load_products() {
+    load_autors() {
       axios
-        .post("/productos/listar", { relations: ["proyecto"] })
+        .post("autores/listar" /* { relations: ["productos"] } */)
         .then((response) => {
-          this.products_list = response.data;
+          this.autors_list = response.data;
           this.series_data = [];
-          this.products_list.forEach((product) => {
+          this.autors_list.forEach((autor) => {
             let index = this.series_data.findIndex(
-              (serie) => serie.years === parseInt(product.añoProd.toString())
+              (serie) => serie.sex === parseInt(autor.sexoAutr.toString())
             );
             if (index != -1) {
-              this.series_data[index].products += 1;
+              this.series_data[index].autors += 1;
             } else {
               this.series_data.push({
-                years: parseInt(product.añoProd.toString()),
-                products: 1,
+                sex: parseInt(autor.sexoAutr.toString()),
+                autors: 1,
               });
             }
           });
           this.series_data.sort((x, y) => {
-            return x.years - y.years;
+            return x.sex - y.sex;
           });
-          this.$refs.gridObj.refresh();
+          if (
+            this.series_data.length > 0 &&
+            this.series_data[this.series_data.length - 1].autors < 5
+          ) {
+            this.primary_y_axis.interval = 5;
+          }
+          /* axios.post("/productos/listar").then((res) => {
+            this.products_childs = {
+              dataSource: res.data,
+              queryString: "proyecto_id",
+              ref: "childGrid",
+              columns: [
+                {
+                  field: "tituloProd",
+                  headerText: "Título",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  field: "codigProd",
+                  headerText: "Código",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  field: "estadodigProd",
+                  headerText: "Estado de Digitalización",
+                  width: "135",
+                  textAlign: "Left",
+                },
+                {
+                  field: "añoProd",
+                  headerText: "Año",
+                  width: "90",
+                  textAlign: "Left",
+                },
+                {
+                  field: "statusComProd",
+                  headerText: "Estatus Comercial",
+                  width: "120",
+                  textAlign: "Left",
+                },
+                {
+                  field: "genMusicPro",
+                  headerText: "Género Musical",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  headerText: "Estado",
+                  template: this.status_child_template,
+                  width: "105",
+                  visible: true,
+                  textAlign: "Center",
+                },
+              ],
+              load: function () {
+                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
+                  "id"
+                ];
+              },
+            };
+            this.$refs.gridObj.refresh();
+          }); */
         });
     },
     /*
@@ -861,7 +944,7 @@ export default {
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.load_products();
+      this.load_autors();
     },
     /*
      * Método con la lógica de los botones del toolbar de la tabla
@@ -878,9 +961,9 @@ export default {
      */
     panel_export_click(args) {
       let pdfExportProperties = {
-        fileName: "Reporte_Productos.pdf",
+        hierarchyExportMode: "Expanded",
+        fileName: "Reporte_Autores.pdf",
         pageOrientation: "Landscape",
-        pageSize: "Note",
         header: {
           fromTop: 0,
           height: 120,
@@ -899,7 +982,7 @@ export default {
             },
             {
               type: "Text",
-              value: "Reporte de Productos",
+              value: "Reporte de Autores",
               position: { x: 0, y: 40 },
               style: {
                 textBrushColor: "#731954",
@@ -910,7 +993,7 @@ export default {
             {
               type: "Line",
               style: { penColor: "#731954", penSize: 1, dashStyle: "Solid" },
-              points: { x1: 0, y1: 70, x2: 435, y2: 70 },
+              points: { x1: 0, y1: 70, x2: 280, y2: 70 },
             },
             {
               type: "Text",
@@ -925,7 +1008,7 @@ export default {
             {
               type: "Image",
               src: image,
-              position: { x: 445, y: 0 },
+              position: { x: 775, y: 0 },
               size: { height: 110, width: 250 },
             },
           ],
@@ -939,16 +1022,16 @@ export default {
         },
       };
       let excelExportProperties = {
+        hierarchyExportMode: "Expanded",
         fileName: "",
-        //   pageSize: 'Letter',
         header: {
           headerRows: 3,
           rows: [
             {
               cells: [
                 {
-                  colSpan: 6,
-                  value: "Reporte de Productos",
+                  colSpan: 4,
+                  value: "Reporte de Autores",
                   style: {
                     fontColor: "#731954",
                     fontSize: 20,
@@ -962,7 +1045,7 @@ export default {
             {
               cells: [
                 {
-                  colSpan: 6,
+                  colSpan: 4,
                   value: "Fecha del reporte: " + new moment().format("LLL"),
                   style: {
                     fontColor: "#808080",
@@ -987,11 +1070,11 @@ export default {
         this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
-        excelExportProperties.fileName = "Reporte_Productos.xlsx";
+        excelExportProperties.fileName = "Reporte_Autores.xlsx";
         this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
-        excelExportProperties.fileName = "Reporte_Productos.csv";
+        excelExportProperties.fileName = "Reporte_Autores.csv";
         this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
@@ -1003,45 +1086,10 @@ export default {
      * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
      */
     pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[7].visible = true;
     },
     excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
-    },
-    /*
-     * Método con la lógica del botón detalles
-     */
-    detail_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-eye-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      if (this.row_selected.deleted_at == null) this.visible_details = true;
-    },
-    /*
-     * Método con la lógica del botón editar
-     */
-    edit_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-edit-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      if (this.row_selected.deleted_at == null) {
-        this.action_management = "editar";
-        this.visible_management = true;
-      }
+      this.$refs.gridObj.getColumns()[7].visible = true;
     },
   },
   components: {
@@ -1060,6 +1108,7 @@ export default {
       Sort,
       Reorder,
       Toolbar,
+      DetailRow,
       PdfExport,
       ExcelExport,
     ],
@@ -1069,58 +1118,61 @@ export default {
 </script>
 
 <style>
-#producto_index .e-headercontent,
-#producto_index .e-sortfilter,
-#producto_index thead,
-#producto_index tr,
-#producto_index td,
-#producto_index th,
-#producto_index .e-pagercontainer,
-#producto_index .e-pagerdropdown,
-#producto_index .e-first,
-#producto_index .e-prev,
-#producto_index .e-numericcontainer,
-#producto_index .e-next,
-#producto_index .e-last,
-#producto_index .e-table,
-#producto_index .e-input-group,
-#producto_index .e-content,
-#producto_index .e-toolbar-items,
-#producto_index .e-tbar-btn,
-#producto_index .e-toolbar-item,
-#producto_index .e-gridheader,
-#producto_index .e-gridcontent,
-#producto_index .e-gridpager,
-#producto_index .e-toolbar {
+#autor_index .e-headercontent,
+#autor_index .e-sortfilter,
+#autor_index thead,
+#autor_index tr,
+#autor_index td,
+#autor_index th,
+#autor_index .e-pagercontainer,
+#autor_index .e-pagerdropdown,
+#autor_index .e-first,
+#autor_index .e-prev,
+#autor_index .e-numericcontainer,
+#autor_index .e-next,
+#autor_index .e-last,
+#autor_index .e-table,
+#autor_index .e-input-group,
+#autor_index .e-content,
+#autor_index .e-toolbar-items,
+#autor_index .e-tbar-btn,
+#autor_index .e-toolbar-item,
+#autor_index .e-gridheader,
+#autor_index .e-gridcontent,
+#autor_index .e-gridpager,
+#autor_index .e-toolbar {
   background-color: transparent !important;
 }
-#producto_index .e-grid {
+#autor_index .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-#producto_index .e-gridheader {
+#autor_index .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-#producto_index td {
+#autor_index td {
   border-color: lightgrey !important;
 }
-#producto_index .e-grid,
-#producto_index .e-toolbar,
-#producto_index .e-grid .e-headercontent {
+#autor_index .e-grid,
+#autor_index .e-toolbar,
+#autor_index .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-#producto_index .e-row:hover {
+#autor_index .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-#producto_index thead span,
-#producto_index .e-icon-filter {
+#autor_index .e-detailrowcollapse .e-icon-grightarrow,
+#autor_index .e-detailrowexpand .e-icon-gdownarrow,
+#autor_index thead span,
+#autor_index .e-icon-filter {
   color: rgb(115, 25, 84) !important;
   font-weight: bold !important;
 }
-#producto_index .ant-switch-inner {
+#autor_index .ant-switch-inner {
   width: auto !important;
 }
-#producto_index span {
-  display: initial !important;
+#autor_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+.e-badge.e-badge-success[href]:not(.e-badge-ghost) {
+  color: white !important;
 }
 </style>

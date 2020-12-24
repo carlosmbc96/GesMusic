@@ -554,13 +554,13 @@ export default {
                     `El Producto se ${action} correctamente`,
                     "¡Éxito!",
                     {
-                      timeout: 2000,
+                      timeout: 1000,
                       color: action === "inactivó" ? "blue" : "grey",
                     }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 2000,
+                    timeout: 1000,
                   });
                 }
               },
@@ -660,7 +660,7 @@ export default {
                                       this.$toast.success(
                                         "El producto ha sido eliminado correctamente",
                                         "¡Éxito!",
-                                        { timeout: 2000, color: "red" }
+                                        { timeout: 1000, color: "red" }
                                       );
                                     })
                                     .catch((err) => {
@@ -669,7 +669,7 @@ export default {
                                         "Ha ocurrido un error",
                                         "¡Error!",
                                         {
-                                          timeout: 2000,
+                                          timeout: 1000,
                                         }
                                       );
                                     });
@@ -1044,12 +1044,12 @@ export default {
                     this.$toast.success(
                       "El producto ha sido eliminado correctamente",
                       "¡Éxito!",
-                      { timeout: 2000 }
+                      { timeout: 1000 }
                     );
                   })
                   .catch((err) => {
                     this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                      timeout: 2000,
+                      timeout: 1000,
                     });
                   });
                 instance.hide({ transitionOut: "fadeOut" }, toast, "button");

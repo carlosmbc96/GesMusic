@@ -1,6 +1,6 @@
 <template>
-  <div id="producto_index">
-    <h1 style="color: white !important">Productos</h1>
+  <div id="interprete_index">
+    <h1 style="color: white !important">Intérpretes</h1>
     <hr style="border-color: white !important; margin-bottom: 0 !important" />
 
     <!-- Inicio Sección de Analítica | Gráficas -->
@@ -18,17 +18,16 @@
       height="60%"
       :tooltip="tooltip"
       :load="load"
-			width='60%' height='60%'
-			:legendSettings="{ visible: false }"
-      v-if="products_list.length !== 0"
+      :legendSettings="{ visible: false }"
+      v-if="interpretes_list.length !== 0"
     >
       <e-series-collection>
         <e-series
           :dataSource="series_data"
           type="Column"
-          xName="years"
-          yName="products"
-          name="Año"
+          xName="status"
+          yName="interpetres"
+          name="Estados"
           :marker="marker"
           :animation="animation_series"
         />
@@ -90,15 +89,14 @@
     <ejs-grid
       id="datatable"
       ref="gridObj"
-      :dataSource="products_list"
       locale="es-ES"
+      :dataSource="interpretes_list"
       :toolbar="toolbar"
       :toolbarClick="click_toolbar"
       :allowPaging="true"
       :pageSettings="page_settings"
       :allowFiltering="true"
       :filterSettings="filter_settings"
-      :allowSelection="false"
       :allowTextWrap="true"
       :allowSorting="true"
       :pdfExportComplete="pdf_export_complete"
@@ -111,46 +109,22 @@
     >
       <e-columns>
         <e-column
-          field="codigProd"
+          field="codigInterp"
           headerText="Código"
           width="110"
           textAlign="Left"
         />
         <e-column
-          field="tituloProd"
-          headerText="Título"
+          field="nombreInterp"
+          headerText="Nombre"
           width="110"
-          textAlign="Left"
-        />
-
-        <e-column
-          field="añoProd"
-          headerText="Año"
-          width="95"
-          textAlign="Left"
-        />
-        <e-column
-          field="estadodigProd"
-          headerText="Estado de Digitalización"
-          width="145"
-          textAlign="Left"
-        />
-        <e-column
-          field="statusComProd"
-          headerText="Estatus Comercial"
-          width="125"
-          textAlign="Left"
-        />
-        <e-column
-          field="genMusicPro"
-          headerText="Género Musical"
-          width="114"
           textAlign="Left"
         />
         <e-column
           headerText="Estado"
+          width="145"
           :template="status_template"
-          width="115"
+          :visible="true"
           textAlign="Center"
         />
         <e-column
@@ -167,16 +141,16 @@
     <!-- Inicio Sección de Modals -->
     <modal_detail
       v-if="visible_details"
-      :producto_prop="row_selected"
+      :interp_prop="row_selected"
       @close_modal="visible_details = $event"
     />
     <modal_management
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :product="row_selected"
+      :interp="row_selected"
       @close_modal="visible_management = $event"
-      :products_list="products_list"
+      :interp_list="interpretes_list"
     />
     <!-- Fin Sección de Modals -->
   </div>
@@ -187,9 +161,9 @@
  *Importaciones
  */
 import Vue from "vue";
-import axios from "../../../config/axios/axios";
-import modal_detail from "./Modal_Detalles_Producto";
-import modal_management from "./Modal_Gestionar_Producto";
+import axios from "../../../../config/axios/axios";
+import modal_detail from "./Modal_Detalles_Interpretes";
+import modal_management from "./Modal_Gestionar_Interprete";
 import {
   GridPlugin,
   Edit,
@@ -202,6 +176,7 @@ import {
   Sort,
   Toolbar,
   Reorder,
+  DetailRow,
   PdfExport,
   ExcelExport,
   PdfExportProperties,
@@ -213,7 +188,6 @@ import {
   DataLabel,
   Tooltip,
   Legend,
-  logBase,
 } from "@syncfusion/ej2-vue-charts";
 import { ButtonPlugin } from "@syncfusion/ej2-vue-buttons";
 import { loadCldr, L10n, setCulture, Browser } from "@syncfusion/ej2-base";
@@ -222,7 +196,7 @@ import * as weekData from "cldr-data/supplemental/weekData.json";
 import * as timeZoneNames from "cldr-data/main/es/timeZoneNames.json";
 import * as numbers from "cldr-data/main/es/numbers.json";
 import * as gregorian from "cldr-data/main/es/ca-gregorian.json";
-import { image } from "../../../../../public/assets/logo_base64";
+import { image } from "../../../../../../public/assets/logo_base64";
 Vue.use(GridPlugin);
 Vue.use(ButtonPlugin);
 Vue.use(ChartPlugin);
@@ -291,7 +265,7 @@ let theme = (
   selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
 ).replace(/-dark/i, "Dark");
 export default {
-  name: "Proyecto_Index",
+  name: "Autor_Index",
   data() {
     return {
       //* Variables de configuración del gráfico
@@ -307,8 +281,8 @@ export default {
       },
       tooltip: {
         enable: true,
-        header: "Productos por Año",
-        format: "${point.x} : ${point.y} Productos",
+        header: "Intérpretes por estado",
+        format: "${point.x} : ${point.y} Interprétes",
         fill: "rgba(115, 25, 84, 0.9)",
         border: { width: 0 },
       },
@@ -318,7 +292,7 @@ export default {
       series_data: [],
       primary_x_axis: {
         valueType: "Category",
-        title: "Años",
+        title: "Estados",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -331,7 +305,7 @@ export default {
         labelStyle: { color: "white" },
       },
       primary_y_axis: {
-        title: "Productos",
+        title: "Intérpretes",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -348,165 +322,13 @@ export default {
       filter_settings: { type: "Menu" },
       toolbar: [
         {
-          text: "Añadir Producto",
-          tooltipText: "Añadir Producto",
+          text: "Añadir Intérprete",
+          tooltipText: "Añadir Intérprete",
           prefixIcon: "e-add-icon",
           id: "add",
         },
         "Search",
       ],
-      actions_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `
-                <div>
-                <a-tooltip title="Detalles" placement="bottom">
-							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
-                </a-tooltip>
-                <a-tooltip title="Editar" placement="bottom">
-                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
-                </a-tooltip>
-                <a-popconfirm
-                    placement="leftBottom"
-                    @confirm="del_physical_btn_click"
-										ok-text="Si"
-                    cancel-text="No"
-                    title="¿Desea eliminar el Producto?"
-                >
-                <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
-                <a-tooltip title="Eliminar" placement="bottom">
-                <a-button size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
-                </a-tooltip>
-                </a-popconfirm>
-                </div>`,
-            data: function (axios) {
-              return {
-                data: {},
-              };
-            },
-            methods: {
-              /*
-               * Método con la lógica del botón detalles
-               */
-              detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-                if (this.data.deleted_at === null)
-                  this.$parent.$parent.visible_details = true;
-              },
-              /*
-               * Método con la lógica del botón editar
-               */
-              edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-                if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
-                }
-              },
-              /*
-               * Método con la lógica del botón borrado físico
-               */
-              del_physical_btn_click(args) {
-                this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    zindex: 999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar el Producto?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    axios
-                                      .delete(
-                                        `productos/eliminar/${this.data.id}`
-                                      )
-                                      .then((ress) => {
-                                        this.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El producto ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 1000, color: "red" }
-                                        );
-                                      })
-                                      .catch((err) => {
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 1000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
-                              ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
-                    ],
-                  }
-                );
-              },
-            },
-          }),
-        };
-      },
       status_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -516,17 +338,15 @@ export default {
                     :placement="position"
                     @confirm="confirm_change_status"
 										ok-text="Si"
-                    cancel-text="No"
-                    :visible="visible_pop"
-										@visibleChange="handle_visible_pop_change"
+										cancel-text="No"
 								>
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p>¿Desea {{ action }} el Producto?</p>
+                      <p>¿Desea {{ action }} al Intérprete?</p>
                     </template>
-                    <a-tooltip :title="data.proyecto === null ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
-                      <a-switch :disabled="data.proyecto === null" style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                    <a-tooltip title="Cambiar estado" placement="left">
+                      <a-switch style="width: 30%!important" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -539,7 +359,6 @@ export default {
                 position: "",
                 data: {},
                 axios: axios,
-                visible_pop: false,
                 checked: false,
                 loading: false,
               };
@@ -557,15 +376,11 @@ export default {
               },
             },
             methods: {
-              handle_visible_pop_change(visible) {
-                if (this.data.proyecto === null) this.visible_pop = false;
-                else this.visible_pop = visible;
-              },
               confirm_change_status() {
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Producto?",
+                    "¿Esta acción inactivará al Intérprete?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -581,7 +396,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea inactivar el Producto?",
+                              "¿Desea inactivar al Intérprete?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -599,7 +414,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "productos/desactivar/" + this.data.id
+                                          "interpretes/desactivar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -654,7 +469,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará el Producto?",
+                    "¿Esta acción ativará al Intérprete?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -670,7 +485,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea activar el Producto?",
+                              "¿Desea activar al Intérprete?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -688,7 +503,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .get(
-                                          "productos/restaurar/" + this.data.id
+                                          "interpretes/restaurar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -743,10 +558,10 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_products();
+                  this.$parent.$parent.load_interpretes();
                   this.checked = !this.checked;
                   this.$toast.success(
-                    `El Producto se ${action} correctamente`,
+                    `El Intérprete se ${action} correctamente`,
                     "¡Éxito!",
                     {
                       timeout: 1000,
@@ -763,16 +578,190 @@ export default {
           }),
         };
       },
+      status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function () {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
+      actions_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `
+                <div>
+                <a-tooltip title="Detalles" placement="bottom">
+							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                </a-tooltip>
+                <a-tooltip title="Editar" placement="bottom">
+                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                </a-tooltip>
+                <a-popconfirm
+                    placement="leftBottom"
+                    @confirm="del_physical_btn_click"
+										ok-text="Si"
+                    cancel-text="No"
+                    title="¿Desea eliminar al Intérprete?"
+                >
+                <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
+                <a-tooltip title="Eliminar" placement="bottom">
+                <a-button size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
+                </a-tooltip>
+                </a-popconfirm>
+                </div>`,
+            data: function (axios) {
+              return {
+                data: {},
+              };
+            },
+            methods: {
+              /*
+               * Método con la lógica del botón detalles
+               */
+              detail_btn_click(args) {
+                this.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null)
+                  this.$parent.$parent.visible_details = true;
+              },
+              /*
+               * Método con la lógica del botón editar
+               */
+              edit_btn_click(args) {
+                this.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null) {
+                  this.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.visible_management = true;
+                }
+              },
+              /*
+               * Método con la lógica del botón borrado físico
+               */
+              del_physical_btn_click(args) {
+                this.$toast.question(
+                  "¿Esta acción de eliminación es irrevercible?",
+                  "Confirmación",
+                  {
+                    timeout: 5000,
+                    close: false,
+                    overlay: true,
+                    displayMode: "once",
+                    color: "#F8A6A2",
+                    zindex: 999,
+                    title: "Hey",
+                    position: "center",
+                    buttons: [
+                      [
+                        "<button>Si</button>",
+                        (instance, toast) => {
+                          this.$toast.question("¿Desea eliminar al Intérprete?", "Confirmación", {
+                            timeout: 5000,
+                            close: false,
+                            color: "#F58983",
+                            overlay: true,
+                            displayMode: "once",
+                            zindex: 9999,
+                            title: "Hey",
+                            position: "center",
+                            buttons: [
+                              [
+                                "<button>Si</button>",
+                                (instance, toast) => {
+                                  axios
+                                    .delete(
+                                      `interpretes/eliminar/${this.data.id}`
+                                    )
+                                    .then((ress) => {
+                                      this.$parent.$parent.refresh_table();
+                                      this.$toast.success(
+                                        "El Intérprete ha sido eliminado correctamente",
+                                        "¡Éxito!",
+                                        { timeout: 1000, color: "red" }
+                                      );
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      this.$toast.error(
+                                        "Ha ocurrido un error",
+                                        "¡Error!",
+                                        {
+                                          timeout: 1000,
+                                        }
+                                      );
+                                    });
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                                true,
+                              ],
+                              [
+                                "<button>No</button>",
+                                function (instance, toast) {
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                              ],
+                            ],
+                          });
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                        true,
+                      ],
+                      [
+                        "<button>No</button>",
+                        function (instance, toast) {
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                      ],
+                    ],
+                  }
+                );
+              },
+            },
+          }),
+        };
+      },
       export_view: false, //* Vista del panel de exportaciones
-      products_list: [], //* Lista de productos que es cargada en la tabla
-      row_selected: {}, //* Fila de la tabla seleccionada | producto seleccionado
-      visible_details: false, //* variable para visualizar el modal de detalles del producto
-      visible_management: false, //* variable para visualizar el modal de gestión del producto
+      interpretes_list: [], //* Lista de Intérprete que es cargada en la tabla
+      /* products_childs: {}, //* Objeto de productos hijos de los Intérprete */
+      row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
+      visible_details: false, //* variable para visualizar el modal de detalles del Intérprete
+      visible_management: false, //* variable para visualizar el modal de gestión del Intérprete
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
     };
   },
   created() {
-    this.load_products();
+    this.load_interpretes();
   },
   methods: {
     /*
@@ -790,7 +779,7 @@ export default {
       if (args.column.headerText == "Estado") {
         if (args.data["deleted_at"] != null) {
           args.style = { backgroundColor: "#f36b64" };
-          args.value = "Inactivo";
+          args.value = "Incativo";
         } else {
           args.style = { backgroundColor: "#4cc4b1" };
           args.value = "Activo";
@@ -818,31 +807,94 @@ export default {
       }
     },
     /*
-     * Método que carga los productos de la bd
+     * Método que carga los Intérpretes de la bd
      */
-    load_products() {
+    load_interpretes() {
       axios
-        .post("/productos/listar", { relations: ["proyecto"] })
+        .post("interpretes/listar", /* { relations: ["productos"] } */)
         .then((response) => {
-          this.products_list = response.data;
+          this.interpretes_list = response.data;
           this.series_data = [];
-          this.products_list.forEach((product) => {
+          /* this.interpretes_list.forEach((autor) => {
             let index = this.series_data.findIndex(
-              (serie) => serie.years === parseInt(product.añoProd.toString())
+              (serie) => serie.sex === parseInt(autor.sexoAutr.toString())
             );
             if (index != -1) {
-              this.series_data[index].products += 1;
+              this.series_data[index].autors += 1;
             } else {
               this.series_data.push({
-                years: parseInt(product.añoProd.toString()),
-                products: 1,
+                sex: parseInt(autor.sexoAutr.toString()),
+                autors: 1,
               });
             }
+          }); */
+          /* this.series_data.sort((x, y) => {
+            return x.sex - y.sex;
           });
-          this.series_data.sort((x, y) => {
-            return x.years - y.years;
-          });
-          this.$refs.gridObj.refresh();
+          if (
+            this.series_data.length > 0 &&
+            this.series_data[this.series_data.length - 1].autors < 5
+          ) {
+            this.primary_y_axis.interval = 5;
+          } */
+          /* axios.post("/productos/listar").then((res) => {
+            this.products_childs = {
+              dataSource: res.data,
+              queryString: "proyecto_id",
+              ref: "childGrid",
+              columns: [
+                {
+                  field: "tituloProd",
+                  headerText: "Título",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  field: "codigProd",
+                  headerText: "Código",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  field: "estadodigProd",
+                  headerText: "Estado de Digitalización",
+                  width: "135",
+                  textAlign: "Left",
+                },
+                {
+                  field: "añoProd",
+                  headerText: "Año",
+                  width: "90",
+                  textAlign: "Left",
+                },
+                {
+                  field: "statusComProd",
+                  headerText: "Estatus Comercial",
+                  width: "120",
+                  textAlign: "Left",
+                },
+                {
+                  field: "genMusicPro",
+                  headerText: "Género Musical",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  headerText: "Estado",
+                  template: this.status_child_template,
+                  width: "105",
+                  visible: true,
+                  textAlign: "Center",
+                },
+              ],
+              load: function () {
+                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
+                  "id"
+                ];
+              },
+            };
+            this.$refs.gridObj.refresh();
+          }); */
         });
     },
     /*
@@ -861,7 +913,7 @@ export default {
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.load_products();
+      this.load_interpretes();
     },
     /*
      * Método con la lógica de los botones del toolbar de la tabla
@@ -878,9 +930,9 @@ export default {
      */
     panel_export_click(args) {
       let pdfExportProperties = {
-        fileName: "Reporte_Productos.pdf",
+        hierarchyExportMode: "Expanded",
+        fileName: "Reporte_Intérpretes.pdf",
         pageOrientation: "Landscape",
-        pageSize: "Note",
         header: {
           fromTop: 0,
           height: 120,
@@ -899,7 +951,7 @@ export default {
             },
             {
               type: "Text",
-              value: "Reporte de Productos",
+              value: "Reporte de Intérpretes",
               position: { x: 0, y: 40 },
               style: {
                 textBrushColor: "#731954",
@@ -910,7 +962,7 @@ export default {
             {
               type: "Line",
               style: { penColor: "#731954", penSize: 1, dashStyle: "Solid" },
-              points: { x1: 0, y1: 70, x2: 435, y2: 70 },
+              points: { x1: 0, y1: 70, x2: 280, y2: 70 },
             },
             {
               type: "Text",
@@ -925,7 +977,7 @@ export default {
             {
               type: "Image",
               src: image,
-              position: { x: 445, y: 0 },
+              position: { x: 775, y: 0 },
               size: { height: 110, width: 250 },
             },
           ],
@@ -939,16 +991,16 @@ export default {
         },
       };
       let excelExportProperties = {
+        hierarchyExportMode: "Expanded",
         fileName: "",
-        //   pageSize: 'Letter',
         header: {
           headerRows: 3,
           rows: [
             {
               cells: [
                 {
-                  colSpan: 6,
-                  value: "Reporte de Productos",
+                  colSpan: 4,
+                  value: "Reporte de Intérpretes",
                   style: {
                     fontColor: "#731954",
                     fontSize: 20,
@@ -962,7 +1014,7 @@ export default {
             {
               cells: [
                 {
-                  colSpan: 6,
+                  colSpan: 4,
                   value: "Fecha del reporte: " + new moment().format("LLL"),
                   style: {
                     fontColor: "#808080",
@@ -984,18 +1036,18 @@ export default {
         },
       };
       if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[3].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
-        excelExportProperties.fileName = "Reporte_Productos.xlsx";
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        excelExportProperties.fileName = "Reporte_Intérpretes.xlsx";
+        this.$refs.gridObj.getColumns()[3].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
-        excelExportProperties.fileName = "Reporte_Productos.csv";
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        excelExportProperties.fileName = "Reporte_Intérpretes.csv";
+        this.$refs.gridObj.getColumns()[3].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[3].visible = false;
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
@@ -1003,45 +1055,10 @@ export default {
      * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
      */
     pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[3].visible = true;
     },
     excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
-    },
-    /*
-     * Método con la lógica del botón detalles
-     */
-    detail_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-eye-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      if (this.row_selected.deleted_at == null) this.visible_details = true;
-    },
-    /*
-     * Método con la lógica del botón editar
-     */
-    edit_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-edit-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      if (this.row_selected.deleted_at == null) {
-        this.action_management = "editar";
-        this.visible_management = true;
-      }
+      this.$refs.gridObj.getColumns()[3].visible = true;
     },
   },
   components: {
@@ -1060,6 +1077,7 @@ export default {
       Sort,
       Reorder,
       Toolbar,
+      DetailRow,
       PdfExport,
       ExcelExport,
     ],
@@ -1069,58 +1087,61 @@ export default {
 </script>
 
 <style>
-#producto_index .e-headercontent,
-#producto_index .e-sortfilter,
-#producto_index thead,
-#producto_index tr,
-#producto_index td,
-#producto_index th,
-#producto_index .e-pagercontainer,
-#producto_index .e-pagerdropdown,
-#producto_index .e-first,
-#producto_index .e-prev,
-#producto_index .e-numericcontainer,
-#producto_index .e-next,
-#producto_index .e-last,
-#producto_index .e-table,
-#producto_index .e-input-group,
-#producto_index .e-content,
-#producto_index .e-toolbar-items,
-#producto_index .e-tbar-btn,
-#producto_index .e-toolbar-item,
-#producto_index .e-gridheader,
-#producto_index .e-gridcontent,
-#producto_index .e-gridpager,
-#producto_index .e-toolbar {
+#interprete_index .e-headercontent,
+#interprete_index .e-sortfilter,
+#interprete_index thead,
+#interprete_index tr,
+#interprete_index td,
+#interprete_index th,
+#interprete_index .e-pagercontainer,
+#interprete_index .e-pagerdropdown,
+#interprete_index .e-first,
+#interprete_index .e-prev,
+#interprete_index .e-numericcontainer,
+#interprete_index .e-next,
+#interprete_index .e-last,
+#interprete_index .e-table,
+#interprete_index .e-input-group,
+#interprete_index .e-content,
+#interprete_index .e-toolbar-items,
+#interprete_index .e-tbar-btn,
+#interprete_index .e-toolbar-item,
+#interprete_index .e-gridheader,
+#interprete_index .e-gridcontent,
+#interprete_index .e-gridpager,
+#interprete_index .e-toolbar {
   background-color: transparent !important;
 }
-#producto_index .e-grid {
+#interprete_index .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-#producto_index .e-gridheader {
+#interprete_index .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-#producto_index td {
+#interprete_index td {
   border-color: lightgrey !important;
 }
-#producto_index .e-grid,
-#producto_index .e-toolbar,
-#producto_index .e-grid .e-headercontent {
+#interprete_index .e-grid,
+#interprete_index .e-toolbar,
+#interprete_index .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-#producto_index .e-row:hover {
+#interprete_index .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-#producto_index thead span,
-#producto_index .e-icon-filter {
+#interprete_index .e-detailrowcollapse .e-icon-grightarrow,
+#interprete_index .e-detailrowexpand .e-icon-gdownarrow,
+#interprete_index thead span,
+#interprete_index .e-icon-filter {
   color: rgb(115, 25, 84) !important;
   font-weight: bold !important;
 }
-#producto_index .ant-switch-inner {
+#interprete_index .ant-switch-inner {
   width: auto !important;
 }
-#producto_index span {
-  display: initial !important;
+#interprete_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+.e-badge.e-badge-success[href]:not(.e-badge-ghost) {
+  color: white !important;
 }
 </style>

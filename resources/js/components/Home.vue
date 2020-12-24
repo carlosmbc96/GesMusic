@@ -449,8 +449,10 @@ export default {
 }
 .has-error .ant-input-group-addon {
     color: currentColor !important;
-    background-color: #fff !important;
-    border: 1px solid #d9d9d9 !important;
+    background-color: #fafafa !important;
+    border-top: 1px solid #d9d9d9 !important;
+    border-bottom: 1px solid #d9d9d9 !important;
+    border-left: 1px solid #d9d9d9 !important;
 }
 .page-sidebar .page-sidebar-menu .sub-menu > li.active > a,
 .page-sidebar .page-sidebar-menu .sub-menu > li.open > a,
@@ -540,5 +542,8 @@ export default {
   position: absolute !important;
   top: 5px !important;
   font-size: 20px !important;
+}
+.ant-message-custom-content .ant-message-success{
+  background: #B7E7E0e0;
 }
 </style>

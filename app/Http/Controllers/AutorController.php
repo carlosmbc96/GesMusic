@@ -78,7 +78,7 @@ class AutorController extends Controller
             if (substr($autor->fotoAutr, 36) !== "Logo ver vertical_Ltr Negras.png") {
                 Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
             }
-            $autor->setFotoAutrAttribute($request->fotoAutr, $request->codigProy);
+            $autor->setFotoAutrAttribute($request->fotoAutr, $request->codigAutr);
         } else if ($request->img_default) {
             Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
             $autor->setFotoAutrAttributeDefault();

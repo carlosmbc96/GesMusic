@@ -33,15 +33,12 @@
                 <span class="title font-white">Analítica</span>
               </a>
             </li>
-            <li @click="proyecto">
+            <li @click="change_route('/proyecto_index')">
               <a class="nav-link">
                 <i class="icon-bulb font-white" />
                 <span class="title font-white">Gestión</span>
               </a>
             </li>
-            <!--  <router-link tag="li" class="nav-item" to="/proyecto_index"> -->
-
-            <!-- </router-link> -->
             <li class="nav-item">
               <a class="nav-link">
                 <i class="icon-doc font-white" />
@@ -63,7 +60,7 @@
                 <span class="title font-white">Analítica</span>
               </a>
             </li>
-            <li @click="producto">
+            <li @click="change_route('/producto_index')">
               <a class="nav-link">
                 <i class="icon-bulb font-white" />
                 <span class="title font-white">Gestión</span>
@@ -122,10 +119,10 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-folder font-white" />
                 <span class="title font-white">Otros</span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
 
-              <ul class="sub-menu" style="display: block">
+              <ul class="sub-menu">
                 <li class="nav-item">
                   <a href="table_static_basic.html" class="nav-link">
                     <i class="icon-users font-white" />
@@ -161,7 +158,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-earphones font-white" />
                 <span class="title font-white">Fonogramas</span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -170,8 +167,8 @@
                     <span class="title font-white"> Analítica </span>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="table_static_basic.html" class="nav-link">
+                <li class="nav-item" @click="change_route('/fonograma_index')">
+                  <a class="nav-link">
                     <i class="icon-bulb font-white" />
                     <span class="title font-white"> Gestión </span>
                   </a>
@@ -189,7 +186,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-music-tone font-white" />
                 <span class="title font-white">Tracks</span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -216,7 +213,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-folder font-white" />
                 <span class="title font-white">Otros</span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -246,7 +243,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-users font-white" />
                 <span class="title font-white"> Autores </span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -255,8 +252,8 @@
                     <span class="title font-white"> Analítica </span>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="table_static_basic.html" class="nav-link">
+                <li @click="change_route('/autor_index')">
+                  <a class="nav-link">
                     <i class="icon-bulb font-white" />
                     <span class="title font-white"> Gestión </span>
                   </a>
@@ -274,7 +271,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-users font-white" />
                 <span class="title font-white"> Intérpretes </span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -283,8 +280,8 @@
                     <span class="title font-white"> Analítica </span>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="table_static_basic.html" class="nav-link">
+                <li @click="change_route('/interprete_index')">
+                  <a class="nav-link">
                     <i class="icon-bulb font-white" />
                     <span class="title font-white"> Gestión </span>
                   </a>
@@ -338,7 +335,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-doc font-white" />
                 <span class="title font-white"> Generales </span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -354,7 +351,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-docs font-white" />
                 <span class="title font-white"> Específicos </span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -386,7 +383,7 @@
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-users font-white" />
                 <span class="title font-white"> Usuarios </span>
-                <span class="arrow open" />
+                <span class="arrow" />
               </a>
               <ul class="sub-menu">
                 <li class="nav-item">
@@ -457,13 +454,11 @@
 export default {
   name: "Side_Bar",
   methods: {
-    proyecto() {
-      this.$router.push("/proyecto_index");
-      return this.$emit("change_route", this.$router.currentRoute.fullPath);
-    },
-    producto() {
-      this.$router.push("/producto_index");
-      return this.$emit("change_route", this.$router.currentRoute.fullPath);
+    change_route(route) {
+      if (route !== this.$router.currentRoute.fullPath) {
+        this.$router.push(route);
+        return this.$emit("change_route", this.$router.currentRoute.fullPath);
+      }
     },
   },
 };

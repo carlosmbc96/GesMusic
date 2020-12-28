@@ -635,11 +635,12 @@ export default {
     if (this.producto.interpretesProd !== null) {
       let list_help = this.producto.interpretesProd.split(".");
       this.producto.interpretesProd = list_help[0];
-      this.producto.interpretesProd = this.producto.interpretesProd.split(" ");
+      this.producto.interpretesProd = this.producto.interpretesProd.split("-");
       this.producto.interpretesProd.pop();
     }
     if (this.producto.autoresProd !== null) {
-      this.producto.autoresProd = this.producto.autoresProd.split(" ");
+      this.producto.autoresProd = this.producto.autoresProd.split("-");
+       this.producto.autoresProd.pop()
     }
   },
   methods: {

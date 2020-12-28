@@ -1051,7 +1051,7 @@ export default {
           });
         }
         this.product_modal.interpretesProd = this.product_modal.interpretesProd.split(
-          " "
+          "-"
         );
         if (list_roles !== undefined) {
           this.product_modal.interpretesProd.pop();
@@ -1086,8 +1086,9 @@ export default {
       }
       if (this.product_modal.autoresProd !== null) {
         this.product_modal.autoresProd = this.product_modal.autoresProd.split(
-          " "
+          "-"
         );
+        this.product_modal.autoresProd.pop()
         for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
           this.autoresProd.push({
             id: this.product_modal.autoresProd[i].id,
@@ -1107,7 +1108,7 @@ export default {
       }
       if (this.product_modal.destinosComerPro !== null) {
         this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
-          " "
+          "-"
         );
       } else delete this.product_modal.destinosComerPro;
     } else {
@@ -1335,10 +1336,12 @@ export default {
           this.product_modal.destinosComerPro = "";
         }
         this.autoresProd.forEach((item) => {
-          this.product_modal.autoresProd.push(item.value);
+          if (item.value !== "") {
+            this.product_modal.autoresProd.push(item.value);
+          }
         });
         this.product_modal.autoresProd.forEach((item) => {
-          autores += item + " ";
+          autores += item + "-";
         });
         this.product_modal.autoresProd = autores;
         this.interpretesProd.forEach((item) => {
@@ -1355,7 +1358,7 @@ export default {
           });
         }
         this.product_modal.interpretesProd.forEach((item) => {
-          interpretes += item + " ";
+          interpretes += item + "-";
         });
         interpretes_roles =
           interpretes && roles
@@ -1363,7 +1366,7 @@ export default {
             : interpretes + roles;
         if (this.product_modal.destinosComerPro !== "") {
           this.product_modal.destinosComerPro.forEach((item) => {
-            destinos += item + " ";
+            destinos += item + "-";
           });
           this.product_modal.destinosComerPro = destinos;
         }
@@ -1483,17 +1486,20 @@ export default {
           roles += item + "|";
         });
         this.product_modal.interpretesProd.forEach((item) => {
-          interpretes += item + " ";
+          interpretes += item + "-";
         });
         this.product_modal.autoresProd.forEach((item) => {
-          autores += item + " ";
+          autores += item + "-";
         });
         if (this.product_modal.destinosComerPro !== "") {
           this.product_modal.destinosComerPro.forEach((item) => {
-            destinos += item + " ";
+            destinos += item + "-";
           });
         }
-        if (interpretes === " ") {
+        if (autores === "-") {
+          autores = "";
+        }
+        if (interpretes === "-") {
           roles = "";
           interpretes = "";
         } else if (roles === "|") {

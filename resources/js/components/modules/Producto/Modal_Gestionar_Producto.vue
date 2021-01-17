@@ -55,13 +55,6 @@
 				<!-- Tab 1 -->
 				<a-tab-pane key="1" v-if="tab_visibility">
 					<span slot="tab"> Proyecto </span>
-					<a-spin :spinning="spinning">
-						<a-icon
-							slot="indicator"
-							style="font-size: 30px"
-							type="loading"
-							spin
-						/>
 						<div>
 							<a-form-model
 								ref="formularioproject"
@@ -98,7 +91,7 @@
 											</a-select-option>
 										</a-select>
 									</a-form-model-item>
-									<a-form-model-item has-feedback label="Nombre">
+									<a-form-model-item label="Nombre" >
 										<a-select
 											option-filter-prop="children"
 											:filter-option="filter_option"
@@ -129,7 +122,6 @@
 								</a-col>
 							</a-form-model>
 						</div>
-					</a-spin>
 				</a-tab-pane>
 				<!-- Tab 2 -->
 				<a-tab-pane key="2" :disabled="tab_2">
@@ -156,6 +148,7 @@
 											list-type="picture-card"
 											:before-upload="before_upload"
 											@change="handle_change"
+											style="margin-top: -7px"
 										>
 											<div v-if="file_list.length < 1">
 												<img v-if="preview_image" />
@@ -434,7 +427,7 @@
 										</a-form-model-item>
 									</a-col>
 								</a-row>
-								<div v-if="action_modal === 'editar'">
+								<div v-if="action_modal === 'editar'" style="margin-top: -16px">
 									<div class="section-title">
 										<h4>Gestión de Intérpretes</h4>
 									</div>
@@ -586,7 +579,7 @@
 						</a-row>
 						<div v-if="action_modal === 'crear'">
 							<a-row>
-								<div class="section-title">
+								<div class="section-title" style="margin-top: 46%">
 									<h4>Datos Descripciones</h4>
 								</div>
 								<a-row>

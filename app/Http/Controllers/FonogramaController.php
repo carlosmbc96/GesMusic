@@ -71,9 +71,6 @@ class FonogramaController extends Controller
             "descripEspFong" => $request->descripEspFong,
             "descripIngFong" => $request->descripIngFong,
         ]);
-        //$producto = Producto::findOrFail($request->producto_id);
-        //$proyecto = Proyecto::findOrFail($producto->proyecto_id);
-        //Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy ."/". $producto->codigProd ."/". $request->codigFong);
         if ($request->portadillaFong !== null) {
             var_dump('asdasa');
             $fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);

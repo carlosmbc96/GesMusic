@@ -28,8 +28,6 @@ class Fonograma extends Model
         'dirArbolFong',  // Ruta URL del directorio donde se almacena el Fonograma
         'descripEspFong',  // Descripción en Español del Fonograma
         'descripIngFong',  // Descripción en Inglés del Fonograma
-
-        'producto_id',  // Identificador Único de la tabla Producto  / Relación One to Many
     ];
     //SECCIÓN DE FILLABLE
 

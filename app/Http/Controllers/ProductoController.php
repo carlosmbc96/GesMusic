@@ -151,4 +151,8 @@ class ProductoController extends Controller
     {
         return response()->json(Producto::onlyTrashed()->findOrFail($id)->restore());
     }
+    public function fonogramasRelation($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Producto
+    {
+        return response()->json(Producto::findOrFail($id)->fonogramas);
+    }
 }

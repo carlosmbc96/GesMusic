@@ -55,81 +55,73 @@
         <!-- Tab 1 -->
         <a-tab-pane key="1" v-if="tab_visibility">
           <span slot="tab"> Proyecto </span>
-          <a-spin :spinning="spinning">
-            <a-icon
-              slot="indicator"
-              style="font-size: 30px"
-              type="loading"
-              spin
-            />
-            <div>
-              <a-form-model
-                ref="formularioproject"
-                :model="product_modal"
-                :rules="rules"
-              >
-                <a-row>
-                  <a-col span="12">
-                    <div class="section-title">
-                      <h4>Selector de Proyecto</h4>
-                    </div>
-                  </a-col>
-                </a-row>
+          <div>
+            <a-form-model
+              ref="formularioproject"
+              :model="product_modal"
+              :rules="rules"
+            >
+              <a-row>
                 <a-col span="12">
-                  <a-form-model-item
-                    label="Código"
-                    prop="proyecto_id"
-                    has-feedback
-                  >
-                    <a-select
-                      option-filter-prop="children"
-                      :filter-option="filter_option"
-                      show-search
-                      v-model="product_modal.proyecto_id"
-                      style="width: 50% !important"
-                      :disabled="disabled"
-                    >
-                      <a-select-option
-                        v-for="project in projects"
-                        :key="project.id"
-                        :value="project.id"
-                      >
-                        {{ project.codigProy }}
-                      </a-select-option>
-                    </a-select>
-                  </a-form-model-item>
-                  <a-form-model-item has-feedback label="Nombre">
-                    <a-select
-                      option-filter-prop="children"
-                      :filter-option="filter_option"
-                      show-search
-                      v-model="product_modal.proyecto_id"
-                      :disabled="disabled"
-                    >
-                      <a-select-option
-                        v-for="project in projects"
-                        :key="project.id"
-                        :value="project.id"
-                      >
-                        {{ project.nombreProy }}
-                      </a-select-option>
-                    </a-select>
-                  </a-form-model-item>
+                  <div class="section-title">
+                    <h4>Selector de Proyecto</h4>
+                  </div>
                 </a-col>
-                <a-col span="24">
-                  <a-button
+              </a-row>
+              <a-col span="12">
+                <a-form-model-item
+                  label="Código"
+                  prop="proyecto_id"
+                  has-feedback
+                >
+                  <a-select
+                    option-filter-prop="children"
+                    :filter-option="filter_option"
+                    show-search
+                    v-model="product_modal.proyecto_id"
+                    style="width: 50% !important"
                     :disabled="disabled"
-                    style="float: right"
-                    type="default"
-                    @click="siguiente('tab_1', '2')"
                   >
-                    Siguiente
-                    <a-icon type="right" />
-                  </a-button>
-                </a-col>
-              </a-form-model>
-            </div>
-          </a-spin>
+                    <a-select-option
+                      v-for="project in projects"
+                      :key="project.codigProy"
+                      :value="project.id"
+                    >
+                      {{ project.codigProy }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-model-item>
+                <a-form-model-item label="Nombre">
+                  <a-select
+                    option-filter-prop="children"
+                    :filter-option="filter_option"
+                    show-search
+                    v-model="product_modal.proyecto_id"
+                    :disabled="disabled"
+                  >
+                    <a-select-option
+                      v-for="project in projects"
+                      :key="project.id"
+                      :value="project.id"
+                    >
+                      {{ project.nombreProy }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-model-item>
+              </a-col>
+              <a-col span="24">
+                <a-button
+                  :disabled="disabled"
+                  style="float: right"
+                  type="default"
+                  @click="siguiente('tab_1', '2')"
+                >
+                  Siguiente
+                  <a-icon type="right" />
+                </a-button>
+              </a-col>
+            </a-form-model>
+          </div>
         </a-tab-pane>
         <!-- Tab 2 -->
         <a-tab-pane key="2" :disabled="tab_2">
@@ -156,6 +148,7 @@
                       list-type="picture-card"
                       :before-upload="before_upload"
                       @change="handle_change"
+                      style="margin-top: -7px"
                     >
                       <div v-if="file_list.length < 1">
                         <img v-if="preview_image" />
@@ -435,7 +428,7 @@
                     </a-form-model-item>
                   </a-col>
                 </a-row>
-                <div v-if="action_modal === 'editar'">
+                <div v-if="action_modal === 'editar'" style="margin-top: -16px">
                   <div class="section-title">
                     <h4>Gestión de Intérpretes</h4>
                   </div>
@@ -587,9 +580,9 @@
             </a-row>
             <div v-if="action_modal === 'crear'">
               <a-row>
-                <div class="section-title">
-                  <h4>Datos Descripciones</h4>
-                </div>
+                  <div class="section-title" style="width: 46%">
+                    <h4>Datos Descripciones</h4>
+                  </div>
                 <a-row>
                   <a-col span="11">
                     <a-form-model-item
@@ -800,7 +793,7 @@ export default {
         proyecto_id: [
           {
             required: true,
-            message: "Seleccione el código",
+            message: "Campo requerido",
             trigger: "change",
           },
         ],
@@ -1088,7 +1081,7 @@ export default {
         this.product_modal.autoresProd = this.product_modal.autoresProd.split(
           "-"
         );
-        this.product_modal.autoresProd.pop()
+        this.product_modal.autoresProd.pop();
         for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
           this.autoresProd.push({
             id: this.product_modal.autoresProd[i].id,

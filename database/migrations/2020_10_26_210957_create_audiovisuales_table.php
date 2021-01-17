@@ -12,7 +12,7 @@ class CreateAudiovisualesTable extends Migration
             // Migración del Modelo Audiovisuales
             $table->id()->index();  // Identificador Único de la Tabla: Audiovisuales
             $table->string('codigAud',9)->unique();  // Código Audiovisual [AUD0000]
-            $table->string('isrcAud',15)->unique()->nullable();  // ISRC Audiovisual
+            $table->string('isrcAud',12)->unique()->nullable();  // ISRC Audiovisual
             $table->string('tituloAud');  // Título Audiovisual
             $table->string('portadillaAud')->nullable();  // Url del Archivo de Portada del Audiovisual
             $table->string('clasifAud')->nullable();  // Clasificación Audiovisual *nom

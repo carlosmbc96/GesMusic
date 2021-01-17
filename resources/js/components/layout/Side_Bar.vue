@@ -4,7 +4,7 @@
     <!-- END SIDEBAR -->
     <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
     <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-    <div class="page-sidebar navbar-collapse collapse">
+    <div class="page-sidebar navbar-collapse collapse" style="display: block !important">
       <!-- BEGIN SIDEBAR MENU -->
       <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
       <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
@@ -103,7 +103,7 @@
                 <span class="title font-white">Analítica</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" @click="change_route('/audiovisual_index')">
               <a href="javascript:;" class="nav-link nav-toggle">
                 <i class="icon-bulb font-white" />
                 <span class="title font-white">Gestión</span>

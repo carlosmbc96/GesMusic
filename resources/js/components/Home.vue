@@ -426,7 +426,7 @@ export default {
   border-radius: 5px 0 5px 5px !important;
 }
 .ant-form-item-label {
-  margin-bottom: -10px !important;
+  margin-bottom: -15px !important;
 }
 .iziToast-buttons button:focus {
   outline: none !important;
@@ -545,5 +545,8 @@ export default {
 }
 .ant-message-custom-content .ant-message-success{
   background: #B7E7E0e0;
+}
+.e-control.e-grid .e-gridheader .e-sortfilter .e-fltr-icon .e-headercelldiv {
+    margin: -7px 1px -7px -7px !important;
 }
 </style>

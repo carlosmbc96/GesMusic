@@ -51,11 +51,11 @@
 </head>
 
 <body class="page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid" style="background: url('../images/fondo1.jpg') no-repeat center center fixed; -webkit-background-size: cover;
-      -moz-background-size: cover; -o-background-size: cover; background-size: cover">
+      -moz-background-size: cover; -o-background-size: cover; background-size: cover; overflow: overlay;">
 	<div id="app">
 		<app-component />
 	</div>
 	<script src="{{asset('js/app.js')}}"></script>
 </body>
 
-</html> 
+</html>

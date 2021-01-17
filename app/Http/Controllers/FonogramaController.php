@@ -70,14 +70,12 @@ class FonogramaController extends Controller
             "dirArbolFong" => $request->dirArbolFong,
             "descripEspFong" => $request->descripEspFong,
             "descripIngFong" => $request->descripIngFong,
-            "producto_id" => $request->producto_id
         ]);
-        $producto = Producto::findOrFail($request->producto_id);
-        $proyecto = Proyecto::findOrFail($producto->proyecto_id);
-        var_dump($proyecto->codigProy);
-        var_dump($producto->codigProd);
-        Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy ."/". $producto->codigProd ."/". $request->codigFong);
+        //$producto = Producto::findOrFail($request->producto_id);
+        //$proyecto = Proyecto::findOrFail($producto->proyecto_id);
+        //Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy ."/". $producto->codigProd ."/". $request->codigFong);
         if ($request->portadillaFong !== null) {
+            var_dump('asdasa');
             $fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
         } else
             $fonograma->setPortadillaFongAttributeDefault();
@@ -109,7 +107,6 @@ class FonogramaController extends Controller
             "dirArbolFong" => $request->dirArbolFong,
             "descripEspFong" => $request->descripEspFong,
             "descripIngFong" => $request->descripIngFong,
-            "producto_id" => $request->producto_id
         ]);
         return response()->json($fonograma);
     }

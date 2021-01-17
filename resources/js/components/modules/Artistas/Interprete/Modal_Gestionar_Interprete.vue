@@ -55,71 +55,124 @@
         <div slot="tabBarExtraContent">{{ text_header_button }} Intérprete</div>
         <a-tab-pane key="1">
           <span slot="tab">Generales</span>
-          <div>
-            <a-row>
-              <a-col span="12">
-                <div class="section-title">
-                  <h4>Datos Generales</h4>
-                </div>
-              </a-col>
-            </a-row>
-            <a-form-model
-              ref="general_form"
-              layout="horizontal"
-              :model="interp_modal"
-              :rules="rules"
-            >
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Datos Generales</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <a-form-model
+            ref="general_form"
+            layout="horizontal"
+            :model="interp_modal"
+            :rules="rules"
+          >
+            <a-col span="12">
               <a-row>
-                <a-col span="12">
-                  <a-form-model-item
-                    v-if="action_modal !== 'editar'"
-                    :validate-status="show_error"
-                    prop="codigInterp"
-                    has-feedback
-                    label="Código"
-                    :help="show_used_error"
-                  >
-                    <a-input
-                      addon-before="INTR-"
-                      placeholder="0001"
-                      :disabled="action_modal === 'editar'"
-                      v-model="interp_modal.codigInterp"
-                    />
-                  </a-form-model-item>
-                  <a-form-model-item v-else label="Código">
-                    <a-input
-                      addon-before="INTR-"
-                      placeholder="0001"
-                      :disabled="action_modal === 'editar'"
-                      v-model="interp_modal.codigInterp"
-                    />
-                  </a-form-model-item>
-                  <a-form-model-item
-                    prop="nombreInterp"
-                    has-feedback
-                    label="Nombre"
-                  >
-                    <a-input
-                      :disabled="disabled"
-                      v-model="interp_modal.nombreInterp"
-                    />
-                  </a-form-model-item>
-                  <a-form-model-item
-                    has-feedback
-                    label="Reseña biográfica del Interprete"
-                    prop="biogInterp"
-                  >
-                    <a-input
-                      :disabled="disabled"
-                      style="width: 100%; height: 150px"
-                      v-model="interp_modal.reseñaBiogInterp"
-                      type="textarea"
-                    />
-                  </a-form-model-item>
-                </a-col>
+                <a-form-model-item
+                  v-if="action_modal !== 'editar'"
+                  :validate-status="show_error"
+                  prop="codigInterp"
+                  has-feedback
+                  label="Código"
+                  :help="show_used_error"
+                >
+                  <a-input
+                    addon-before="INTR-"
+                    placeholder="0001"
+                    :disabled="action_modal === 'editar'"
+                    v-model="interp_modal.codigInterp"
+                  />
+                </a-form-model-item>
+                <a-form-model-item v-else label="Código">
+                  <a-input
+                    addon-before="INTR-"
+                    placeholder="0001"
+                    :disabled="action_modal === 'editar'"
+                    v-model="interp_modal.codigInterp"
+                  />
+                </a-form-model-item>
+                <a-form-model-item
+                  prop="nombreInterp"
+                  has-feedback
+                  label="Nombre"
+                >
+                  <a-input
+                    :disabled="disabled"
+                    v-model="interp_modal.nombreInterp"
+                  />
+                </a-form-model-item>
+                <a-form-model-item
+                  has-feedback
+                  label="Reseña biográfica del Interprete"
+                  prop="biogInterp"
+                >
+                  <a-input
+                    :disabled="disabled"
+                    style="width: 100%; height: 150px"
+                    v-model="interp_modal.reseñaBiogInterp"
+                    type="textarea"
+                  />
+                </a-form-model-item>
               </a-row>
-            </a-form-model>
-          </div>
+            </a-col>
+            <a-col span="12">
+              <a-row>
+                <a-form-model-item
+                  style="margin-top: 2.5px !important"
+                  prop="NombreArts"
+                  has-feedback
+                  label="Nombre Artístico"
+                >
+                  <a-select
+                    :getPopupContainer="(trigger) => trigger.parentNode"
+                    option-filter-prop="children"
+                    :disabled="disabled"
+                    v-model="nombreArts"
+                  >
+                    <a-select-option
+                      v-for="nombreArtistico in nombresArtisticos"
+                      :key="nombreArtistico.id"
+                      :value="nombreArtistico.NombreArts"
+                    >
+                      {{ nombreArtistico.NombreArts }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-model-item>
+              </a-row>
+              <a-row>
+                <a-form-model-item
+                  style="margin-top: 12px !important"
+                  v-if="create_artisticos"
+                >
+                  <a-checkbox
+                    :disabled="disabled"
+                    v-model="interp_modal.artisticos.actualNombreArts"
+                    :value="actualNombreArts"
+                    style="margin-top: 20px"
+                  >
+                    ¿Es el actual Nombre Artístico?
+                  </a-checkbox>
+                </a-form-model-item>
+              </a-row>
+              <a-row>
+                <a-form-model-item
+                  v-if="create_artisticos"
+                  has-feedback
+                  label="Descripción del Nombre Artístico"
+                  prop="descripNombreArts"
+                >
+                  <a-input
+                    :disabled="disabled"
+                    style="width: 100%; height: 150px"
+                    v-model="interp_modal.artisticos.descripNombreArts"
+                    type="textarea"
+                  />
+                </a-form-model-item>
+              </a-row>
+            </a-col>
+          </a-form-model>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -139,6 +192,7 @@ export default {
       callback();
     };
     return {
+      create_artisticos: false,
       action_cancel_title: "",
       action_title: "",
       show: true,
@@ -146,10 +200,12 @@ export default {
       disabled: false,
       waiting: false,
       text_button: "",
+      nombreArts: "",
       text_header_button: "",
-      spinning: false,
       interp_modal: {},
+      actualNombreArts: false,
       disabled: false,
+      nombresArtisticos: [],
       activated: true,
       show_error: "",
       show_used_error: "",
@@ -174,8 +230,8 @@ export default {
           {
             validator: validate_codig_unique,
             trigger: "change",
-					},
-					{
+          },
+          {
             len: 4,
             message: "Formato de 4 dígitos",
             trigger: "change",
@@ -209,6 +265,12 @@ export default {
     };
   },
   created() {
+    axios
+      .post("/artisticos/listar")
+      .then((response) => {
+        this.nombresArtisticos = response.data;
+      })
+      .catch((error) => console.log(error));
     this.set_action();
   },
   computed: {
@@ -216,14 +278,11 @@ export default {
       if (this.text_button === "Editar") {
         return !this.compare_object;
       } else
-        return (
-          this.interp_modal.codigInterp &&
-          this.interp_modal.nombreInterp
-        );
+        return this.interp_modal.codigInterp && this.interp_modal.nombreInterp;
     },
   },
   methods: {
-   handle_cancel(e) {
+    handle_cancel(e) {
       if (e === "cancelar") {
         this.$refs.general_form.resetFields();
         this.show = false;
@@ -258,15 +317,18 @@ export default {
         this.text_button = "Editar";
         this.action_cancel_title = "¿Desea cancelar la edición del Intérprete?";
         this.action_title = "¿Desea guardar los cambios en el Intérprete?";
-        this.action_close = "La edición del Intérprete se canceló correctamente";
+        this.action_close =
+          "La edición del Intérprete se canceló correctamente";
         this.interp.codigInterp = this.interp.codigInterp.substr(5);
         this.interp_modal = { ...this.interp };
       } else {
         this.text_button = "Crear";
         this.text_header_button = "Crear";
-        this.action_cancel_title = "¿Desea cancelar la creación del Intérprete?";
+        this.action_cancel_title =
+          "¿Desea cancelar la creación del Intérprete?";
         this.action_title = "¿Desea crear el Intérprete?";
-        this.action_close = "La creación del Intérprete se canceló correctamente";
+        this.action_close =
+          "La creación del Intérprete se canceló correctamente";
       }
     },
     confirm() {
@@ -326,11 +388,13 @@ export default {
       }
     },
     prepare_create() {
+      this.interp_modal.actualNombreArts =
+        this.actualNombreArts === false ? 0 : 1;
       let form_data = new FormData();
       if (this.action_modal === "editar") {
         form_data.append("id", this.interp_modal.id);
-			}
-			if (this.interp_modal.reseñaBiogInterp === undefined) {
+      }
+      if (this.interp_modal.reseñaBiogInterp === undefined) {
         this.interp_modal.reseñaBiogInterp = "";
       }
       this.interp_modal.codigInterp = "INTR-" + this.interp_modal.codigInterp;
@@ -344,4 +408,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+#modal_gestionar_interpretes .ant-form-item-control {
+  width: 80% !important;
+}
+</style>

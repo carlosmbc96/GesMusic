@@ -55,11 +55,16 @@ class Audiovisual extends Model
 
     public function setPortadillaAudAttributeDefault()
     {
-        $this->attributes['portadillaAud'] = '/BisMusic/Audiovisuales/Logo ver vertical_Ltr Negras.png';
+        $this->attributes['portadillaAud'] = '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png';
     }
     //SECCIÓN DE IMÁGENES
 
     //SECCIÓN DE RELACIONES
+    //Relación de Many to Many Audiovisuales - Productos
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class,'producto_audiovisual'); // Un Producto tiene muchos Fonogramas
+    }
     //Relación de One to Many Audiovisuales - Elementos
     public function elementos()
     {

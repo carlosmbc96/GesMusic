@@ -56,63 +56,60 @@ class FonogramaController extends Controller
 		return response()->json([[$clasfFonog], [$territorio], [$nacionalid], [$estdContract]]);  // Se envian las variables
 	}
 
-	public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Fonograma
-	{
-		$fonograma = Fonograma::create([
-			"codigFong" => $request->codigFong,
-			"tituloFong" => $request->tituloFong,
-			"clasficacionFong" => $request->clasficacionFong,
-			"duracionFong" => $request->duracionFong,
-			"territorioFong" => $request->territorioFong,
-			"dueñoDerchFong" => $request->dueñoDerchFong,
-			"nacioDueñoDerchFong" => $request->nacioDueñoDerchFong,
-			"propiedadFong" => $request->propiedadFong,
-			"dirArbolFong" => $request->dirArbolFong,
-			"descripEspFong" => $request->descripEspFong,
-			"descripIngFong" => $request->descripIngFong,
-			// "producto_id" => $request->producto_id
-		]);
-		// $producto = Producto::findOrFail($request->producto_id);
-		// $proyecto = Proyecto::findOrFail($producto->proyecto_id);
-		// var_dump($proyecto->codigProy);
-		// var_dump($producto->codigProd);
-		// Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $request->codigFong);
-		if ($request->portadillaFong !== null) {
-			$fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
-		} else
-			$fonograma->setPortadillaFongAttributeDefault();
-		$fonograma->save();
-		return response()->json($fonograma);
-	}
+    public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Fonograma
+    {
+        $fonograma = Fonograma::create([
+            "codigFong" => $request->codigFong,
+            "tituloFong" => $request->tituloFong,
+            "clasficacionFong" => $request->clasficacionFong,
+            "duracionFong" => $request->duracionFong,
+            "territorioFong" => $request->territorioFong,
+            "dueñoDerchFong" => $request->dueñoDerchFong,
+            "nacioDueñoDerchFong" => $request->nacioDueñoDerchFong,
+            "propiedadFong" => $request->propiedadFong,
+            "dirArbolFong" => $request->dirArbolFong,
+            "descripEspFong" => $request->descripEspFong,
+            "descripIngFong" => $request->descripIngFong,
+        ]);
+        //$producto = Producto::findOrFail($request->producto_id);
+        //$proyecto = Proyecto::findOrFail($producto->proyecto_id);
+        //Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy ."/". $producto->codigProd ."/". $request->codigFong);
+        if ($request->portadillaFong !== null) {
+            var_dump('asdasa');
+            $fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
+        } else
+            $fonograma->setPortadillaFongAttributeDefault();
+        $fonograma->save();
+        return response()->json($fonograma);
+    }
 
-	public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Fonograma
-	{
-		$fonograma = Fonograma::findOrFail($request->id);
-		if ($request->portadillaFong !== null) {
-			if (substr($fonograma->portadillaFong, 30) !== "Logo ver vertical_Ltr Negras.png") {
-				Storage::disk('local')->delete(substr('/Imagenes/Fonogramas/' . $fonograma->portadillaFong, 30));
-			}
-			$fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
-		} else if ($request->img_default) {
-			Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 30));
-			$fonograma->setPortadillaFongAttributeDefault();
-		}
-		$fonograma->update([
-			"codigFong" => $request->codigFong,
-			"tituloFong" => $request->tituloFong,
-			"clasficacionFong" => $request->clasficacionFong,
-			"duracionFong" => $request->duracionFong,
-			"territorioFong" => $request->territorioFong,
-			"dueñoDerchFong" => $request->dueñoDerchFong,
-			"nacioDueñoDerchFong" => $request->nacioDueñoDerchFong,
-			"propiedadFong" => $request->propiedadFong,
-			"dirArbolFong" => $request->dirArbolFong,
-			"descripEspFong" => $request->descripEspFong,
-			"descripIngFong" => $request->descripIngFong,
-			//"producto_id" => $request->producto_id
-		]);
-		return response()->json($fonograma);
-	}
+    public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Fonograma
+    {
+        $fonograma = Fonograma::findOrFail($request->id);
+        if ($request->portadillaFong !== null) {
+            if (substr($fonograma->portadillaFong, 30) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete(substr('/Imagenes/Fonogramas/' . $fonograma->portadillaFong, 30));
+            }
+            $fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
+        } else if ($request->img_default) {
+            Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 30));
+            $fonograma->setPortadillaFongAttributeDefault();
+        }
+        $fonograma->update([
+            "codigFong" => $request->codigFong,
+            "tituloFong" => $request->tituloFong,
+            "clasficacionFong" => $request->clasficacionFong,
+            "duracionFong" => $request->duracionFong,
+            "territorioFong" => $request->territorioFong,
+            "dueñoDerchFong" => $request->dueñoDerchFong,
+            "nacioDueñoDerchFong" => $request->nacioDueñoDerchFong,
+            "propiedadFong" => $request->propiedadFong,
+            "dirArbolFong" => $request->dirArbolFong,
+            "descripEspFong" => $request->descripEspFong,
+            "descripIngFong" => $request->descripIngFong,
+        ]);
+        return response()->json($fonograma);
+    }
 
 	public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Fonograma
 	{

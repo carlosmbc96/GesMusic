@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Artistico;
-use http\Env\Response;
 use Illuminate\Http\Request;
 
 class ArtisticoController extends Controller
@@ -13,9 +12,9 @@ class ArtisticoController extends Controller
         $valorbuscado = $request->valorbuscado;
         $atributo = $request->atributo;
         if ( ($atributo) && ($valorbuscado) ) {
-            $artisticos=Artistico::BusqSelect($atributo, $valorbuscado)->paginate(5);
+            $artisticos=Artistico::withTrashed()->BusqSelect($atributo, $valorbuscado)->get();
         } else if($valorbuscado){
-            $artisticos=Artistico::BusqGeneral($valorbuscado)->paginate(5);
+            $artisticos=Artistico::withTrashed()->BusqGeneral($valorbuscado)->get();
         } else {
             $artisticos=Artistico::withTrashed()->get();
         }
@@ -26,7 +25,7 @@ class ArtisticoController extends Controller
                 $i=0;
                 $length = count($artisticos);
                 for ($i ; $i < $length; $i++) {
-                    $artisticos[$i]->interpretes;
+                    $artisticos[$i]->interprete;
                 }
             }
             else {

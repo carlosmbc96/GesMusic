@@ -77,50 +77,50 @@
 								<i class="icon-folder font-white" />
 								<span class="title font-white">Otros</span>
 
-								<span class="arrow" />
-							</a>
-							<ul class="sub-menu">
-								<li class="nav-item">
-									<a href="table_static_basic.html" class="nav-link">
-										<i class="icon-handbag font-white" />
-										<span class="title font-white">Gestión Elementos</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item">
-					<a href="javascript:;" class="nav-link nav-toggle">
-						<i class="icon-film font-white" />
-						<span class="title font-white">Audiovisuales</span>
-						<span class="arrow" />
-					</a>
-					<ul class="sub-menu">
-						<li class="nav-item">
-							<a href="javascript:;" class="nav-link nav-toggle">
-								<i class="icon-bar-chart font-white" />
-								<span class="title font-white">Analítica</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="javascript:;" class="nav-link nav-toggle">
-								<i class="icon-bulb font-white" />
-								<span class="title font-white">Gestión</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="javascript:;" class="nav-link nav-toggle">
-								<i class="icon-doc font-white" />
-								<span class="title font-white">Reportes</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="javascript:;" class="nav-link nav-toggle">
-								<i class="icon-folder font-white" />
-								<span class="title font-white">Otros</span>
-								<span class="arrow" />
-							</a>
+                <span class="arrow" />
+              </a>
+              <ul class="sub-menu">
+                <li class="nav-item">
+                  <a href="table_static_basic.html" class="nav-link">
+                    <i class="icon-handbag font-white" />
+                    <span class="title font-white">Gestión Elementos</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="javascript:;" class="nav-link nav-toggle">
+            <i class="icon-film font-white" />
+            <span class="title font-white">Audiovisuales</span>
+            <span class="arrow" />
+          </a>
+          <ul class="sub-menu">
+            <li class="nav-item">
+              <a href="javascript:;" class="nav-link nav-toggle">
+                <i class="icon-bar-chart font-white" />
+                <span class="title font-white">Analítica</span>
+              </a>
+            </li>
+            <li class="nav-item" @click="change_route('/audiovisual_index')">
+              <a href="javascript:;" class="nav-link nav-toggle">
+                <i class="icon-bulb font-white" />
+                <span class="title font-white">Gestión</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript:;" class="nav-link nav-toggle">
+                <i class="icon-doc font-white" />
+                <span class="title font-white">Reportes</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript:;" class="nav-link nav-toggle">
+                <i class="icon-folder font-white" />
+                <span class="title font-white">Otros</span>
+                <span class="arrow" />
+              </a>
 
 							<ul class="sub-menu">
 								<li class="nav-item">

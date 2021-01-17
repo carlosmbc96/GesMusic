@@ -98,7 +98,7 @@
           </a>
           <ul class="sub-menu">
             <li class="nav-item">
-              <a href="javascript:;" class="nav-link nav-toggle">
+              <a class="nav-link nav-toggle">
                 <i class="icon-bar-chart font-white" />
                 <span class="title font-white">Analítica</span>
               </a>

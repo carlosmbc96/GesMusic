@@ -149,15 +149,15 @@
       v-if="visible_details"
       :proyecto_prop="row_selected"
       @close_modal="visible_details = $event"
-    />
+    /> -->
     <modal_management
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :project="row_selected"
+      :fonogram="row_selected"
       @close_modal="visible_management = $event"
-      :projects_list="projects_list"
-    /> -->
+      :fonograms_list="fonograms_list"
+    />
     <!-- Fin Sección de Modals -->
   </div>
 </template>
@@ -166,6 +166,7 @@
 /*
  *Importaciones
  */
+import modal_management from './Modal_Gestionar_Fonograma';
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
 /* import modal_detail from "./Modal_Detalles_Proyecto";
@@ -760,7 +761,8 @@ export default {
       export_view: false, //* Vista del panel de exportaciones
       fonograms_list: [], //* Lista de Fonogramas que es cargada en la tabla
       //products_childs: {}, //* Objeto de productos hijos de los Fonogramas
-      row_selected: {}, //* Fila de la tabla seleccionada | Fonograma seleccionado
+			row_selected: {}, //* Fila de la tabla seleccionada | Fonograma seleccionado
+			fonograms_list: [],
       visible_details: false, //* variable para visualizar el modal de detalles del Fonograma
       visible_management: false, //* variable para visualizar el modal de gestión del Fonograma
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
@@ -821,7 +823,7 @@ export default {
         .then((response) => {
           this.fonograms_list = response.data;
           this.series_data = [];
-          /* this.projects_list.forEach((project) => {
+          /* this.fonograms_list.forEach((project) => {
             let index = this.series_data.findIndex(
               (serie) => serie.years === parseInt(project.añoProy.toString())
             );
@@ -1067,10 +1069,10 @@ export default {
       this.$refs.gridObj.getColumns()[4].visible = true;
     },
   },
-  /* components: {
-    modal_detail,
+  components: {
+    //modal_detail,
     modal_management,
-  }, */
+  },
   provide: {
     grid: [
       Edit,

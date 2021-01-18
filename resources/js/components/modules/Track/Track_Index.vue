@@ -110,51 +110,51 @@
 				<e-column
 					field="ordenTrk"
 					headerText="Orden"
-					width="110"
+					width="100"
 					textAlign="Left"
 				/>
 				<e-column
 					field="isrcTrk"
 					headerText="ISRC"
-					width="150"
+					width="105"
 					textAlign="Left"
 				/>
 				<e-column
 					field="tituloTrk"
 					headerText="Título"
-					width="150"
+					width="98"
 					textAlign="Left"
 				/>
 				<e-column
 					field="duracionTrk"
 					headerText="Duración"
-					width="150"
+					width="120"
 					textAlign="Left"
 				/>
 				<e-column
 					field="generoTrk"
 					headerText="Género"
-					width="150"
+					width="105"
 					textAlign="Left"
 				/>
 				<e-column
 					field="subgeneroTrk"
 					headerText="Subgénero"
-					width="150"
+					width="123"
 					textAlign="Left"
 				/>
 				<e-column
 					field="bonusTrk"
 					headerText="Bonus"
-					width="150"
+					width="100"
 					textAlign="Left"
 				/>
-				<e-column
+				<!-- <e-column
 					field="paisgrabTrk"
 					headerText="País"
-					width="150"
+					width="90"
 					textAlign="Left"
-				/>
+				/> -->
 				<e-column
 					headerText="Estado"
 					width="115"
@@ -164,7 +164,7 @@
 				/>
 				<e-column
 					headerText="Acciones"
-					width="140"
+					width="160"
 					:template="actions_template"
 					:visible="true"
 					textAlign="Center"
@@ -380,7 +380,7 @@ export default {
                       <p>¿Desea {{ action }} el Track?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 50%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>

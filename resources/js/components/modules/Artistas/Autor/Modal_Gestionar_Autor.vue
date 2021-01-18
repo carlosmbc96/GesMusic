@@ -79,7 +79,6 @@
                     list-type="picture-card"
                     :before-upload="before_upload"
                     @change="handle_change"
-                    style="margin-top: 20px"
                   >
                     <div v-if="file_list.length < 1">
                       <img v-if="preview_image" />
@@ -458,13 +457,13 @@ export default {
           .then((response) => {
             this.text_button = "Editar";
             this.waiting = false;
+            this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
               "Se ha modificado el autor correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
-            this.handle_cancel();
           })
           .catch((error) => {
             this.text_button = "Editar";
@@ -483,13 +482,13 @@ export default {
           .then((res) => {
             this.text_button = "Creando...";
             this.waiting = false;
+            this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
               "Se ha creado el autor correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
-            this.handle_cancel();
           })
           .catch((err) => {
             this.text_button = "Crear";

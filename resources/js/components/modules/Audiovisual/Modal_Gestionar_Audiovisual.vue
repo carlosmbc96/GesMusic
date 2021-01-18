@@ -870,9 +870,9 @@ export default {
             },
           })
           .then((response) => {
-            this.handle_cancel();
             this.text_button = "Editar";
             this.waiting = false;
+            this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
               "Se ha modificado el audiovisual correctamente",
@@ -896,9 +896,9 @@ export default {
             },
           })
           .then((res) => {
-            this.handle_cancel();
             this.text_button = "Crear";
             this.waiting = false;
+            this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
               "Se ha creado el audiovisual correctamente",

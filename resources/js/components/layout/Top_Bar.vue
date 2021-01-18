@@ -20,6 +20,17 @@
         </div>
       </div>
       <!-- END LOGO -->
+      <a
+        href="javascript:;"
+        class="menu-toggler responsive-toggler"
+        data-toggle="collapse"
+        data-target=".navbar-collapse"
+      >
+      <img
+            src="../../../../public/assets/images/sidebar-toggler.png"
+          />
+        <!-- <span></span> -->
+      </a>
       <!-- BEGIN PAGE TOP -->
       <div class="page-top" style="background-color: rgba(255, 255, 255, 0.4)">
         <!-- BEGIN TOP NAVIGATION MENU -->
@@ -99,5 +110,8 @@ export default {
 }
 .dropdown-user a:hover {
   background-color: rgba(255, 255, 255, 0.4) !important;
+}
+.page-header.navbar .menu-toggler {
+    opacity: 1 !important;
 }
 </style>

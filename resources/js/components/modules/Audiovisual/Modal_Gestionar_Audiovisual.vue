@@ -77,7 +77,6 @@
                   prop="productos_audvs"
                 >
                   <a-select
-                    :getPopupContainer="(trigger) => trigger.parentNode"
                     mode="multiple"
                     v-model="audiovisual_modal.productos_audvs"
                     style="width: 50% !important"
@@ -94,7 +93,6 @@
                 </a-form-model-item>
                 <a-form-model-item label="Nombre">
                   <a-select
-                    :getPopupContainer="(trigger) => trigger.parentNode"
                     mode="multiple"
                     v-model="audiovisual_modal.productos_audvs"
                     :disabled="disabled"

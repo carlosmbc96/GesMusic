@@ -55,13 +55,6 @@
 				<!-- Tab 1 -->
 				<a-tab-pane key="1" v-if="tab_visibility">
 					<span slot="tab"> Producto </span>
-					<a-spin :spinning="spinning">
-						<a-icon
-							slot="indicator"
-							style="font-size: 30px"
-							type="loading"
-							spin
-						/>
 						<div>
 							<a-form-model
 								ref="formularioProducto"
@@ -129,7 +122,6 @@
 								</a-col>
 							</a-form-model>
 						</div>
-					</a-spin>
 				</a-tab-pane>
 				<!-- Tab 2 -->
 				<a-tab-pane key="2" :disabled="tab_2">

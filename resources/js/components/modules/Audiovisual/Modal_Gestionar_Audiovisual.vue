@@ -215,6 +215,8 @@
                         <a-select
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
                           :disabled="disabled"
                           v-model="audiovisual_modal.clasifAud"
                         >
@@ -309,6 +311,8 @@
                         <a-select
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
                           :disabled="disabled"
                           v-model="audiovisual_modal.paisGrabAud"
                         >
@@ -340,6 +344,8 @@
                         <a-select
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
                           :disabled="disabled"
                           v-model="audiovisual_modal.generoAud"
                         >
@@ -360,6 +366,8 @@
                         <a-select
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
                           :disabled="disabled"
                           v-model="audiovisual_modal.añoFinAud"
                         >
@@ -416,6 +424,8 @@
                       <a-select
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
                         :disabled="disabled"
                         v-model="audiovisual_modal.nacioDueñoDerchAud"
                       >
@@ -436,6 +446,8 @@
                       <a-select
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
                         :disabled="disabled"
                         v-model="audiovisual_modal.propiedadAud"
                       >
@@ -487,8 +499,7 @@
                   </a-col>
                 </a-form-model>
               </div>
-              </a-spin
-            >
+            </a-spin>
           </a-row>
           <a-row>
             <a-button

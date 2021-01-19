@@ -867,7 +867,6 @@ export default {
           {
             len: 4,
             message: "Formato de 4 números",
-            /*  validator: validate_lentgh, */
             trigger: "change",
           },
         ],
@@ -1216,7 +1215,7 @@ export default {
               }
             }
           });
-        } else return this.confirm();
+        }
       }
     },
     interpretes() {
@@ -1860,7 +1859,7 @@ export default {
     },
     generar_codigo(arr) {
       let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
-      let answer = 0;
+      let answer = 1;
       for (let i = 0; i < list.length; i++) {
         if (list[0] !== 1) {
           answer = 1;

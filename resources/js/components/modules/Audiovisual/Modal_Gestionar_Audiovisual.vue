@@ -269,7 +269,7 @@
                       >
                         <a-input
                           addon-before="AUDV-"
-                          placeholder="0001"
+                          :default-value="codigo"
                           :disabled="action_modal === 'editar'"
                           v-model="audiovisual_modal.codigAud"
                         />
@@ -536,11 +536,13 @@ export default {
   props: ["action", "audiovisual", "audiovisuals_list"],
   data() {
     let validate_codig_unique = (rule, value, callback) => {
-      this.audiovisuals_list.forEach((element) => {
-        if (element.codigAud.substr(5) === value.replace(/ /g, "")) {
-          callback(new Error("Código ya usado"));
-        }
-      });
+      if (value !== undefined) {
+        this.audiovisuals_list.forEach((element) => {
+          if (element.codigAud.substr(5) === value.replace(/ /g, "")) {
+            callback(new Error("Código ya usado"));
+          }
+        });
+      }
       callback();
     };
     let validate_ISRC_unique = (rule, value, callback) => {
@@ -550,6 +552,11 @@ export default {
         }
       });
       callback();
+		};
+		let code_required = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Inserte el código"));
+      } else callback();
     };
     return {
       tab_2: true,
@@ -582,18 +589,18 @@ export default {
       activated: true,
       file_list: [],
       preview_image: "",
-      valid_image: true,
+			valid_image: true,
       preview_visible: false,
       show_error: "",
       show_used_error: "",
       action_modal: this.action,
       makingOfAud: false,
       list_nomenclators: [],
+			codigo : "",
       rules: {
         codigAud: [
           {
-            required: true,
-            message: "Campo requerido",
+            validator: code_required,
             trigger: "change",
           },
           {
@@ -769,7 +776,10 @@ export default {
   },
   created() {
     this.load_nomenclators();
-    this.set_action();
+		this.set_action();
+		if (this.action_modal === "crear") {
+      this.codigo = this.generar_codigo(this.audiovisuals_list);
+    }
   },
   computed: {
     active() {
@@ -786,7 +796,6 @@ export default {
           this.audiovisual_modal.tituloAud &&
           this.audiovisual_modal.clasifAud &&
           this.audiovisual_modal.generoAud &&
-          this.audiovisual_modal.codigAud &&
           this.audiovisual_modal.añoFinAud &&
           this.valid_image
         );
@@ -848,6 +857,9 @@ export default {
       }
     },
     validate() {
+			if (this.audiovisual_modal.codigAud === undefined) {
+        this.audiovisual_modal.codigAud = this.codigo;
+      }
       if (!this.used) {
         if (this.tabs_list.indexOf("tab_2") !== -1) {
           this.$refs.general_form.validate((valid) => {
@@ -857,7 +869,7 @@ export default {
               }
             }
           });
-        } else return this.confirm();
+        }
       }
     },
     atras(tabAnterior) {
@@ -1016,6 +1028,9 @@ export default {
       let form_data = new FormData();
       if (this.action_modal === "editar") {
         form_data.append("id", this.audiovisual_modal.id);
+			}
+			if (this.audiovisual_modal.codigAud === undefined) {
+        this.audiovisual_modal.codigAud = this.codigo;
       }
       this.audiovisual_modal.codigAud =
         "AUDV-" + this.audiovisual_modal.codigAud;
@@ -1192,7 +1207,63 @@ export default {
             timeout: 1000,
           });
         });
+		},
+
+    //Metodos para generar el codigo
+    //Este es el único método que varia de un módulo a otro
+    crear_arr_codig(arr) {
+      let answer = [];
+      for (let i = 0; i < arr.length; i++) {
+        answer.push(parseInt(arr[i].codigAud.substr(5, 8)));
+      }
+      return answer;
     },
+    //Método de ordenamiento en burbuja
+    ordenamiento_burbuja(arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) {
+        for (let j = 0; j < l - 1 - i; j++) {
+          if (arr[j] > arr[j + 1]) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+      return arr;
+    },
+    generar_codigo(arr) {
+      let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
+      let answer = 1;
+      for (let i = 0; i < list.length; i++) {
+        if (list[0] !== 1) {
+          answer = 1;
+          break;
+        }
+        if (i === list.length - 1) {
+          answer = list[i] + 1;
+          break;
+        }
+        if (!(list[i] + 1 === list[i + 1])) {
+          answer = list[i] + 1;
+          break;
+        }
+      }
+      return this.crear_codigo(answer);
+    },
+    crear_codigo(number) {
+      switch (number.toString().length) {
+        case 1:
+          return "000" + number;
+        case 2:
+          return "00" + number;
+        case 3:
+          return "0" + number;
+        case 4:
+          return number.toString();
+        default:
+          break;
+      }
+    },
+    //Fin de metodos para generar el codigo
   },
 };
 </script>

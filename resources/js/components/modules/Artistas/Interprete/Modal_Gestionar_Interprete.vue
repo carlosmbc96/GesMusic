@@ -62,117 +62,119 @@
               </div>
             </a-col>
           </a-row>
-          <a-form-model
-            ref="general_form"
-            layout="horizontal"
-            :model="interp_modal"
-            :rules="rules"
-          >
-            <a-col span="12">
-              <a-row>
-                <a-form-model-item
-                  v-if="action_modal !== 'editar'"
-                  :validate-status="show_error"
-                  prop="codigInterp"
-                  has-feedback
-                  label="Código"
-                  :help="show_used_error"
-                >
-                  <a-input
-                    addon-before="INTR-"
-                    placeholder="0001"
-                    :disabled="action_modal === 'editar'"
-                    v-model="interp_modal.codigInterp"
-                  />
-                </a-form-model-item>
-                <a-form-model-item v-else label="Código">
-                  <a-input
-                    addon-before="INTR-"
-                    placeholder="0001"
-                    :disabled="action_modal === 'editar'"
-                    v-model="interp_modal.codigInterp"
-                  />
-                </a-form-model-item>
-                <a-form-model-item
-                  prop="nombreInterp"
-                  has-feedback
-                  label="Nombre"
-                >
-                  <a-input
-                    :disabled="disabled"
-                    v-model="interp_modal.nombreInterp"
-                  />
-                </a-form-model-item>
-                <a-form-model-item
-                  has-feedback
-                  label="Reseña biográfica del Interprete"
-                  prop="biogInterp"
-                >
-                  <a-input
-                    :disabled="disabled"
-                    style="width: 100%; height: 150px"
-                    v-model="interp_modal.reseñaBiogInterp"
-                    type="textarea"
-                  />
-                </a-form-model-item>
-              </a-row>
-            </a-col>
-            <a-col span="12">
-              <a-row>
-                <a-form-model-item
-                  style="margin-top: 2.5px !important"
-                  prop="NombreArts"
-                  has-feedback
-                  label="Nombre Artístico"
-                >
-                  <a-select
-                    :getPopupContainer="(trigger) => trigger.parentNode"
-                    option-filter-prop="children"
-                    :disabled="disabled"
-                    v-model="nombreArts"
+          <a-spin :spinning="spinning">
+            <a-form-model
+              ref="general_form"
+              layout="horizontal"
+              :model="interp_modal"
+              :rules="rules"
+            >
+              <a-col span="12">
+                <a-row>
+                  <a-form-model-item
+                    v-if="action_modal !== 'editar'"
+                    :validate-status="show_error"
+                    prop="codigInterp"
+                    has-feedback
+                    label="Código"
+                    :help="show_used_error"
                   >
-                    <a-select-option
-                      v-for="nombreArtistico in nombresArtisticos"
-                      :key="nombreArtistico.id"
-                      :value="nombreArtistico.NombreArts"
+                    <a-input
+                      addon-before="INTR-"
+                      placeholder="0001"
+                      :disabled="action_modal === 'editar'"
+                      v-model="interp_modal.codigInterp"
+                    />
+                  </a-form-model-item>
+                  <a-form-model-item v-else label="Código">
+                    <a-input
+                      addon-before="INTR-"
+                      placeholder="0001"
+                      :disabled="action_modal === 'editar'"
+                      v-model="interp_modal.codigInterp"
+                    />
+                  </a-form-model-item>
+                  <a-form-model-item
+                    prop="nombreInterp"
+                    has-feedback
+                    label="Nombre"
+                  >
+                    <a-input
+                      :disabled="disabled"
+                      v-model="interp_modal.nombreInterp"
+                    />
+                  </a-form-model-item>
+                  <a-form-model-item
+                    has-feedback
+                    label="Reseña biográfica del Interprete"
+                    prop="biogInterp"
+                  >
+                    <a-input
+                      :disabled="disabled"
+                      style="width: 100%; height: 150px"
+                      v-model="interp_modal.reseñaBiogInterp"
+                      type="textarea"
+                    />
+                  </a-form-model-item>
+                </a-row>
+              </a-col>
+              <a-col span="12">
+                <a-row>
+                  <a-form-model-item
+                    style="margin-top: 2.5px !important"
+                    prop="NombreArts"
+                    has-feedback
+                    label="Nombre Artístico"
+                  >
+                    <a-select
+                      :getPopupContainer="(trigger) => trigger.parentNode"
+                      option-filter-prop="children"
+                      :disabled="disabled"
+                      v-model="nombreArts"
                     >
-                      {{ nombreArtistico.NombreArts }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-model-item>
-              </a-row>
-              <a-row>
-                <a-form-model-item
-                  style="margin-top: 12px !important"
-                  v-if="create_artisticos"
-                >
-                  <a-checkbox
-                    :disabled="disabled"
-                    v-model="interp_modal.artisticos.actualNombreArts"
-                    :value="actualNombreArts"
-                    style="margin-top: 20px"
+                      <a-select-option
+                        v-for="nombreArtistico in nombresArtisticos"
+                        :key="nombreArtistico.id"
+                        :value="nombreArtistico.NombreArts"
+                      >
+                        {{ nombreArtistico.NombreArts }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-row>
+                <a-row>
+                  <a-form-model-item
+                    style="margin-top: 12px !important"
+                    v-if="create_artisticos"
                   >
-                    ¿Es el actual Nombre Artístico?
-                  </a-checkbox>
-                </a-form-model-item>
-              </a-row>
-              <a-row>
-                <a-form-model-item
-                  v-if="create_artisticos"
-                  has-feedback
-                  label="Descripción del Nombre Artístico"
-                  prop="descripNombreArts"
-                >
-                  <a-input
-                    :disabled="disabled"
-                    style="width: 100%; height: 150px"
-                    v-model="interp_modal.artisticos.descripNombreArts"
-                    type="textarea"
-                  />
-                </a-form-model-item>
-              </a-row>
-            </a-col>
-          </a-form-model>
+                    <a-checkbox
+                      :disabled="disabled"
+                      v-model="interp_modal.artisticos.actualNombreArts"
+                      :value="actualNombreArts"
+                      style="margin-top: 20px"
+                    >
+                      ¿Es el actual Nombre Artístico?
+                    </a-checkbox>
+                  </a-form-model-item>
+                </a-row>
+                <a-row>
+                  <a-form-model-item
+                    v-if="create_artisticos"
+                    has-feedback
+                    label="Descripción del Nombre Artístico"
+                    prop="descripNombreArts"
+                  >
+                    <a-input
+                      :disabled="disabled"
+                      style="width: 100%; height: 150px"
+                      v-model="interp_modal.artisticos.descripNombreArts"
+                      type="textarea"
+                    />
+                  </a-form-model-item>
+                </a-row>
+              </a-col>
+            </a-form-model>
+          </a-spin>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -199,6 +201,7 @@ export default {
       used: false,
       disabled: false,
       waiting: false,
+      spinning: false,
       text_button: "",
       nombreArts: "",
       text_header_button: "",
@@ -332,6 +335,7 @@ export default {
       }
     },
     confirm() {
+      this.spinning = true;
       this.waiting = true;
       let form_data = this.prepare_create();
       if (this.action_modal === "editar") {
@@ -344,6 +348,7 @@ export default {
           })
           .then((response) => {
             this.text_button = "Editar";
+            this.spinning = false;
             this.waiting = false;
             this.$emit("actualizar");
             this.$toast.success(
@@ -355,6 +360,7 @@ export default {
           })
           .catch((error) => {
             this.text_button = "Editar";
+            this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,
@@ -369,6 +375,7 @@ export default {
           })
           .then((res) => {
             this.text_button = "Creando...";
+            this.spinning = false;
             this.waiting = false;
             this.$emit("actualizar");
             this.$toast.success(
@@ -380,6 +387,7 @@ export default {
           })
           .catch((err) => {
             this.text_button = "Crear";
+            this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,

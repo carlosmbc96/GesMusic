@@ -84,8 +84,8 @@ class ProductoController extends Controller
             "autoresProd" => $request->autoresProd,
             "dirArbolProd" => $request->dirArbolProd
         ]);
-        $codigProy= Proyecto::findOrFail($request->proyecto_id)->codigProy;
-        Storage::disk('local')->makeDirectory('/Proyectos/'.$codigProy."/".$request->codigProd);
+        $codigProy = Proyecto::findOrFail($request->proyecto_id)->codigProy;
+        Storage::disk('local')->makeDirectory('/Proyectos/' . $codigProy . "/" . $request->codigProd);
         if ($request->identificadorProd !== null) {
             $producto->setIdentificadorProdAttribute($request->identificadorProd, $request->codigProd);
         } else
@@ -99,12 +99,17 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($request->id);
         if ($request->identificadorProd !== null) {
             if (substr($producto->identificadorProd, 29) !== "Logo ver vertical_Ltr Negras.png") {
-                Storage::disk('local')->delete(substr('/Imagenes/Productos/'.$producto->identificadorProd, 29));
+                Storage::disk('local')->delete(substr('/Imagenes/Productos/' . $producto->identificadorProd, 29));
             }
             $producto->setIdentificadorProdAttribute($request->identificadorProd, $request->codigProd);
         } else if ($request->img_default) {
-            Storage::disk('local')->delete('/Imagenes/Productos/'.substr($producto->identificadorProd, 29));
+            Storage::disk('local')->delete('/Imagenes/Productos/' . substr($producto->identificadorProd, 29));
             $producto->setIdentificadorProdAttributeDefault();
+        }
+        if ($request->proyecto_id !== $producto->proyecto_id) {
+            Storage::disk('local')->deleteDirectory('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
+            $codigProy = Proyecto::findOrFail($request->proyecto_id)->codigProy;
+            Storage::disk('local')->makeDirectory('/Proyectos/' . $codigProy . "/" . $request->codigProd);
         }
         $producto->update([
             "codigProd" => $request->codigProd,
@@ -140,9 +145,12 @@ class ProductoController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Producto
     {
         $producto = Producto::withTrashed()->findOrFail($id);
-        Storage::disk('local')->deleteDirectory('/Proyectos/'.$producto->proyecto()->withTrashed()->get()[0]->codigProy."/".$producto->codigProd);
+        for ($i = 0; $i < count($producto->audiovisuales); $i++) {
+            $producto->audiovisuales[$i]->pivot->delete();
+        }
+        Storage::disk('local')->deleteDirectory('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
         if (substr($producto->identificadorProd, 29) !== "Logo ver vertical_Ltr Negras.png") {
-            Storage::disk('local')->delete('/Imagenes/Productos/'.substr($producto->identificadorProd, 29));
+            Storage::disk('local')->delete('/Imagenes/Productos/' . substr($producto->identificadorProd, 29));
         }
         return response()->json($producto->forceDelete());
     }

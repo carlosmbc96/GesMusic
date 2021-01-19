@@ -549,4 +549,7 @@ export default {
 .e-control.e-grid .e-gridheader .e-sortfilter .e-fltr-icon .e-headercelldiv {
     margin: -7px 1px -7px -7px !important;
 }
+.ant-spin-nested-loading > div > .ant-spin {
+    position: inherit !important;
+}
 </style>

@@ -63,174 +63,181 @@
                 </div>
               </a-col>
             </a-row>
-            <a-form-model
-              ref="general_form"
-              layout="horizontal"
-              :model="author_modal"
-              :rules="rules"
-            >
-              <a-row>
-                <a-col span="6">
-                  <a-upload
-                    :disabled="disabled"
-                    :remove="remove_image"
-                    @preview="handle_preview"
-                    :file-list="file_list"
-                    list-type="picture-card"
-                    :before-upload="before_upload"
-                    @change="handle_change"
-                  >
-                    <div v-if="file_list.length < 1">
-                      <img v-if="preview_image" />
-                      <div v-else>
-                        <a-icon type="upload" />
-                        <div class="ant-upload-text">Cargar foto</div>
-                      </div>
-                    </div>
-                  </a-upload>
-                  <br />
-                  <a-modal
-                    :visible="preview_visible"
-                    :footer="null"
-                    @cancel="preview_cancel"
-                  >
-                    <img style="width: 100%" :src="preview_image" />
-                  </a-modal>
-                </a-col>
-                <a-col span="6">
-                  <a-form-model-item
-                    v-if="action_modal !== 'editar'"
-                    :validate-status="show_error"
-                    prop="codigAutr"
-                    has-feedback
-                    label="Código"
-                    :help="show_used_error"
-                  >
-                    <a-input
-                      addon-before="AUTR-"
-                      placeholder="0001"
-                      :disabled="action_modal === 'editar'"
-                      v-model="author_modal.codigAutr"
-                    />
-                  </a-form-model-item>
-                  <a-form-model-item v-else label="Código">
-                    <a-input
-                      addon-before="AUTR-"
-                      placeholder="0001"
-                      :disabled="action_modal === 'editar'"
-                      v-model="author_modal.codigAutr"
-                    />
-                  </a-form-model-item>
-                  <a-form-model-item
-                    v-if="action_modal !== 'editar'"
-                    :validate-status="show_error"
-                    prop="ciAutr"
-                    has-feedback
-                    label="Carnet de identidad(CI)"
-                    :help="show_used_error"
-                  >
-                    <a-input
-                      :disabled="action_modal === 'editar'"
-                      v-model="author_modal.ciAutr"
-                    />
-                  </a-form-model-item>
-                  <a-form-model-item v-else label="Carnet de identidad(CI)">
-                    <a-input
-                      :disabled="action_modal === 'editar'"
-                      v-model="author_modal.ciAutr"
-                    />
-                  </a-form-model-item>
-                </a-col>
-                <a-col span="6">
-                  <div id="nombresAutr">
-                    <a-form-model-item
-                      prop="nombresAutr"
-                      has-feedback
-                      label="Nombre"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="author_modal.nombresAutr"
-                      />
-                    </a-form-model-item>
-                  </div>
-                  <a-form-model-item has-feedback label="Sexo" prop="sexoAutr">
-                    <a-select
-                      :getPopupContainer="(trigger) => trigger.parentNode"
-                      option-filter-prop="children"
+            <a-spin :spinning="spinning">
+              <a-form-model
+                ref="general_form"
+                layout="horizontal"
+                :model="author_modal"
+                :rules="rules"
+              >
+                <a-row>
+                  <a-col span="6">
+                    <a-upload
                       :disabled="disabled"
-                      v-model="author_modal.sexoAutr"
+                      :remove="remove_image"
+                      @preview="handle_preview"
+                      :file-list="file_list"
+                      list-type="picture-card"
+                      :before-upload="before_upload"
+                      @change="handle_change"
                     >
-                      <a-select-option
-                        v-for="nomenclator in list_nomenclators"
-                        :key="nomenclator.id"
-                        :value="nomenclator.nombreTer"
+                      <div v-if="file_list.length < 1">
+                        <img v-if="preview_image" />
+                        <div v-else>
+                          <a-icon type="upload" />
+                          <div class="ant-upload-text">Cargar foto</div>
+                        </div>
+                      </div>
+                    </a-upload>
+                    <br />
+                    <a-modal
+                      :visible="preview_visible"
+                      :footer="null"
+                      @cancel="preview_cancel"
+                    >
+                      <img style="width: 100%" :src="preview_image" />
+                    </a-modal>
+                  </a-col>
+                  <a-col span="6">
+                    <a-form-model-item
+                      v-if="action_modal !== 'editar'"
+                      :validate-status="show_error"
+                      prop="codigAutr"
+                      has-feedback
+                      label="Código"
+                      :help="show_used_error"
+                    >
+                      <a-input
+                        addon-before="AUTR-"
+                        placeholder="0001"
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.codigAutr"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item v-else label="Código">
+                      <a-input
+                        addon-before="AUTR-"
+                        placeholder="0001"
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.codigAutr"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'editar'"
+                      :validate-status="show_error"
+                      prop="ciAutr"
+                      has-feedback
+                      label="Carnet de identidad(CI)"
+                      :help="show_used_error"
+                    >
+                      <a-input
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.ciAutr"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item v-else label="Carnet de identidad(CI)">
+                      <a-input
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.ciAutr"
+                      />
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col span="6">
+                    <div id="nombresAutr">
+                      <a-form-model-item
+                        prop="nombresAutr"
+                        has-feedback
+                        label="Nombre"
                       >
-                        {{ nomenclator.nombreTer }}
-                      </a-select-option>
-                    </a-select>
-                  </a-form-model-item>
-                </a-col>
-                <a-col span="6">
-                  <div id="apellidosAutr">
-                    <a-form-model-item
-                      prop="apellidosAutr"
-                      has-feedback
-                      label="Apellidos"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="author_modal.apellidosAutr"
-                      />
-                    </a-form-model-item>
-                  </div>
-                </a-col>
-              </a-row>
-              <a-row>
-                <a-col span="11">
-                  <div id="resenha">
+                        <a-input
+                          :disabled="disabled"
+                          v-model="author_modal.nombresAutr"
+                        />
+                      </a-form-model-item>
+                    </div>
                     <a-form-model-item
                       has-feedback
-                      label="Reseña biográfica del autor"
-                      prop="biogAutr"
-                      id="resenha"
+                      label="Sexo"
+                      prop="sexoAutr"
                     >
-                      <a-input
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
                         :disabled="disabled"
-                        style="width: 100%; height: 100px"
-                        v-model="author_modal.biogAutr"
-                        type="textarea"
-                      />
+                        v-model="author_modal.sexoAutr"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in list_nomenclators"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
                     </a-form-model-item>
-                  </div>
-                </a-col>
-                <a-col span="1"></a-col>
-                <a-col span="11">
-                  <div id="checkbox" style="margin-top: 30px">
+                  </a-col>
+                  <a-col span="6">
+                    <div id="apellidosAutr">
+                      <a-form-model-item
+                        prop="apellidosAutr"
+                        has-feedback
+                        label="Apellidos"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          v-model="author_modal.apellidosAutr"
+                        />
+                      </a-form-model-item>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-row>
+                  <a-col span="11">
+                    <div id="resenha">
+                      <a-form-model-item
+                        has-feedback
+                        label="Reseña biográfica del autor"
+                        prop="biogAutr"
+                        id="resenha"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 100px"
+                          v-model="author_modal.biogAutr"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                    </div>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="11">
+                    <div id="checkbox" style="margin-top: 30px">
+                      <a-form-model-item>
+                        <a-checkbox
+                          :disabled="disabled"
+                          v-model="fallecidoAutr"
+                          :value="fallecidoAutr"
+                          style="margin-top: 20px"
+                        >
+                          ¿El Autor es Fallecido?
+                        </a-checkbox>
+                      </a-form-model-item>
+                    </div>
+
                     <a-form-model-item>
                       <a-checkbox
                         :disabled="disabled"
-                        v-model="fallecidoAutr"
-                        :value="fallecidoAutr"
-                        style="margin-top: 20px"
+                        v-model="obrasCatEditAutr"
+                        :value="obrasCatEditAutr"
                       >
-                        ¿El Autor es Fallecido?
+                        ¿El Autor tiene Obras en el Catalgo Editorial de
+                        Bismusic?
                       </a-checkbox>
                     </a-form-model-item>
-                  </div>
-
-                  <a-form-model-item>
-                    <a-checkbox
-                      :disabled="disabled"
-                      v-model="obrasCatEditAutr"
-                      :value="obrasCatEditAutr"
-                    >
-                      ¿El Autor tiene Obras en el Catalgo Editorial de Bismusic?
-                    </a-checkbox>
-                  </a-form-model-item>
-                </a-col>
-              </a-row>
-            </a-form-model>
+                  </a-col>
+                </a-row>
+              </a-form-model>
+            </a-spin>
           </div>
         </a-tab-pane>
       </a-tabs>
@@ -444,6 +451,7 @@ export default {
       }
     },
     confirm() {
+      this.spinning=true
       this.waiting = true;
       let form_data = this.prepare_create();
       if (this.action_modal === "editar") {
@@ -456,6 +464,7 @@ export default {
           })
           .then((response) => {
             this.text_button = "Editar";
+            this.spinning=false
             this.waiting = false;
             this.handle_cancel();
             this.$emit("actualizar");
@@ -467,6 +476,7 @@ export default {
           })
           .catch((error) => {
             this.text_button = "Editar";
+            this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,
@@ -481,6 +491,7 @@ export default {
           })
           .then((res) => {
             this.text_button = "Creando...";
+            this.spinning = false;
             this.waiting = false;
             this.handle_cancel();
             this.$emit("actualizar");
@@ -492,6 +503,7 @@ export default {
           })
           .catch((err) => {
             this.text_button = "Crear";
+            this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,

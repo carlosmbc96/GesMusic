@@ -872,7 +872,7 @@ export default {
         this.audiovisual_modal.codigAud = this.codigo;
       }
       if (!this.used) {
-        if (this.tabs_list.indexOf("tab_2") !== -1) {
+        if (this.tabs_list.indexOf("tab_1") !== -1) {
           this.$refs.general_form.validate((valid) => {
             if (valid) {
               if (this.file_list.length !== 0) {
@@ -880,7 +880,7 @@ export default {
               }
             }
           });
-        }
+        } else return this.confirm();
       }
     },
     atras(tabAnterior) {

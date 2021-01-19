@@ -1207,7 +1207,7 @@ export default {
         this.product_modal.codigProd = this.codigo;
       }
       if (!this.used) {
-        if (this.tabs_list.indexOf("tab_2") !== -1) {
+        if (this.tabs_list.indexOf("tab_1") !== -1) {
           this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
               if (this.file_list.length !== 0) {
@@ -1215,7 +1215,7 @@ export default {
               }
             }
           });
-        }
+        } else this.confirm();
       }
     },
     interpretes() {

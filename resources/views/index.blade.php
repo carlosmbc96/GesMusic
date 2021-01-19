@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<title>GesMusic</title>
 	<!-- BEGIN GLOBAL MANDATORY STYLES -->
-	<link rel="shortcut icon" href="../assets/images/logo-ConvertImage.ico" type="image/icon">
+	<link rel="shortcut icon" href="../assets/images/logo.jpg" type="image/icon">
 	<link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 	<link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
 	<link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />

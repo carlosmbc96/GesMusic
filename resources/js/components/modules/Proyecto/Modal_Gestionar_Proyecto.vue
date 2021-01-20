@@ -9,7 +9,16 @@
       id="modal_gestionar_proyectos"
     >
       <template slot="footer">
+        <a-button
+          v-if="action_modal === 'detalles'"
+          key="back"
+          type="primary"
+          @click="handle_cancel('cancelar')"
+        >
+          Aceptar</a-button
+        >
         <a-popconfirm
+          v-if="action_modal !== 'detalles'"
           :getPopupContainer="(trigger) => trigger.parentNode"
           placement="left"
           @confirm="handle_cancel('cancelar')"
@@ -26,6 +35,7 @@
           <a-button type="danger" key="back"> Cancelar </a-button>
         </a-popconfirm>
         <a-popconfirm
+          v-if="action_modal !== 'detalles'"
           :getPopupContainer="(trigger) => trigger.parentNode"
           placement="topRight"
           @confirm="validate()"
@@ -73,6 +83,7 @@
                 <a-row>
                   <a-col span="6">
                     <a-upload
+                      v-if="action_modal !== 'detalles'"
                       :disabled="disabled"
                       :remove="remove_image"
                       @preview="handle_preview"
@@ -91,6 +102,16 @@
                         </div>
                       </div>
                     </a-upload>
+                    <a-upload
+                      v-else
+                      @preview="handle_preview"
+                      :file-list="file_list"
+                      list-type="picture-card"
+                    >
+                      <div v-if="file_list.length < 1">
+                        <img />
+                      </div>
+                    </a-upload>
                     <br />
                     <a-modal
                       :visible="preview_visible"
@@ -102,6 +123,7 @@
                   </a-col>
                   <a-col span="6">
                     <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
                       style="margin-right: 28% !important"
                       prop="añoProy"
                       has-feedback
@@ -124,10 +146,24 @@
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
+                    <a-form-model-item label="Año del proyecto" v-else>
+                      <a-mentions readonly :placeholder="project_modal.añoProy">
+                      </a-mentions>
+                    </a-form-model-item>
                   </a-col>
                   <a-col span="12">
                     <a-form-model-item
-                      v-if="action_modal !== 'editar'"
+                      label="Código"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions
+                        readonly
+                        :placeholder="project_modal.codigProy"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal === 'crear'"
                       :validate-status="show_error"
                       prop="codigProy"
                       has-feedback
@@ -141,7 +177,10 @@
                         v-model="project_modal.codigProy"
                       />
                     </a-form-model-item>
-                    <a-form-model-item v-else label="Código">
+                    <a-form-model-item
+                      v-if="action_modal === 'editar'"
+                      label="Código"
+                    >
                       <a-input
                         addon-before="PROY-"
                         :disabled="action_modal === 'editar'"
@@ -150,6 +189,7 @@
                     </a-form-model-item>
                     <div id="nombreProy">
                       <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
                         prop="nombreProy"
                         has-feedback
                         label="Nombre Completo"
@@ -159,34 +199,71 @@
                           v-model="project_modal.nombreProy"
                         />
                       </a-form-model-item>
+                      <a-form-model-item label="Nombre Completo" v-else>
+                        <a-mentions
+                          readonly
+                          :placeholder="project_modal.nombreProy"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
                     </div>
                   </a-col>
                 </a-row>
                 <a-row>
                   <a-col span="12">
                     <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
                       has-feedback
                       label="Descripción en Español del proyecto"
                       prop="descripEsp"
                     >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="project_modal.descripEsp"
-                        type="textarea"
-                      />
+                      <div class="description">
+                        <a-input
+                          :disabled="disabled"
+                          v-model="project_modal.descripEsp"
+                          type="textarea"
+                        />
+                      </div>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Descripción en Español del proyecto"
+                      v-else
+                    >
+                      <div class="description">
+                        <a-mentions
+                          readonly
+                          :placeholder="project_modal.descripEsp"
+                        >
+                        </a-mentions>
+                      </div>
                     </a-form-model-item>
                   </a-col>
                   <a-col span="12">
                     <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
                       has-feedback
                       label="Descripción en Inglés del proyecto"
                       prop="descripIng"
                     >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="project_modal.descripIng"
-                        type="textarea"
-                      />
+                      <div class="description">
+                        <a-input
+                          :disabled="disabled"
+                          v-model="project_modal.descripIng"
+                          type="textarea"
+                        />
+                      </div>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Descripción en Inglés del proyecto"
+                      v-else
+                    >
+                      <div class="description">
+                        <a-mentions
+                          readonly
+                          :placeholder="project_modal.descripIng"
+                        >
+                        </a-mentions>
+                      </div>
                     </a-form-model-item>
                   </a-col>
                 </a-row>
@@ -266,8 +343,8 @@
         project_modal: {}, //*Contiene los datos del proyecto que serán guardados en la bd
         show: true, //*Variable para mostrar u ocultar el modal
         waiting: false, //*Variable que indica que el proceso de guardar o crear no ha terminado
-				vista_editar: true,
-				codigo: "",
+        vista_editar: true,
+        codigo: '',
         rules: {
           //*reglas de validacion de los campos del formulario
           codigProy: [
@@ -503,7 +580,10 @@
           this.project_modal.descripEsp = '';
         }
         let form_data = new FormData();
-        if (this.action_modal === 'editar') {
+        if (
+          this.action_modal === 'editar' ||
+          this.action_modal === 'detalles'
+        ) {
           form_data.append('id', this.project_modal.id);
         }
         if (this.project_modal.codigProy == undefined) {
@@ -539,15 +619,20 @@
        *de configuración y los campos del formulario del modal a su estado inicial
        */
       handle_cancel(e) {
+        if (this.action_modal === 'detalles') {
+          this.project.codigProy = 'PROY-' + this.project.codigProy;
+        }
         if (e === 'cancelar') {
           this.$refs.general_form.resetFields();
           this.show = false;
           this.$emit('close_modal', this.show);
           this.$emit('actualizar');
-          this.$toast.success(this.action_close, '¡Éxito!', {
-            timeout: 1000,
-            color: 'orange',
-          });
+          if (this.action_modal !== 'detalles') {
+            this.$toast.success(this.action_close, '¡Éxito!', {
+              timeout: 1000,
+              color: 'orange',
+            });
+          }
         } else {
           this.$refs.general_form.resetFields();
           this.show = false;
@@ -562,6 +647,42 @@
        */
       set_action() {
         if (this.action_modal === 'editar') {
+          if (this.project.deleted_at !== null) {
+            this.disabled = true;
+            this.activated = false;
+          }
+          this.text_header_button = 'Editar';
+          this.text_button = 'Editar';
+          this.action_cancel_title = '¿Desea cancelar la edición del Proyecto?';
+          this.action_title = '¿Desea guardar los cambios en el Proyecto?';
+          this.action_close =
+            'La edición del Proyecto se canceló correctamente';
+          this.project.descripEsp =
+            this.project.descripEsp === null ? '' : this.project.descripEsp;
+          this.project.descripIng =
+            this.project.descripIng === null ? '' : this.project.descripIng;
+          this.project.codigProy = this.project.codigProy.substr(5);
+          this.project_modal = { ...this.project };
+          if (this.project_modal.identificadorProy !== null) {
+            if (
+              this.project_modal.identificadorProy !==
+              '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png'
+            ) {
+              this.file_list.push({
+                uid: this.project_modal.id,
+                name: this.project_modal.identificadorProy.split('/')[
+                  this.project_modal.identificadorProy.split('/').length - 1
+                ],
+                url: this.project_modal.identificadorProy,
+              });
+            } else
+              this.file_list.push({
+                uid: 1,
+                name: 'Logo ver vertical_Ltr Negras.png',
+                url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
+              });
+          }
+        } else if (this.action_modal === 'detalles') {
           if (this.project.deleted_at !== null) {
             this.disabled = true;
             this.activated = false;
@@ -719,6 +840,12 @@
   }
   #modal_gestionar_proyectos .ant-select-search input {
     border-color: rgb(255, 255, 255) !important;
+  }
+  #modal_gestionar_proyectos .ant-mentions textarea {
+    height: 32px !important;
+  }
+  #modal_gestionar_proyectos .description textarea {
+    height: 150px !important;
   }
   #modal_gestionar_proyectos textarea {
     height: 150px !important;

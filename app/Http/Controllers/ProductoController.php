@@ -98,12 +98,12 @@ class ProductoController extends Controller
     {
         $producto = Producto::findOrFail($request->id);
         if ($request->identificadorProd !== null) {
-            if (substr($producto->identificadorProd, 29) !== "Logo ver vertical_Ltr Negras.png") {
-                Storage::disk('local')->delete(substr('/Imagenes/Productos/' . $producto->identificadorProd, 29));
+            if (substr($producto->identificadorProd, 33) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete(substr('/Imagenes/Productos/' . $producto->identificadorProd, 33));
             }
             $producto->setIdentificadorProdAttribute($request->identificadorProd, $request->codigProd);
         } else if ($request->img_default) {
-            Storage::disk('local')->delete('/Imagenes/Productos/' . substr($producto->identificadorProd, 29));
+            Storage::disk('local')->delete('/Imagenes/Productos/' . substr($producto->identificadorProd, 33));
             $producto->setIdentificadorProdAttributeDefault();
         }
         if ($request->proyecto_id !== $producto->proyecto_id) {
@@ -149,7 +149,7 @@ class ProductoController extends Controller
             $producto->audiovisuales[$i]->pivot->delete();
         }
         Storage::disk('local')->deleteDirectory('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
-        if (substr($producto->identificadorProd, 29) !== "Logo ver vertical_Ltr Negras.png") {
+        if (substr($producto->identificadorProd, 33) !== "Logo ver vertical_Ltr Negras.png") {
             Storage::disk('local')->delete('/Imagenes/Productos/' . substr($producto->identificadorProd, 29));
         }
         return response()->json($producto->forceDelete());

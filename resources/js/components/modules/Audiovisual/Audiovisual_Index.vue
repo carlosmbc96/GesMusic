@@ -669,8 +669,9 @@ export default {
                */
               detail_btn_click(args) {
                 this.$parent.$parent.row_selected = this.data;
-                if (this.data.deleted_at === null)
-                  this.$parent.$parent.visible_details = true;
+								if (this.data.deleted_at === null)
+									this.$parent.$parent.action_management = "detalles";
+									this.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar

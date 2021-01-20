@@ -9,7 +9,16 @@
       id="modal_gestionar_fonogramas"
     >
       <template slot="footer">
+        <a-button
+          v-if="action_modal === 'detalles'"
+          key="back"
+          type="primary"
+          @click="handle_cancel('cancelar')"
+        >
+          Aceptar</a-button
+        >
         <a-popconfirm
+          v-if="action_modal !== 'detalles'"
           :getPopupContainer="(trigger) => trigger.parentNode"
           placement="left"
           @confirm="handle_cancel('cancelar')"
@@ -23,10 +32,9 @@
             theme="filled"
             style="color: #f0b727"
           />
-          <a-button type="danger" key="back" v-if="action_modal !== 'detalles'">
+          <a-button type="danger" key="back">
             Cancelar
           </a-button>
-          <a-button type="primary" key="back" v-else> Aceptar </a-button>
         </a-popconfirm>
         <a-popconfirm
           v-if="action_modal !== 'detalles'"
@@ -147,6 +155,7 @@
                   <a-row>
                     <a-col span="11">
                       <a-upload
+                        v-if="action_modal !== 'detalles'"
                         :disabled="disabled"
                         :remove="remove_image"
                         @preview="handle_preview"
@@ -165,6 +174,16 @@
                           </div>
                         </div>
                       </a-upload>
+                      <a-upload
+                        v-if="action_modal === 'detalles'"
+                        @preview="handle_preview"
+                        :file-list="file_list"
+                        list-type="picture-card"
+                      >
+                        <div v-if="file_list.length < 1">
+                          <img />
+                        </div>
+                      </a-upload>
                       <br />
                       <a-modal
                         :visible="preview_visible"
@@ -173,10 +192,30 @@
                       >
                         <img style="width: 100%" :src="preview_image" />
                       </a-modal>
+                      <a-form-model-item
+                        label="Duración"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.duracionFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
                     </a-col>
                     <a-col span="11" style="float: right">
                       <a-form-model-item
-                        v-if="action_modal !== 'editar'"
+                        label="Código"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.codigFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal === 'crear'"
                         :validate-status="show_error"
                         :help="show_used_error"
                         prop="codigFong"
@@ -186,14 +225,14 @@
                         <a-input
                           addon-before="FONG-"
                           :default-value="codigo"
-                          :disabled="
-                            action_modal === 'editar' ||
-                              action_modal === 'detalles'
-                          "
+                          :disabled="action_modal === 'editar'"
                           v-model="fonogram_modal.codigFong"
                         />
                       </a-form-model-item>
-                      <a-form-model-item v-else label="Código">
+                      <a-form-model-item
+                        v-if="action_modal === 'editar'"
+                        label="Código"
+                      >
                         <a-input
                           addon-before="Fong-"
                           :disabled="action_modal === 'editar'"
@@ -201,6 +240,7 @@
                         />
                       </a-form-model-item>
                       <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
                         prop="tituloFong"
                         has-feedback
                         label="Título"
@@ -210,7 +250,15 @@
                           v-model="fonogram_modal.tituloFong"
                         />
                       </a-form-model-item>
+                      <a-form-model-item label="Título" v-else>
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.tituloFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
                       <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
                         has-feedback
                         label="Clasificación del Fonograma"
                         prop="clasficacionFong"
@@ -233,6 +281,17 @@
                         </a-select>
                       </a-form-model-item>
                       <a-form-model-item
+                        label="Clasificación del fonograma"
+                        v-else
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.clasficacionFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
                         has-feedback
                         label="Nacionalidad del dueño del producto"
                         prop="propiedadFong"
@@ -254,6 +313,16 @@
                           </a-select-option>
                         </a-select>
                       </a-form-model-item>
+                      <a-form-model-item
+                        label="Nacionalidad del dueño del producto"
+                        v-else
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.propiedadFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
                     </a-col>
                   </a-row>
                 </a-col>
@@ -263,6 +332,7 @@
                   </div>
                   <a-row style="margin-bottom: 30px">
                     <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
                       prop="dueñoDerchFong"
                       has-feedback
                       label="Nombre completo"
@@ -272,7 +342,15 @@
                         v-model="fonogram_modal.dueñoDerchFong"
                       />
                     </a-form-model-item>
+                    <a-form-model-item label="Nombre completo" v-else>
+                      <a-mentions
+                        readonly
+                        :placeholder="fonogram_modal.dueñoDerchFong"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
                     <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
                       has-feedback
                       label="Nacionalidad"
                       prop="nacioDueñoDerchFong"
@@ -294,7 +372,15 @@
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
+                    <a-form-model-item label="Nacionalidad" v-else>
+                      <a-mentions
+                        readonly
+                        :placeholder="fonogram_modal.nacioDueñoDerchFong"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
                     <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
                       has-feedback
                       label="Territorio del fonograma"
                       prop="territorioFong"
@@ -316,6 +402,13 @@
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
+                    <a-form-model-item label="Territorio del fonograma" v-else>
+                      <a-mentions
+                        readonly
+                        :placeholder="fonogram_modal.territorioFong"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
                   </a-row>
                 </a-col>
               </a-row>
@@ -327,30 +420,60 @@
                   <a-row>
                     <a-col span="11">
                       <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
                         has-feedback
                         label="Descripción en español del fonograma"
                         prop="descripEspFong"
                       >
-                        <a-input
-                          :disabled="disabled"
-                          style="width: 100%; height: 100px"
-                          v-model="fonogram_modal.descripEspFong"
-                          type="textarea"
-                        />
+                        <div class="description">
+                          <a-input
+                            :disabled="disabled"
+                            style="width: 100%; height: 100px"
+                            v-model="fonogram_modal.descripEspFong"
+                            type="textarea"
+                          />
+                        </div>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en español del fonograma"
+                        v-else
+                      >
+                        <div class="description">
+                          <a-mentions
+                            readonly
+                            :placeholder="fonogram_modal.descripEspFong"
+                          >
+                          </a-mentions>
+                        </div>
                       </a-form-model-item>
                     </a-col>
                     <a-col span="11" style="float: right">
                       <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
                         has-feedback
                         label="Descripción en inglés del fonograma"
                         prop="descripIngFong"
                       >
-                        <a-input
-                          :disabled="disabled"
-                          style="width: 100%; height: 100px"
-                          v-model="fonogram_modal.descripIngFong"
-                          type="textarea"
-                        />
+                        <div class="description">
+                          <a-input
+                            :disabled="disabled"
+                            style="width: 100%; height: 100px"
+                            v-model="fonogram_modal.descripIngFong"
+                            type="textarea"
+                          />
+                        </div>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en inglés del fonograma"
+                        v-else
+                      >
+                        <div class="description">
+                          <a-mentions
+                            readonly
+                            :placeholder="fonogram_modal.descripIngFong"
+                          >
+                          </a-mentions>
+                        </div>
                       </a-form-model-item>
                     </a-col>
                   </a-row>
@@ -547,7 +670,7 @@
         this.codigo = this.generar_codigo(this.fonograms_list);
       } else if (this.action_modal === 'detalles') {
         this.active_tab = '2';
-        this.disabled = true;
+        this.fonogram_modal.codigFong = 'FONG-' + this.fonogram.codigFong;
       }
     },
     computed: {
@@ -595,9 +718,9 @@
         }
       },
       handle_cancel(e) {
-				if (this.action_modal === "detalles") {
-					this.fonogram.codigFong = "FONG-" + this.fonogram.codigFong;
-				}
+        if (this.action_modal === 'detalles') {
+          this.fonogram.codigFong = 'FONG-' + this.fonogram.codigFong;
+        }
         if (e === 'cancelar') {
           if (this.tabs_list.indexOf('tab_1') !== -1) {
             this.$refs.formularioGenerales.resetFields();
@@ -606,11 +729,13 @@
           this.active_tab = '1';
           this.tab_visibility = true;
           this.show = false;
-          this.$emit('close_modal', this.show);
-          this.$toast.success(this.action_close, '¡Éxito!', {
+					this.$emit('close_modal', this.show);
+					if (this.action_modal !== 'detalles') {
+						this.$toast.success(this.action_close, '¡Éxito!', {
             timeout: 1000,
             color: 'orange',
           });
+					}
         } else {
           if (this.tabs_list.indexOf('tab_1') !== -1) {
             this.$refs.formularioGenerales.resetFields();
@@ -762,6 +887,7 @@
         this.fonogram_modal.codigFong = 'FONG-' + this.fonogram_modal.codigFong;
         form_data.append('codigFong', this.fonogram_modal.codigFong);
         form_data.append('tituloFong', this.fonogram_modal.tituloFong);
+        form_data.append('duracionFong', '00:00');
         form_data.append(
           'clasficacionFong',
           this.fonogram_modal.clasficacionFong
@@ -847,8 +973,8 @@
             this.fonogram.descripIngFong === null
               ? ''
               : this.fonogram.descripIngFong;
-					this.fonogram.productos_fongs = [];
-					console.log(this.fonogram.codigFong);
+          this.fonogram.productos_fongs = [];
+          console.log(this.fonogram.codigFong);
           this.fonogram.codigFong = this.fonogram.codigFong.substr(5);
           this.fonogram.productos.forEach((element) => {
             this.fonogram.productos_fongs.push(element.id);
@@ -1063,7 +1189,10 @@
   #modal_gestionar_fonogramas .interpretes-select {
     width: 80% !important;
   }
-  #modal_gestionar_fonogramas textarea {
+  #modal_gestionar_fonogramas .ant-mentions textarea {
+    height: 32px !important;
+  }
+  #modal_gestionar_fonogramas .description textarea {
     height: 150px !important;
   }
   #modal_gestionar_fonogramas .dynamic-delete-button {

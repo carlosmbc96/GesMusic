@@ -144,13 +144,6 @@
     </ejs-grid>
     <!-- Fin Sección de Tabla de datos -->
 
-    <!-- Inicio Sección de Modals -->
-    <modal_detail
-      @refresh="refresh_table"
-      v-if="visible_details"
-      :proyecto_prop="row_selected"
-      @close_modal="visible_details = $event"
-    />
     <modal_management
       v-if="visible_management"
       :action="action_management"
@@ -169,7 +162,6 @@
  */
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
-import modal_detail from "./Modal_Detalles_Proyecto";
 import modal_management from "./Modal_Gestionar_Proyecto";
 import {
   GridPlugin,
@@ -646,8 +638,9 @@ export default {
                */
               detail_btn_click(args) {
                 this.$parent.$parent.row_selected = this.data;
-                if (this.data.deleted_at === null)
-                  this.$parent.$parent.visible_details = true;
+								if (this.data.deleted_at === null)
+									this.$parent.$parent.action_management = "detalles";
+									this.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
@@ -1066,7 +1059,6 @@ export default {
     },
   },
   components: {
-    modal_detail,
     modal_management,
   },
   provide: {

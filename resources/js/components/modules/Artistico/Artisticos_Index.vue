@@ -1,10 +1,10 @@
 <template>
-  <div id="autor_index">
-    <h1 style="color: white !important">Autores</h1>
+  <div id="artisticos_index">
+    <h1 style="color: white !important">Nombres Artísticos</h1>
     <hr style="border-color: white !important" />
 
     <!-- Inicio Sección de Analítica | Gráficas -->
-    <ejs-chart
+    <!-- <ejs-chart
       style="display: block; margin: 20px"
       :theme="theme"
       align="center"
@@ -32,7 +32,7 @@
           :animation="animation_series"
         />
       </e-series-collection>
-    </ejs-chart>
+    </ejs-chart> -->
     <!-- Fin Sección de Analítica | Gráficas -->
 
     <!-- Inicio Sección de Tabla de datos -->
@@ -90,7 +90,7 @@
       id="datatable"
       ref="gridObj"
       locale="es-ES"
-      :dataSource="autors_list"
+      :dataSource="artisticos_list"
       :toolbar="toolbar"
       :toolbarClick="click_toolbar"
       :allowPaging="true"
@@ -109,40 +109,28 @@
     >
       <e-columns>
         <e-column
-          field="codigAutr"
+          field="codigArts"
           headerText="Código"
           width="115"
           textAlign="Left"
         />
         <e-column
-          field="ciAutr"
-          headerText="Carnet de Identidad"
-          width="130"
+          field="NombreArts"
+          headerText="Nombre Artístico"
+          width="150"
           textAlign="Left"
         />
         <e-column
-          field="nombresAutr"
-          headerText="Nombre"
-          width="120"
-          textAlign="Left"
-        />
-        <e-column
-          field="apellidosAutr"
-          headerText="Apellidos"
-          width="128"
-          textAlign="Left"
-        />
-        <e-column
-          field="sexoAutr"
-          headerText="Sexo"
-          width="110"
+          field="descripNombreArts"
+          headerText="Descripción"
+          width="150"
           textAlign="Left"
         />
         <e-column
           :displayAsCheckBox="true"
-          field="fallecidoAutr"
-          headerText="Fallecido"
-          width="125"
+          field="actualNombreArts"
+          headerText="Nombre Artístico Actual"
+          width="200"
           textAlign="Center"
           type="boolean"
         />
@@ -165,19 +153,19 @@
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
-    <modal_detail
+    <!-- <modal_detail
       @refresh="refresh_table"
       v-if="visible_details"
       :author_prop="row_selected"
       @close_modal="visible_details = $event"
-    />
+    /> -->
     <modal_management
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :author="row_selected"
+      :artistico="row_selected"
       @close_modal="visible_management = $event"
-      :autors_list="autors_list"
+      :artisticos_list="artisticos_list"
     />
     <!-- Fin Sección de Modals -->
   </div>
@@ -188,9 +176,9 @@
  *Importaciones
  */
 import Vue from "vue";
-import axios from "../../../../config/axios/axios";
-import modal_detail from "./Modal_Detalles_Autor";
-import modal_management from "./Modal_Gestionar_Autor";
+import axios from "../../../config/axios/axios";
+/* import modal_detail from "./Modal_Detalles_Autor";*/
+import modal_management from "./Modal_Gestionar_Artisticos";
 import {
   GridPlugin,
   Edit,
@@ -223,7 +211,7 @@ import * as weekData from "cldr-data/supplemental/weekData.json";
 import * as timeZoneNames from "cldr-data/main/es/timeZoneNames.json";
 import * as numbers from "cldr-data/main/es/numbers.json";
 import * as gregorian from "cldr-data/main/es/ca-gregorian.json";
-import { image } from "../../../../../../public/assets/logo_base64";
+import { image } from "../../../../../public/assets/logo_base64";
 Vue.use(GridPlugin);
 Vue.use(ButtonPlugin);
 Vue.use(ChartPlugin);
@@ -286,16 +274,16 @@ setCulture("es-ES");
 /*
  *  Código para configurar el tema del gráfico
  */
-let selected_theme = location.hash.split("/")[1];
+/* let selected_theme = location.hash.split("/")[1];
 selected_theme = selected_theme ? selected_theme : "Material";
 let theme = (
   selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
-).replace(/-dark/i, "Dark");
+).replace(/-dark/i, "Dark"); */
 export default {
-  name: "Autor_Index",
+  name: "Artisticos_Index",
   data() {
     return {
-      //* Variables de configuración del gráfico
+      /* //* Variables de configuración del gráfico
       theme: theme,
       chart_area: { border: { width: 0 } },
       width: Browser.isDevice ? "100%" : "60%",
@@ -343,14 +331,14 @@ export default {
         majorTickLines: { width: 1, color: "white" },
         lineStyle: { color: "white" },
         labelStyle: { color: "white" },
-      },
+      }, */
       //* Variables de configuración de la tabla
       page_settings: { pageSizes: [5, 10, 20, 30], pageCount: 5, pageSize: 10 },
       filter_settings: { type: "Menu" },
       toolbar: [
         {
-          text: "Añadir Autor",
-          tooltipText: "Añadir Autor",
+          text: "Añadir Nombre Artístico",
+          tooltipText: "Añadir Nombre Artístico",
           prefixIcon: "e-add-icon",
           id: "add",
         },
@@ -370,10 +358,10 @@ export default {
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p>¿Desea {{ action }} al Autor?</p>
+                      <p>¿Desea {{ action }} el Nombre Artístico?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch style="width: 100% !important" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -407,7 +395,7 @@ export default {
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará al Autor?",
+                    "¿Esta acción inactivará el Nombre Artístico?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -423,7 +411,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea inactivar al Autor?",
+                              "¿Desea inactivar el Nombre Artístico?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -441,7 +429,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "autores/desactivar/" + this.data.id
+                                          "artisticos/desactivar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -496,7 +484,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará al Autor?",
+                    "¿Esta acción ativará el Nombre Artístico?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -512,7 +500,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea activar al Autor?",
+                              "¿Desea activar el Nombre Artístico?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -530,7 +518,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .get(
-                                          "autores/restaurar/" + this.data.id
+                                          "artisticos/restaurar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -585,10 +573,10 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_autors();
+                  this.$parent.$parent.load_artisticos();
                   this.checked = !this.checked;
                   this.$toast.success(
-                    `El Autor se ${action} correctamente`,
+                    `El Nombre Artístico se ${action} correctamente`,
                     "¡Éxito!",
                     {
                       timeout: 1000,
@@ -645,7 +633,7 @@ export default {
                     @confirm="del_physical_btn_click"
 										ok-text="Si"
                     cancel-text="No"
-                    title="¿Desea eliminar al Autor?"
+                    title="¿Desea eliminar el Nombre Artístico?"
                 >
                 <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
                 <a-tooltip title="Eliminar" placement="bottom">
@@ -698,7 +686,7 @@ export default {
                         "<button>Si</button>",
                         (instance, toast) => {
                           this.$toast.question(
-                            "¿Desea eliminar al Autor?",
+                            "¿Desea eliminar el Nombre Artístico?",
                             "Confirmación",
                             {
                               timeout: 5000,
@@ -715,12 +703,12 @@ export default {
                                   (instance, toast) => {
                                     axios
                                       .delete(
-                                        `autores/eliminar/${this.data.id}`
+                                        `artisticos/eliminar/${this.data.id}`
                                       )
                                       .then((ress) => {
                                         this.$parent.$parent.refresh_table();
                                         this.$toast.success(
-                                          "El Autor ha sido eliminado correctamente",
+                                          "El Nombre Artístico ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
@@ -783,8 +771,8 @@ export default {
         };
       },
       export_view: false, //* Vista del panel de exportaciones
-      autors_list: [], //* Lista de autores que es cargada en la tabla
-      /* products_childs: {}, //* Objeto de productos hijos de los autores */
+      artisticos_list: [], //* Lista de artisticos que es cargada en la tabla
+      /* products_childs: {}, //* Objeto de productos hijos de los artisticos */
       row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
       visible_details: false, //* variable para visualizar el modal de detalles del autor
       visible_management: false, //* variable para visualizar el modal de gestión del autor
@@ -792,7 +780,7 @@ export default {
     };
   },
   created() {
-    this.load_autors();
+    this.load_artisticos();
   },
   methods: {
     /*
@@ -840,13 +828,13 @@ export default {
     /*
      * Método que carga los autores de la bd
      */
-    load_autors() {
+    load_artisticos() {
       axios
-        .post("autores/listar" /* { relations: ["productos"] } */)
+        .post("artisticos/listar" /* { relations: ["productos"] } */)
         .then((response) => {
-          this.autors_list = response.data;
-          this.series_data = [];
-          this.autors_list.forEach((autor) => {
+          this.artisticos_list = response.data;
+          /* this.series_data = []; */
+          /* this.autors_list.forEach((autor) => {
             let index = this.series_data.findIndex((serie) =>
               autor.deleted_at != null
                 ? serie.status === "Inactivo"
@@ -864,13 +852,13 @@ export default {
           this.series_data.sort(function(a, b) {
               return a.status > b.status ? 1 : -1;
           });
-          this.$refs.gridObj.refresh();
+          this.$refs.gridObj.refresh(); */
         });
     },
     /*
      * Método de configuración del gráfico
      */
-    load(args) {
+    /* load(args) {
       let selected_theme = location.hash.split("/")[1];
       selected_theme = selected_theme ? selected_theme : "Material";
       if (selected_theme === "highcontrast") {
@@ -878,12 +866,12 @@ export default {
         args.chart.series[1].marker.dataLabel.font.color = "#000000";
         args.chart.series[2].marker.dataLabel.font.color = "#000000";
       }
-    },
+    }, */
     /*
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.load_autors();
+      this.load_artisticos();
     },
     /*
      * Método con la lógica de los botones del toolbar de la tabla
@@ -901,7 +889,7 @@ export default {
     panel_export_click(args) {
       let pdfExportProperties = {
         hierarchyExportMode: "Expanded",
-        fileName: "Reporte_Autores.pdf",
+        fileName: "Reporte_Nombres_Artísticos.pdf",
         pageOrientation: "Landscape",
         header: {
           fromTop: 0,
@@ -921,7 +909,7 @@ export default {
             },
             {
               type: "Text",
-              value: "Reporte de Autores",
+              value: "Reporte de Nombres Artísticos",
               position: { x: 0, y: 40 },
               style: {
                 textBrushColor: "#731954",
@@ -970,7 +958,7 @@ export default {
               cells: [
                 {
                   colSpan: 4,
-                  value: "Reporte de Autores",
+                  value: "Reporte de Nombres Artísticos",
                   style: {
                     fontColor: "#731954",
                     fontSize: 20,
@@ -1006,18 +994,18 @@ export default {
         },
       };
       if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
-        excelExportProperties.fileName = "Reporte_Autores.xlsx";
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        excelExportProperties.fileName = "Reporte_Nombres_Artísticos.xlsx";
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
-        excelExportProperties.fileName = "Reporte_Autores.csv";
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        excelExportProperties.fileName = "Reporte_Nombres_Artísticos.csv";
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
@@ -1025,14 +1013,14 @@ export default {
      * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
      */
     pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[7].visible = true;
+      this.$refs.gridObj.getColumns()[5].visible = true;
     },
     excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[7].visible = true;
+      this.$refs.gridObj.getColumns()[5].visible = true;
     },
   },
   components: {
-    modal_detail,
+    /* modal_detail,*/
     modal_management,
   },
   provide: {
@@ -1057,60 +1045,60 @@ export default {
 </script>
 
 <style>
-#autor_index .e-headercontent,
-#autor_index .e-sortfilter,
-#autor_index thead,
-#autor_index tr,
-#autor_index td,
-#autor_index th,
-#autor_index .e-pagercontainer,
-#autor_index .e-pagerdropdown,
-#autor_index .e-first,
-#autor_index .e-prev,
-#autor_index .e-numericcontainer,
-#autor_index .e-next,
-#autor_index .e-last,
-#autor_index .e-table,
-#autor_index .e-input-group,
-#autor_index .e-content,
-#autor_index .e-toolbar-items,
-#autor_index .e-tbar-btn,
-#autor_index .e-toolbar-item,
-#autor_index .e-gridheader,
-#autor_index .e-gridcontent,
-#autor_index .e-gridpager,
-#autor_index .e-toolbar {
+#artisticos_index .e-headercontent,
+#artisticos_index .e-sortfilter,
+#artisticos_index thead,
+#artisticos_index tr,
+#artisticos_index td,
+#artisticos_index th,
+#artisticos_index .e-pagercontainer,
+#artisticos_index .e-pagerdropdown,
+#artisticos_index .e-first,
+#artisticos_index .e-prev,
+#artisticos_index .e-numericcontainer,
+#artisticos_index .e-next,
+#artisticos_index .e-last,
+#artisticos_index .e-table,
+#artisticos_index .e-input-group,
+#artisticos_index .e-content,
+#artisticos_index .e-toolbar-items,
+#artisticos_index .e-tbar-btn,
+#artisticos_index .e-toolbar-item,
+#artisticos_index .e-gridheader,
+#artisticos_index .e-gridcontent,
+#artisticos_index .e-gridpager,
+#artisticos_index .e-toolbar {
   background-color: transparent !important;
 }
-#autor_index .e-grid {
+#artisticos_index .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-#autor_index .e-gridheader {
+#artisticos_index .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-#autor_index td {
+#artisticos_index td {
   border-color: lightgrey !important;
 }
-#autor_index .e-grid,
-#autor_index .e-toolbar,
-#autor_index .e-grid .e-headercontent {
+#artisticos_index .e-grid,
+#artisticos_index .e-toolbar,
+#artisticos_index .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-#autor_index .e-row:hover {
+#artisticos_index .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-#autor_index .e-detailrowcollapse .e-icon-grightarrow,
-#autor_index .e-detailrowexpand .e-icon-gdownarrow,
-#autor_index thead span,
-#autor_index .e-icon-filter {
+#artisticos_index .e-detailrowcollapse .e-icon-grightarrow,
+#artisticos_index .e-detailrowexpand .e-icon-gdownarrow,
+#artisticos_index thead span,
+#artisticos_index .e-icon-filter {
   color: rgb(115, 25, 84) !important;
   font-weight: bold !important;
 }
-#autor_index .ant-switch-inner {
+#artisticos_index .ant-switch-inner {
   width: auto !important;
 }
-#autor_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+#artisticos_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
 .e-badge.e-badge-success[href]:not(.e-badge-ghost) {
   color: white !important;
 }

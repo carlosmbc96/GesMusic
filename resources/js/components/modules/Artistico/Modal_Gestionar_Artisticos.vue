@@ -7,7 +7,7 @@
       cancelText="Cancelar"
       cancelType="danger"
       :visible="show"
-      id="modal_gestionar_interpretes"
+      id="modal_gestionar_artisticos"
     >
       <template slot="footer">
         <a-popconfirm
@@ -52,7 +52,9 @@
       </template>
       <!-- Aqui comienzan los tabs -->
       <a-tabs>
-        <div slot="tabBarExtraContent">{{ text_header_button }} Intérprete</div>
+        <div slot="tabBarExtraContent">
+          {{ text_header_button }} Nombre Artístico
+        </div>
         <a-tab-pane key="1">
           <span slot="tab">Generales</span>
           <a-row>
@@ -66,7 +68,7 @@
             <a-form-model
               ref="general_form"
               layout="horizontal"
-              :model="interp_modal"
+              :model="artisticos_modal"
               :rules="rules"
             >
               <a-row>
@@ -74,52 +76,91 @@
                   <a-form-model-item
                     v-if="action_modal !== 'editar'"
                     :validate-status="show_error"
-                    prop="codigInterp"
+                    prop="codigArts"
                     has-feedback
                     label="Código"
                     :help="show_used_error"
                   >
                     <a-input
-                      addon-before="INTR-"
+                      addon-before="ARTS-"
                       placeholder="0001"
                       :disabled="action_modal === 'editar'"
-                      v-model="interp_modal.codigInterp"
+                      v-model="artisticos_modal.codigArts"
                     />
                   </a-form-model-item>
                   <a-form-model-item v-else label="Código">
                     <a-input
-                      addon-before="INTR-"
+                      addon-before="ARTS-"
                       placeholder="0001"
                       :disabled="action_modal === 'editar'"
-                      v-model="interp_modal.codigInterp"
+                      v-model="artisticos_modal.codigArts"
                     />
                   </a-form-model-item>
                   <a-form-model-item
-                    prop="nombreInterp"
                     has-feedback
-                    label="Nombre"
+                    label="Nombre Artístico"
+                    prop="NombreArts"
                   >
                     <a-input
                       :disabled="disabled"
-                      v-model="interp_modal.nombreInterp"
+                      v-model="artisticos_modal.NombreArts"
                     />
+                  </a-form-model-item>
+                  <a-form-model-item>
+                    <a-checkbox
+                      :disabled="disabled"
+                      v-model="actualNombreArts"
+                      :value="actualNombreArts"
+                    >
+                      ¿Es el actual Nombre Artístico?
+                    </a-checkbox>
                   </a-form-model-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-model-item
                     has-feedback
-                    label="Reseña biográfica del Interprete"
-                    prop="biogInterp"
+                    label="Descripción del Nombre Artístico"
+                    prop="descripNombreArts"
                   >
                     <a-input
                       :disabled="disabled"
                       style="width: 100%; height: 150px"
-                      v-model="interp_modal.reseñaBiogInterp"
+                      v-model="artisticos_modal.descripNombreArts"
                       type="textarea"
                     />
                   </a-form-model-item>
                 </a-col>
               </a-row>
+              <a-row>
+                <a-col span="12">
+                  <div class="section-title">
+                    <h4>Selección del Intérprete</h4>
+                  </div>
+                </a-col>
+              </a-row>
+              <a-col span="12">
+                <a-form-model-item
+                  label="Intérprete"
+                  prop="interprete_id"
+                  has-feedback
+                >
+                  <a-select
+                    option-filter-prop="children"
+                    :filter-option="filter_option"
+                    show-search
+                    v-model="artisticos_modal.interprete_id"
+                    :disabled="disabled"
+                  >
+                    <a-select-option
+                      v-for="interprete in interpretes"
+                      :key="interprete.id"
+                      :value="interprete.id"
+                    >
+                      {{ interprete.nombreInterp }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-model-item>
+              </a-col>
             </a-form-model>
           </a-spin>
         </a-tab-pane>
@@ -130,17 +171,18 @@
 
 <script>
 export default {
-  props: ["action", "interp", "interp_list"],
+  props: ["action", "artistico", "artisticos_list"],
   data() {
     let validate_codig_unique = (rule, value, callback) => {
-      this.interp_list.forEach((element) => {
-        if (element.codigInterp.substr(5) === value.replace(/ /g, "")) {
+      this.artisticos_list.forEach((element) => {
+        if (element.codigArts.substr(5) === value.replace(/ /g, "")) {
           callback(new Error("Código usado"));
         }
       });
       callback();
     };
     return {
+      interpretes: [],
       action_cancel_title: "",
       action_title: "",
       show: true,
@@ -149,19 +191,19 @@ export default {
       waiting: false,
       spinning: false,
       text_button: "",
-      nombreArts: "",
       text_header_button: "",
-      interp_modal: {},
+      artisticos_modal: {},
+      actualNombreArts: "",
       disabled: false,
       activated: true,
       show_error: "",
       show_used_error: "",
       action_modal: this.action,
       rules: {
-        codigInterp: [
+        codigArts: [
           {
             required: true,
-            message: "Inserte el código",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
@@ -184,10 +226,10 @@ export default {
             trigger: "change",
           },
         ],
-        nombreInterp: [
+        NombreArts: [
           {
             required: true,
-            message: "Inserte el nombre",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
@@ -201,10 +243,22 @@ export default {
             trigger: "change",
           },
         ],
-        biogInterp: [
+        descripNombreArts: [
           {
-            pattern: "^[ a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()]*$",
+            whitespace: true,
+            message: "Inserte una descripción",
+            trigger: "change",
+          },
+          {
+            pattern: "^[ a-zA-Z0-9üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()\n]*$",
             message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+        interprete_id: [
+          {
+            required: true,
+            message: "Campo requerido",
             trigger: "change",
           },
         ],
@@ -219,10 +273,22 @@ export default {
       if (this.text_button === "Editar") {
         return !this.compare_object;
       } else
-        return this.interp_modal.codigInterp && this.interp_modal.nombreInterp;
+        return (
+          this.artisticos_modal.codigArts && this.artisticos_modal.NombreArts
+        );
     },
   },
   methods: {
+    /*
+     *Métodoo usado para filtrar la búsqueda del select de los años
+     */
+    filter_option(input, option) {
+      return (
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      );
+    },
     handle_cancel(e) {
       if (e === "cancelar") {
         this.$refs.general_form.resetFields();
@@ -249,27 +315,52 @@ export default {
       }
     },
     set_action() {
+      axios
+        .post("/interpretes/listar")
+        .then((response) => {
+          let i = 0;
+          const length = response.data.length;
+          for (i; i < length; i++) {
+            this.interpretes.push(response.data[i]);
+          }
+        })
+        .catch((error) => {
+          this.$toast.error("Ha ocurrido un error", "¡Error!", {
+            timeout: 1000,
+          });
+        });
       if (this.action_modal === "editar") {
-        if (this.interp.deleted_at !== null) {
+        if (this.artistico.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
         }
+        this.artistico.descripNombreArts =
+          this.artistico.descripNombreArts === null
+            ? ""
+            : this.artistico.descripNombreArts;
         this.text_header_button = "Editar";
         this.text_button = "Editar";
-        this.action_cancel_title = "¿Desea cancelar la edición del Intérprete?";
-        this.action_title = "¿Desea guardar los cambios en el Intérprete?";
+        this.action_cancel_title =
+          "¿Desea cancelar la edición del Nombre Artístico?";
+        this.action_title =
+          "¿Desea guardar los cambios en el Nombre Artístico?";
         this.action_close =
-          "La edición del Intérprete se canceló correctamente";
-        this.interp.codigInterp = this.interp.codigInterp.substr(5);
-        this.interp_modal = { ...this.interp };
+          "La edición del Nombre Artístico se canceló correctamente";
+        this.artistico.codigArts = this.artistico.codigArts.substr(5);
+        this.artisticos_modal = { ...this.artistico };
+        this.actualNombreArts =
+          this.artisticos_modal.actualNombreArts === 0 ? false : true;
+          console.log(this.artisticos_modal.actualNombreArts === 0);
+          console.log(this.artisticos_modal.actualNombreArts);
       } else {
+        this.actualNombreArts = false;
         this.text_button = "Crear";
         this.text_header_button = "Crear";
         this.action_cancel_title =
-          "¿Desea cancelar la creación del Intérprete?";
-        this.action_title = "¿Desea crear el Intérprete?";
+          "¿Desea cancelar la creación del Nombre Artísrico?";
+        this.action_title = "¿Desea crear el Nombre Artísrico?";
         this.action_close =
-          "La creación del Intérprete se canceló correctamente";
+          "La creación del Nombre Artísrico se canceló correctamente";
       }
     },
     confirm() {
@@ -279,7 +370,7 @@ export default {
       if (this.action_modal === "editar") {
         this.text_button = "Editando...";
         axios
-          .post(`/interpretes/editar`, form_data, {
+          .post(`/artisticos/editar`, form_data, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -290,7 +381,7 @@ export default {
             this.waiting = false;
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha modificado el interprete correctamente",
+              "Se ha modificado el Nombre Artístico correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
@@ -306,7 +397,7 @@ export default {
           });
       } else {
         axios
-          .post("/interpretes", form_data, {
+          .post("/artisticos", form_data, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -317,7 +408,7 @@ export default {
             this.waiting = false;
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha creado el interprete correctamente",
+              "Se ha creado el Nombre Artístico correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
@@ -334,19 +425,28 @@ export default {
       }
     },
     prepare_create() {
-      this.interp_modal.actualNombreArts =
+      this.artisticos_modal.actualNombreArts =
         this.actualNombreArts === false ? 0 : 1;
       let form_data = new FormData();
       if (this.action_modal === "editar") {
-        form_data.append("id", this.interp_modal.id);
+        form_data.append("id", this.artisticos_modal.id);
       }
-      if (this.interp_modal.reseñaBiogInterp === undefined) {
-        this.interp_modal.reseñaBiogInterp = "";
+      if (this.artisticos_modal.descripNombreArts === undefined) {
+        this.artisticos_modal.descripNombreArts = "";
       }
-      this.interp_modal.codigInterp = "INTR-" + this.interp_modal.codigInterp;
-      form_data.append("codigInterp", this.interp_modal.codigInterp);
-      form_data.append("nombreInterp", this.interp_modal.nombreInterp);
-      form_data.append("reseñaBiogInterp", this.interp_modal.reseñaBiogInterp);
+      this.artisticos_modal.codigArts =
+        "ARTS-" + this.artisticos_modal.codigArts;
+      form_data.append("codigArts", this.artisticos_modal.codigArts);
+      form_data.append(
+        "actualNombreArts",
+        this.artisticos_modal.actualNombreArts
+      );
+      form_data.append("NombreArts", this.artisticos_modal.NombreArts);
+      form_data.append("interprete_id", this.artisticos_modal.interprete_id);
+      form_data.append(
+        "descripNombreArts",
+        this.artisticos_modal.descripNombreArts
+      );
       this.text_button = "Creando...";
       return form_data;
     },
@@ -355,7 +455,7 @@ export default {
 </script>
 
 <style>
-#modal_gestionar_interpretes .ant-form-item-control {
+#modal_gestionar_artisticos .ant-form-item-control {
   width: 80% !important;
 }
 </style>

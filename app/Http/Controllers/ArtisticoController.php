@@ -48,23 +48,23 @@ class ArtisticoController extends Controller
         return response()->json(Artistico::create($request->all()));
     }
 
-    public function update(Request $request,Artistico $artistico, $id)  // Update | Método que Actualiza un Registro Específico del Modelo:Artistico
+    public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Artistico
     {
-        return response()->json(Artistico::findOrFail($id)->update($request->all()));
+        return response()->json(Artistico::findOrFail($request->id)->update($request->all()));
     }
 
-    public function destroyLog(Artistico $artistico, $id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Artistico
+    public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Artistico
     {
         return response()->json(Artistico::findOrFail($id)->delete());
     }
 
-    public function destroyFis(Artistico $artistico, $id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Artistico
+    public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Artistico
     {
-        return response()->json(Artistico::findOrFail($id)->forceDelete());
+        return response()->json(Artistico::withTrashed()->findOrFail($id)->forceDelete());
     }
 
-    public function restoreLog(Artistico $artistico, $id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Artistico
+    public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Artistico
     {
-        return response()->json(Artistico::findOrFail($id)->restore());
+        return response()->json(Artistico::onlyTrashed()->findOrFail($id)->restore());
     }
 }

@@ -10,6 +10,7 @@ class CreateArtisticosTable extends Migration
     {
         Schema::create('artisticos', function (Blueprint $table) {
             $table->id()->index();  // Identificador Único de la Tabla: Artisticos
+            $table->string('codigArts',9)->unique();  // Código Artistico [B0000]
             $table->string('NombreArts');  // Nombre Artistico
             $table->string('actualNombreArts')->nullable();  // ¿Es el Actual Nombre Artístico?
             $table->text('descripNombreArts')->nullable();  // Descripción Nombre Artístico

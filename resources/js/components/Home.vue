@@ -552,4 +552,19 @@ export default {
 .ant-spin-nested-loading > div > .ant-spin {
     position: inherit !important;
 }
+#dropUpExports {
+  padding-left: 10px !important;
+  padding-top: 10px !important;
+  padding: 0px;
+}
+#arrowDropUpExports {
+  padding-top: 10px !important;
+  padding: 0px;
+}
+.e-icons.export-icons.e-up-arrow-export {
+  margin-left: 8px !important;
+}
+.e-icons.export-icons.e-down-arrow-export {
+  margin-left: 8px !important;
+}
 </style>

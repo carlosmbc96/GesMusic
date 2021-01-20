@@ -1,7 +1,7 @@
 <template>
   <div id="proyecto_index">
     <h1 style="color: white !important">Proyectos</h1>
-    <hr style="border-color: white !important; margin-bottom: 0 !important" />
+    <hr style="border-color: white !important" />
 
     <!-- Inicio Sección de Analítica | Gráficas -->
     <ejs-chart

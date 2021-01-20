@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Fonograma;
 use App\Producto;
+use App\Producto_Fonograma;
 use App\Proyecto;
 use App\Vocabulario;
 use Illuminate\Http\Request;
@@ -70,9 +71,16 @@ class FonogramaController extends Controller
             "dirArbolFong" => $request->dirArbolFong,
             "descripEspFong" => $request->descripEspFong,
             "descripIngFong" => $request->descripIngFong,
-        ]);
+				]);
+				$productos = explode(",", $request->product_id);
+        foreach ($productos as $producto) {
+            Producto_Fonograma::create([
+                "producto_id" => $producto,
+                "fonograma_id" => $fonograma->id
+            ]);
+				}
+				$this->crearDirectorios($productos, $request->codigFong);
         if ($request->portadillaFong !== null) {
-            var_dump('asdasa');
             $fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
         } else
             $fonograma->setPortadillaFongAttributeDefault();
@@ -84,12 +92,12 @@ class FonogramaController extends Controller
     {
         $fonograma = Fonograma::findOrFail($request->id);
         if ($request->portadillaFong !== null) {
-            if (substr($fonograma->portadillaFong, 30) !== "Logo ver vertical_Ltr Negras.png") {
-                Storage::disk('local')->delete(substr('/Imagenes/Fonogramas/' . $fonograma->portadillaFong, 30));
+            if (substr($fonograma->portadillaFong, 33) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete(substr('/Imagenes/Fonogramas/' . $fonograma->portadillaFong, 33));
             }
             $fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
         } else if ($request->img_default) {
-            Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 30));
+            Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 33));
             $fonograma->setPortadillaFongAttributeDefault();
         }
         $fonograma->update([
@@ -105,6 +113,28 @@ class FonogramaController extends Controller
             "descripEspFong" => $request->descripEspFong,
             "descripIngFong" => $request->descripIngFong,
         ]);
+        $productos = explode(",", $request->product_id);
+        $productosOld=[];
+        $igual_cont = 0;
+        for ($i = 0; $i < count($fonograma->productos); $i++) {
+            array_push($productosOld, $fonograma->productos[$i]->pivot->producto_id);
+            }
+        if (count($productos) === count($fonograma->productos)) {
+            for ($i = 0; $i < count($fonograma->productos); $i++) {
+                if ($fonograma->productos[$i]->pivot->producto_id === $productos[$i]) {
+                    $igual_cont++;
+                }
+            }
+            if ($igual_cont !== count($productos)) {
+                $this->eliminarDirectorios($productosOld, $request->codigAud);
+                $this->crearDirectorios($productos, $request->codigAud);
+                $this->actualizarRelacion($fonograma, $productos);
+            }
+        } else {
+            $this->eliminarDirectorios($productosOld, $request->codigAud);
+            $this->crearDirectorios($productos, $request->codigAud);
+            $this->actualizarRelacion($fonograma, $productos);
+        }
         return response()->json($fonograma);
     }
 
@@ -115,12 +145,14 @@ class FonogramaController extends Controller
 
 	public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Fonograma
 	{
+		$productos = [];
 		$fonograma = Fonograma::withTrashed()->findOrFail($id);
-		//$producto = Producto::withTrashed()->findOrFail($fonograma->producto_id);
-		//$proyecto = Proyecto::withTrashed()->findOrFail($producto->proyecto_id);
-		//Storage::disk('local')->deleteDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $fonograma->codigFong);
-		if (substr($fonograma->portadillaFong, 30) !== "Logo ver vertical_Ltr Negras.png") {
-			Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 30));
+		for ($i = 0; $i < count($fonograma->productos); $i++) {
+			array_push($productos, $fonograma->productos[$i]->pivot->producto_id);
+			$fonograma->productos[$i]->pivot->delete();
+	}
+		if (substr($fonograma->portadillaFong, 33) !== "Logo ver vertical_Ltr Negras.png") {
+			Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 33));
 		}
 		return response()->json($fonograma->forceDelete());
 	}
@@ -129,4 +161,33 @@ class FonogramaController extends Controller
 	{
 		return response()->json(Fonograma::onlyTrashed()->findOrFail($id)->restore());
 	}
+
+	public function actualizarRelacion($fonograma, $productos)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Fonograma
+    {
+        for ($i = 0; $i < count($fonograma->productos); $i++) {
+            $fonograma->productos[$i]->pivot->delete();
+        }
+        foreach ($productos as $producto) {
+            Producto_Fonograma::create([
+                "producto_id" => $producto,
+                "fonograma_id" => $fonograma->id
+            ]);
+        }
+    }
+    public function crearDirectorios($productos, $codigFong)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Fonograma
+    {
+        for ($i = 0; $i < count($productos); $i++) {
+            $producto = Producto::withTrashed()->findOrFail($productos[$i]);
+            $proyecto = Proyecto::withTrashed()->findOrFail($producto->proyecto_id);
+            Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $codigFong);
+        }
+    }
+    public function eliminarDirectorios($productos, $codigFong)
+    {
+        for ($i = 0; $i < count($productos); $i++) {
+            $producto = Producto::findOrFail($productos[$i]);
+            $proyecto = Proyecto::findOrFail($producto->proyecto_id);
+            Storage::disk('local')->deleteDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $codigFong);
+        }
+    }
 }

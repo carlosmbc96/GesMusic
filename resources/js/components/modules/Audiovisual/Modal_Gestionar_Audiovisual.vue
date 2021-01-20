@@ -1100,7 +1100,8 @@ export default {
             ? ""
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
-        this.audiovisual.codigAud = this.audiovisual.codigAud.substr(5);
+				this.audiovisual.codigAud = this.audiovisual.codigAud.substr(5);
+				console.log(this.audiovisual.productos);
         this.audiovisual.productos.forEach((element) => {
           this.audiovisual.productos_audvs.push(element.id);
         });

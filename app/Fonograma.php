@@ -17,8 +17,8 @@ class Fonograma extends Model
     // Atributos del Modelo Fonograma
     protected $fillable = [
         'codigFong',  // Código Fonograma [FON0000]
-        'tituloFong',  // Título Audiovisual
-        'portadillaFong',  // Url del Archivo de Portada del Audiovisual
+        'tituloFong',  // Título Fonograma
+        'portadillaFong',  // Url del Archivo de Portada del Fonograma
         'clasficacionFong',  // Clasificación Fonograma *nom
         'duracionFong',  // Duración total del Fonograma (suma de las duraciones de los Tracks asociados)
         'territorioFong',  // Territorio del Fonograma *nom
@@ -45,7 +45,7 @@ class Fonograma extends Model
 
     public function setPortadillaFongAttributeDefault()
     {
-        $this->attributes['portadillaFong'] = '/BisMusic/Imagenes/Fonogramas/Logo ver vertical_Ltr Negras.png';
+        $this->attributes['portadillaFong'] = '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png';
     }
     //SECCIÓN DE IMÁGENES
 
@@ -111,5 +111,11 @@ class Fonograma extends Model
                 ->orwhere('propiedadFong', 'like', "%$valorbuscado%");
         }
     }
-    //SECCIÓN DE QUERY SCOPE
+
+		//SECCIÓN DE RELACIONES
+    //Relación de Many to Many Fonogramas - Productos
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class,'producto_fonograma'); // Un Producto tiene muchos Fonogramas
+    }
 }

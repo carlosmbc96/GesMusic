@@ -286,6 +286,12 @@
 										<span class="title font-white"> Gestión </span>
 									</a>
 								</li>
+								<li @click="change_route('/artisticos_index')">
+									<a class="nav-link">
+										<i class="icon-bulb font-white" />
+										<span class="title font-white"> Gestión de Nombres Artísticos </span>
+									</a>
+								</li>
 								<li class="nav-item">
 									<a href="table_static_basic.html" class="nav-link">
 										<i class="icon-doc font-white" />

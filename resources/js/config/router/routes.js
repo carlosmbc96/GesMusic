@@ -5,6 +5,7 @@ import interprete_index from '../../components/modules/Artistas/Interprete/Inter
 import fonograma_index from '../../components/modules/Fonograma/Fonograma_Index';
 import track_index from '../../components/modules/Track/Track_Index';
 import audiovisual_index from '../../components/modules/Audiovisual/Audiovisual_Index.vue';
+import artisticos_index from '../../components/modules/Artistico/Artisticos_Index.vue';
 
 export const routes = [
 	{ path: '/proyecto_index', component: proyecto_index },
@@ -14,4 +15,5 @@ export const routes = [
 	{ path: '/fonograma_index', component: fonograma_index },
 	{ path: '/track_index', component: track_index },
 	{ path: '/audiovisual_index', component: audiovisual_index },
+	{ path: '/artisticos_index', component: artisticos_index },
 ];

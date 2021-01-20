@@ -35,7 +35,6 @@ Route::get('/proyectos/restaurar/{id}', 'ProyectoController@restoreLog');
 Route::post('/proyectos/nomencladores', 'ProyectoController@nomenclators');
 Route::post('/proyectos/listar', 'ProyectoController@index')->name('proyectos.listar'); // Ruta que Lista todos los Registros del Modelo Proyecto
 Route::post('/proyectos', 'ProyectoController@store')->name('proyectos.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Proyecto
-//Route::get('/proyectos/{id}','ProyectoController@show'); // Ruta que Muestra un Registro Específico del Modelo Proyecto
 Route::post('/proyectos/editar', 'ProyectoController@update')->name('proyectos.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Proyecto
 Route::delete('/proyectos/desactivar/{id}', 'ProyectoController@destroyLog')->name('proyectos.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Proyecto
 Route::delete('/proyectos/eliminar/{id}', 'ProyectoController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Proyecto
@@ -45,7 +44,6 @@ Route::delete('/proyectos/eliminar/{id}', 'ProyectoController@destroyFis'); // R
 Route::get('/productos/restaurar/{id}', 'ProductoController@restoreLog');
 Route::post('/productos/listar', 'ProductoController@index')->name('productos.listar'); // Ruta que Lista todos los Registros del Modelo Producto
 Route::post('/productos', 'ProductoController@store')->name('productos.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Producto
-//Route::get('/productos/{id}','ProductoController@show')->name('productos.mostrar'); // Ruta que Muestra un Registro Específico del Modelo Producto
 Route::post('/productos/editar','ProductoController@update')->name('productos.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Producto
 Route::delete('/productos/desactivar/{id}','ProductoController@destroyLog')->name('productos.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/productos/eliminar/{id}','ProductoController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
@@ -57,7 +55,6 @@ Route::get('/productos/fonogramas/{id}','ProductoController@fonogramasRelation')
 Route::get('/fonogramas/restaurar/{id}', 'FonogramaController@restoreLog');
 Route::post('/fonogramas/listar', 'FonogramaController@index'); // Ruta que Lista todos los Registros del Modelo Producto
 Route::post('/fonogramas', 'FonogramaController@store');
-//Route::post('/fonogramas/{id}','FonogramaController@show'); // Ruta que Muestra un Registro Específico del Modelo Producto
 Route::post('/fonogramas/editar','FonogramaController@update'); // Ruta que Guarda un Registro Específico del Modelo Producto
 Route::delete('/fonogramas/desactivar/{id}','FonogramaController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/fonogramas/eliminar/{id}','FonogramaController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
@@ -93,7 +90,6 @@ Route::put('/realizadores/{id}','RealizadorController@update')->name('realizador
 Route::delete('/realizadores/{id}','RealizadorController@destroyLog')->name('realizadores.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Realizador
 */
 // RUTAS DEL RECURSO: TRACK
-//Route::resource('tracks','TrackController'); // Ruta que Lista todos los Recursos de la Clase Tracks
 Route::post('/tracks/listar', 'TrackController@index')->name('tracks.listar'); // Ruta que Lista todos los Registros del Modelo Track
 Route::get('/tracks/create', 'TrackController@create')->name('tracks.crear'); // Ruta que Muestra un Formulario para Crear un Registro del Modelo Track
 Route::post('/tracks', 'TrackController@store')->name('tracks.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Track
@@ -103,32 +99,28 @@ Route::put('/tracks/{id}', 'TrackController@update')->name('tracks.actualizar');
 Route::delete('/tracks/{id}', 'TrackController@destroyLog')->name('tracks.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Track
 
 // RUTAS DEL RECURSO: AUTOR
-//Route::resource('autores','AutorController'); // Ruta que Lista todos los Recursos de la Clase Autores
 Route::get('/autores/restaurar/{id}', 'AutorController@restoreLog');
 Route::post('/autores/listar', 'AutorController@index'); // Ruta que Lista todos los Registros del Modelo Producto
 Route::post('/autores', 'AutorController@store'); // Ruta que Guarda el Nuevo Registro del Modelo Producto
-//Route::get('/autores/{id}','AutorController@show'); // Ruta que Muestra un Registro Específico del Modelo Producto
 Route::post('/autores/editar', 'AutorController@update'); // Ruta que Guarda un Registro Específico del Modelo Producto
 Route::delete('/autores/desactivar/{id}', 'AutorController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/autores/eliminar/{id}', 'AutorController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::post('/autores/nomencladores', 'AutorController@nomenclators');
 // RUTAS DEL RECURSO: INTERPRETE
-//Route::resource('interpretes','InterpreteController'); // Ruta que Lista todos los Recursos de la Clase Interpretes
 Route::get('/interpretes/restaurar/{id}', 'InterpreteController@restoreLog');
 Route::post('/interpretes/listar', 'InterpreteController@index'); // Ruta que Lista todos los Registros del Modelo Producto
 Route::post('/interpretes', 'InterpreteController@store'); // Ruta que Guarda el Nuevo Registro del Modelo Producto
-//Route::get('/interpretes/{id}','InterpreteController@show'); // Ruta que Muestra un Registro Específico del Modelo Producto
 Route::post('/interpretes/editar','InterpreteController@update'); // Ruta que Guarda un Registro Específico del Modelo Producto
 Route::delete('/interpretes/desactivar/{id}','InterpreteController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/interpretes/eliminar/{id}','InterpreteController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 
 // RUTAS DEL RECURSO: ARTISTICO
-//Route::resource('artisticos','ArtisticoController'); // Ruta que Lista todos los Recursos de la Clase Artisticos
+Route::get('/artisticos/restaurar/{id}', 'ArtisticoController@restoreLog');
 Route::post('/artisticos/listar','ArtisticoController@index'); // Ruta que Lista todos los Registros del Modelo Artistico
 Route::post('/artisticos','ArtisticoController@store'); // Ruta que Guarda el Nuevo Registro del Modelo Artistico
-//Route::get('/artisticos/{id}','ArtisticoController@show')->name('artisticos.mostrar'); // Ruta que Muestra un Registro Específico del Modelo Artistico
-Route::put('/artisticos/editar','ArtisticoController@update'); // Ruta que Guarda un Registro Específico del Modelo Artistico
-//Route::delete('/artisticos/{id}','ArtisticoController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Artistico
+Route::post('/artisticos/editar','ArtisticoController@update'); // Ruta que Guarda un Registro Específico del Modelo Artistico
+Route::delete('/artisticos/desactivar/{id}','ArtisticoController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
+Route::delete('/artisticos/eliminar/{id}','ArtisticoController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 /*
 // RUTAS DEL RECURSO: TEMA
 //Route::resource('temas','TemaController'); // Ruta que Lista todos los Recursos de la Clase Temas

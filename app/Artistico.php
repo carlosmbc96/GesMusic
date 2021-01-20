@@ -15,6 +15,7 @@ class Artistico extends Model
     // Atributos del Modelo Artistico
     protected $fillable = [
         'NombreArts',  // Nombre Artistico
+        'codigArts',  // Código Artistico
         'actualNombreArts',  // ¿Es el Actual Nombre Artístico?
         'descripNombreArts',  // Descripción Nombre Artístico
 

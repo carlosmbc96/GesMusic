@@ -107,9 +107,16 @@ class ProductoController extends Controller
             $producto->setIdentificadorProdAttributeDefault();
         }
         if ($request->proyecto_id !== $producto->proyecto_id) {
+            $directorios = Storage::disk('local')->allDirectories('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
             Storage::disk('local')->deleteDirectory('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
             $codigProy = Proyecto::findOrFail($request->proyecto_id)->codigProy;
-            Storage::disk('local')->makeDirectory('/Proyectos/' . $codigProy . "/" . $request->codigProd);
+            $nuevo_directorio = "";
+            $directorio = "";
+            for ($i = 0; $i < count($directorios); $i++) {
+                $directorio = substr($directorios[$i], 20);
+                $nuevo_directorio = $codigProy . "/" . $directorio;
+                Storage::disk('local')->makeDirectory("/Proyectos/".$nuevo_directorio);
+            }
         }
         $producto->update([
             "codigProd" => $request->codigProd,

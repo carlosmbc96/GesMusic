@@ -163,6 +163,7 @@
                       <a-select
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
+                        show-search
                         :disabled="disabled"
                         v-model="author_modal.sexoAutr"
                       >
@@ -293,7 +294,7 @@ export default {
         codigAutr: [
           {
             required: true,
-            message: "Inserte el código",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
@@ -321,7 +322,7 @@ export default {
         ciAutr: [
           {
             required: true,
-            message: "Inserte el carnet de identidad",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
@@ -347,7 +348,7 @@ export default {
         nombresAutr: [
           {
             required: true,
-            message: "Inserte el nombre",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
@@ -364,7 +365,7 @@ export default {
         apellidosAutr: [
           {
             required: true,
-            message: "Inserte los apellidos",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
@@ -381,7 +382,7 @@ export default {
         sexoAutr: [
           {
             required: true,
-            message: "Seleccione el sexo",
+            message: "Campo reuqerido",
             trigger: "change",
           },
         ],
@@ -623,7 +624,6 @@ export default {
           for (i; i < length; i++) {
             this.list_nomenclators.push(response.data[i]);
           }
-          this.list_nomenclators.push(response.data);
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {

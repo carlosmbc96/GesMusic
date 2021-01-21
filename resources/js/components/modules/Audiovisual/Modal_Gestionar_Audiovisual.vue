@@ -679,13 +679,6 @@ export default {
             trigger: "change",
           },
         ],
-        productos_audvs: [
-          {
-            required: true,
-            message: "Campo requerido",
-            trigger: "change",
-          },
-        ],
         generoAud: [
           {
             required: true,
@@ -1015,6 +1008,11 @@ export default {
       } else if (this.audiovisual_modal.propiedadAud === null) {
         this.audiovisual_modal.propiedadAud = "";
       }
+      if (this.audiovisual_modal.nacioDueñoDerchAud === undefined) {
+        this.audiovisual_modal.nacioDueñoDerchAud = "";
+      } else if (this.audiovisual_modal.nacioDueñoDerchAud === null) {
+        this.audiovisual_modal.nacioDueñoDerchAud = "";
+      }
       let etiquetas = "";
       let idiomas = "";
       let subtitulos = "";
@@ -1101,7 +1099,6 @@ export default {
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
 				this.audiovisual.codigAud = this.audiovisual.codigAud.substr(5);
-				console.log(this.audiovisual.productos);
         this.audiovisual.productos.forEach((element) => {
           this.audiovisual.productos_audvs.push(element.id);
         });

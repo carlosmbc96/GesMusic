@@ -9,6 +9,7 @@ use App\Producto;
 use App\Proyecto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Mockery\Undefined;
 
 class AudiovisualController extends Controller
 {
@@ -86,16 +87,19 @@ class AudiovisualController extends Controller
             "descripEspAud" => $request->descripEspAud,
             "descripIngAud" => $request->descripIngAud,
             "dirArbolAud" => $request->dirArbolAud,
+            "nacioDueñoDerchAud" => $request->nacioDueñoDerchAud,
             "fenomRefAud" => $request->fenomRefAud
         ]);
-        $productos = explode(",", $request->product_id);
-        foreach ($productos as $producto) {
-            Producto_Audiovisual::create([
-                "producto_id" => $producto,
-                "audiovisual_id" => $audiovisual->id
-            ]);
+        if ($request->product_id !== "undefined") {
+            $productos = explode(",", $request->product_id);
+            foreach ($productos as $producto) {
+                Producto_Audiovisual::create([
+                    "producto_id" => $producto,
+                    "audiovisual_id" => $audiovisual->id
+                ]);
+            }
+            $this->crearDirectorios($productos, $request->codigAud);
         }
-        $this->crearDirectorios($productos, $request->codigAud);
         if ($request->portadillaAud !== null) {
             $audiovisual->setPortadillaAudAttribute($request->portadillaAud, $request->codigAud);
         } else
@@ -131,33 +135,42 @@ class AudiovisualController extends Controller
             "etiquetasAud" => $request->etiquetasAud,
             "dueñoDerchAud" => $request->dueñoDerchAud,
             "propiedadAud" => $request->propiedadAud,
+            "nacioDueñoDerchAud" => $request->nacioDueñoDerchAud,
             "makingOfAud" => $request->makingOfAud,
             "descripEspAud" => $request->descripEspAud,
             "descripIngAud" => $request->descripIngAud,
             "dirArbolAud" => $request->dirArbolAud,
             "fenomRefAud" => $request->fenomRefAud
         ]);
-        $productos = explode(",", $request->product_id);
-        $productosOld=[];
+        $productosOld = [];
         $igual_cont = 0;
-        for ($i = 0; $i < count($audiovisual->productos); $i++) {
-            array_push($productosOld, $audiovisual->productos[$i]->pivot->producto_id);
-            }
-        if (count($productos) === count($audiovisual->productos)) {
+        if ($request->product_id !== null) {
+            $productos = explode(",", $request->product_id);
             for ($i = 0; $i < count($audiovisual->productos); $i++) {
-                if ($audiovisual->productos[$i]->pivot->producto_id === $productos[$i]) {
-                    $igual_cont++;
-                }
+                array_push($productosOld, $audiovisual->productos[$i]->pivot->producto_id);
             }
-            if ($igual_cont !== count($productos)) {
+            if (count($productos) === count($audiovisual->productos)) {
+                for ($i = 0; $i < count($audiovisual->productos); $i++) {
+                    if ($audiovisual->productos[$i]->pivot->producto_id === $productos[$i]) {
+                        $igual_cont++;
+                    }
+                }
+                if ($igual_cont !== count($productos)) {
+                    $this->eliminarDirectorios($productosOld, $request->codigAud);
+                    $this->crearDirectorios($productos, $request->codigAud);
+                    $this->actualizarRelacion($audiovisual, $productos);
+                }
+            } else {
                 $this->eliminarDirectorios($productosOld, $request->codigAud);
                 $this->crearDirectorios($productos, $request->codigAud);
                 $this->actualizarRelacion($audiovisual, $productos);
             }
-        } else {
+        } else if (count($audiovisual->productos) !== 0) {
+            for ($i = 0; $i < count($audiovisual->productos); $i++) {
+                array_push($productosOld, $audiovisual->productos[$i]->pivot->producto_id);
+                $audiovisual->productos[$i]->pivot->delete();
+            }
             $this->eliminarDirectorios($productosOld, $request->codigAud);
-            $this->crearDirectorios($productos, $request->codigAud);
-            $this->actualizarRelacion($audiovisual, $productos);
         }
         return response()->json($audiovisual);
     }
@@ -171,11 +184,13 @@ class AudiovisualController extends Controller
     {
         $productos = [];
         $audiovisual = Audiovisual::withTrashed()->findOrFail($id);
-        for ($i = 0; $i < count($audiovisual->productos); $i++) {
-            array_push($productos, $audiovisual->productos[$i]->pivot->producto_id);
-            $audiovisual->productos[$i]->pivot->delete();
+        if (count($audiovisual->productos) !== 0) {
+            for ($i = 0; $i < count($audiovisual->productos); $i++) {
+                array_push($productos, $audiovisual->productos[$i]->pivot->producto_id);
+                $audiovisual->productos[$i]->pivot->delete();
+            }
+            $this->eliminarDirectorios($productos, $audiovisual->codigAud);
         }
-        $this->eliminarDirectorios($productos, $audiovisual->codigAud);
         if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
             Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
         }

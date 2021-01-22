@@ -619,9 +619,6 @@
        *de configuración y los campos del formulario del modal a su estado inicial
        */
       handle_cancel(e) {
-        if (this.action_modal === 'detalles') {
-          this.project.codigProy = 'PROY-' + this.project.codigProy;
-        }
         if (e === 'cancelar') {
           this.$refs.general_form.resetFields();
           this.show = false;
@@ -697,7 +694,6 @@
             this.project.descripEsp === null ? '' : this.project.descripEsp;
           this.project.descripIng =
             this.project.descripIng === null ? '' : this.project.descripIng;
-          this.project.codigProy = this.project.codigProy.substr(5);
           this.project_modal = { ...this.project };
           if (this.project_modal.identificadorProy !== null) {
             if (

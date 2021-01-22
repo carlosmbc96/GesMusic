@@ -729,13 +729,13 @@
           this.active_tab = '1';
           this.tab_visibility = true;
           this.show = false;
-					this.$emit('close_modal', this.show);
-					if (this.action_modal !== 'detalles') {
-						this.$toast.success(this.action_close, '¡Éxito!', {
-            timeout: 1000,
-            color: 'orange',
-          });
-					}
+          this.$emit('close_modal', this.show);
+          if (this.action_modal !== 'detalles') {
+            this.$toast.success(this.action_close, '¡Éxito!', {
+              timeout: 1000,
+              color: 'orange',
+            });
+          }
         } else {
           if (this.tabs_list.indexOf('tab_1') !== -1) {
             this.$refs.formularioGenerales.resetFields();
@@ -748,9 +748,6 @@
         }
       },
       validate() {
-        if (this.fonogram_modal.codigFong === undefined) {
-          this.fonogram_modal.codigFong = this.codigo;
-        }
         if (!this.used) {
           if (this.tabs_list.indexOf('tab_1') !== -1) {
             this.$refs.formularioGenerales.validate((valid) => {

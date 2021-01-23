@@ -155,6 +155,9 @@ class ProductoController extends Controller
         for ($i = 0; $i < count($producto->audiovisuales); $i++) {
             $producto->audiovisuales[$i]->pivot->delete();
         }
+        for ($i = 0; $i < count($producto->fonogramas); $i++) {
+            $producto->fonogramas[$i]->pivot->delete();
+        }
         Storage::disk('local')->deleteDirectory('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
         if (substr($producto->identificadorProd, 33) !== "Logo ver vertical_Ltr Negras.png") {
             Storage::disk('local')->delete('/Imagenes/Productos/' . substr($producto->identificadorProd, 29));

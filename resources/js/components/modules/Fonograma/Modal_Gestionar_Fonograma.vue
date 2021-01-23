@@ -88,7 +88,6 @@
                   <a-form-model-item
                     label="Código"
                     has-feedback
-                    prop="productos_fongs"
                   >
                     <a-select
                       mode="multiple"
@@ -548,7 +547,7 @@
         if (value !== undefined) {
           this.fonograms_list.forEach((element) => {
             if (element.codigFong.substr(5) === value.replace(/ /g, '')) {
-              callback(new Error('Código ya usado'));
+              callback(new Error('Código usado'));
             }
           });
         }
@@ -556,7 +555,7 @@
       };
       let code_required = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('Inserte el código'));
+          callback(new Error('Campo requerido'));
         } else callback();
       };
       return {
@@ -629,13 +628,6 @@
               trigger: 'change',
             },
           ],
-          productos_fongs: [
-            {
-              required: true,
-              message: 'Campo requerido',
-              trigger: 'change',
-            },
-          ],
           descripEspFong: [
             {
               whitespace: true,
@@ -657,6 +649,13 @@
             {
               pattern: "^[ a-zA-Z0-9',.;:\n]*$",
               message: 'Caracter no válido',
+              trigger: 'change',
+            },
+          ],
+          clasficacionFong: [
+            {
+              whitespace: true,
+              message: 'Campo requerido',
               trigger: 'change',
             },
           ],
@@ -794,6 +793,7 @@
               this.text_button = 'Editar';
               this.spinning = false;
               this.waiting = false;
+              this.handle_cancel();
               this.$toast.error('Ha ocurrido un error', '¡Error!', {
                 timeout: 1000,
               });
@@ -822,6 +822,7 @@
               this.text_button = 'Crear';
               this.spinning = false;
               this.waiting = false;
+              this.handle_cancel();
               this.$toast.error('Ha ocurrido un error', '¡Error!', {
                 timeout: 1000,
               });

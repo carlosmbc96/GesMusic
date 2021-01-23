@@ -153,12 +153,6 @@
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
-    <!-- <modal_detail
-      @refresh="refresh_table"
-      v-if="visible_details"
-      :author_prop="row_selected"
-      @close_modal="visible_details = $event"
-    /> -->
     <modal_management
       v-if="visible_management"
       :action="action_management"

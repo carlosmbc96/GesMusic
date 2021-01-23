@@ -193,7 +193,7 @@ export default {
       text_button: "",
       text_header_button: "",
       artisticos_modal: {},
-      actualNombreArts: "",
+      actualNombreArts: false,
       disabled: false,
       activated: true,
       show_error: "",
@@ -334,6 +334,8 @@ export default {
           this.disabled = true;
           this.activated = false;
         }
+        this.actualNombreArts =
+          this.artistico.actualNombreArts === 0 ? false : true;
         this.artistico.descripNombreArts =
           this.artistico.descripNombreArts === null
             ? ""
@@ -348,12 +350,7 @@ export default {
           "La edición del Nombre Artístico se canceló correctamente";
         this.artistico.codigArts = this.artistico.codigArts.substr(5);
         this.artisticos_modal = { ...this.artistico };
-        this.actualNombreArts =
-          this.artisticos_modal.actualNombreArts === 0 ? false : true;
-          console.log(this.artisticos_modal.actualNombreArts === 0);
-          console.log(this.artisticos_modal.actualNombreArts);
       } else {
-        this.actualNombreArts = false;
         this.text_button = "Crear";
         this.text_header_button = "Crear";
         this.action_cancel_title =
@@ -391,6 +388,7 @@ export default {
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;
+            this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,
             });
@@ -418,6 +416,7 @@ export default {
             this.text_button = "Crear";
             this.spinning = false;
             this.waiting = false;
+            this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,
             });

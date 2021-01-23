@@ -83,11 +83,7 @@
                   </a-col>
                 </a-row>
                 <a-col span="12">
-                  <a-form-model-item
-                    label="Código"
-                    has-feedback
-                    prop="productos_fongs"
-                  >
+                  <a-form-model-item label="Código" has-feedback>
                     <a-select
                       mode="multiple"
                       v-model="fonogram_modal.productos_fongs"

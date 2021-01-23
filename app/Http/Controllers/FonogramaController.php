@@ -31,6 +31,7 @@ class FonogramaController extends Controller
                 $length = count($fonogramas);
                 for ($i; $i < $length; $i++) {
                     $fonogramas[$i]->elementos;
+                    $fonogramas[$i]->productos;
                 }
             } else {
                 $i = 0;;
@@ -53,8 +54,8 @@ class FonogramaController extends Controller
         $clasfFonog = Vocabulario::findorFail(4)->terminos;  // Nomenclador: Clasificación Fonograma
         $territorio = Vocabulario::findorFail(36)->terminos;  // Nomenclador: Territorios
         $nacionalid = Vocabulario::findorFail(22)->terminos;  // Nomenclador: Nacionalidades
-        $estdContract = Vocabulario::findorFail(8)->terminos;  // Nomenclador: Estados Contractuales
-        return response()->json([[$clasfFonog], [$territorio], [$nacionalid], [$estdContract]]);  // Se envian las variables
+        $anos = Vocabulario::findorFail(2)->terminos;  // Nomenclador: Años
+        return response()->json([[$clasfFonog], [$territorio], [$nacionalid], ["$anos"]]);  // Se envian las variables
     }
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Fonograma
@@ -64,6 +65,7 @@ class FonogramaController extends Controller
             "tituloFong" => $request->tituloFong,
             "clasficacionFong" => $request->clasficacionFong,
             "duracionFong" => $request->duracionFong,
+            "añoFong" => $request->añoFong,
             "territorioFong" => $request->territorioFong,
             "dueñoDerchFong" => $request->dueñoDerchFong,
             "nacioDueñoDerchFong" => $request->nacioDueñoDerchFong,
@@ -108,6 +110,7 @@ class FonogramaController extends Controller
             "clasficacionFong" => $request->clasficacionFong,
             "duracionFong" => $request->duracionFong,
             "territorioFong" => $request->territorioFong,
+            "añoFong" => $request->añoFong,
             "dueñoDerchFong" => $request->dueñoDerchFong,
             "nacioDueñoDerchFong" => $request->nacioDueñoDerchFong,
             "propiedadFong" => $request->propiedadFong,
@@ -129,13 +132,13 @@ class FonogramaController extends Controller
                     }
                 }
                 if ($igual_cont !== count($productos)) {
-                    $this->eliminarDirectorios($productosOld, $request->codigAud);
-                    $this->crearDirectorios($productos, $request->codigAud);
+                    $this->eliminarDirectorios($productosOld, $request->codigFong);
+                    $this->crearDirectorios($productos, $request->codigFong);
                     $this->actualizarRelacion($fonograma, $productos);
                 }
             } else {
-                $this->eliminarDirectorios($productosOld, $request->codigAud);
-                $this->crearDirectorios($productos, $request->codigAud);
+                $this->eliminarDirectorios($productosOld, $request->codigFong);
+                $this->crearDirectorios($productos, $request->codigFong);
                 $this->actualizarRelacion($fonograma, $productos);
             }
         } else if (count($fonograma->productos) !== 0) {
@@ -143,7 +146,7 @@ class FonogramaController extends Controller
                 array_push($productosOld, $fonograma->productos[$i]->pivot->producto_id);
                 $fonograma->productos[$i]->pivot->delete();
             }
-            $this->eliminarDirectorios($productosOld, $request->codigAud);
+            $this->eliminarDirectorios($productosOld, $request->codigFong);
         }
         return response()->json($fonograma);
     }

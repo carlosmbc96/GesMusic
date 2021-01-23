@@ -14,6 +14,7 @@ class CreateFonogramasTable extends Migration
             $table->string('codigFong',9)->unique();  // Código Fonograma [FON0000]
             $table->string('tituloFong');  // Título Audiovisual
             $table->string('portadillaFong')->nullable();  // Url del Archivo de Portada del Audiovisual
+            $table->string('añoFong')->nullable();
             $table->string('clasficacionFong')->nullable();  // Clasificación Fonograma *nom
             $table->string('duracionFong')->nullable();  // Duración total del Fonograma (suma de las duraciones de los Tracks asociados)
             $table->string('territorioFong')->nullable();  // Territorio del Audiovisual

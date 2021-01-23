@@ -1817,6 +1817,7 @@
               this.spinning = false;
               this.waiting = false;
               this.text_button = 'Editar';
+              this.handle_cancel();
               this.$toast.error('Ha ocurrido un error', '¡Error!', {
                 timeout: 1000,
               });
@@ -1977,6 +1978,7 @@
               this.spinning = false;
               this.waiting = false;
               this.text_button = 'Crear';
+              this.handle_cancel();
               this.$toast.error('Ha ocurrido un error', '¡Error!', {
                 timeout: 1000,
               });

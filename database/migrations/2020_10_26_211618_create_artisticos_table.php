@@ -19,7 +19,7 @@ class CreateArtisticosTable extends Migration
             $table->timestamps();  // Fecha de Creación y Actualización del Registro
 
             // Relaciones
-            $table->foreignId('interprete_id')->references('id')->on('interpretes');
+            $table->foreignId('interprete_id')->references('id')->on('interpretes')->onDelete("cascade");
         });
     }
 

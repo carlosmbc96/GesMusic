@@ -19,6 +19,7 @@ class Fonograma extends Model
         'codigFong',  // Código Fonograma [FON0000]
         'tituloFong',  // Título Fonograma
         'portadillaFong',  // Url del Archivo de Portada del Fonograma
+        'añoFong',
         'clasficacionFong',  // Clasificación Fonograma *nom
         'duracionFong',  // Duración total del Fonograma (suma de las duraciones de los Tracks asociados)
         'territorioFong',  // Territorio del Fonograma *nom
@@ -54,6 +55,12 @@ class Fonograma extends Model
     public function elementos()
     {
         return $this->hasMany(Elemento::class); // Un Fonograma tiene muchos Elementos
+    }
+
+    //Relación de Many to Many Fonogramas - Productos
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class,'producto_fonograma'); // Un Producto tiene muchos Fonogramas
     }
     //SECCIÓN DE RELACIONES
 
@@ -110,12 +117,5 @@ class Fonograma extends Model
                 ->orwhere('nacioDueñoDerchFong', 'like', "%$valorbuscado%")
                 ->orwhere('propiedadFong', 'like', "%$valorbuscado%");
         }
-    }
-
-		//SECCIÓN DE RELACIONES
-    //Relación de Many to Many Fonogramas - Productos
-    public function productos()
-    {
-        return $this->belongsToMany(Producto::class,'producto_fonograma'); // Un Producto tiene muchos Fonogramas
     }
 }

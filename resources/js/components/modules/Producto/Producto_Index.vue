@@ -18,7 +18,7 @@
       height="60%"
       :tooltip="tooltip"
       :load="load"
-			:legendSettings="{ visible: false }"
+      :legendSettings="{ visible: false }"
       v-if="products_list.length !== 0"
     >
       <e-series-collection>
@@ -89,15 +89,14 @@
     <ejs-grid
       id="datatable"
       ref="gridObj"
-      :dataSource="products_list"
       locale="es-ES"
+      :dataSource="products_list"
       :toolbar="toolbar"
       :toolbarClick="click_toolbar"
       :allowPaging="true"
       :pageSettings="page_settings"
       :allowFiltering="true"
       :filterSettings="filter_settings"
-      :allowSelection="false"
       :allowTextWrap="true"
       :allowSorting="true"
       :pdfExportComplete="pdf_export_complete"
@@ -154,7 +153,7 @@
         />
         <e-column
           headerText="Acciones"
-          width="146"
+          width="155"
           :template="actions_template"
           :visible="true"
           textAlign="Center"
@@ -348,6 +347,30 @@ export default {
         },
         "Search",
       ],
+      status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important; width: 70%!important" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function () {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
       actions_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -383,9 +406,9 @@ export default {
                */
               detail_btn_click(args) {
                 this.$parent.$parent.row_selected = this.data;
-								if (this.data.deleted_at === null)
-									this.$parent.$parent.action_management = "detalles";
-									this.$parent.$parent.visible_management = true;
+                if (this.data.deleted_at === null)
+                  this.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
@@ -758,7 +781,7 @@ export default {
         };
       },
       export_view: false, //* Vista del panel de exportaciones
-      products_list: [], //* Lista de productos que es cargada en la tabla
+      products_list: [], //* Lista de productos que es cargada en la
       row_selected: {}, //* Fila de la tabla seleccionada | producto seleccionado
       visible_management: false, //* variable para visualizar el modal de gestión del producto
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
@@ -835,7 +858,6 @@ export default {
           this.series_data.sort((x, y) => {
             return x.years - y.years;
           });
-          this.$refs.gridObj.refresh();
         });
     },
     /*
@@ -993,13 +1015,13 @@ export default {
       }
     },
     /*
-     * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
+     * Métodos para volver a mostrar las columnas luego de exportar
      */
     pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[7].visible = true;
     },
     excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[7].visible = true;
     },
     /*
      * Método con la lógica del botón detalles
@@ -1104,6 +1126,8 @@ export default {
 #producto_index .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
+#producto_index .e-detailrowcollapse .e-icon-grightarrow,
+#producto_index .e-detailrowexpand .e-icon-gdownarrow,
 #producto_index thead span,
 #producto_index .e-icon-filter {
   color: rgb(115, 25, 84) !important;
@@ -1112,7 +1136,8 @@ export default {
 #producto_index .ant-switch-inner {
   width: auto !important;
 }
-#producto_index span {
-  display: initial !important;
+#producto_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+.e-badge.e-badge-success[href]:not(.e-badge-ghost) {
+  color: white !important;
 }
 </style>

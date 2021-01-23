@@ -1155,6 +1155,7 @@ export default {
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;
+            this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,
             });
@@ -1183,6 +1184,7 @@ export default {
             this.text_button = "Crear";
             this.spinning = false;
             this.waiting = false;
+            this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
               timeout: 1000,
             });

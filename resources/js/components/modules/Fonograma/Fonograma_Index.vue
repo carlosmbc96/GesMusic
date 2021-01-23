@@ -26,7 +26,7 @@
           :dataSource="series_data"
           type="Column"
           xName="years"
-          yName="proyects"
+          yName="fonograms"
           name="Año"
           :marker="marker"
           :animation="animation_series"
@@ -121,6 +121,12 @@
           textAlign="Left"
         />
         <e-column
+          field="añoFong"
+          headerText="Año"
+          width="110"
+          textAlign="Left"
+        />
+        <e-column
           field="clasficacionFong"
           headerText="Clasificación"
           width="150"
@@ -128,7 +134,7 @@
         />
         <e-column
           headerText="Estado"
-          width="115"
+          width="120"
           :template="status_template"
           :visible="true"
           textAlign="Center"
@@ -145,12 +151,6 @@
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
-    <!-- <modal_detail
-      @refresh="refresh_table"
-      v-if="visible_details"
-      :proyecto_prop="row_selected"
-      @close_modal="visible_details = $event"
-    /> -->
     <modal_management
       v-if="visible_management"
       :action="action_management"
@@ -170,8 +170,6 @@
 import modal_management from "./Modal_Gestionar_Fonograma";
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
-/* import modal_detail from "./Modal_Detalles_Proyecto";
-import modal_management from "./Modal_Gestionar_Proyecto"; */
 import {
   GridPlugin,
   Edit,
@@ -289,8 +287,8 @@ export default {
       },
       tooltip: {
         enable: true,
-        header: "Proyectos por Año",
-        format: "${point.x} : ${point.y} Proyectos",
+        header: "Fonogramas por Año",
+        format: "${point.x} : ${point.y} Fonogramas",
         fill: "rgba(115, 25, 84, 0.9)",
         border: { width: 0 },
       },
@@ -313,7 +311,7 @@ export default {
         labelStyle: { color: "white" },
       },
       primary_y_axis: {
-        title: "Proyectos",
+        title: "Fonogramas",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -832,7 +830,20 @@ export default {
         .post("/fonogramas/listar", { relations: ["productos"] })
         .then((response) => {
           this.fonograms_list = response.data;
-          this.series_data = [];
+          /* this.series_data = [];
+          this.fonograms_list.forEach((fonograma) => {
+            let index = this.series_data.findIndex(
+              (serie) => serie.years === parseInt(fonograms_list.clasficacionFong)
+            );
+            if (index != -1) {
+              this.series_data[index].fonograms += 1;
+            } else {
+              this.series_data.push({
+                years: parseInt(fonograma.clasficacionFong),
+                fonograms: 1,
+              });
+            }
+          });
           this.series_data.sort((x, y) => {
             return x.years - y.years;
           });
@@ -841,7 +852,7 @@ export default {
             this.series_data[this.series_data.length - 1].fonograms < 5
           ) {
             this.primary_y_axis.interval = 5;
-          }
+          } */
         });
     },
     /*

@@ -758,7 +758,6 @@ export default {
       projects_list: [], //* Lista de proyectos que es cargada en la tabla
       products_childs: {}, //* Objeto de productos hijos de los proyectos
       row_selected: {}, //* Fila de la tabla seleccionada | proyecto seleccionado
-      visible_details: false, //* variable para visualizar el modal de detalles del proyecto
       visible_management: false, //* variable para visualizar el modal de gestión del proyecto
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
     };

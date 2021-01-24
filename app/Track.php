@@ -14,18 +14,18 @@ class Track extends Model
     //SECCIÓN DE FILLABLE
     // Atributos del Modelo Track
     protected $fillable = [
-        'ordenTrk',  // Orden Track Repertorio
-        'tituloTrk',  // Titulo Track
-        'isrcTrk',  // ISRC Track
-        'duracionTrk',  // Duración Track
+        'ordenTrk',  // Orden Track Repertorio*
+        'tituloTrk',  // Titulo Track*
+        'isrcTrk',  // ISRC Track*
+        'duracionTrk',  // Duración Track*
         'muestraTrk',  // ¿El Track tiene una pista de Muestra?
         'envivoTrk',  // ¿El Track se Grabó en Vivo?
-        'generoTrk',  // Género Musical Track *nom
-        'subgeneroTrk',  // Subgénero Musical Track *nom
+        'generoTrk',  // Género Musical Track *nom*
+        'subgeneroTrk',  // Subgénero Musical Track *nom*
         'bonusTrk',  // ¿Es un bonus Track?
-        'moodTrk',  // Estados de Ánimos que refiere el Track *nom
+        'moodTrk',  // Estados de Ánimos que refiere el Track *nom*
         'gestionTrk',  // Gestión Track *nom
-        'paisgrabTrk',  // País grabación Track *nom
+        'paisgrabTrk',  // País grabación Track *nom*
         'archivoTrk',  // Url del Archivo Track
         'archivoMuestraTrk',  // Url del Archivo de MuestraTrack
         'dirArbolTrk',  // Ruta URL del directorio donde se almacena el Track

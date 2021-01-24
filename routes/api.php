@@ -97,6 +97,9 @@ Route::get('/tracks/{id}', 'TrackController@show')->name('tracks.mostrar'); // R
 Route::get('/tracks/{id}/edit', 'TrackController@edit')->name('tracks.editar'); // Ruta que Edita un Registro Específico del Modelo Track
 Route::put('/tracks/{id}', 'TrackController@update')->name('tracks.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Track
 Route::delete('/tracks/{id}', 'TrackController@destroyLog')->name('tracks.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Track
+Route::post('/tracks/nomencladores','TrackController@nomenclators');
+Route::delete('/tracks/eliminar/{id}','TrackController@destroyFis');
+Route::post('/tracks/editar','TrackController@update');
 
 // RUTAS DEL RECURSO: AUTOR
 Route::get('/autores/restaurar/{id}', 'AutorController@restoreLog');

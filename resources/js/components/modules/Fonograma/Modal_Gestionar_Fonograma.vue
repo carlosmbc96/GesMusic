@@ -958,7 +958,6 @@ export default {
             : this.fonogram.descripIngFong;
         this.fonogram.productos_fongs = [];
         console.log(this.fonogram.codigFong);
-        this.fonogram.codigFong = this.fonogram.codigFong.substr(5);
         this.fonogram.productos.forEach((element) => {
           this.fonogram.productos_fongs.push(element.id);
         });

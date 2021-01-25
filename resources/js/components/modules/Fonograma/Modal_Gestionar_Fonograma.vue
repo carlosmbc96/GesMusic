@@ -901,7 +901,7 @@ export default {
       return form_data;
     },
     set_action() {
-      if (this.fonogram.productos_fongs) {
+      if (this.fonogram.productos_fongs || this.fonogram.tabla) {
         this.tab_visibility = false;
         this.active_tab = "2";
       }

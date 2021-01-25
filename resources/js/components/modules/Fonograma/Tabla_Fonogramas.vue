@@ -176,7 +176,7 @@ L10n.load({
 setCulture("es-ES");
 export default {
   name: "tabla_fonogramas",
-  props: ["producto", "vista_editar"],
+  props: ["producto", "vista_editar", "detalles_prop"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -186,21 +186,24 @@ export default {
         pageSize: 10,
       },
       filter_settings: { type: "Menu" },
-      toolbar: [
-        {
-          text: "Añadir Fonograma",
-          tooltipText: "Añadir Fonograma",
-          prefixIcon: "e-add-icon",
-          id: "add",
-        },
-        "Search",
-      ],
+      toolbar: this.detalles_prop
+        ? ["Search"]
+        : [
+            {
+              text: "Añadir Fonograma",
+              tooltipText: "Añadir Fonograma",
+              prefixIcon: "e-add-icon",
+              id: "add",
+            },
+            "Search",
+          ],
       status_template: () => {
         return {
           template: Vue.component("columnTemplate", {
             template: `
               <div>
                 <a-popconfirm
+                    :disabled="$parent.$parent.$parent.detalles"
                     :placement="position"
                     @confirm="confirm_change_status"
 										ok-text="Si"
@@ -212,7 +215,7 @@ export default {
                       <p>¿Desea {{ action }} el Fonograma?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -454,7 +457,7 @@ export default {
 							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 <a-tooltip title="Editar" placement="bottom">
-                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                <a-button  v-if="!$parent.$parent.$parent.detalles" size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 <a-popconfirm
                     placement="leftBottom"
@@ -489,6 +492,7 @@ export default {
                */
               edit_btn_click(args) {
                 this.$parent.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected.tabla = true;
                 if (this.data.deleted_at === null) {
                   this.$parent.$parent.$parent.action_management = "editar";
                   this.$parent.$parent.$parent.visible_management = true;
@@ -606,6 +610,7 @@ export default {
       visible_management: false, //* variable para visualizar el modal de gestión del fonograma
       all_fonogramas: [],
       spinning: false,
+      detalles: this.detalles_prop,
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
     };
   },
@@ -669,100 +674,6 @@ export default {
           modal_detalles: true,
           productos_fongs: this.producto.id,
         };
-      }
-    },
-    /*
-     * Método con la lógica del botón borrado físico
-     */
-    del_physical_btn_click(args) {
-      let target = args.target;
-      if (target.classList.contains("e-delete-physical-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.$toast.question(
-        "¿Seguro, esta acción es irrevercible?",
-        "Confirmar",
-        {
-          timeout: 5000,
-          close: false,
-          overlay: true,
-          displayMode: "once",
-          id: "question",
-          zindex: 999999999,
-          title: "Hey",
-          position: "center",
-          buttons: [
-            [
-              "<button><b>YES</b></button>",
-              (instance, toast) => {
-                axios
-                  .delete(`fonogramas/eliminar/${row_obj.data.id}`)
-                  .then((ress) => {
-                    this.refresh_table();
-                    this.$emit("reload");
-                    this.$toast.success(
-                      "El Fonograma ha sido eliminado correctamente",
-                      "¡Éxito!",
-                      { timeout: 1000 }
-                    );
-                  })
-                  .catch((err) => {
-                    this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                      timeout: 1000,
-                    });
-                  });
-                instance.hide({ transitionOut: "fadeOut" }, toast, "button");
-              },
-              true,
-            ],
-            [
-              "<button>NO</button>",
-              function (instance, toast) {
-                instance.hide({ transitionOut: "fadeOut" }, toast, "button");
-              },
-            ],
-          ],
-        }
-      );
-    },
-    /*
-     * Método con la lógica del botón detalles
-     */
-    detail_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-eye-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-    },
-    /*
-     * Método con la lógica del botón editar
-     */
-    edit_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-edit-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      this.row_selected.modal_detalles = true;
-      if (this.row_selected.deleted_at == null) {
-        this.action_management = "editar";
-        this.visible_management = true;
       }
     },
   },

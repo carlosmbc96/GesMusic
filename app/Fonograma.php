@@ -62,6 +62,11 @@ class Fonograma extends Model
     {
         return $this->belongsToMany(Producto::class,'producto_fonograma'); // Un Producto tiene muchos Fonogramas
     }
+    //Relación de Many to Many Fonogramas - Tracks
+    public function tracks()
+    {
+        return $this->belongsToMany(Track::class,'fonograma_track'); // Un Fonograma tiene muchos Tracks
+    }
     //SECCIÓN DE RELACIONES
 
 

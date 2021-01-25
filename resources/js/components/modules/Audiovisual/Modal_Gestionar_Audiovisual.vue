@@ -1327,7 +1327,7 @@ export default {
       return form_data;
     },
     set_action() {
-      if (this.audiovisual.productos_audvs) {
+      if (this.audiovisual.productos_audvs || this.audiovisual.tabla) {
         this.tab_visibility = false;
         this.active_tab = "2";
       }

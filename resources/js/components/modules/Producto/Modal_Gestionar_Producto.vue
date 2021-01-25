@@ -876,7 +876,11 @@
             </a-form-model>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane key="3" :disabled="tab_3">
+        <a-tab-pane
+          key="3"
+          :disabled="tab_3"
+          v-if="tab_visibility && action_modal !== 'crear'"
+        >
           <span slot="tab"> Multimedias </span>
           <a-row>
             <a-col span="12">
@@ -894,10 +898,11 @@
                 :title="item.title"
               />
             </a-steps>
-            <br>
+            <br />
             <div>
               <tabla_audiovisuales
                 v-if="current === 0"
+                :detalles_prop="detalles"
                 @reload="reload_parent"
                 :producto="product_modal"
                 :vista_editar="vista_editar"
@@ -905,13 +910,14 @@
               />
               <tabla_fonogramas
                 v-else
+                :detalles_prop="detalles"
                 @reload="reload_parent"
                 :producto="product_modal"
                 :vista_editar="vista_editar"
                 @close_modal="show = $event"
               />
             </div>
-            <br>
+            <br />
           </div>
 
           <a-button
@@ -1012,6 +1018,7 @@ export default {
       pivot: "",
       spinning: false, //*
       activated: true,
+      detalles: false,
       anhos: [],
       estados: [],
       status: [],
@@ -1187,6 +1194,7 @@ export default {
   },
   created() {
     if (this.action_modal === "detalles") {
+      this.detalles = true;
       this.producto = { ...this.product };
       if (this.producto.interpretesProd !== null) {
         let list_help = this.producto.interpretesProd.split(".");
@@ -2286,9 +2294,9 @@ export default {
     //Fin de metodos para generar el codigo
   },
   components: {
-      tabla_audiovisuales,
-      tabla_fonogramas
-    },
+    tabla_audiovisuales,
+    tabla_fonogramas,
+  },
 };
 </script>
 

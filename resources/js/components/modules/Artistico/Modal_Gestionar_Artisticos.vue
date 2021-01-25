@@ -148,7 +148,7 @@
                   <a-form-model-item v-else>
                     <i
                       class="fa fa-check-square-o hidden-xs"
-                      v-if="actualNombreArts === 1"
+                      v-if="actualNombreArts === true"
                     />
                     <i class="fa fa-square-o" v-else />
                     ¿Es el actual Nombre Artístico?
@@ -259,7 +259,7 @@ export default {
       text_button: "",
       text_header_button: "",
       artisticos_modal: {},
-      actualNombreArts: "",
+      actualNombreArts: false,
       disabled: false,
       activated: true,
       show_error: "",
@@ -336,7 +336,6 @@ export default {
     if (this.action_modal === "crear") {
       this.codigo = this.generar_codigo(this.artisticos_list);
     }
-    console.log(this.interpretes);
   },
   computed: {
     active() {
@@ -421,9 +420,7 @@ export default {
         this.artistico.codigArts = this.artistico.codigArts.substr(5);
         this.artisticos_modal = { ...this.artistico };
         this.actualNombreArts =
-          this.artisticos_modal.actualNombreArts === 0 ? false : true;
-        console.log(this.artisticos_modal.actualNombreArts === 0);
-        console.log(this.artisticos_modal.actualNombreArts);
+          parseInt(this.artisticos_modal.actualNombreArts) === 0 ? false : true;
       } else if (this.action_modal === "detalles") {
         if (this.artistico.deleted_at !== null) {
           this.disabled = true;
@@ -437,7 +434,9 @@ export default {
         this.text_button = "Detalles";
         this.artisticos_modal = { ...this.artistico };
         this.actualNombreArts =
-          this.artisticos_modal.actualNombreArts === 0 ? false : true;
+					parseInt(this.artisticos_modal.actualNombreArts) === 0 ? false : true;
+				console.log(this.actualNombreArts === 1);
+        console.log(typeof(this.actualNombreArts));
       } else {
         this.actualNombreArts = false;
         this.text_button = "Crear";

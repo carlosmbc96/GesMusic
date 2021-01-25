@@ -186,6 +186,39 @@
                       >
                         <img style="width: 100%" :src="preview_image" />
                       </a-modal>
+											<a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Año de creación"
+                        prop="añoFong"
+                      >
+                        <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          :disabled="disabled"
+                          v-model="fonogram_modal.añoFong"
+                        >
+                          <a-select-option
+                            v-for="nomenclator in anhos"
+                            :key="nomenclator.id"
+                            :value="nomenclator.nombreTer"
+                          >
+                            {{ nomenclator.nombreTer }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Año de creación"
+                        v-else
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.añoFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
                       <a-form-model-item
                         label="Duración"
                         v-if="action_modal === 'detalles'"
@@ -287,7 +320,7 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Nacionalidad del dueño del producto"
+                        label="País del dueño del producto"
                         prop="propiedadFong"
                       >
                         <a-select
@@ -308,7 +341,7 @@
                         </a-select>
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Nacionalidad del dueño del producto"
+                        label="País del dueño del producto"
                         v-else
                       >
                         <a-mentions
@@ -564,7 +597,8 @@ export default {
       paises: [],
       territorios: [],
       action_cancel_title: "",
-      products: [],
+			products: [],
+			anhos: [],
       action_title: "",
       show: true,
       used: false,
@@ -658,14 +692,14 @@ export default {
     };
   },
   created() {
-    this.load_nomenclators();
+		this.load_nomenclators();
     this.set_action();
     if (this.action_modal === "crear") {
       this.codigo = this.generar_codigo(this.fonograms_list);
     } else if (this.action_modal === "detalles") {
       this.active_tab = "2";
       this.fonogram_modal.codigFong = "FONG-" + this.fonogram.codigFong;
-    }
+		}
   },
   computed: {
     active() {
@@ -860,6 +894,11 @@ export default {
       } else if (this.fonogram_modal.clasficacionFong === null) {
         this.fonogram_modal.clasficacionFong = "";
       }
+      if (this.fonogram_modal.añoFong === undefined) {
+        this.fonogram_modal.añoFong = "";
+      } else if (this.fonogram_modal.añoFong === null) {
+        this.fonogram_modal.añoFong = "";
+      }
       if (this.fonogram_modal.nacioDueñoDerchFong === undefined) {
         this.fonogram_modal.nacioDueñoDerchFong = "";
       } else if (this.fonogram_modal.nacioDueñoDerchFong === null) {
@@ -881,6 +920,7 @@ export default {
         this.fonogram_modal.clasficacionFong
       );
       form_data.append("territorioFong", this.fonogram_modal.territorioFong);
+      form_data.append("añoFong", this.fonogram_modal.añoFong);
       form_data.append("dueñoDerchFong", this.fonogram_modal.dueñoDerchFong);
       form_data.append(
         "nacioDueñoDerchFong",
@@ -961,7 +1001,6 @@ export default {
             ? ""
             : this.fonogram.descripIngFong;
         this.fonogram.productos_fongs = [];
-        console.log(this.fonogram.codigFong);
         this.fonogram.productos.forEach((element) => {
           this.fonogram.productos_fongs.push(element.id);
         });
@@ -987,7 +1026,6 @@ export default {
         }
       } else {
         this.fonogram_modal = {...this.fonogram}
-        console.log(this.fonogram_modal);
         this.file_list.push({
           uid: 1,
           name: "Logo ver vertical_Ltr Negras.png",
@@ -1051,12 +1089,14 @@ export default {
           this.clasficaciones = this.list_nomenclators[0][0];
           this.paises = this.list_nomenclators[2][0];
           this.territorios = this.list_nomenclators[1][0];
+          this.anhos = this.list_nomenclators[3][0];
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
             timeout: 1000,
           });
-        });
+				});
+				console.log(this.clasficaciones);
     },
 
     //Metodos para generar el codigo

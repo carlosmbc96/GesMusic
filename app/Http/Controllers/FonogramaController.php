@@ -52,10 +52,10 @@ class FonogramaController extends Controller
     {
         // Sección de Carga de Nomencladores a emplear en las vista
         $clasfFonog = Vocabulario::findorFail(4)->terminos;  // Nomenclador: Clasificación Fonograma
+        $anos = Vocabulario::findorFail(2)->terminos;  // Nomenclador: Años
         $territorio = Vocabulario::findorFail(36)->terminos;  // Nomenclador: Territorios
         $nacionalid = Vocabulario::findorFail(22)->terminos;  // Nomenclador: Nacionalidades
-        $anos = Vocabulario::findorFail(2)->terminos;  // Nomenclador: Años
-        return response()->json([[$clasfFonog], [$territorio], [$nacionalid], ["$anos"]]);  // Se envian las variables
+        return response()->json([[$clasfFonog], [$territorio], [$nacionalid], [$anos]]);  // Se envian las variables
     }
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Fonograma

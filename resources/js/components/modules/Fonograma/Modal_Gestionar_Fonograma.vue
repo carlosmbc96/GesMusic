@@ -901,6 +901,10 @@ export default {
       return form_data;
     },
     set_action() {
+      if (this.fonogram.productos_fongs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+      }
       if (this.action === "editar") {
         if (this.fonogram.deleted_at !== null) {
           this.disabled = true;
@@ -983,6 +987,8 @@ export default {
             });
         }
       } else {
+        this.fonogram_modal = {...this.fonogram}
+        console.log(this.fonogram_modal);
         this.file_list.push({
           uid: 1,
           name: "Logo ver vertical_Ltr Negras.png",

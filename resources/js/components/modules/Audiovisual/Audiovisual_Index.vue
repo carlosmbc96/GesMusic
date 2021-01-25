@@ -169,12 +169,6 @@
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
-    <!-- <modal_detail
-      @refresh="refresh_table"
-      v-if="visible_details"
-      :proyecto_prop="row_selected"
-      @close_modal="visible_details = $event"
-    /> -->
     <modal_management
       v-if="visible_management"
       :action="action_management"
@@ -610,30 +604,6 @@ export default {
           }),
         };
       },
-      status_child_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
-                </div>`,
-            data: function () {
-              return {
-                data: {},
-              };
-            },
-            computed: {
-              status() {
-                return this.data.deleted_at == null ? "Activo" : "Inactivo";
-              },
-              class_badge() {
-                return this.data.deleted_at == null
-                  ? "e-badge-success"
-                  : "e-badge-warning";
-              },
-            },
-          }),
-        };
-      },
       actions_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -874,64 +844,6 @@ export default {
           ) {
             this.primary_y_axis.interval = 5;
           }
-          /* axios.post("/productos/listar").then((res) => {
-            this.products_childs = {
-              dataSource: res.data,
-              queryString: "proyecto_id",
-              ref: "childGrid",
-              columns: [
-                {
-                  field: "tituloProd",
-                  headerText: "Título",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  field: "codigProd",
-                  headerText: "Código",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  field: "estadodigProd",
-                  headerText: "Estado de Digitalización",
-                  width: "135",
-                  textAlign: "Left",
-                },
-                {
-                  field: "añoProd",
-                  headerText: "Año",
-                  width: "90",
-                  textAlign: "Left",
-                },
-                {
-                  field: "statusComProd",
-                  headerText: "Estatus Comercial",
-                  width: "120",
-                  textAlign: "Left",
-                },
-                {
-                  field: "genMusicPro",
-                  headerText: "Género Musical",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  headerText: "Estado",
-                  template: this.status_child_template,
-                  width: "105",
-                  visible: true,
-                  textAlign: "Center",
-                },
-              ],
-              load: function () {
-                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
-                  "id"
-                ];
-              },
-            };
-            this.$refs.gridObj.refresh();
-          }); */
         });
     },
     /*

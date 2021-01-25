@@ -1258,6 +1258,11 @@ export default {
       } else if (this.audiovisual_modal.propiedadAud === null) {
         this.audiovisual_modal.propiedadAud = "";
       }
+      if (this.audiovisual_modal.nacioDueñoDerchAud === undefined) {
+        this.audiovisual_modal.nacioDueñoDerchAud = "";
+      } else if (this.audiovisual_modal.nacioDueñoDerchAud === null) {
+        this.audiovisual_modal.nacioDueñoDerchAud = "";
+      }
       let etiquetas = "";
       let idiomas = "";
       let subtitulos = "";
@@ -1322,6 +1327,10 @@ export default {
       return form_data;
     },
     set_action() {
+      if (this.audiovisual.productos_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+      }
       if (this.action === "editar") {
         if (this.audiovisual.deleted_at !== null) {
           this.disabled = true;
@@ -1424,6 +1433,7 @@ export default {
             });
         }
       } else {
+        this.audiovisual_modal = { ...this.audiovisual };
         this.file_list.push({
           uid: 1,
           name: "Logo ver vertical_Ltr Negras.png",

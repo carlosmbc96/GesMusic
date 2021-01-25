@@ -1,82 +1,84 @@
 <template>
-  <div id="tabla_productos">
+  <div id="tabla_audiovisuales">
     <!-- Inicio Sección de Tabla de datos -->
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      :dataSource="products_list"
-      locale="es-ES"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowSelection="false"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigProd"
-          headerText="Código"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          field="tituloProd"
-          headerText="Título"
-          width="110"
-          textAlign="Left"
-        />
-
-        <e-column
-          field="añoProd"
-          headerText="Año"
-          width="95"
-          textAlign="Left"
-        />
-        <e-column
-          field="estadodigProd"
-          headerText="Estado de Digitalización"
-          width="145"
-          textAlign="Left"
-        />
-        <e-column
-          field="statusComProd"
-          headerText="Estatus Comercial"
-          width="125"
-          textAlign="Left"
-        />
-        <e-column
-          field="genMusicPro"
-          headerText="Género Musical"
-          width="114"
-          textAlign="Left"
-        />
-        <e-column
-          headerText="Estado"
-          :template="status_template"
-          width="115"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="140"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        :dataSource="audiovisuals_list"
+        locale="es-ES"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowSelection="false"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :queryCellInfo="customise_cell"
+      >
+        <e-columns>
+          <e-column
+            field="codigAud"
+            headerText="Código"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="isrcAud"
+            headerText="ISRC"
+            width="105"
+            textAlign="Left"
+          />
+          <e-column
+            field="tituloAud"
+            headerText="Título"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="añoFinAud"
+            headerText="Año"
+            width="90"
+            textAlign="Left"
+          />
+          <e-column
+            field="clasifAud"
+            headerText="Clasificación"
+            width="150"
+            textAlign="Left"
+          />
+          <e-column
+            field="paisGrabAud"
+            headerText="País"
+            width="100"
+            textAlign="Left"
+          />
+          <e-column
+            field="idiomaAud"
+            headerText="Idioma"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            headerText="Estado"
+            width="118"
+            :template="status_template"
+            :visible="true"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="140"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
@@ -84,9 +86,9 @@
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :product="row_selected"
+      :audiovisual="row_selected"
       @close_modal="visible_management = $event"
-      :products_list="all_products"
+      :audiovisuals_list="all_audiovisuals"
     />
     <!-- Fin Sección de Modals -->
   </div>
@@ -98,7 +100,7 @@
  */
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
-import modal_management from "./Modal_Gestionar_Producto";
+import modal_management from "./Modal_Gestionar_Audiovisual";
 import {
   GridPlugin,
   Edit,
@@ -190,17 +192,9 @@ L10n.load({
   },
 });
 setCulture("es-ES");
-/*
- *  Código para configurar el tema del gráfico
- */
-let selected_theme = location.hash.split("/")[1];
-selected_theme = selected_theme ? selected_theme : "Material";
-let theme = (
-  selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
-).replace(/-dark/i, "Dark");
 export default {
-  name: "Proyecto_Index",
-  props: ["proyecto", "vista_editar"],
+  name: "Tabla_Audiovisuales",
+  props: ["producto", "vista_editar"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -210,29 +204,10 @@ export default {
         pageSize: 10,
       },
       filter_settings: { type: "Menu" },
-      commands: [
-        {
-          type: "Detalles",
-          buttonOption: {
-            iconCss: "e-icons e-eye-icon",
-            click: this.detail_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-        {
-          type: "Editar",
-          buttonOption: {
-            iconCss: "e-icons e-edit-icon",
-            click: this.edit_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-      ],
       toolbar: [
         {
-          text: "Añadir Producto",
-          click: this.add_btn_click,
-          tooltipText: "Añadir Producto",
+          text: "Añadir Audiovisual",
+          tooltipText: "Añadir Audiovisual",
           prefixIcon: "e-add-icon",
           id: "add",
         },
@@ -248,16 +223,14 @@ export default {
                     @confirm="confirm_change_status"
 										ok-text="Si"
 										cancel-text="No"
-										:visible="visible_pop"
-										@visibleChange="handle_visible_pop_change"
 								>
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p>¿Desea {{ action }} el Producto?</p>
+                      <p>¿Desea {{ action }} el Audiovisual?</p>
                     </template>
-                    <a-tooltip :title="project.deleted_at ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
-                      <a-switch :disabled="project.deleted_at" style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                    <a-tooltip title="Cambiar estado" placement="left">
+                      <a-switch style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -272,31 +245,10 @@ export default {
                 axios: axios,
                 checked: false,
                 loading: false,
-                visible_pop: false,
-                project: "",
               };
             },
             created() {
-              this.checked = this.data.deleted_at === null;
-              axios
-                .post("proyectos/listar", {
-                  atributo: "id",
-                  valorbuscado: this.data.proyecto_id,
-                })
-                .then((response) => {
-                  this.project = response.data;
-                })
-                .catch((error) => console.log(error));
-              if (this.visible_management) {
-                this.commands.push({
-                  type: "Borrado Físico",
-                  buttonOption: {
-                    iconCss: "e-icons e-delete-physical-icon",
-                    click: this.del_physical_btn_click,
-                    cssClass: "e-commands-custom",
-                  },
-                });
-              }
+              this.checked = this.data.deleted_at == null;
               this.position = this.checked ? "top" : "bottom";
               this.action = this.checked ? "inactivar" : "activar";
             },
@@ -308,15 +260,11 @@ export default {
               },
             },
             methods: {
-              handle_visible_pop_change(visible) {
-                if (this.project.deleted_at === null) this.visible_pop = false;
-                else this.visible_pop = visible;
-              },
               confirm_change_status() {
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Producto?",
+                    "¿Esta acción inactivará el Audiovisual?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -324,7 +272,7 @@ export default {
                       overlay: true,
                       displayMode: "once",
                       color: "#AB7598",
-                      zindex: 999999,
+                      zindex: 99999999,
                       title: "Hey",
                       position: "center",
                       buttons: [
@@ -332,7 +280,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea inactivar el Producto?",
+                              "¿Desea inactivar el Audiovisual?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -340,7 +288,7 @@ export default {
                                 color: "#8F4776",
                                 overlay: true,
                                 displayMode: "once",
-                                zindex: 999999999,
+                                zindex: 99999999999,
                                 title: "Hey",
                                 position: "center",
                                 buttons: [
@@ -350,7 +298,8 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "productos/desactivar/" + this.data.id
+                                          "audiovisuales/desactivar/" +
+                                            this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -405,7 +354,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará el Producto?",
+                    "¿Esta acción ativará el Audiovisual?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -413,7 +362,7 @@ export default {
                       overlay: true,
                       displayMode: "once",
                       color: "#D7DE7A",
-                      zindex: 999999,
+                      zindex: 99999999,
                       title: "Hey",
                       position: "center",
                       buttons: [
@@ -421,7 +370,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea activar el Producto?",
+                              "¿Desea activar el Audiovisual?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -429,7 +378,7 @@ export default {
                                 color: "#C9D34D",
                                 overlay: true,
                                 displayMode: "once",
-                                zindex: 999999999,
+                                zindex: 999999999999,
                                 title: "Hey",
                                 position: "center",
                                 buttons: [
@@ -439,7 +388,8 @@ export default {
                                       this.loading = true;
                                       axios
                                         .get(
-                                          "productos/restaurar/" + this.data.id
+                                          "audiovisuales/restaurar/" +
+                                            this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -494,10 +444,10 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_products();
+                  this.$parent.$parent.$parent.load_audiovisuals();
                   this.checked = !this.checked;
                   this.$toast.success(
-                    `El Producto se ${action} correctamente`,
+                    `El Audiovisual se ${action} correctamente`,
                     "¡Éxito!",
                     {
                       timeout: 1000,
@@ -530,18 +480,17 @@ export default {
                     @confirm="del_physical_btn_click"
 										ok-text="Si"
                     cancel-text="No"
-                    title="¿Desea eliminar el Producto?"
+                    title="¿Desea eliminar el Audiovisual?"
                 >
                 <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
                 <a-tooltip title="Eliminar" placement="bottom">
-                <a-button v-if="visible_pop" size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
+                <a-button v-if="false" size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
             data: function (axios) {
               return {
                 data: {},
-                visible_pop: false,
               };
             },
             methods: {
@@ -549,20 +498,19 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null)
-                  this.$parent.$parent.action_management = "detalles";
-                this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-                this.$parent.$parent.row_selected.modal_detalles = true;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
               },
               /*
@@ -578,7 +526,7 @@ export default {
                     overlay: true,
                     displayMode: "once",
                     color: "#F8A6A2",
-                    zindex: 999,
+                    zindex: 9999999,
                     title: "Hey",
                     position: "center",
                     buttons: [
@@ -586,7 +534,7 @@ export default {
                         "<button>Si</button>",
                         (instance, toast) => {
                           this.$toast.question(
-                            "¿Desea eliminar el Producto?",
+                            "¿Desea eliminar el Audiovisual?",
                             "Confirmación",
                             {
                               timeout: 5000,
@@ -594,7 +542,7 @@ export default {
                               color: "#F58983",
                               overlay: true,
                               displayMode: "once",
-                              zindex: 9999,
+                              zindex: 9999999999,
                               title: "Hey",
                               position: "center",
                               buttons: [
@@ -603,12 +551,12 @@ export default {
                                   (instance, toast) => {
                                     axios
                                       .delete(
-                                        `productos/eliminar/${this.data.id}`
+                                        `audiovisuales/eliminar/${this.data.id}`
                                       )
                                       .then((ress) => {
-                                        this.$parent.$parent.refresh_table();
+                                        this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
-                                          "El producto ha sido eliminado correctamente",
+                                          "El Audiovisual ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
@@ -671,16 +619,17 @@ export default {
         };
       },
       export_view: false, //* Vista del panel de exportaciones
-      products_list: [], //* Lista de productos que es cargada en la tabla
-      row_selected: {}, //* Fila de la tabla seleccionada | producto seleccionado
-      visible_management: false, //* variable para visualizar el modal de gestión del producto
+      spinning: false,
+      audiovisuals_list: [], //* Lista de Audiovisuales que es cargada en la tabla
+      row_selected: {}, //* Fila de la tabla seleccionada | Audiovisual seleccionado
+      visible_details: false, //* variable para visualizar el modal de detalles del Audiovisual
+      visible_management: false, //* variable para visualizar el modal de gestión del Audiovisual
+      all_audiovisuals: [],
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
-      proyecto_id: "",
-      all_products: [],
     };
   },
   created() {
-    this.load_products();
+    this.load_audiovisuals();
   },
   methods: {
     /*
@@ -694,29 +643,39 @@ export default {
     /*
      * Método que carga los productos de la bd
      */
-    load_products() {
+    load_audiovisuals() {
       this.$emit("reload");
+      this.spinning = true;
       if (this.vista_editar) {
         axios
-          .post("/productos/listar", {
-            atributo: "proyecto_id",
-            valorbuscado: this.proyecto.id,
-          })
+          .post("/audiovisuales/listar", { relations: ["productos"] })
           .then((response) => {
-            this.products_list = response.data;
+            this.audiovisuals_list = [];
+            let pertenece = false;
+            response.data.forEach((audiovisual) => {
+              audiovisual.productos.forEach((producto) => {
+                if (producto.id === this.producto.id) {
+                  pertenece = true;
+                }
+              });
+              if (pertenece) {
+                this.audiovisuals_list.push(audiovisual);
+              }
+              pertenece = false;
+            });
+            this.spinning = false;
           });
-        axios
-          .post("/productos/listar", { relations: ["proyecto"] })
-          .then((response) => {
-            this.all_products = response.data;
-          });
+        axios.post("/audiovisuales/listar").then((response) => {
+          this.all_audiovisuals = response.data;
+        });
       }
     },
     /*
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.load_products();
+      this.audiovisuals_list = null;
+      this.load_audiovisuals();
     },
     /*
      * Método con la lógica de los botones del toolbar de la tabla
@@ -727,7 +686,7 @@ export default {
         this.visible_management = true;
         this.row_selected = {
           modal_detalles: true,
-          proyecto_id: this.proyecto.id,
+          productos_audvs: this.producto.id,
         };
       }
     },
@@ -745,7 +704,7 @@ export default {
         )
       );
       this.$toast.question(
-        "¿Seguro, esta acción es irrevercible, eliminará de forma definitiva este producto del sistema?",
+        "¿Seguro, esta acción es irrevercible?",
         "Confirmar",
         {
           timeout: 5000,
@@ -761,12 +720,12 @@ export default {
               "<button><b>YES</b></button>",
               (instance, toast) => {
                 axios
-                  .delete(`productos/eliminar/${row_obj.data.id}`)
+                  .delete(`audiovisuales/eliminar/${row_obj.data.id}`)
                   .then((ress) => {
                     this.refresh_table();
                     this.$emit("reload");
                     this.$toast.success(
-                      "El producto ha sido eliminado correctamente",
+                      "El Audioovisual ha sido eliminado correctamente",
                       "¡Éxito!",
                       { timeout: 1000 }
                     );
@@ -825,9 +784,6 @@ export default {
         this.visible_management = true;
       }
     },
-    add_btn_click(args) {
-      this.proyecto_id = this.proyecto.codigProy;
-    },
   },
   components: {
     modal_management,
@@ -853,61 +809,61 @@ export default {
 </script>
 
 <style>
-#tabla_productos .e-headercontent,
-#tabla_productos .e-sortfilter,
-#tabla_productos thead,
-#tabla_productos tr,
-#tabla_productos td,
-#tabla_productos th,
-#tabla_productos .e-pagercontainer,
-#tabla_productos .e-pagerdropdown,
-#tabla_productos .e-first,
-#tabla_productos .e-prev,
-#tabla_productos .e-numericcontainer,
-#tabla_productos .e-next,
-#tabla_productos .e-last,
-#tabla_productos .e-table,
-#tabla_productos .e-input-group,
-#tabla_productos .e-content,
-#tabla_productos .e-toolbar-items,
-#tabla_productos .e-tbar-btn,
-#tabla_productos .e-toolbar-item,
-#tabla_productos .e-gridheader,
-#tabla_productos .e-gridcontent,
-#tabla_productos .e-gridpager,
-#tabla_productos .e-toolbar {
+#tabla_audiovisuales .e-headercontent,
+#tabla_audiovisuales .e-sortfilter,
+#tabla_audiovisuales thead,
+#tabla_audiovisuales tr,
+#tabla_audiovisuales td,
+#tabla_audiovisuales th,
+#tabla_audiovisuales .e-pagercontainer,
+#tabla_audiovisuales .e-pagerdropdown,
+#tabla_audiovisuales .e-first,
+#tabla_audiovisuales .e-prev,
+#tabla_audiovisuales .e-numericcontainer,
+#tabla_audiovisuales .e-next,
+#tabla_audiovisuales .e-last,
+#tabla_audiovisuales .e-table,
+#tabla_audiovisuales .e-input-group,
+#tabla_audiovisuales .e-content,
+#tabla_audiovisuales .e-toolbar-items,
+#tabla_audiovisuales .e-tbar-btn,
+#tabla_audiovisuales .e-toolbar-item,
+#tabla_audiovisuales .e-gridheader,
+#tabla_audiovisuales .e-gridcontent,
+#tabla_audiovisuales .e-gridpager,
+#tabla_audiovisuales .e-toolbar {
   background-color: transparent !important;
 }
-#tabla_productos .e-grid {
+#tabla_audiovisuales .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-#tabla_productos .e-grid {
+#tabla_audiovisuales .e-grid {
   border-radius: 5px !important;
 }
-#tabla_productos .e-gridheader {
+#tabla_audiovisuales .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-#tabla_productos td {
+#tabla_audiovisuales td {
   border-color: lightgrey !important;
 }
-#tabla_productos .e-grid,
-#tabla_productos .e-toolbar,
-#tabla_productos .e-grid .e-headercontent {
+#tabla_audiovisuales .e-grid,
+#tabla_audiovisuales .e-toolbar,
+#tabla_audiovisuales .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-#tabla_productos .e-row:hover {
+#tabla_audiovisuales .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-#tabla_productos thead span,
-#tabla_productos .e-icon-filter {
+#tabla_audiovisuales thead span,
+#tabla_audiovisuales .e-icon-filter {
   color: rgb(115, 25, 84) !important;
   font-weight: bold !important;
 }
-#tabla_productos .ant-switch-inner {
+#tabla_audiovisuales .ant-switch-inner {
   width: auto !important;
 }
-#tabla_productos span {
+#tabla_audiovisuales span {
   display: initial !important;
 }
 </style>

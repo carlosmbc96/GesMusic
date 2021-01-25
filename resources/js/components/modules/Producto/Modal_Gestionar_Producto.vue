@@ -878,7 +878,42 @@
         </a-tab-pane>
         <a-tab-pane key="3" :disabled="tab_3">
           <span slot="tab"> Multimedias </span>
-          <h4>Multimedias</h4>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Multimedias</h4>
+              </div>
+            </a-col>
+          </a-row>
+
+          <div>
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br>
+            <div>
+              <tabla_audiovisuales
+                v-if="current === 0"
+                @reload="reload_parent"
+                :producto="product_modal"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_fonogramas
+                v-else
+                @reload="reload_parent"
+                :producto="product_modal"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
+            <br>
+          </div>
+
           <a-button
             :disabled="disabled"
             style="float: right"
@@ -918,1440 +953,1424 @@
 </template>
 
 <script>
-  export default {
-    name: 'modal_product_managment',
-    props: ['action', 'product', 'products_list'],
-    data() {
-      /* let validate_lentgh = (rule, value, callback) => {
-      if (value.replace(/ /g, "").length > 9) {
-        callback(new Error("Máximo 9 caracteres"));
-      } else callback();
-    }; */
-      /* let validate_cod_bar = (rule, value, callback) => {
-      if (value.replace(/ /g, "").length > 13) {
-        callback(new Error("Máximo 13 caracteres"));
-      } else callback();
-    }; */
-      let validate_codig_unique = (rule, value, callback) => {
-        if (value !== undefined) {
-          this.products_list.forEach((element) => {
-            if (element.codigProd.substr(5) === value.replace(/ /g, '')) {
-              callback(new Error('Código ya usado'));
-            }
-          });
-        }
-        callback();
-      };
-      let code_required = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('Inserte el código'));
-        } else callback();
-      };
-      return {
-        action_cancel_title: '',
-        action_title: '',
-        tab_visibility: true,
-        roles_interp: [],
-        disabled_option: false,
-        list_compare_autores: '',
-        list_compare_interpretes: '',
-        valid_image: true,
-        used: false,
-        show_error: '',
-        show_used_error: '',
-        text_header_button: '',
-        producPrincProd: '',
-        catalDigitalPro: '',
-        activoCatalbisPro: '',
-        variosInterpretesProd: '',
-        primeraPantProd: '',
-        product_image: '',
-        autoresProd: [],
-        interpretesProd: [],
-        list_autores: [],
-        copia_autores: [],
-        list_interpretes: [],
-        copia_interpretes: [],
-        pivot: '',
-        spinning: false, //*
-        activated: true,
-        anhos: [],
-        estados: [],
-        status: [],
-        generos: [],
-        destinos: [],
-        sellos: [],
-        producto: [],
-        codigo: '',
-        disabled: false,
-        list_nomenclators: [],
-        text_button: '', //* variable que muestra el texto del input submit del formulario en dependencia de la acción que sea(editar o crear).
-        action_modal: this.action, //* variable que define la acción que se va a realizar, editar o crear.
-        preview_visible: false, //* variable usada para previsualizar la imagen subida a través de un modal.
-        preview_image: '', //* variable usada para saber si ya se ha subido una imagen.
-        file_list: [], //* variable usada para guardar la imagen subida.
-        loading: false, //* variable usada para alternar el ícono del componente uploat.
-        product_modal: {}, //* variable que almacena el producto pasado por prop, con el cual se va a trabajar.
-        projects: [], //*
-        show: true, //* variable usada para mostrar u ocultar el modal.
-        active_tab: '1', //* variable usada para almacenar el tab que esta activo.
-        tabs_list: [], //* variable usada para almacenar los tabs por los que se ha pasado.
-        waiting: false, //* variable usada para poner el ícono de cargando.
-        tab_2: true, //*
-        tab_3: true, //*
-        tab_4: true, //*
-        tab_5: true, //*
-        varios_int: false,
-        formItemLayout: {
-          wrapperCol: {
-            xs: { span: 24, offset: 0 },
-            sm: { span: 20, offset: 4 },
-          },
-        },
-        rules: {
-          //*
-          proyecto_id: [
-            {
-              required: true,
-              message: 'Seleccione el código',
-              trigger: 'change',
-            },
-          ],
-          descripEspPro: [
-            {
-              whitespace: true,
-              message: 'Inserte una descripción',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[ a-zA-Z0-9üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()\n]*$',
-              message: 'Caracter no válido',
-              trigger: 'change',
-            },
-          ],
-          descripIngPro: [
-            {
-              whitespace: true,
-              message: 'Inserte una descripción',
-              trigger: 'change',
-            },
-            {
-              pattern: "^[ a-zA-Z0-9',.;:\n]*$",
-              message: 'Caracter no válido',
-              trigger: 'change',
-            },
-          ],
-          nombreProy: [
-            {
-              required: true,
-              message: 'Seleccione el nombre',
-              trigger: 'change',
-            },
-          ],
-          codigProd: [
-            {
-              validator: code_required,
-              trigger: 'change',
-            },
-            {
-              whitespace: true,
-              message: 'Espacio no válido',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[0-9]*$',
-              message: 'Solo números',
-              trigger: 'change',
-            },
-            {
-              validator: validate_codig_unique,
-              trigger: 'change',
-            },
-            {
-              len: 4,
-              message: 'Formato de 4 números',
-              trigger: 'change',
-            },
-          ],
-          tituloProd: [
-            {
-              required: true,
-              message: 'Inserte el titulo',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[ a-zA-Z0-9üáéíóúÁÉÍÓÚñÑ]*$',
-              message: 'Caracter no válido',
-              trigger: 'change',
-            },
-            {
-              whitespace: true,
-              message: 'Inserte el titulo',
-              trigger: 'change',
-            },
-          ],
-          añoProd: [
-            {
-              required: true,
-              message: 'Seleccione el año',
-              trigger: 'change',
-            },
-          ],
-          sellodiscProd: [
-            {
-              trigger: 'change',
-            },
-          ],
-          estadodigProd: [
-            {
-              trigger: 'change',
-            },
-          ],
-          statusComProd: [
-            {
-              trigger: 'change',
-            },
-          ],
-          genMusicPro: [
-            {
-              trigger: 'change',
-            },
-          ],
-          catalDigitalPro: [
-            {
-              trigger: 'change',
-            },
-          ],
-          value: [
-            {
-              trigger: 'change',
-            },
-          ],
-          codigBarProd: [
-            {
-              len: 13,
-              message: 'Formato de 13 números',
-              /* validator: validate_cod_bar, */
-              trigger: 'change',
-            },
-            {
-              whitespace: true,
-              message: 'Espacio no válido',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[0-9]*$',
-              message: 'Solo números',
-              trigger: 'change',
-            },
-          ],
-        },
-      };
-    },
-    created() {
-      //* Carga de proyectos
-      axios
-        .post('/proyectos/listar')
-        .then((response) => {
-          let proy = response.data;
-          proy.forEach((element) => {
-            if (!element.deleted_at) {
-              this.projects.push(element);
-            }
-          });
-        })
-        .catch((error) => {});
-      //* Carga de autores
-      axios
-        .post('/autores/listar')
-        .then((response) => {
-          this.list_autores = response.data;
-          this.copia_autores = this.clone_arr(this.list_autores);
-        })
-        .catch((error) => {});
-      //* Carga de interpretes
-      axios
-        .post('/interpretes/listar')
-        .then((response) => {
-          this.list_interpretes = response.data;
-          this.copia_interpretes = this.clone_arr(this.list_interpretes);
-        })
-        .catch((error) => {});
-      //* Carga de nomencladores
-      axios
-        .post('/productos/nomencladores')
-        .then((response) => {
-          this.list_nomenclators = response.data;
-          this.anhos = this.list_nomenclators[0][0];
-          this.generos = this.list_nomenclators[1][0];
-          this.estados = this.list_nomenclators[2][0];
-          this.status = this.list_nomenclators[3][0];
-          this.destinos = this.list_nomenclators[4][0];
-          this.sellos = this.list_nomenclators[5][0];
-          this.roles_interp = this.list_nomenclators[6][0];
-        })
-        .catch((error) => {});
-      if (this.action_modal === 'detalles') {
-        this.active_tab = '2';
-      }
-      if (this.action_modal === 'editar') {
-        this.list_compare_autores =
-          this.product.autoresProd === null ? [] : this.product.autoresProd;
-        this.list_compare_interpretes =
-          this.product.interpretesProd === null
-            ? []
-            : this.product.interpretesProd;
-        this.product.descripEspPro =
-          this.product.descripEspPro === null ? '' : this.product.descripEspPro;
-        this.product.descripIngPro =
-          this.product.descripIngPro === null ? '' : this.product.descripIngPro;
-        if (this.product.deleted_at !== null) {
-          this.disabled = true;
-          this.activated = false;
-        }
-        this.product.codigProd = this.product.codigProd.substr(5);
-        this.product_modal = { ...this.product };
-        if (this.product_modal.identificadorProd !== null) {
-          if (
-            this.product_modal.identificadorProd !==
-            '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png'
-          ) {
-            this.file_list.push({
-              uid: this.product_modal.id,
-              name: this.product_modal.identificadorProd.split('/')[
-                this.product_modal.identificadorProd.split('/').length - 1
-              ],
-              url: this.product_modal.identificadorProd,
-            });
-          } else
-            this.file_list.push({
-              uid: 1,
-              name: 'Logo ver vertical_Ltr Negras.png',
-              url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
-            });
-        }
-        this.varios_int = this.product_modal.variosInterpretesProd;
-        this.producPrincProd =
-          this.product_modal.producPrincProd === 0 ? false : true;
-        this.primeraPantProd =
-          this.product_modal.primeraPantProd === 0 ? false : true;
-        this.activoCatalbisPro =
-          this.product_modal.activoCatalbisPro === 0 ? false : true;
-        this.catalDigitalPro =
-          this.product_modal.catalDigitalPro === 0 ? false : true;
-        this.variosInterpretesProd =
-          this.product_modal.variosInterpretesProd === 0 ? false : true;
-        this.text_button = 'Editar';
-        this.text_header_button = 'Editar';
-        this.action_cancel_title = '¿Desea cancelar la edición del Producto?';
-        this.action_title = '¿Desea guardar los cambios en el Producto?';
-        this.action_close = 'La edición del Producto se canceló correctamente';
-        let list_help = [];
-        let list_roles = [];
-        let list_roles_help = [];
-        if (this.product_modal.interpretesProd !== null) {
-          list_help = this.product_modal.interpretesProd.split('.');
-          this.product_modal.interpretesProd = list_help[0];
-          list_roles = list_help[1];
-          if (list_roles !== undefined) {
-            list_roles = list_roles.split('|');
-            list_roles.forEach((element) => {
-              list_roles_help.push(element.split(','));
-            });
+import tabla_audiovisuales from "../Audiovisual/Tabla_Audiovisuales";
+import tabla_fonogramas from "../Fonograma/Tabla_Fonogramas";
+export default {
+  name: "modal_product_managment",
+  props: ["action", "product", "products_list"],
+  data() {
+    let validate_codig_unique = (rule, value, callback) => {
+      if (value !== undefined) {
+        this.products_list.forEach((element) => {
+          if (element.codigProd.substr(5) === value.replace(/ /g, "")) {
+            callback(new Error("Código usado"));
           }
-          this.product_modal.interpretesProd = this.product_modal.interpretesProd.split(
-            '-'
-          );
-          if (list_roles !== undefined) {
-            this.product_modal.interpretesProd.pop();
-          }
-          let roles = [];
-          for (let i = 0; i < this.product_modal.interpretesProd.length; i++) {
-            if (list_roles_help.length !== 0) {
-              list_roles_help[i].forEach((element) => {
-                if (element === '') {
-                  roles = [];
-                } else roles = list_roles_help[i];
-                return roles;
-              });
-            }
-            this.interpretesProd.push({
-              id: this.product_modal.interpretesProd[i].id,
-              key: i + 1,
-              role: roles,
-              value: this.product_modal.interpretesProd[i],
-            });
-          }
-          this.product_modal.interpretesProd = [];
-        } else {
-          this.product_modal.interpretesProd = [];
-          this.interpretesProd = [
-            {
-              value: '',
-              role: [],
-              key: 2,
-            },
-          ];
-        }
-        if (this.product_modal.autoresProd !== null) {
-          this.product_modal.autoresProd = this.product_modal.autoresProd.split(
-            '-'
-          );
-          this.product_modal.autoresProd.pop();
-          for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
-            this.autoresProd.push({
-              id: this.product_modal.autoresProd[i].id,
-              key: i - 1,
-              value: this.product_modal.autoresProd[i],
-            });
-          }
-          this.product_modal.autoresProd = [];
-        } else {
-          this.product_modal.autoresProd = [];
-          this.autoresProd = [
-            {
-              value: '',
-              key: 1,
-            },
-          ];
-        }
-        if (this.product_modal.destinosComerPro !== null) {
-          this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
-            '-'
-          );
-        } else delete this.product_modal.destinosComerPro;
-      } else if (this.action_modal === 'detalles') {
-        this.list_compare_autores =
-          this.product.autoresProd === null ? [] : this.product.autoresProd;
-        this.list_compare_interpretes =
-          this.product.interpretesProd === null
-            ? []
-            : this.product.interpretesProd;
-        this.product.descripEspPro =
-          this.product.descripEspPro === null ? '' : this.product.descripEspPro;
-        this.product.descripIngPro =
-          this.product.descripIngPro === null ? '' : this.product.descripIngPro;
-        if (this.product.deleted_at !== null) {
-          this.disabled = true;
-          this.activated = false;
-        }
-        this.product_modal = { ...this.product };
-        if (this.product_modal.identificadorProd !== null) {
-          if (
-            this.product_modal.identificadorProd !==
-            '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png'
-          ) {
-            this.file_list.push({
-              uid: this.product_modal.id,
-              name: this.product_modal.identificadorProd.split('/')[
-                this.product_modal.identificadorProd.split('/').length - 1
-              ],
-              url: this.product_modal.identificadorProd,
-            });
-          } else
-            this.file_list.push({
-              uid: 1,
-              name: 'Logo ver vertical_Ltr Negras.png',
-              url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
-            });
-        }
-        this.varios_int = this.product_modal.variosInterpretesProd;
-        this.producPrincProd =
-          this.product_modal.producPrincProd === 0 ? false : true;
-        this.primeraPantProd =
-          this.product_modal.primeraPantProd === 0 ? false : true;
-        this.activoCatalbisPro =
-          this.product_modal.activoCatalbisPro === 0 ? false : true;
-        this.catalDigitalPro =
-          this.product_modal.catalDigitalPro === 0 ? false : true;
-        this.variosInterpretesProd =
-          this.product_modal.variosInterpretesProd === 0 ? false : true;
-        this.text_button = 'Detalles';
-        this.text_header_button = 'Detalles';
-        let list_help = [];
-        let list_roles = [];
-        let list_roles_help = [];
-        if (this.product_modal.interpretesProd !== null) {
-          list_help = this.product_modal.interpretesProd.split('.');
-          this.product_modal.interpretesProd = list_help[0];
-          list_roles = list_help[1];
-          if (list_roles !== undefined) {
-            list_roles = list_roles.split('|');
-            list_roles.forEach((element) => {
-              list_roles_help.push(element.split(','));
-            });
-          }
-          this.product_modal.interpretesProd = this.product_modal.interpretesProd.split(
-            '-'
-          );
-          if (list_roles !== undefined) {
-            this.product_modal.interpretesProd.pop();
-          }
-          let roles = [];
-          for (let i = 0; i < this.product_modal.interpretesProd.length; i++) {
-            if (list_roles_help.length !== 0) {
-              list_roles_help[i].forEach((element) => {
-                if (element === '') {
-                  roles = [];
-                } else roles = list_roles_help[i];
-                return roles;
-              });
-            }
-            this.interpretesProd.push({
-              id: this.product_modal.interpretesProd[i].id,
-              key: i + 1,
-              role: roles,
-              value: this.product_modal.interpretesProd[i],
-            });
-          }
-          this.product_modal.interpretesProd = [];
-        } else {
-          this.product_modal.interpretesProd = [];
-          this.interpretesProd = [
-            {
-              value: '',
-              role: [],
-              key: 2,
-            },
-          ];
-        }
-        if (this.product_modal.autoresProd !== null) {
-          this.product_modal.autoresProd = this.product_modal.autoresProd.split(
-            '-'
-          );
-          this.product_modal.autoresProd.pop();
-          for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
-            this.autoresProd.push({
-              id: this.product_modal.autoresProd[i].id,
-              key: i - 1,
-              value: this.product_modal.autoresProd[i],
-            });
-          }
-          this.product_modal.autoresProd = [];
-        } else {
-          this.product_modal.autoresProd = [];
-          this.autoresProd = [
-            {
-              value: '',
-              key: 1,
-            },
-          ];
-        }
-        if (this.product_modal.destinosComerPro !== null) {
-          this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
-            '-'
-          );
-        } else delete this.product_modal.destinosComerPro;
-      } else {
-        this.text_button = 'Crear';
-        this.text_header_button = 'Crear';
-        this.action_cancel_title = '¿Desea cancelar la creación del Producto?';
-        this.action_title = '¿Desea crear el Producto?';
-        this.action_close = 'La creación del Producto se canceló correctamente';
-        this.product.estadodigProd = 'En proceso';
-        this.product.statusComProd = 'Por definir';
-        const date = new Date();
-        this.product.añoProd = date.getFullYear();
-        this.product_modal = { ...this.product };
-        this.codigo = this.generar_codigo(this.products_list);
-        this.producPrincProd = false;
-        this.activoCatalbisPro = false;
-        this.catalDigitalPro = false;
-        this.primeraPantProd = false;
-        this.variosInterpretesProd = false;
-        this.product_modal.autoresProd = [];
-        this.product_modal.interpretesProd = [];
-        this.file_list.push({
-          uid: 1,
-          name: 'Logo ver vertical_Ltr Negras.png',
-          url: '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png',
         });
-        this.autoresProd = [
+      }
+      callback();
+    };
+    let code_required = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Campo requerido"));
+      } else callback();
+    };
+    return {
+      steps: [
+        {
+          title: "Audiovisuales",
+        },
+        {
+          title: "Fonogramas",
+        },
+      ],
+      current: 0,
+      vista_editar: true,
+      action_cancel_title: "",
+      action_title: "",
+      tab_visibility: true,
+      roles_interp: [],
+      disabled_option: false,
+      list_compare_autores: "",
+      list_compare_interpretes: "",
+      valid_image: true,
+      used: false,
+      show_error: "",
+      show_used_error: "",
+      text_header_button: "",
+      producPrincProd: "",
+      catalDigitalPro: "",
+      activoCatalbisPro: "",
+      variosInterpretesProd: "",
+      primeraPantProd: "",
+      product_image: "",
+      autoresProd: [],
+      interpretesProd: [],
+      list_autores: [],
+      copia_autores: [],
+      list_interpretes: [],
+      copia_interpretes: [],
+      pivot: "",
+      spinning: false, //*
+      activated: true,
+      anhos: [],
+      estados: [],
+      status: [],
+      generos: [],
+      destinos: [],
+      sellos: [],
+      producto: [],
+      codigo: "",
+      disabled: false,
+      list_nomenclators: [],
+      text_button: "", //* variable que muestra el texto del input submit del formulario en dependencia de la acción que sea(editar o crear).
+      action_modal: this.action, //* variable que define la acción que se va a realizar, editar o crear.
+      preview_visible: false, //* variable usada para previsualizar la imagen subida a través de un modal.
+      preview_image: "", //* variable usada para saber si ya se ha subido una imagen.
+      file_list: [], //* variable usada para guardar la imagen subida.
+      loading: false, //* variable usada para alternar el ícono del componente uploat.
+      product_modal: {}, //* variable que almacena el producto pasado por prop, con el cual se va a trabajar.
+      projects: [], //*
+      show: true, //* variable usada para mostrar u ocultar el modal.
+      active_tab: "1", //* variable usada para almacenar el tab que esta activo.
+      tabs_list: [], //* variable usada para almacenar los tabs por los que se ha pasado.
+      waiting: false, //* variable usada para poner el ícono de cargando.
+      tab_2: true, //*
+      tab_3: true, //*
+      tab_4: true, //*
+      tab_5: true, //*
+      varios_int: false,
+      formItemLayout: {
+        wrapperCol: {
+          xs: { span: 24, offset: 0 },
+          sm: { span: 20, offset: 4 },
+        },
+      },
+      rules: {
+        //*
+        proyecto_id: [
           {
-            id: -1,
-            value: '',
-            key: 1,
+            required: true,
+            message: "Seleccione el código",
+            trigger: "change",
           },
-        ];
+        ],
+        descripEspPro: [
+          {
+            whitespace: true,
+            message: "Inserte una descripción",
+            trigger: "change",
+          },
+          {
+            pattern: "^[ a-zA-Z0-9üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()\n]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+        descripIngPro: [
+          {
+            whitespace: true,
+            message: "Inserte una descripción",
+            trigger: "change",
+          },
+          {
+            pattern: "^[ a-zA-Z0-9',.;:\n]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+        nombreProy: [
+          {
+            required: true,
+            message: "Seleccione el nombre",
+            trigger: "change",
+          },
+        ],
+        codigProd: [
+          {
+            validator: code_required,
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+          {
+            pattern: "^[0-9]*$",
+            message: "Solo números",
+            trigger: "change",
+          },
+          {
+            validator: validate_codig_unique,
+            trigger: "change",
+          },
+          {
+            len: 4,
+            message: "Formato de 4 números",
+            trigger: "change",
+          },
+        ],
+        tituloProd: [
+          {
+            required: true,
+            message: "Inserte el titulo",
+            trigger: "change",
+          },
+          {
+            pattern: "^[ a-zA-Z0-9üáéíóúÁÉÍÓÚñÑ]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Inserte el titulo",
+            trigger: "change",
+          },
+        ],
+        añoProd: [
+          {
+            required: true,
+            message: "Seleccione el año",
+            trigger: "change",
+          },
+        ],
+        sellodiscProd: [
+          {
+            trigger: "change",
+          },
+        ],
+        estadodigProd: [
+          {
+            trigger: "change",
+          },
+        ],
+        statusComProd: [
+          {
+            trigger: "change",
+          },
+        ],
+        genMusicPro: [
+          {
+            trigger: "change",
+          },
+        ],
+        catalDigitalPro: [
+          {
+            trigger: "change",
+          },
+        ],
+        value: [
+          {
+            trigger: "change",
+          },
+        ],
+        codigBarProd: [
+          {
+            len: 13,
+            message: "Formato de 13 números",
+            /* validator: validate_cod_bar, */
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+          {
+            pattern: "^[0-9]*$",
+            message: "Solo números",
+            trigger: "change",
+          },
+        ],
+      },
+    };
+  },
+  created() {
+    if (this.action_modal === "detalles") {
+      this.producto = { ...this.product };
+      if (this.producto.interpretesProd !== null) {
+        let list_help = this.producto.interpretesProd.split(".");
+        this.producto.interpretesProd = list_help[0];
+        this.producto.interpretesProd = this.producto.interpretesProd.split(
+          "-"
+        );
+        this.producto.interpretesProd.pop();
+      }
+      if (this.producto.autoresProd !== null) {
+        this.producto.autoresProd = this.producto.autoresProd.split("-");
+        this.producto.autoresProd.pop();
+      }
+    }
+    //* Carga de proyectos
+    axios
+      .post("/proyectos/listar")
+      .then((response) => {
+        let proy = response.data;
+        proy.forEach((element) => {
+          if (!element.deleted_at) {
+            this.projects.push(element);
+          }
+        });
+      })
+      .catch((error) => {});
+    //* Carga de autores
+    axios
+      .post("/autores/listar")
+      .then((response) => {
+        this.list_autores = response.data;
+        this.copia_autores = this.clone_arr(this.list_autores);
+      })
+      .catch((error) => {});
+    //* Carga de interpretes
+    axios
+      .post("/interpretes/listar")
+      .then((response) => {
+        this.list_interpretes = response.data;
+        this.copia_interpretes = this.clone_arr(this.list_interpretes);
+      })
+      .catch((error) => {});
+    //* Carga de nomencladores
+    axios
+      .post("/productos/nomencladores")
+      .then((response) => {
+        this.list_nomenclators = response.data;
+        this.anhos = this.list_nomenclators[0][0];
+        this.generos = this.list_nomenclators[1][0];
+        this.estados = this.list_nomenclators[2][0];
+        this.status = this.list_nomenclators[3][0];
+        this.destinos = this.list_nomenclators[4][0];
+        this.sellos = this.list_nomenclators[5][0];
+        this.roles_interp = this.list_nomenclators[6][0];
+      })
+      .catch((error) => {});
+    if (this.action_modal === "detalles") {
+      this.active_tab = "2";
+    }
+    if (this.action_modal === "editar") {
+      this.list_compare_autores =
+        this.product.autoresProd === null ? [] : this.product.autoresProd;
+      this.list_compare_interpretes =
+        this.product.interpretesProd === null
+          ? []
+          : this.product.interpretesProd;
+      this.product.descripEspPro =
+        this.product.descripEspPro === null ? "" : this.product.descripEspPro;
+      this.product.descripIngPro =
+        this.product.descripIngPro === null ? "" : this.product.descripIngPro;
+      if (this.product.deleted_at !== null) {
+        this.disabled = true;
+        this.activated = false;
+      }
+      this.product.codigProd = this.product.codigProd.substr(5);
+      this.product_modal = { ...this.product };
+      if (this.product_modal.identificadorProd !== null) {
+        if (
+          this.product_modal.identificadorProd !==
+          "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
+        ) {
+          this.file_list.push({
+            uid: this.product_modal.id,
+            name: this.product_modal.identificadorProd.split("/")[
+              this.product_modal.identificadorProd.split("/").length - 1
+            ],
+            url: this.product_modal.identificadorProd,
+          });
+        } else
+          this.file_list.push({
+            uid: 1,
+            name: "Logo ver vertical_Ltr Negras.png",
+            url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+          });
+      }
+      this.varios_int = this.product_modal.variosInterpretesProd;
+      this.producPrincProd =
+        this.product_modal.producPrincProd === 0 ? false : true;
+      this.primeraPantProd =
+        this.product_modal.primeraPantProd === 0 ? false : true;
+      this.activoCatalbisPro =
+        this.product_modal.activoCatalbisPro === 0 ? false : true;
+      this.catalDigitalPro =
+        this.product_modal.catalDigitalPro === 0 ? false : true;
+      this.variosInterpretesProd =
+        this.product_modal.variosInterpretesProd === 0 ? false : true;
+      this.text_button = "Editar";
+      this.text_header_button = "Editar";
+      this.action_cancel_title = "¿Desea cancelar la edición del Producto?";
+      this.action_title = "¿Desea guardar los cambios en el Producto?";
+      this.action_close = "La edición del Producto se canceló correctamente";
+      let list_help = [];
+      let list_roles = [];
+      let list_roles_help = [];
+      if (this.product_modal.interpretesProd !== null) {
+        list_help = this.product_modal.interpretesProd.split(".");
+        this.product_modal.interpretesProd = list_help[0];
+        list_roles = list_help[1];
+        if (list_roles !== undefined) {
+          list_roles = list_roles.split("|");
+          list_roles.forEach((element) => {
+            list_roles_help.push(element.split(","));
+          });
+        }
+        this.product_modal.interpretesProd = this.product_modal.interpretesProd.split(
+          "-"
+        );
+        if (list_roles !== undefined) {
+          this.product_modal.interpretesProd.pop();
+        }
+        let roles = [];
+        for (let i = 0; i < this.product_modal.interpretesProd.length; i++) {
+          if (list_roles_help.length !== 0) {
+            list_roles_help[i].forEach((element) => {
+              if (element === "") {
+                roles = [];
+              } else roles = list_roles_help[i];
+              return roles;
+            });
+          }
+          this.interpretesProd.push({
+            id: this.product_modal.interpretesProd[i].id,
+            key: i + 1,
+            role: roles,
+            value: this.product_modal.interpretesProd[i],
+          });
+        }
+        this.product_modal.interpretesProd = [];
+      } else {
+        this.product_modal.interpretesProd = [];
         this.interpretesProd = [
           {
-            id: -1,
-            value: '',
+            value: "",
             role: [],
             key: 2,
           },
         ];
       }
-      console.log(this.list_compare_autores);
-    },
-    computed: {
-      active() {
-        if (this.text_button === 'Editar') {
-          return (
-            !this.compare_object ||
-            (this.valid_image &&
-              this.file_list.length !== 0 &&
-              this.file_list[0].uid !== this.product_modal.id)
-          );
-        } else
-          return (
-            this.product_modal.añoProd &&
-            this.product_modal.tituloProd &&
-            this.valid_image
-          );
-      },
-      /*
-       *Método que compara los campos editables del producto para saber si se ha modificado
-       */
-      compare_object() {
-        return (
-          this.product_modal.tituloProd === this.product.tituloProd &&
-          this.product_modal.añoProd === this.product.añoProd &&
-          this.product_modal.descripEspPro === this.product.descripEspPro &&
-          this.product_modal.descripIngPro === this.product.descripIngPro &&
-          this.product_modal.producPrincProd === this.product.producPrincProd &&
-          this.product_modal.codigBarProd === this.product.codigBarProd &&
-          this.product_modal.destinosComerPro === undefined &&
-          this.product_modal.statusComProd === this.product.statusComProd &&
-          this.product_modal.sellodiscProd === this.product.sellodiscProd &&
-          this.product_modal.genMusicPro === this.product.genMusicPro &&
-          this.product_modal.activoCatalbisPro ===
-            this.product.activoCatalbisPro &&
-          this.product_modal.catalDigitalPro === this.product.catalDigitalPro &&
-          this.product_modal.primeraPantProd === this.product.primeraPantProd &&
-          this.product_modal.estadodigProd === this.product.estadodigProd &&
-          this.product_modal.autoresProd === this.list_compare_autores &&
-          this.product_modal.interpretesProd === this.list_compare_interpretes
+      if (this.product_modal.autoresProd !== null) {
+        this.product_modal.autoresProd = this.product_modal.autoresProd.split(
+          "-"
         );
-      },
+        this.product_modal.autoresProd.pop();
+        for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
+          this.autoresProd.push({
+            id: this.product_modal.autoresProd[i].id,
+            key: i - 1,
+            value: this.product_modal.autoresProd[i],
+          });
+        }
+        this.product_modal.autoresProd = [];
+      } else {
+        this.product_modal.autoresProd = [];
+        this.autoresProd = [
+          {
+            value: "",
+            key: 1,
+          },
+        ];
+      }
+      if (this.product_modal.destinosComerPro !== null) {
+        this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
+          "-"
+        );
+      } else delete this.product_modal.destinosComerPro;
+    } else if (this.action_modal === "detalles") {
+      this.list_compare_autores =
+        this.product.autoresProd === null ? [] : this.product.autoresProd;
+      this.list_compare_interpretes =
+        this.product.interpretesProd === null
+          ? []
+          : this.product.interpretesProd;
+      this.product.descripEspPro =
+        this.product.descripEspPro === null ? "" : this.product.descripEspPro;
+      this.product.descripIngPro =
+        this.product.descripIngPro === null ? "" : this.product.descripIngPro;
+      if (this.product.deleted_at !== null) {
+        this.disabled = true;
+        this.activated = false;
+      }
+      this.product_modal = { ...this.product };
+      if (this.product_modal.identificadorProd !== null) {
+        if (
+          this.product_modal.identificadorProd !==
+          "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
+        ) {
+          this.file_list.push({
+            uid: this.product_modal.id,
+            name: this.product_modal.identificadorProd.split("/")[
+              this.product_modal.identificadorProd.split("/").length - 1
+            ],
+            url: this.product_modal.identificadorProd,
+          });
+        } else
+          this.file_list.push({
+            uid: 1,
+            name: "Logo ver vertical_Ltr Negras.png",
+            url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+          });
+      }
+      this.varios_int = this.product_modal.variosInterpretesProd;
+      this.producPrincProd =
+        this.product_modal.producPrincProd === 0 ? false : true;
+      this.primeraPantProd =
+        this.product_modal.primeraPantProd === 0 ? false : true;
+      this.activoCatalbisPro =
+        this.product_modal.activoCatalbisPro === 0 ? false : true;
+      this.catalDigitalPro =
+        this.product_modal.catalDigitalPro === 0 ? false : true;
+      this.variosInterpretesProd =
+        this.product_modal.variosInterpretesProd === 0 ? false : true;
+      this.text_button = "Detalles";
+      this.text_header_button = "Detalles";
+      let list_help = [];
+      let list_roles = [];
+      let list_roles_help = [];
+      if (this.product_modal.interpretesProd !== null) {
+        list_help = this.product_modal.interpretesProd.split(".");
+        this.product_modal.interpretesProd = list_help[0];
+        list_roles = list_help[1];
+        if (list_roles !== undefined) {
+          list_roles = list_roles.split("|");
+          list_roles.forEach((element) => {
+            list_roles_help.push(element.split(","));
+          });
+        }
+        this.product_modal.interpretesProd = this.product_modal.interpretesProd.split(
+          "-"
+        );
+        if (list_roles !== undefined) {
+          this.product_modal.interpretesProd.pop();
+        }
+        let roles = [];
+        for (let i = 0; i < this.product_modal.interpretesProd.length; i++) {
+          if (list_roles_help.length !== 0) {
+            list_roles_help[i].forEach((element) => {
+              if (element === "") {
+                roles = [];
+              } else roles = list_roles_help[i];
+              return roles;
+            });
+          }
+          this.interpretesProd.push({
+            id: this.product_modal.interpretesProd[i].id,
+            key: i + 1,
+            role: roles,
+            value: this.product_modal.interpretesProd[i],
+          });
+        }
+        this.product_modal.interpretesProd = [];
+      } else {
+        this.product_modal.interpretesProd = [];
+        this.interpretesProd = [
+          {
+            value: "",
+            role: [],
+            key: 2,
+          },
+        ];
+      }
+      if (this.product_modal.autoresProd !== null) {
+        this.product_modal.autoresProd = this.product_modal.autoresProd.split(
+          "-"
+        );
+        this.product_modal.autoresProd.pop();
+        for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
+          this.autoresProd.push({
+            id: this.product_modal.autoresProd[i].id,
+            key: i - 1,
+            value: this.product_modal.autoresProd[i],
+          });
+        }
+        this.product_modal.autoresProd = [];
+      } else {
+        this.product_modal.autoresProd = [];
+        this.autoresProd = [
+          {
+            value: "",
+            key: 1,
+          },
+        ];
+      }
+      if (this.product_modal.destinosComerPro !== null) {
+        this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
+          "-"
+        );
+      } else delete this.product_modal.destinosComerPro;
+    } else {
+      this.text_button = "Crear";
+      this.text_header_button = "Crear";
+      this.action_cancel_title = "¿Desea cancelar la creación del Producto?";
+      this.action_title = "¿Desea crear el Producto?";
+      this.action_close = "La creación del Producto se canceló correctamente";
+      this.product.estadodigProd = "En proceso";
+      this.product.statusComProd = "Por definir";
+      const date = new Date();
+      this.product.añoProd = date.getFullYear();
+      this.product_modal = { ...this.product };
+      this.codigo = this.generar_codigo(this.products_list);
+      this.producPrincProd = false;
+      this.activoCatalbisPro = false;
+      this.catalDigitalPro = false;
+      this.primeraPantProd = false;
+      this.variosInterpretesProd = false;
+      this.product_modal.autoresProd = [];
+      this.product_modal.interpretesProd = [];
+      this.file_list.push({
+        uid: 1,
+        name: "Logo ver vertical_Ltr Negras.png",
+        url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+      });
+      this.autoresProd = [
+        {
+          id: -1,
+          value: "",
+          key: 1,
+        },
+      ];
+      this.interpretesProd = [
+        {
+          id: -1,
+          value: "",
+          role: [],
+          key: 2,
+        },
+      ];
+    }
+  },
+  computed: {
+    active() {
+      if (this.text_button === "Editar") {
+        return (
+          !this.compare_object ||
+          (this.valid_image &&
+            this.file_list.length !== 0 &&
+            this.file_list[0].uid !== this.product_modal.id)
+        );
+      } else
+        return (
+          this.product_modal.añoProd &&
+          this.product_modal.tituloProd &&
+          this.valid_image
+        );
     },
-    mounted() {
-      if (this.action_modal === 'detalles') {
-        this.producto = { ...this.product };
-        if (this.producto.interpretesProd !== null) {
-          let list_help = this.producto.interpretesProd.split('.');
-          this.producto.interpretesProd = list_help[0];
-          this.producto.interpretesProd = this.producto.interpretesProd.split(
-            '-'
-          );
-          this.producto.interpretesProd.pop();
-        }
-        if (this.producto.autoresProd !== null) {
-          this.producto.autoresProd = this.producto.autoresProd.split('-');
-          this.producto.autoresProd.pop();
-        }
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      return (
+        this.product_modal.tituloProd === this.product.tituloProd &&
+        this.product_modal.añoProd === this.product.añoProd &&
+        this.product_modal.descripEspPro === this.product.descripEspPro &&
+        this.product_modal.descripIngPro === this.product.descripIngPro &&
+        this.product_modal.producPrincProd === this.product.producPrincProd &&
+        this.product_modal.codigBarProd === this.product.codigBarProd &&
+        this.product_modal.destinosComerPro === undefined &&
+        this.product_modal.statusComProd === this.product.statusComProd &&
+        this.product_modal.sellodiscProd === this.product.sellodiscProd &&
+        this.product_modal.genMusicPro === this.product.genMusicPro &&
+        this.product_modal.activoCatalbisPro ===
+          this.product.activoCatalbisPro &&
+        this.product_modal.catalDigitalPro === this.product.catalDigitalPro &&
+        this.product_modal.primeraPantProd === this.product.primeraPantProd &&
+        this.product_modal.estadodigProd === this.product.estadodigProd &&
+        this.product_modal.autoresProd === this.list_compare_autores &&
+        this.product_modal.interpretesProd === this.list_compare_interpretes
+      );
+    },
+  },
+  methods: {
+    onChange(current) {
+      this.current = current;
+    },
+    validate() {
+      if (this.product_modal.codigProd === undefined) {
+        this.product_modal.codigProd = this.codigo;
+      }
+      if (!this.used) {
+        if (this.tabs_list.indexOf("tab_1") !== -1) {
+          this.$refs.formularioGenerales.validate((valid) => {
+            if (valid) {
+              if (this.file_list.length !== 0) {
+                return this.confirm();
+              }
+            }
+          });
+        } else this.confirm();
       }
     },
-    methods: {
-      validate() {
-        if (this.product_modal.codigProd === undefined) {
-          this.product_modal.codigProd = this.codigo;
-        }
-        if (!this.used) {
-          if (this.tabs_list.indexOf('tab_1') !== -1) {
-            this.$refs.formularioGenerales.validate((valid) => {
-              if (valid) {
-                if (this.file_list.length !== 0) {
-                  return this.confirm();
-                }
-              }
-            });
-          } else this.confirm();
-        }
-      },
-      interpretes() {
-        this.varios_int = !this.varios_int;
-        if (this.varios_int) {
-          this.multiplicidad = 'multiple';
-        } else {
-          this.multiplicidad = 'single';
-        }
-      },
-      remove_image() {
-        this.file_list.pop();
-        this.preview_image = '';
-        this.valid_image = true;
-      },
-      preview_cancel() {
-        this.preview_visible = false;
-      },
-      handle_preview(file) {
-        this.preview_image = file.url || file.thumbUrl;
-        this.preview_visible = true;
-      },
-      handle_change({ fileList }) {
-        this.file_list = fileList;
-      },
-      before_upload(file) {
-        const isJpgOrPng =
-          file.type === 'image/jpeg' ||
-          file.type === 'image/png' ||
-          file.type === 'image/jpg';
-        if (!isJpgOrPng) {
-          this.valid_image = false;
-          this.$message.error(
-            'Sólo puedes subir imágenes como identificador del proyecto'
-          );
-        } else this.$message.success('Identificador cargado correctamente');
-        return false;
-      },
-      siguiente(tab, siguienteTab) {
-        if (tab == 'tab_1') {
-          if (this.action_modal === 'editar') {
-            for (let i = 0; i < this.autoresProd.length; i++) {
-              this.autoresProd[i].id = this.find_element_autor(
-                this.autoresProd[i].value,
-                this.list_autores
-              );
-              this.edit_copia_autores(this.autoresProd[i].id);
-            }
-            for (let i = 0; i < this.interpretesProd.length; i++) {
-              this.interpretesProd[i].id = this.find_element_interprete(
-                this.interpretesProd[i].value,
-                this.list_interpretes
-              );
-              this.edit_copia_interpretes(this.interpretesProd[i].id);
-            }
+    reload_parent() {
+      this.$emit("refresh");
+    },
+    interpretes() {
+      this.varios_int = !this.varios_int;
+      if (this.varios_int) {
+        this.multiplicidad = "multiple";
+      } else {
+        this.multiplicidad = "single";
+      }
+    },
+    remove_image() {
+      this.file_list.pop();
+      this.preview_image = "";
+      this.valid_image = true;
+    },
+    preview_cancel() {
+      this.preview_visible = false;
+    },
+    handle_preview(file) {
+      this.preview_image = file.url || file.thumbUrl;
+      this.preview_visible = true;
+    },
+    handle_change({ fileList }) {
+      this.file_list = fileList;
+    },
+    before_upload(file) {
+      const isJpgOrPng =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "image/jpg";
+      if (!isJpgOrPng) {
+        this.valid_image = false;
+        this.$message.error(
+          "Sólo puedes subir imágenes como identificador del proyecto"
+        );
+      } else this.$message.success("Identificador cargado correctamente");
+      return false;
+    },
+    siguiente(tab, siguienteTab) {
+      if (tab == "tab_1") {
+        if (this.action_modal === "editar") {
+          for (let i = 0; i < this.autoresProd.length; i++) {
+            this.autoresProd[i].id = this.find_element_autor(
+              this.autoresProd[i].value,
+              this.list_autores
+            );
+            this.edit_copia_autores(this.autoresProd[i].id);
           }
-          this.$refs.formularioproject.validate((valid) => {
+          for (let i = 0; i < this.interpretesProd.length; i++) {
+            this.interpretesProd[i].id = this.find_element_interprete(
+              this.interpretesProd[i].value,
+              this.list_interpretes
+            );
+            this.edit_copia_interpretes(this.interpretesProd[i].id);
+          }
+        }
+        this.$refs.formularioproject.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            if (this.tabs_list.indexOf(tab) == -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          }
+        });
+      } else if (tab == "tab_2") {
+        if (this.action_modal !== "detalles") {
+          this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
-              this.tab_2 = false;
+              this.tab_3 = false;
               if (this.tabs_list.indexOf(tab) == -1) {
                 this.tabs_list.push(tab);
               }
               this.active_tab = siguienteTab;
             }
           });
-        } else if (tab == 'tab_2') {
-          if (this.action_modal !== 'detalles') {
-            this.$refs.formularioGenerales.validate((valid) => {
-              if (valid) {
-                this.tab_3 = false;
-                if (this.tabs_list.indexOf(tab) == -1) {
-                  this.tabs_list.push(tab);
-                }
-                this.active_tab = siguienteTab;
-              }
-            });
-          } else {
-            this.tab_3 = false;
-            if (this.tabs_list.indexOf(tab) == -1) {
-              this.tabs_list.push(tab);
-            }
-            this.active_tab = siguienteTab;
-          }
-        } else if (tab == 'tab_3') {
-          this.tab_4 = false;
+        } else {
+          this.tab_3 = false;
           if (this.tabs_list.indexOf(tab) == -1) {
             this.tabs_list.push(tab);
           }
           this.active_tab = siguienteTab;
         }
-      },
-      atras(tabAnterior) {
-        this.active_tab = tabAnterior;
-      },
-      confirm() {
-        this.product_modal.primeraPantProd =
-          this.primeraPantProd === false ? 0 : 1;
-        this.product_modal.producPrincProd =
-          this.producPrincProd === false ? 0 : 1;
-        this.product_modal.catalDigitalPro =
-          this.catalDigitalPro === false ? 0 : 1;
-        this.product_modal.activoCatalbisPro =
-          this.activoCatalbisPro === false ? 0 : 1;
-        this.product_modal.variosInterpretesProd =
-          this.variosInterpretesProd === false ? 0 : 1;
-        this.waiting = true;
-        this.spinning = true;
-        let destinos = '';
-        let interpretes = '';
-        let autores = '';
-        let roles_interp = [];
-        let roles = '';
-        let interpretes_roles = '';
-        if (
-          this.action_modal === 'editar' ||
-          this.action_modal === 'detalles'
-        ) {
-          this.text_button = 'Editando...';
-          if (this.product_modal.descripIngPro === undefined) {
-            this.product_modal.descripIngPro = '';
+      } else if (tab == "tab_3") {
+        this.tab_4 = false;
+        if (this.tabs_list.indexOf(tab) == -1) {
+          this.tabs_list.push(tab);
+        }
+        this.active_tab = siguienteTab;
+      }
+    },
+    atras(tabAnterior) {
+      this.active_tab = tabAnterior;
+    },
+    confirm() {
+      this.product_modal.primeraPantProd =
+        this.primeraPantProd === false ? 0 : 1;
+      this.product_modal.producPrincProd =
+        this.producPrincProd === false ? 0 : 1;
+      this.product_modal.catalDigitalPro =
+        this.catalDigitalPro === false ? 0 : 1;
+      this.product_modal.activoCatalbisPro =
+        this.activoCatalbisPro === false ? 0 : 1;
+      this.product_modal.variosInterpretesProd =
+        this.variosInterpretesProd === false ? 0 : 1;
+      this.waiting = true;
+      this.spinning = true;
+      let destinos = "";
+      let interpretes = "";
+      let autores = "";
+      let roles_interp = [];
+      let roles = "";
+      let interpretes_roles = "";
+      if (this.action_modal === "editar" || this.action_modal === "detalles") {
+        this.text_button = "Editando...";
+        if (this.product_modal.descripIngPro === undefined) {
+          this.product_modal.descripIngPro = "";
+        }
+        if (this.product_modal.descripEspPro === undefined) {
+          this.product_modal.descripEspPro = "";
+        }
+        if (this.product_modal.sellodiscProd === null) {
+          this.product_modal.sellodiscProd = "";
+        }
+        if (this.product_modal.statusComProd === null) {
+          this.product_modal.statusComProd = "";
+        }
+        if (this.product_modal.estadodigProd === null) {
+          this.product_modal.estadodigProd = "";
+        }
+        if (this.product_modal.genMusicPro === null) {
+          this.product_modal.genMusicPro = "";
+        }
+        if (this.product_modal.codigBarProd === null) {
+          this.product_modal.codigBarProd = "";
+        }
+        if (this.product_modal.destinosComerPro === undefined) {
+          this.product_modal.destinosComerPro = "";
+        }
+        this.autoresProd.forEach((item) => {
+          if (item.value !== "") {
+            this.product_modal.autoresProd.push(item.value);
           }
-          if (this.product_modal.descripEspPro === undefined) {
-            this.product_modal.descripEspPro = '';
+        });
+        this.product_modal.autoresProd.forEach((item) => {
+          autores += item + "-";
+        });
+        this.product_modal.autoresProd = autores;
+        this.interpretesProd.forEach((item) => {
+          if (item.value !== "") {
+            this.product_modal.interpretesProd.push(item.value);
+            if (item.role.length !== 0) {
+              roles_interp.push(item.role);
+            } else roles_interp.push("");
           }
-          if (this.product_modal.sellodiscProd === null) {
-            this.product_modal.sellodiscProd = '';
+        });
+        if (roles_interp.length !== 0) {
+          roles_interp.forEach((item) => {
+            roles += item + "|";
+          });
+        }
+        this.product_modal.interpretesProd.forEach((item) => {
+          interpretes += item + "-";
+        });
+        interpretes_roles =
+          interpretes && roles
+            ? (interpretes_roles = interpretes + "." + roles)
+            : interpretes + roles;
+        if (this.product_modal.destinosComerPro !== "") {
+          this.product_modal.destinosComerPro.forEach((item) => {
+            destinos += item + "-";
+          });
+          this.product_modal.destinosComerPro = destinos;
+        }
+        this.product_modal.codigProd = "PROD-" + this.product_modal.codigProd;
+        let form_data = new FormData();
+        form_data.append("codigProd", this.product_modal.codigProd);
+        form_data.append("añoProd", this.product_modal.añoProd);
+        form_data.append("descripEspPro", this.product_modal.descripEspPro);
+        form_data.append("descripIngPro", this.product_modal.descripIngPro);
+        form_data.append("tituloProd", this.product_modal.tituloProd);
+        form_data.append("proyecto_id", this.product_modal.proyecto_id);
+        form_data.append("id", this.product_modal.id);
+        form_data.append("sellodiscProd", this.product_modal.sellodiscProd);
+        form_data.append("estadodigProd", this.product_modal.estadodigProd);
+        form_data.append("statusComProd", this.product_modal.statusComProd);
+        form_data.append("producPrincProd", this.product_modal.producPrincProd);
+        form_data.append("codigBarProd", this.product_modal.codigBarProd);
+        form_data.append("genMusicPro", this.product_modal.genMusicPro);
+        form_data.append("catalDigitalPro", this.product_modal.catalDigitalPro);
+        form_data.append("destinosComerPro", destinos);
+        form_data.append("autoresProd", autores);
+        form_data.append("interpretesProd", interpretes_roles);
+        form_data.append(
+          "variosInterpretesProd",
+          this.product_modal.variosInterpretesProd
+        );
+        form_data.append(
+          "activoCatalbisPro",
+          this.product_modal.activoCatalbisPro
+        );
+        let founded = false;
+        let project = "";
+        form_data.append("primeraPantProd", this.product_modal.primeraPantProd);
+        for (let i = 0; i < this.projects.length && !founded; i++) {
+          if (this.projects[i].id === this.product_modal.proyecto_id) {
+            project = this.projects[i].codigProy;
+            founded = true;
           }
-          if (this.product_modal.statusComProd === null) {
-            this.product_modal.statusComProd = '';
-          }
-          if (this.product_modal.estadodigProd === null) {
-            this.product_modal.estadodigProd = '';
-          }
-          if (this.product_modal.genMusicPro === null) {
-            this.product_modal.genMusicPro = '';
-          }
-          if (this.product_modal.codigBarProd === null) {
-            this.product_modal.codigBarProd = '';
-          }
-          if (this.product_modal.destinosComerPro === undefined) {
-            this.product_modal.destinosComerPro = '';
-          }
-          this.autoresProd.forEach((item) => {
-            if (item.value !== '') {
-              this.product_modal.autoresProd.push(item.value);
+        }
+        form_data.append(
+          "dirArbolProd",
+          `/BisMusic/Proyectos/${project}/${this.product_modal.codigProd}`
+        );
+        if (this.file_list.length !== 0) {
+          if (this.file_list[0].uid !== this.product_modal.id) {
+            if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
+              form_data.append(
+                "identificadorProd",
+                this.file_list[0].originFileObj
+              );
             }
-          });
-          this.product_modal.autoresProd.forEach((item) => {
-            autores += item + '-';
-          });
-          this.product_modal.autoresProd = autores;
-          this.interpretesProd.forEach((item) => {
-            if (item.value !== '') {
-              this.product_modal.interpretesProd.push(item.value);
-              if (item.role.length !== 0) {
-                roles_interp.push(item.role);
-              } else roles_interp.push('');
-            }
-          });
-          if (roles_interp.length !== 0) {
-            roles_interp.forEach((item) => {
-              roles += item + '|';
+          }
+        } else form_data.append("img_default", true);
+        axios
+          .post(`/productos/editar`, form_data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            this.spinning = false;
+            this.waiting = false;
+            this.text_button = "Editar";
+            this.$emit("actualizar");
+            this.$toast.success(
+              "Se ha modificado el producto correctamente",
+              "¡Éxito!",
+              { timeout: 1000 }
+            );
+            this.handle_cancel();
+          })
+          .catch((err) => {
+            this.spinning = false;
+            this.waiting = false;
+            this.text_button = "Editar";
+            this.handle_cancel();
+            this.$toast.error("Ha ocurrido un error", "¡Error!", {
+              timeout: 1000,
             });
-          }
-          this.product_modal.interpretesProd.forEach((item) => {
-            interpretes += item + '-';
           });
+      } else {
+        this.text_button = "Creando...";
+        if (this.product_modal.descripIngPro === undefined) {
+          this.product_modal.descripIngPro = "";
+        }
+        if (this.product_modal.descripEspPro === undefined) {
+          this.product_modal.descripEspPro = "";
+        }
+        if (this.product_modal.sellodiscProd === undefined) {
+          this.product_modal.sellodiscProd = "";
+        }
+        if (this.product_modal.statusComProd === undefined) {
+          this.product_modal.statusComProd = "";
+        }
+        if (this.product_modal.estadodigProd === undefined) {
+          this.product_modal.estadodigProd = "";
+        }
+        if (this.product_modal.codigBarProd === undefined) {
+          this.product_modal.codigBarProd = "";
+        }
+        if (this.product_modal.genMusicPro === undefined) {
+          this.product_modal.genMusicPro = "";
+        }
+        if (this.product_modal.destinosComerPro === undefined) {
+          this.product_modal.destinosComerPro = "";
+        }
+        this.autoresProd.forEach((item) => {
+          this.product_modal.autoresProd.push(item.value);
+        });
+        this.interpretesProd.forEach((item) => {
+          if (item.value !== "") {
+            this.product_modal.interpretesProd.push(item.value);
+            if (item.role !== undefined) {
+              roles_interp.push(item.role);
+            } else roles_interp.push("");
+          }
+        });
+        roles_interp.forEach((item) => {
+          roles += item + "|";
+        });
+        this.product_modal.interpretesProd.forEach((item) => {
+          interpretes += item + "-";
+        });
+        this.product_modal.autoresProd.forEach((item) => {
+          autores += item + "-";
+        });
+        if (this.product_modal.destinosComerPro !== "") {
+          this.product_modal.destinosComerPro.forEach((item) => {
+            destinos += item + "-";
+          });
+        }
+        if (autores === "-") {
+          autores = "";
+        }
+        if (interpretes === "-") {
+          roles = "";
+          interpretes = "";
+        } else if (roles === "|") {
+          roles = "";
+          interpretes_roles = interpretes;
+        } else
           interpretes_roles =
             interpretes && roles
-              ? (interpretes_roles = interpretes + '.' + roles)
+              ? (interpretes_roles = interpretes + "." + roles)
               : interpretes + roles;
-          if (this.product_modal.destinosComerPro !== '') {
-            this.product_modal.destinosComerPro.forEach((item) => {
-              destinos += item + '-';
-            });
-            this.product_modal.destinosComerPro = destinos;
-          }
-          this.product_modal.codigProd = 'PROD-' + this.product_modal.codigProd;
-          let form_data = new FormData();
-          form_data.append('codigProd', this.product_modal.codigProd);
-          form_data.append('añoProd', this.product_modal.añoProd);
-          form_data.append('descripEspPro', this.product_modal.descripEspPro);
-          form_data.append('descripIngPro', this.product_modal.descripIngPro);
-          form_data.append('tituloProd', this.product_modal.tituloProd);
-          form_data.append('proyecto_id', this.product_modal.proyecto_id);
-          form_data.append('id', this.product_modal.id);
-          form_data.append('sellodiscProd', this.product_modal.sellodiscProd);
-          form_data.append('estadodigProd', this.product_modal.estadodigProd);
-          form_data.append('statusComProd', this.product_modal.statusComProd);
-          form_data.append(
-            'producPrincProd',
-            this.product_modal.producPrincProd
-          );
-          form_data.append('codigBarProd', this.product_modal.codigBarProd);
-          form_data.append('genMusicPro', this.product_modal.genMusicPro);
-          form_data.append(
-            'catalDigitalPro',
-            this.product_modal.catalDigitalPro
-          );
-          form_data.append('destinosComerPro', destinos);
-          form_data.append('autoresProd', autores);
-          form_data.append('interpretesProd', interpretes_roles);
-          form_data.append(
-            'variosInterpretesProd',
-            this.product_modal.variosInterpretesProd
-          );
-          form_data.append(
-            'activoCatalbisPro',
-            this.product_modal.activoCatalbisPro
-          );
-          let founded = false;
-          let project = '';
-          form_data.append(
-            'primeraPantProd',
-            this.product_modal.primeraPantProd
-          );
-          for (let i = 0; i < this.projects.length && !founded; i++) {
-            if (this.projects[i].id === this.product_modal.proyecto_id) {
-              project = this.projects[i].codigProy;
-              founded = true;
-            }
-          }
-          form_data.append(
-            'dirArbolProd',
-            `/BisMusic/Proyectos/${project}/${this.product_modal.codigProd}`
-          );
-          if (this.file_list.length !== 0) {
-            if (this.file_list[0].uid !== this.product_modal.id) {
-              if (
-                this.file_list[0].name !== 'Logo ver vertical_Ltr Negras.png'
-              ) {
-                form_data.append(
-                  'identificadorProd',
-                  this.file_list[0].originFileObj
-                );
-              }
-            }
-          } else form_data.append('img_default', true);
-          axios
-            .post(`/productos/editar`, form_data, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            })
-            .then((res) => {
-              this.spinning = false;
-              this.waiting = false;
-              this.text_button = 'Editar';
-              this.$emit('actualizar');
-              this.$toast.success(
-                'Se ha modificado el producto correctamente',
-                '¡Éxito!',
-                { timeout: 1000 }
-              );
-              this.handle_cancel();
-            })
-            .catch((err) => {
-              this.spinning = false;
-              this.waiting = false;
-              this.text_button = 'Editar';
-              this.handle_cancel();
-              this.$toast.error('Ha ocurrido un error', '¡Error!', {
-                timeout: 1000,
-              });
-            });
-        } else {
-          this.text_button = 'Creando...';
-          if (this.product_modal.descripIngPro === undefined) {
-            this.product_modal.descripIngPro = '';
-          }
-          if (this.product_modal.descripEspPro === undefined) {
-            this.product_modal.descripEspPro = '';
-          }
-          if (this.product_modal.sellodiscProd === undefined) {
-            this.product_modal.sellodiscProd = '';
-          }
-          if (this.product_modal.statusComProd === undefined) {
-            this.product_modal.statusComProd = '';
-          }
-          if (this.product_modal.estadodigProd === undefined) {
-            this.product_modal.estadodigProd = '';
-          }
-          if (this.product_modal.codigBarProd === undefined) {
-            this.product_modal.codigBarProd = '';
-          }
-          if (this.product_modal.genMusicPro === undefined) {
-            this.product_modal.genMusicPro = '';
-          }
-          if (this.product_modal.destinosComerPro === undefined) {
-            this.product_modal.destinosComerPro = '';
-          }
-          this.autoresProd.forEach((item) => {
-            this.product_modal.autoresProd.push(item.value);
-          });
-          this.interpretesProd.forEach((item) => {
-            if (item.value !== '') {
-              this.product_modal.interpretesProd.push(item.value);
-              if (item.role !== undefined) {
-                roles_interp.push(item.role);
-              } else roles_interp.push('');
-            }
-          });
-          roles_interp.forEach((item) => {
-            roles += item + '|';
-          });
-          this.product_modal.interpretesProd.forEach((item) => {
-            interpretes += item + '-';
-          });
-          this.product_modal.autoresProd.forEach((item) => {
-            autores += item + '-';
-          });
-          if (this.product_modal.destinosComerPro !== '') {
-            this.product_modal.destinosComerPro.forEach((item) => {
-              destinos += item + '-';
-            });
-          }
-          if (autores === '-') {
-            autores = '';
-          }
-          if (interpretes === '-') {
-            roles = '';
-            interpretes = '';
-          } else if (roles === '|') {
-            roles = '';
-            interpretes_roles = interpretes;
-          } else
-            interpretes_roles =
-              interpretes && roles
-                ? (interpretes_roles = interpretes + '.' + roles)
-                : interpretes + roles;
-          if (this.product.proyecto_id) {
-            this.product_modal.proyecto_id = this.product.proyecto_id;
-            this.tab_visibility = false;
-            this.tab_2 = false;
-            this.active_tab = '2';
-          }
-          if (this.product_modal.codigProd == undefined) {
-            this.product_modal.codigProd = this.codigo;
-          }
-          this.product_modal.codigProd = 'PROD-' + this.product_modal.codigProd;
-          let form_data = new FormData();
-          form_data.append('codigProd', this.product_modal.codigProd);
-          form_data.append('añoProd', this.product_modal.añoProd);
-          form_data.append('descripEspPro', this.product_modal.descripEspPro);
-          form_data.append('descripIngPro', this.product_modal.descripIngPro);
-          form_data.append('tituloProd', this.product_modal.tituloProd);
-          form_data.append('proyecto_id', this.product_modal.proyecto_id);
-          form_data.append('sellodiscProd', this.product_modal.sellodiscProd);
-          form_data.append('estadodigProd', this.product_modal.estadodigProd);
-          form_data.append('statusComProd', this.product_modal.statusComProd);
-          form_data.append(
-            'producPrincProd',
-            this.product_modal.producPrincProd
-          );
-          form_data.append('codigBarProd', this.product_modal.codigBarProd);
-          form_data.append('genMusicPro', this.product_modal.genMusicPro);
-          form_data.append(
-            'catalDigitalPro',
-            this.product_modal.catalDigitalPro
-          );
-          form_data.append('destinosComerPro', destinos);
-          form_data.append('autoresProd', autores);
-          form_data.append('interpretesProd', interpretes_roles);
-          form_data.append(
-            'variosInterpretesProd',
-            this.product_modal.variosInterpretesProd
-          );
-          form_data.append(
-            'activoCatalbisPro',
-            this.product_modal.activoCatalbisPro
-          );
-          let founded = false;
-          let project = '';
-          form_data.append(
-            'primeraPantProd',
-            this.product_modal.primeraPantProd
-          );
-          for (let i = 0; i < this.projects.length && !founded; i++) {
-            if (this.projects[i].id === this.product_modal.proyecto_id) {
-              project = this.projects[i].codigProy;
-              founded = true;
-            }
-          }
-          form_data.append(
-            'dirArbolProd',
-            `/BisMusic/Proyectos/${project}/${this.product_modal.codigProd}`
-          );
-          if (this.file_list.length !== 0) {
-            if (this.file_list[0].uid !== this.product_modal.id) {
-              if (
-                this.file_list[0].name !== 'Logo ver vertical_Ltr Negras.png'
-              ) {
-                form_data.append(
-                  'identificadorProd',
-                  this.file_list[0].originFileObj
-                );
-              }
-            }
-          } else form_data.append('img_default', true);
-          axios
-            .post('/productos', form_data, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            })
-            .then((res) => {
-              this.spinning = false;
-              this.waiting = false;
-              this.text_button = 'Crear';
-              this.$emit('actualizar');
-              this.$toast.success(
-                'Se ha creado el producto correctamente',
-                '¡Éxito!',
-                { timeout: 1000 }
-              );
-              this.handle_cancel();
-            })
-            .catch((err) => {
-              this.spinning = false;
-              this.waiting = false;
-              this.text_button = 'Crear';
-              this.handle_cancel();
-              this.$toast.error('Ha ocurrido un error', '¡Error!', {
-                timeout: 1000,
-              });
-            });
+        if (this.product.proyecto_id) {
+          this.product_modal.proyecto_id = this.product.proyecto_id;
+          this.tab_visibility = false;
+          this.tab_2 = false;
+          this.active_tab = "2";
         }
-      },
-      /*
-       *Métodoo usado para filtrar la búsqueda del select de los años
-       */
-      filter_option(input, option) {
-        return (
-          option.componentOptions.children[0].text
-            .toLowerCase()
-            .indexOf(input.toLowerCase()) >= 0
+        if (this.product_modal.codigProd == undefined) {
+          this.product_modal.codigProd = this.codigo;
+        }
+        this.product_modal.codigProd = "PROD-" + this.product_modal.codigProd;
+        let form_data = new FormData();
+        form_data.append("codigProd", this.product_modal.codigProd);
+        form_data.append("añoProd", this.product_modal.añoProd);
+        form_data.append("descripEspPro", this.product_modal.descripEspPro);
+        form_data.append("descripIngPro", this.product_modal.descripIngPro);
+        form_data.append("tituloProd", this.product_modal.tituloProd);
+        form_data.append("proyecto_id", this.product_modal.proyecto_id);
+        form_data.append("sellodiscProd", this.product_modal.sellodiscProd);
+        form_data.append("estadodigProd", this.product_modal.estadodigProd);
+        form_data.append("statusComProd", this.product_modal.statusComProd);
+        form_data.append("producPrincProd", this.product_modal.producPrincProd);
+        form_data.append("codigBarProd", this.product_modal.codigBarProd);
+        form_data.append("genMusicPro", this.product_modal.genMusicPro);
+        form_data.append("catalDigitalPro", this.product_modal.catalDigitalPro);
+        form_data.append("destinosComerPro", destinos);
+        form_data.append("autoresProd", autores);
+        form_data.append("interpretesProd", interpretes_roles);
+        form_data.append(
+          "variosInterpretesProd",
+          this.product_modal.variosInterpretesProd
         );
-      },
-      handle_cancel(e) {
-        if (e === 'cancelar') {
-          if (!this.product.proyecto_id) {
-            this.$refs.formularioproject.resetFields();
+        form_data.append(
+          "activoCatalbisPro",
+          this.product_modal.activoCatalbisPro
+        );
+        let founded = false;
+        let project = "";
+        form_data.append("primeraPantProd", this.product_modal.primeraPantProd);
+        for (let i = 0; i < this.projects.length && !founded; i++) {
+          if (this.projects[i].id === this.product_modal.proyecto_id) {
+            project = this.projects[i].codigProy;
+            founded = true;
           }
-          if (this.tabs_list.indexOf('tab_1') !== -1) {
-            this.$refs.formularioGenerales.resetFields();
+        }
+        form_data.append(
+          "dirArbolProd",
+          `/BisMusic/Proyectos/${project}/${this.product_modal.codigProd}`
+        );
+        if (this.file_list.length !== 0) {
+          if (this.file_list[0].uid !== this.product_modal.id) {
+            if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
+              form_data.append(
+                "identificadorProd",
+                this.file_list[0].originFileObj
+              );
+            }
           }
-          this.tabs_list = [];
-          this.active_tab = '1';
-          this.tab_visibility = true;
-          this.show = false;
-          this.$emit('close_modal', this.show);
-          if (this.action_modal !== 'detalles') {
-            this.$toast.success(this.action_close, '¡Éxito!', {
-              timeout: 1000,
-              color: 'orange',
-            });
-          }
-        } else {
-          if (!this.product.proyecto_id) {
-            this.$refs.formularioproject.resetFields();
-          }
-          if (this.tabs_list.indexOf('tab_1') != -1) {
-            this.$refs.formularioGenerales.resetFields();
-          }
-          this.tabs_list = [];
-          this.active_tab = '1';
-          this.tab_visibility = true;
-          this.show = false;
-          this.$emit('close_modal', this.show);
-        }
-      },
-      remove_autor(item) {
-        let index = this.autoresProd.indexOf(item);
-        let autor = this.autoresProd[index];
-        if (autor.value !== '') {
-          this.copia_autores.push(
-            this.list_autores[
-              this.find_element_autor(autor.value, this.list_autores)
-            ]
-          );
-        }
-        if (index !== -1) {
-          this.autoresProd.splice(index, 1);
-        }
-      },
-      add_autor() {
-        if (this.autoresProd.length < this.list_autores.length) {
-          this.autoresProd.push({
-            id: -1,
-            value: '',
-            key: Date.now(),
-          });
-        }
-      },
-      remove_interprete(item) {
-        let index = this.interpretesProd.indexOf(item);
-        let interprete = this.interpretesProd[index];
-        if (interprete.value !== '') {
-          this.copia_interpretes.push(
-            this.list_interpretes[
-              this.find_element_interprete(
-                interprete.value,
-                this.list_interpretes
-              )
-            ]
-          );
-        }
-        if (index !== -1) {
-          this.interpretesProd.splice(index, 1);
-        }
-      },
-      add_interprete() {
-        if (this.interpretesProd.length < this.list_interpretes.length) {
-          this.interpretesProd.push({
-            id: -1,
-            value: '',
-            role: [],
-            key: Date.now(),
-          });
-        }
-      },
-      cambiar_varios_interpretes() {
-        this.varios_int = !this.varios_int;
-        if (!this.varios_int) {
-          this.interpretesProd.splice(1, this.interpretesProd.length - 1);
-          this.copia_interpretes = this.clone_arr(this.list_interpretes);
-          if (this.interpretesProd[0].value !== '') {
-            this.copia_interpretes.splice(
-              this.find_element_interprete(
-                this.interpretesProd[0].value,
-                this.copia_interpretes
-              ),
-              1
+        } else form_data.append("img_default", true);
+        axios
+          .post("/productos", form_data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            this.spinning = false;
+            this.waiting = false;
+            this.text_button = "Crear";
+            this.$emit("actualizar");
+            this.$toast.success(
+              "Se ha creado el producto correctamente",
+              "¡Éxito!",
+              { timeout: 1000 }
             );
-          }
+            this.handle_cancel();
+          })
+          .catch((err) => {
+            this.spinning = false;
+            this.waiting = false;
+            this.text_button = "Crear";
+            this.handle_cancel();
+            this.$toast.error("Ha ocurrido un error", "¡Error!", {
+              timeout: 1000,
+            });
+          });
+      }
+    },
+    /*
+     *Métodoo usado para filtrar la búsqueda del select de los años
+     */
+    filter_option(input, option) {
+      return (
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      );
+    },
+    handle_cancel(e) {
+      if (e === "cancelar") {
+        if (!this.product.proyecto_id) {
+          this.$refs.formularioproject.resetFields();
         }
-      },
-      change_autor(item) {
-        let index = this.autoresProd.indexOf(item);
-        let autor = this.autoresProd[index];
-        if (this.copia_autores.length === 1) {
-          this.copia_autores.splice(0, this.copia_autores.length);
-        } else {
-          this.copia_autores.splice(
-            this.find_element_autor(autor.value, this.copia_autores),
-            1
-          );
+        if (this.tabs_list.indexOf("tab_1") !== -1) {
+          this.$refs.formularioGenerales.resetFields();
         }
-        this.autoresProd[index].id = this.find_element_autor(
-          autor.value,
-          this.list_autores
+        this.tabs_list = [];
+        this.active_tab = "1";
+        this.tab_visibility = true;
+        this.show = false;
+        this.$emit("close_modal", this.show);
+        if (this.action_modal !== "detalles") {
+          this.$toast.success(this.action_close, "¡Éxito!", {
+            timeout: 1000,
+            color: "orange",
+          });
+        }
+      } else {
+        if (!this.product.proyecto_id) {
+          this.$refs.formularioproject.resetFields();
+        }
+        if (this.tabs_list.indexOf("tab_1") != -1) {
+          this.$refs.formularioGenerales.resetFields();
+        }
+        this.tabs_list = [];
+        this.active_tab = "1";
+        this.tab_visibility = true;
+        this.show = false;
+        this.$emit("close_modal", this.show);
+      }
+    },
+    remove_autor(item) {
+      let index = this.autoresProd.indexOf(item);
+      let autor = this.autoresProd[index];
+      if (autor.value !== "") {
+        this.copia_autores.push(
+          this.list_autores[
+            this.find_element_autor(autor.value, this.list_autores)
+          ]
         );
-        if (this.pivot != '') {
-          this.add_arr_elem_autor(this.pivot, this.copia_autores);
-          this.pivot = '';
-        }
-        document.getElementById(autor.key).blur();
-      },
-      last_autor(item) {
-        let index = this.autoresProd.indexOf(item);
-        let autor = this.autoresProd[index];
-        if (autor.id != -1) {
-          this.pivot = autor.value;
-        }
-      },
-      change_interprete(item) {
-        let index = this.interpretesProd.indexOf(item);
-        let interprete = this.interpretesProd[index];
-        if (this.copia_interpretes.length === 1) {
-          this.copia_interpretes.splice(0, this.copia_interpretes.length);
-        } else {
-          this.copia_interpretes.splice(
+      }
+      if (index !== -1) {
+        this.autoresProd.splice(index, 1);
+      }
+    },
+    add_autor() {
+      if (this.autoresProd.length < this.list_autores.length) {
+        this.autoresProd.push({
+          id: -1,
+          value: "",
+          key: Date.now(),
+        });
+      }
+    },
+    remove_interprete(item) {
+      let index = this.interpretesProd.indexOf(item);
+      let interprete = this.interpretesProd[index];
+      if (interprete.value !== "") {
+        this.copia_interpretes.push(
+          this.list_interpretes[
             this.find_element_interprete(
               interprete.value,
+              this.list_interpretes
+            )
+          ]
+        );
+      }
+      if (index !== -1) {
+        this.interpretesProd.splice(index, 1);
+      }
+    },
+    add_interprete() {
+      if (this.interpretesProd.length < this.list_interpretes.length) {
+        this.interpretesProd.push({
+          id: -1,
+          value: "",
+          role: [],
+          key: Date.now(),
+        });
+      }
+    },
+    cambiar_varios_interpretes() {
+      this.varios_int = !this.varios_int;
+      if (!this.varios_int) {
+        this.interpretesProd.splice(1, this.interpretesProd.length - 1);
+        this.copia_interpretes = this.clone_arr(this.list_interpretes);
+        if (this.interpretesProd[0].value !== "") {
+          this.copia_interpretes.splice(
+            this.find_element_interprete(
+              this.interpretesProd[0].value,
               this.copia_interpretes
             ),
             1
           );
         }
-        this.interpretesProd[index].id = this.find_element_interprete(
-          interprete.value,
-          this.list_interpretes
-        );
-        if (this.pivot != '') {
-          this.add_arr_elem_interprete(this.pivot, this.copia_interpretes);
-          this.pivot = '';
-        }
-        document.getElementById(interprete.key).blur();
-      },
-      last_interprete(item) {
-        let index = this.interpretesProd.indexOf(item);
-        let interprete = this.interpretesProd[index];
-        if (interprete.id != -1) {
-          this.pivot = interprete.value;
-        }
-      },
-      find_element_autor(item, list) {
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].nombresAutr === item) {
-            return i;
-          }
-        }
-        return -1;
-      },
-      add_arr_elem_autor(elem, arr) {
-        let item = this.find_element_autor(elem, arr);
-        if (item === -1) {
-          arr.push(
-            this.list_autores[
-              this.find_element_autor(this.pivot, this.list_autores)
-            ]
-          );
-        }
-      },
-      find_element_interprete(item, list) {
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].nombreInterp === item) {
-            return i;
-          }
-        }
-        return -1;
-      },
-      add_arr_elem_interprete(elem, arr) {
-        let item = this.find_element_interprete(elem, arr);
-        if (item === -1) {
-          arr.push(
-            this.list_interpretes[
-              this.find_element_interprete(this.pivot, this.list_interpretes)
-            ]
-          );
-        }
-      },
-      clone_arr(arr) {
-        let answer = [];
-        for (let index = 0; index < arr.length; index++) {
-          answer.push(arr[index]);
-        }
-        return answer;
-      },
-      edit_copia_autores(autor) {
-        if (autor !== -1) {
-          let index = this.find_element_autor(
-            this.list_autores[autor].nombresAutr,
-            this.copia_autores
-          );
-          this.copia_autores.splice(index, 1);
-        }
-      },
-      edit_copia_interpretes(interprete) {
-        if (interprete !== -1) {
-          let index = this.find_element_interprete(
-            this.list_interpretes[interprete].nombreInterp,
-            this.copia_interpretes
-          );
-          this.copia_interpretes.splice(index, 1);
-        }
-      },
-      //Metodos para generar el codigo
-      //Este es el único método que varia de un módulo a otro
-      crear_arr_codig(arr) {
-        let answer = [];
-        for (let i = 0; i < arr.length; i++) {
-          answer.push(parseInt(arr[i].codigProd.substr(5, 8)));
-        }
-        return answer;
-      },
-      //Método de ordenamiento en burbuja
-      ordenamiento_burbuja(arr) {
-        const l = arr.length;
-        for (let i = 0; i < l; i++) {
-          for (let j = 0; j < l - 1 - i; j++) {
-            if (arr[j] > arr[j + 1]) {
-              [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-            }
-          }
-        }
-        return arr;
-      },
-      generar_codigo(arr) {
-        let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
-        let answer = 1;
-        for (let i = 0; i < list.length; i++) {
-          if (list[0] !== 1) {
-            answer = 1;
-            break;
-          }
-          if (i === list.length - 1) {
-            answer = list[i] + 1;
-            break;
-          }
-          if (!(list[i] + 1 === list[i + 1])) {
-            answer = list[i] + 1;
-            break;
-          }
-        }
-        return this.crear_codigo(answer);
-      },
-      crear_codigo(number) {
-        switch (number.toString().length) {
-          case 1:
-            return '000' + number;
-          case 2:
-            return '00' + number;
-          case 3:
-            return '0' + number;
-          case 4:
-            return number.toString();
-          default:
-            break;
-        }
-      },
-      //Fin de metodos para generar el codigo
+      }
     },
-  };
+    change_autor(item) {
+      let index = this.autoresProd.indexOf(item);
+      let autor = this.autoresProd[index];
+      if (this.copia_autores.length === 1) {
+        this.copia_autores.splice(0, this.copia_autores.length);
+      } else {
+        this.copia_autores.splice(
+          this.find_element_autor(autor.value, this.copia_autores),
+          1
+        );
+      }
+      this.autoresProd[index].id = this.find_element_autor(
+        autor.value,
+        this.list_autores
+      );
+      if (this.pivot != "") {
+        this.add_arr_elem_autor(this.pivot, this.copia_autores);
+        this.pivot = "";
+      }
+      document.getElementById(autor.key).blur();
+    },
+    last_autor(item) {
+      let index = this.autoresProd.indexOf(item);
+      let autor = this.autoresProd[index];
+      if (autor.id != -1) {
+        this.pivot = autor.value;
+      }
+    },
+    change_interprete(item) {
+      let index = this.interpretesProd.indexOf(item);
+      let interprete = this.interpretesProd[index];
+      if (this.copia_interpretes.length === 1) {
+        this.copia_interpretes.splice(0, this.copia_interpretes.length);
+      } else {
+        this.copia_interpretes.splice(
+          this.find_element_interprete(
+            interprete.value,
+            this.copia_interpretes
+          ),
+          1
+        );
+      }
+      this.interpretesProd[index].id = this.find_element_interprete(
+        interprete.value,
+        this.list_interpretes
+      );
+      if (this.pivot != "") {
+        this.add_arr_elem_interprete(this.pivot, this.copia_interpretes);
+        this.pivot = "";
+      }
+      document.getElementById(interprete.key).blur();
+    },
+    last_interprete(item) {
+      let index = this.interpretesProd.indexOf(item);
+      let interprete = this.interpretesProd[index];
+      if (interprete.id != -1) {
+        this.pivot = interprete.value;
+      }
+    },
+    find_element_autor(item, list) {
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].nombresAutr === item) {
+          return i;
+        }
+      }
+      return -1;
+    },
+    add_arr_elem_autor(elem, arr) {
+      let item = this.find_element_autor(elem, arr);
+      if (item === -1) {
+        arr.push(
+          this.list_autores[
+            this.find_element_autor(this.pivot, this.list_autores)
+          ]
+        );
+      }
+    },
+    find_element_interprete(item, list) {
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].nombreInterp === item) {
+          return i;
+        }
+      }
+      return -1;
+    },
+    add_arr_elem_interprete(elem, arr) {
+      let item = this.find_element_interprete(elem, arr);
+      if (item === -1) {
+        arr.push(
+          this.list_interpretes[
+            this.find_element_interprete(this.pivot, this.list_interpretes)
+          ]
+        );
+      }
+    },
+    clone_arr(arr) {
+      let answer = [];
+      for (let index = 0; index < arr.length; index++) {
+        answer.push(arr[index]);
+      }
+      return answer;
+    },
+    edit_copia_autores(autor) {
+      if (autor !== -1) {
+        let index = this.find_element_autor(
+          this.list_autores[autor].nombresAutr,
+          this.copia_autores
+        );
+        this.copia_autores.splice(index, 1);
+      }
+    },
+    edit_copia_interpretes(interprete) {
+      if (interprete !== -1) {
+        let index = this.find_element_interprete(
+          this.list_interpretes[interprete].nombreInterp,
+          this.copia_interpretes
+        );
+        this.copia_interpretes.splice(index, 1);
+      }
+    },
+    //Metodos para generar el codigo
+    //Este es el único método que varia de un módulo a otro
+    crear_arr_codig(arr) {
+      let answer = [];
+      for (let i = 0; i < arr.length; i++) {
+        answer.push(parseInt(arr[i].codigProd.substr(5, 8)));
+      }
+      return answer;
+    },
+    //Método de ordenamiento en burbuja
+    ordenamiento_burbuja(arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) {
+        for (let j = 0; j < l - 1 - i; j++) {
+          if (arr[j] > arr[j + 1]) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+      return arr;
+    },
+    generar_codigo(arr) {
+      let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
+      let answer = 1;
+      for (let i = 0; i < list.length; i++) {
+        if (list[0] !== 1) {
+          answer = 1;
+          break;
+        }
+        if (i === list.length - 1) {
+          answer = list[i] + 1;
+          break;
+        }
+        if (!(list[i] + 1 === list[i + 1])) {
+          answer = list[i] + 1;
+          break;
+        }
+      }
+      return this.crear_codigo(answer);
+    },
+    crear_codigo(number) {
+      switch (number.toString().length) {
+        case 1:
+          return "000" + number;
+        case 2:
+          return "00" + number;
+        case 3:
+          return "0" + number;
+        case 4:
+          return number.toString();
+        default:
+          break;
+      }
+    },
+    //Fin de metodos para generar el codigo
+  },
+  components: {
+      tabla_audiovisuales,
+      tabla_fonogramas
+    },
+};
 </script>
 
 <style>
-  #modal_gestionar_productos .ant-col-6 {
-    width: 50% !important;
-  }
-  #modal_gestionar_productos .pull-left {
-    float: left !important;
-  }
-  #modal_gestionar_productos .ant-upload-list-item,
-  .ant-upload-list-item-undefined,
-  .ant-upload-list-item-list-type-picture-card,
-  .ant-upload,
-  .ant-upload-select,
-  .ant-upload-select-picture-card,
-  .ant-upload-list-picture-card-container {
-    width: 170px !important;
-    height: 170px !important;
-  }
-  #modal_gestionar_productos .ant-upload,
-  .ant-upload-select,
-  .ant-upload-select-picture-card,
-  .ant-upload-list-picture-card-container {
-    margin-left: 0 !important;
-  }
-  #modal_gestionar_productos .dynamic-delete-button {
-    cursor: pointer;
-    position: relative;
-    top: 4px;
-    font-size: 24px;
-    color: #999;
-    transition: all 0.3s;
-  }
-  #modal_gestionar_productos .dynamic-delete-button[disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-  #upload .ant-upload,
-  .ant-upload-select,
-  .ant-upload-select-text {
-    height: 0px !important;
-  }
-  #modal_gestionar_productos .add-field-button {
-    width: 60% !important;
-    background-color: rgb(46, 171, 229) !important;
-    color: white !important;
-  }
-  #modal_gestionar_productos .ant-col-sm-offset-4 {
-    margin-left: 0 !important;
-  }
-  #modal_gestionar_productos .ant-col-sm-20 {
-    width: 100% !important;
-  }
-  #modal_gestionar_productos .ant-mentions textarea {
-    height: 32px !important;
-  }
-  #modal_gestionar_productos .description textarea {
-    height: 150px !important;
-  }
-  #modal_gestionar_productos .autores-select {
-    width: 85% !important;
-    margin-right: 3px !important;
-  }
-  #modal_gestionar_productos .interpretes-select {
-    width: 80% !important;
-  }
-  #modal_gestionar_productos textarea {
-    height: 150px !important;
-  }
-  #modal_gestionar_productos .dynamic-delete-button {
-    cursor: pointer;
-    position: relative;
-    margin-left: 4px;
-    padding: 0 8px;
-    top: 2px;
-    font-size: 18px;
-    color: white;
-    background-color: rgb(243, 107, 100);
-    transition: all 0.3s;
-  }
-  #autor {
-    margin-bottom: 0 !important;
-  }
+#modal_gestionar_productos .ant-col-6 {
+  width: 50% !important;
+}
+#modal_gestionar_productos .pull-left {
+  float: left !important;
+}
+#modal_gestionar_productos .ant-upload-list-item,
+.ant-upload-list-item-undefined,
+.ant-upload-list-item-list-type-picture-card,
+.ant-upload,
+.ant-upload-select,
+.ant-upload-select-picture-card,
+.ant-upload-list-picture-card-container {
+  width: 170px !important;
+  height: 170px !important;
+}
+#modal_gestionar_productos .ant-upload,
+.ant-upload-select,
+.ant-upload-select-picture-card,
+.ant-upload-list-picture-card-container {
+  margin-left: 0 !important;
+}
+#modal_gestionar_productos .dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all 0.3s;
+}
+#modal_gestionar_productos .dynamic-delete-button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+#upload .ant-upload,
+.ant-upload-select,
+.ant-upload-select-text {
+  height: 0px !important;
+}
+#modal_gestionar_productos .add-field-button {
+  width: 60% !important;
+  background-color: rgb(46, 171, 229) !important;
+  color: white !important;
+}
+#modal_gestionar_productos .ant-col-sm-offset-4 {
+  margin-left: 0 !important;
+}
+#modal_gestionar_productos .ant-col-sm-20 {
+  width: 100% !important;
+}
+#modal_gestionar_productos .ant-mentions textarea {
+  height: 32px !important;
+}
+#modal_gestionar_productos .description textarea {
+  height: 150px !important;
+}
+#modal_gestionar_productos .autores-select {
+  width: 85% !important;
+  margin-right: 3px !important;
+}
+#modal_gestionar_productos .interpretes-select {
+  width: 80% !important;
+}
+#modal_gestionar_productos textarea {
+  height: 150px !important;
+}
+#modal_gestionar_productos .dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  margin-left: 4px;
+  padding: 0 8px;
+  top: 2px;
+  font-size: 18px;
+  color: white;
+  background-color: rgb(243, 107, 100);
+  transition: all 0.3s;
+}
+#autor {
+  margin-bottom: 0 !important;
+}
 </style>

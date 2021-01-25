@@ -181,16 +181,16 @@ export default {
   color: rgb(243, 107, 100) !important;
 }
 .iziToast-color-green {
-  background-color: #70D0C1 !important;
+  background-color: #70d0c1 !important;
 }
 .iziToast-color-blue {
-  background-color: #8F4776 !important;
+  background-color: #8f4776 !important;
 }
 .iziToast-color-grey {
-  background-color: #C9D34D !important;
+  background-color: #c9d34d !important;
 }
 .iziToast-color-orange {
-  background-color: #F3C552 !important;
+  background-color: #f3c552 !important;
 }
 #question .iziToast-message.slideIn {
   margin-top: -7px !important;
@@ -202,7 +202,7 @@ export default {
   width: 99% !important;
 }
 .iziToast-color-red {
-  background-color: #F58983 !important;
+  background-color: #f58983 !important;
 }
 .page-sidebar .page-sidebar-menu > li.open > a,
 .page-sidebar .page-sidebar-menu > li:hover > a,
@@ -448,11 +448,11 @@ export default {
   padding-left: 22px;
 }
 .has-error .ant-input-group-addon {
-    color: currentColor !important;
-    background-color: #fafafa !important;
-    border-top: 1px solid #d9d9d9 !important;
-    border-bottom: 1px solid #d9d9d9 !important;
-    border-left: 1px solid #d9d9d9 !important;
+  color: currentColor !important;
+  background-color: #fafafa !important;
+  border-top: 1px solid #d9d9d9 !important;
+  border-bottom: 1px solid #d9d9d9 !important;
+  border-left: 1px solid #d9d9d9 !important;
 }
 .page-sidebar .page-sidebar-menu .sub-menu > li.active > a,
 .page-sidebar .page-sidebar-menu .sub-menu > li.open > a,
@@ -486,48 +486,48 @@ export default {
   background: rgb(115, 25, 84, 0.2) !important;
 }
 .ant-popover-placement-left .ant-popover-inner {
-  background-color: #F9E2A9e0 !important;
+  background-color: #f9e2a9e0 !important;
 }
 .ant-popover-placement-top .ant-popover-inner {
-  background-color: #C7A3BBe0 !important;
+  background-color: #c7a3bbe0 !important;
 }
 .ant-popover-placement-leftBottom .ant-popover-inner {
-  background-color: #FAC4C1e0 !important;
+  background-color: #fac4c1e0 !important;
 }
 .ant-popover-placement-leftBottom .ant-popover-arrow {
-  border-top-color: #FAC4C1 !important;
-  border-right-color: #FAC4C1!important;
+  border-top-color: #fac4c1 !important;
+  border-right-color: #fac4c1 !important;
   border-bottom-color: transparent !important;
-  border-left-color: transparent  !important;
+  border-left-color: transparent !important;
 }
 .ant-popover-placement-top .ant-popover-arrow {
   border-top-color: transparent !important;
-  border-right-color: #C7A3BB !important;
-  border-bottom-color: #C7A3BB !important;
+  border-right-color: #c7a3bb !important;
+  border-bottom-color: #c7a3bb !important;
   border-left-color: transparent !important;
 }
 .ant-popover-placement-bottom .ant-popover-inner {
-  background-color: #E4E9A6e0 !important;
+  background-color: #e4e9a6e0 !important;
 }
 .ant-popover-placement-bottom .ant-popover-arrow {
-  border-top-color: #E4E9A6 !important;
+  border-top-color: #e4e9a6 !important;
   border-right-color: transparent !important;
   border-bottom-color: transparent !important;
-  border-left-color: #E4E9A6 !important;
+  border-left-color: #e4e9a6 !important;
 }
 .ant-popover-placement-left .ant-popover-arrow {
-  border-top-color: #F9E2A9 !important;
-  border-right-color: #F9E2A9 !important;
+  border-top-color: #f9e2a9 !important;
+  border-right-color: #f9e2a9 !important;
   border-bottom-color: transparent !important;
   border-left-color: transparent !important;
 }
 .ant-popover-placement-topRight .ant-popover-inner {
-  background-color: #B7E7E0e0 !important;
+  background-color: #b7e7e0e0 !important;
 }
 .ant-popover-placement-topRight .ant-popover-arrow {
   border-top-color: transparent !important;
-  border-right-color:#B7E7E0 !important;
-  border-bottom-color: #B7E7E0 !important;
+  border-right-color: #b7e7e0 !important;
+  border-bottom-color: #b7e7e0 !important;
   border-left-color: transparent !important;
 }
 .ant-popover-buttons > button {
@@ -543,14 +543,14 @@ export default {
   top: 5px !important;
   font-size: 20px !important;
 }
-.ant-message-custom-content .ant-message-success{
-  background: #B7E7E0e0;
+.ant-message-custom-content .ant-message-success {
+  background: #b7e7e0e0;
 }
 .e-control.e-grid .e-gridheader .e-sortfilter .e-fltr-icon .e-headercelldiv {
-    margin: -7px 1px -7px -7px !important;
+  margin: -7px 1px -7px -7px !important;
 }
 .ant-spin-nested-loading > div > .ant-spin {
-    position: inherit !important;
+  position: inherit !important;
 }
 #dropUpExports {
   padding-left: 10px !important;
@@ -566,5 +566,61 @@ export default {
 }
 .e-icons.export-icons.e-down-arrow-export {
   margin-left: 8px !important;
+}
+.ant-steps {
+  width: 50% !important;
+}
+.ant-steps-item-process .ant-steps-item-icon {
+  background: rgba(115, 25, 84) !important;
+  border-color: rgba(115, 25, 84) !important;
+}
+.ant-steps-item-finish .ant-steps-item-icon {
+  background-color: white !important;
+  border-color: rgba(115, 25, 84) !important;
+}
+.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+  color: rgba(115, 25, 84) !important;
+}
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-content
+  > .ant-steps-item-title::after {
+  background-color: rgba(115, 25, 84) !important;
+}
+.ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-content
+  > .ant-steps-item-title::after {
+  background-color: #0000001f !important;
+}
+.ant-steps
+  .ant-steps-item:not(.ant-steps-item-active):not(.ant-steps-item-process)
+  > .ant-steps-item-container[role="button"]:hover
+  .ant-steps-item-icon {
+  border-color: rgba(115, 25, 84) !important;
+}
+.ant-steps
+  .ant-steps-item:not(.ant-steps-item-active)
+  > .ant-steps-item-container[role="button"]:hover
+  .ant-steps-item-title,
+.ant-steps
+  .ant-steps-item:not(.ant-steps-item-active)
+  > .ant-steps-item-container[role="button"]:hover
+  .ant-steps-item-subtitle,
+.ant-steps
+  .ant-steps-item:not(.ant-steps-item-active)
+  > .ant-steps-item-container[role="button"]:hover
+  .ant-steps-item-description {
+  color: rgba(115, 25, 84) !important;
+}
+.ant-steps
+  .ant-steps-item:not(.ant-steps-item-active):not(.ant-steps-item-process)
+  > .ant-steps-item-container[role="button"]:hover
+  .ant-steps-item-icon
+  .ant-steps-icon {
+  color: rgba(115, 25, 84) !important;
+}
+.ant-spin-dot-item {
+    background-color: rgba(115, 25, 84) !important;
 }
 </style>

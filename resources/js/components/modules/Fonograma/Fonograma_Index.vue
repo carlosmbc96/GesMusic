@@ -352,7 +352,7 @@ export default {
                       <p>¿Desea {{ action }} el Fonograma?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 50%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -571,39 +571,15 @@ export default {
                     `El Fonograma se ${action} correctamente`,
                     "¡Éxito!",
                     {
-                      timeout: 2000,
+                      timeout: 1000,
                       color: action === "inactivó" ? "blue" : "grey",
                     }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 2000,
+                    timeout: 1000,
                   });
                 }
-              },
-            },
-          }),
-        };
-      },
-      status_child_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
-                </div>`,
-            data: function () {
-              return {
-                data: {},
-              };
-            },
-            computed: {
-              status() {
-                return this.data.deleted_at == null ? "Activo" : "Inactivo";
-              },
-              class_badge() {
-                return this.data.deleted_at == null
-                  ? "e-badge-success"
-                  : "e-badge-warning";
               },
             },
           }),
@@ -703,7 +679,7 @@ export default {
                                         this.$toast.success(
                                           "El Fonograma ha sido eliminado correctamente",
                                           "¡Éxito!",
-                                          { timeout: 2000, color: "red" }
+                                          { timeout: 1000, color: "red" }
                                         );
                                       })
                                       .catch((err) => {
@@ -712,7 +688,7 @@ export default {
                                           "Ha ocurrido un error",
                                           "¡Error!",
                                           {
-                                            timeout: 2000,
+                                            timeout: 1000,
                                           }
                                         );
                                       });

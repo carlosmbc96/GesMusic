@@ -91,15 +91,12 @@ Route::delete('/realizadores/{id}','RealizadorController@destroyLog')->name('rea
 */
 // RUTAS DEL RECURSO: TRACK
 Route::post('/tracks/listar', 'TrackController@index')->name('tracks.listar'); // Ruta que Lista todos los Registros del Modelo Track
-Route::get('/tracks/create', 'TrackController@create')->name('tracks.crear'); // Ruta que Muestra un Formulario para Crear un Registro del Modelo Track
 Route::post('/tracks', 'TrackController@store')->name('tracks.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Track
-Route::get('/tracks/{id}', 'TrackController@show')->name('tracks.mostrar'); // Ruta que Muestra un Registro Específico del Modelo Track
-Route::get('/tracks/{id}/edit', 'TrackController@edit')->name('tracks.editar'); // Ruta que Edita un Registro Específico del Modelo Track
-Route::put('/tracks/{id}', 'TrackController@update')->name('tracks.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Track
-Route::delete('/tracks/{id}', 'TrackController@destroyLog')->name('tracks.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Track
+Route::delete('/tracks/desactivar/{id}', 'TrackController@destroyLog')->name('tracks.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Track
 Route::post('/tracks/nomencladores','TrackController@nomenclators');
 Route::delete('/tracks/eliminar/{id}','TrackController@destroyFis');
 Route::post('/tracks/editar','TrackController@update');
+Route::get('/tracks/restaurar/{id}', 'TrackController@restoreLog');
 
 // RUTAS DEL RECURSO: AUTOR
 Route::get('/autores/restaurar/{id}', 'AutorController@restoreLog');

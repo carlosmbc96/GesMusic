@@ -623,13 +623,6 @@ export default {
             trigger: "change",
           },
         ],
-        productos_fongs: [
-          {
-            required: true,
-            message: "Campo requerido",
-            trigger: "change",
-          },
-        ],
         descripEspFong: [
           {
             whitespace: true,

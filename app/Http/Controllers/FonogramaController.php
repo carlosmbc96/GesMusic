@@ -32,6 +32,7 @@ class FonogramaController extends Controller
                 for ($i; $i < $length; $i++) {
                     $fonogramas[$i]->elementos;
                     $fonogramas[$i]->productos;
+                    $fonogramas[$i]->tracks;
                 }
             } else {
                 $i = 0;;
@@ -55,7 +56,7 @@ class FonogramaController extends Controller
         $territorio = Vocabulario::findorFail(36)->terminos;  // Nomenclador: Territorios
         $nacionalid = Vocabulario::findorFail(22)->terminos;  // Nomenclador: Nacionalidades
         $anos = Vocabulario::findorFail(2)->terminos;  // Nomenclador: Años
-        return response()->json([[$clasfFonog], [$territorio], [$nacionalid], ["$anos"]]);  // Se envian las variables
+        return response()->json([[$clasfFonog], [$territorio], [$nacionalid], [$anos]]);  // Se envian las variables
     }
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Fonograma

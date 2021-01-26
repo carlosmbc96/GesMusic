@@ -943,8 +943,8 @@
         action_modal: this.action,
         makingOfAud: false,
         list_nomenclators: [],
-				codigo: '',
-				codigoIsrc: '',
+        codigo: '',
+        codigoIsrc: '',
         rules: {
           codigAud: [
             {
@@ -1229,10 +1229,10 @@
         }
       },
       validate() {
-        if (this.audiovisual_modal.codigAud === undefined ) {
+        if (this.audiovisual_modal.codigAud === undefined) {
           this.audiovisual_modal.codigAud = this.codigo;
         }
-        if (this.audiovisual_modal.identificador === undefined ) {
+        if (this.audiovisual_modal.identificador === undefined) {
           this.audiovisual_modal.identificador = this.codigoIsrc;
         }
         if (!this.used) {
@@ -1414,13 +1414,13 @@
         ) {
           form_data.append('id', this.audiovisual_modal.id);
         } else {
-					this.audiovisual_modal.isrcAud =
-          '' +
-          this.audiovisual_modal.codigPais.toUpperCase() +
-          this.audiovisual_modal.codigRegistro.toUpperCase() +
-          this.audiovisual_modal.anhoRegistro +
-					this.audiovisual_modal.identificador;
-				}
+          this.audiovisual_modal.isrcAud =
+            '' +
+            this.audiovisual_modal.codigPais.toUpperCase() +
+            this.audiovisual_modal.codigRegistro.toUpperCase() +
+            this.audiovisual_modal.anhoRegistro +
+            this.audiovisual_modal.identificador;
+        }
         if (this.audiovisual_modal.codigAud === undefined) {
           this.audiovisual_modal.codigAud = this.codigo;
         }
@@ -1540,14 +1540,12 @@
             this.audiovisual.descripEspAud === null
               ? ''
               : this.audiovisual.descripEspAud;
-          this.audiovisual.descripIngAudescripEspAud =
-            this.audiovisual.descripIngAudescripEspAud === null
+          this.audiovisual.descripIngAud =
+            this.audiovisual.descripIngAud === null
               ? ''
-              : this.audiovisual.descripIngAudescripEspAud;
+              : this.audiovisual.descripIngAud;
           this.audiovisual.productos_audvs = [];
-          this.audiovisual.codigAudescripEspAud = this.audiovisual.codigAud.substr(
-            5
-          );
+          this.audiovisual.codigAud = this.audiovisual.codigAud.substr(5);
           this.audiovisual.productos.forEach((element) => {
             this.audiovisual.productos_audvs.push(element.id);
           });
@@ -1656,11 +1654,11 @@
       crear_arr_codig(arr, type) {
         let answer = [];
         for (let i = 0; i < arr.length; i++) {
-					if (type === "codigo") {
-						answer.push(parseInt(arr[i].codigAud.substr(5, 8)));
-					} else {
-						answer.push(parseInt(arr[i].isrcAud.substr(7)));
-					}
+          if (type === 'codigo') {
+            answer.push(parseInt(arr[i].codigAud.substr(5, 8)));
+          } else {
+            answer.push(parseInt(arr[i].isrcAud.substr(7)));
+          }
         }
         return answer;
       },

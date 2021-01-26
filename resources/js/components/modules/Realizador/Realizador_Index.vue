@@ -1,6 +1,6 @@
 <template>
-  <div id="entrevistado_index">
-    <h1 style="color: white !important">Entrevistados</h1>
+  <div id="realizador_index">
+    <h1 style="color: white !important">Realizadores</h1>
     <hr style="border-color: white !important" />
 
     <!-- Inicio Sección de Analítica | Gráficas -->
@@ -19,14 +19,14 @@
       :tooltip="tooltip"
       :load="load"
       :legendSettings="{ visible: false }"
-      v-if="entrevistados_list.length !== 0"
+      v-if="realizadores_list.length !== 0"
     >
       <e-series-collection>
         <e-series
           :dataSource="series_data"
           type="Column"
           xName="years"
-          yName="entrevistados"
+          yName="realizadores"
           name="Año"
           :marker="marker"
           :animation="animation_series"
@@ -90,7 +90,7 @@
       id="datatable"
       ref="gridObj"
       locale="es-ES"
-      :dataSource="entrevistados_list"
+      :dataSource="realizadores_list"
       :toolbar="toolbar"
       :toolbarClick="click_toolbar"
       :allowPaging="true"
@@ -109,19 +109,19 @@
     >
       <e-columns>
         <e-column
-          field="codigEntrv"
+          field="codigRealiz"
           headerText="Código"
           width="110"
           textAlign="Left"
         />
         <e-column
-          field="nombreApellidosEntrv"
+          field="nombreApellidosRealiz"
           headerText="Nombre Completo"
           width="105"
           textAlign="Left"
         />
         <e-column
-          field="sexoEntrv"
+          field="sexoRealiz"
           headerText="Sexo"
           width="110"
           textAlign="Left"
@@ -149,9 +149,9 @@
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :entrevistado="row_selected"
+      :realizador="row_selected"
       @close_modal="visible_management = $event"
-      :entrevistados_list="entrevistados_list"
+      :realizadores_list="realizadores_list"
     />
     <!-- Fin Sección de Modals -->
   </div>
@@ -164,7 +164,7 @@
   import Vue from 'vue';
   import axios from '../../../config/axios/axios';
   //import modal_detail from "./Modal_Detalles_Proyecto";
-  import modal_management from './Modal_Gestionar_Entrevistado';
+  import modal_management from './Modal_Gestionar_Realizador';
   import {
     GridPlugin,
     Edit,
@@ -266,7 +266,7 @@
     selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
   ).replace(/-dark/i, 'Dark');
   export default {
-    name: 'Entrevistado_Index',
+    name: 'Realizador_Index',
     data() {
       return {
         //* Variables de configuración del gráfico
@@ -282,8 +282,8 @@
         },
         tooltip: {
           enable: true,
-          header: 'entrevistadoes por Año',
-          format: '${point.x} : ${point.y} entrevistadoes',
+          header: 'realizadores por Año',
+          format: '${point.x} : ${point.y} realizadores',
           fill: 'rgba(115, 25, 84, 0.9)',
           border: { width: 0 },
         },
@@ -306,7 +306,7 @@
           labelStyle: { color: 'white' },
         },
         primary_y_axis: {
-          title: 'entrevistadoes',
+          title: 'realizadores',
           titleStyle: {
             color: 'white',
             size: '16px',
@@ -327,7 +327,7 @@
         filter_settings: { type: 'Menu' },
         toolbar: [
           {
-            text: 'Añadir entrevistado',
+            text: 'Añadir realizador',
             prefixIcon: 'e-add-icon',
             id: 'add',
           },
@@ -347,7 +347,7 @@
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p>¿Desea {{ action }} el entrevistado?</p>
+                      <p>¿Desea {{ action }} el realizador?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
                       <a-switch style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
@@ -384,7 +384,7 @@
                   let error = false;
                   if (this.checked) {
                     this.$toast.question(
-                      '¿Esta acción inactivará el Entrevistado?',
+                      '¿Esta acción inactivará el Realizador?',
                       'Confirmación',
                       {
                         timeout: 5000,
@@ -400,7 +400,7 @@
                             '<button>Si</button>',
                             (instance, toast) => {
                               this.$toast.question(
-                                '¿Desea inactivar el Entrevistado?',
+                                '¿Desea inactivar el Realizador?',
                                 'Confirmación',
                                 {
                                   timeout: 5000,
@@ -418,7 +418,7 @@
                                         this.loading = true;
                                         axios
                                           .delete(
-                                            'entrevistados/desactivar/' +
+                                            'realizadores/desactivar/' +
                                               this.data.id
                                           )
                                           .catch((errors) => {
@@ -474,7 +474,7 @@
                     );
                   } else {
                     this.$toast.question(
-                      '¿Esta acción ativará el Entrevistado?',
+                      '¿Esta acción ativará el Realizador?',
                       'Confirmación',
                       {
                         timeout: 5000,
@@ -490,7 +490,7 @@
                             '<button>Si</button>',
                             (instance, toast) => {
                               this.$toast.question(
-                                '¿Desea activar el Entrevistado?',
+                                '¿Desea activar el Realizador?',
                                 'Confirmación',
                                 {
                                   timeout: 5000,
@@ -508,7 +508,7 @@
                                         this.loading = true;
                                         axios
                                           .get(
-                                            'entrevistados/restaurar/' +
+                                            'realizadores/restaurar/' +
                                               this.data.id
                                           )
                                           .catch((errors) => {
@@ -567,10 +567,10 @@
                 finally_method(action, error) {
                   this.loading = false;
                   if (!error) {
-                    this.$parent.$parent.load_entrevistados();
+                    this.$parent.$parent.load_realizadores();
                     this.checked = !this.checked;
                     this.$toast.success(
-                      `El Entrevistado se ${action} correctamente`,
+                      `El Realizador se ${action} correctamente`,
                       '¡Éxito!',
                       {
                         timeout: 1000,
@@ -603,7 +603,7 @@
                     @confirm="del_physical_btn_click"
 										ok-text="Si"
                     cancel-text="No"
-                    title="¿Desea eliminar el Entrevistado?"
+                    title="¿Desea eliminar el Realizador?"
                 >
                 <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
                 <a-tooltip title="Eliminar" placement="bottom">
@@ -657,7 +657,7 @@
                           '<button>Si</button>',
                           (instance, toast) => {
                             this.$toast.question(
-                              '¿Desea eliminar el Entrevistado?',
+                              '¿Desea eliminar el Realizador?',
                               'Confirmación',
                               {
                                 timeout: 5000,
@@ -674,12 +674,12 @@
                                     (instance, toast) => {
                                       axios
                                         .delete(
-                                          `entrevistados/eliminar/${this.data.id}`
+                                          `realizadores/eliminar/${this.data.id}`
                                         )
                                         .then((ress) => {
                                           this.$parent.$parent.refresh_table();
                                           this.$toast.success(
-                                            'El Entrevistado ha sido eliminado correctamente',
+                                            'El Realizador ha sido eliminado correctamente',
                                             '¡Éxito!',
                                             { timeout: 1000, color: 'red' }
                                           );
@@ -742,16 +742,16 @@
           };
         },
         export_view: false, //* Vista del panel de exportaciones
-        entrevistados_list: [], //* Lista de entrevistadoes que es cargada en la tabla
-        //products_childs: {}, //* Objeto de productos hijos de los entrevistadoes
-        row_selected: {}, //* Fila de la tabla seleccionada | entrevistado seleccionado
-        visible_details: false, //* variable para visualizar el modal de detalles del entrevistado
-        visible_management: false, //* variable para visualizar el modal de gestión del entrevistado
+        realizadores_list: [], //* Lista de realizadores que es cargada en la tabla
+        //products_childs: {}, //* Objeto de productos hijos de los realizadores
+        row_selected: {}, //* Fila de la tabla seleccionada | realizador seleccionado
+        visible_details: false, //* variable para visualizar el modal de detalles del realizador
+        visible_management: false, //* variable para visualizar el modal de gestión del realizador
         action_management: '', //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
       };
     },
     created() {
-      this.load_entrevistados();
+      this.load_realizadores();
     },
     methods: {
       /*
@@ -797,11 +797,11 @@
         }
       },
       /*
-       * Método que carga los entrevistadoes de la bd
+       * Método que carga los realizadores de la bd
        */
-      load_entrevistados() {
-        axios.post('/entrevistados/listar').then((response) => {
-          this.entrevistados_list = response.data;
+      load_realizadores() {
+        axios.post('/realizadores/listar').then((response) => {
+          this.realizadores_list = response.data;
         });
       },
       /*
@@ -820,7 +820,7 @@
        * Método que actualiza los datos de la tabla
        */
       refresh_table() {
-        this.load_entrevistados();
+        this.load_realizadores();
       },
       /*
        * Método con la lógica de los botones del toolbar de la tabla
@@ -838,7 +838,7 @@
       panel_export_click(args) {
         let pdfExportProperties = {
           hierarchyExportMode: 'Expanded',
-          fileName: 'Reporte_entrevistadoes.pdf',
+          fileName: 'Reporte_realizadores.pdf',
           pageOrientation: 'Landscape',
           header: {
             fromTop: 0,
@@ -858,7 +858,7 @@
               },
               {
                 type: 'Text',
-                value: 'Reporte de entrevistadoes',
+                value: 'Reporte de realizadores',
                 position: { x: 0, y: 40 },
                 style: {
                   textBrushColor: '#731954',
@@ -907,7 +907,7 @@
                 cells: [
                   {
                     colSpan: 4,
-                    value: 'Reporte de entrevistadoes',
+                    value: 'Reporte de realizadores',
                     style: {
                       fontColor: '#731954',
                       fontSize: 20,
@@ -946,11 +946,11 @@
           this.$refs.gridObj.getColumns()[8].visible = false;
           this.$refs.gridObj.pdfExport(pdfExportProperties);
         } else if (args === 'excel') {
-          excelExportProperties.fileName = 'Reporte_entrevistadoes.xlsx';
+          excelExportProperties.fileName = 'Reporte_realizadores.xlsx';
           this.$refs.gridObj.getColumns()[8].visible = false;
           this.$refs.gridObj.excelExport(excelExportProperties);
         } else if (args === 'csv') {
-          excelExportProperties.fileName = 'Reporte_entrevistadoes.csv';
+          excelExportProperties.fileName = 'Reporte_realizadores.csv';
           this.$refs.gridObj.getColumns()[8].visible = false;
           this.$refs.gridObj.csvExport(excelExportProperties);
         } else if (args === 'print') {
@@ -994,60 +994,60 @@
 </script>
 
 <style>
-  #entrevistado_index .e-headercontent,
-  #entrevistado_index .e-sortfilter,
-  #entrevistado_index thead,
-  #entrevistado_index tr,
-  #entrevistado_index td,
-  #entrevistado_index th,
-  #entrevistado_index .e-pagercontainer,
-  #entrevistado_index .e-pagerdropdown,
-  #entrevistado_index .e-first,
-  #entrevistado_index .e-prev,
-  #entrevistado_index .e-numericcontainer,
-  #entrevistado_index .e-next,
-  #entrevistado_index .e-last,
-  #entrevistado_index .e-table,
-  #entrevistado_index .e-input-group,
-  #entrevistado_index .e-content,
-  #entrevistado_index .e-toolbar-items,
-  #entrevistado_index .e-tbar-btn,
-  #entrevistado_index .e-toolbar-item,
-  #entrevistado_index .e-gridheader,
-  #entrevistado_index .e-gridcontent,
-  #entrevistado_index .e-gridpager,
-  #entrevistado_index .e-toolbar {
+  #realizador_index .e-headercontent,
+  #realizador_index .e-sortfilter,
+  #realizador_index thead,
+  #realizador_index tr,
+  #realizador_index td,
+  #realizador_index th,
+  #realizador_index .e-pagercontainer,
+  #realizador_index .e-pagerdropdown,
+  #realizador_index .e-first,
+  #realizador_index .e-prev,
+  #realizador_index .e-numericcontainer,
+  #realizador_index .e-next,
+  #realizador_index .e-last,
+  #realizador_index .e-table,
+  #realizador_index .e-input-group,
+  #realizador_index .e-content,
+  #realizador_index .e-toolbar-items,
+  #realizador_index .e-tbar-btn,
+  #realizador_index .e-toolbar-item,
+  #realizador_index .e-gridheader,
+  #realizador_index .e-gridcontent,
+  #realizador_index .e-gridpager,
+  #realizador_index .e-toolbar {
     background-color: transparent !important;
   }
-  #entrevistado_index .e-grid {
+  #realizador_index .e-grid {
     background-color: rgba(255, 255, 255, 0.8) !important;
   }
-  #entrevistado_index .e-gridheader {
+  #realizador_index .e-gridheader {
     border-bottom-color: rgba(115, 25, 84, 0.7) !important;
     border-top-color: transparent !important;
   }
-  #entrevistado_index td {
+  #realizador_index td {
     border-color: lightgrey !important;
   }
-  #entrevistado_index .e-grid,
-  #entrevistado_index .e-toolbar,
-  #entrevistado_index .e-grid .e-headercontent {
+  #realizador_index .e-grid,
+  #realizador_index .e-toolbar,
+  #realizador_index .e-grid .e-headercontent {
     border-color: transparent !important;
   }
-  #entrevistado_index .e-row:hover {
+  #realizador_index .e-row:hover {
     background-color: rgba(115, 25, 84, 0.1) !important;
   }
-  #entrevistado_index .e-detailrowcollapse .e-icon-grightarrow,
-  #entrevistado_index .e-detailrowexpand .e-icon-gdownarrow,
-  #entrevistado_index thead span,
-  #entrevistado_index .e-icon-filter {
+  #realizador_index .e-detailrowcollapse .e-icon-grightarrow,
+  #realizador_index .e-detailrowexpand .e-icon-gdownarrow,
+  #realizador_index thead span,
+  #realizador_index .e-icon-filter {
     color: rgb(115, 25, 84) !important;
     font-weight: bold !important;
   }
-  #entrevistado_index .ant-switch-inner {
+  #realizador_index .ant-switch-inner {
     width: auto !important;
   }
-  #entrevistado_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+  #realizador_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
   .e-badge.e-badge-success[href]:not(.e-badge-ghost) {
     color: white !important;
   }

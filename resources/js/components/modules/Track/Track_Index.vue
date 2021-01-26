@@ -14,9 +14,10 @@
       :primaryXAxis="primary_x_axis"
       :primaryYAxis="primary_y_axis"
       :chartArea="chart_area"
-      :width="width"
       :tooltip="tooltip"
       :load="load"
+      width="50%"
+      height="60%"
       :legendSettings="{ visible: false }"
       v-if="tracks_list.length !== 0"
     >
@@ -602,13 +603,13 @@
                       `El Track se ${action} correctamente`,
                       '¡Éxito!',
                       {
-                        timeout: 2000,
+                        timeout: 1000,
                         color: action === 'inactivó' ? 'blue' : 'grey',
                       }
                     );
                   } else {
                     this.$toast.error('Ha ocurrido un error', '¡Error!', {
-                      timeout: 2000,
+                      timeout: 1000,
                     });
                   }
                 },
@@ -735,7 +736,7 @@
                                           this.$toast.success(
                                             'El Track ha sido eliminado correctamente',
                                             '¡Éxito!',
-                                            { timeout: 2000, color: 'red' }
+                                            { timeout: 1000, color: 'red' }
                                           );
                                         })
                                         .catch((err) => {
@@ -744,7 +745,7 @@
                                             'Ha ocurrido un error',
                                             '¡Error!',
                                             {
-                                              timeout: 2000,
+                                              timeout: 1000,
                                             }
                                           );
                                         });

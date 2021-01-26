@@ -32,6 +32,7 @@ class FonogramaController extends Controller
                 for ($i; $i < $length; $i++) {
                     $fonogramas[$i]->elementos;
                     $fonogramas[$i]->productos;
+                    $fonogramas[$i]->tracks;
                 }
             } else {
                 $i = 0;;

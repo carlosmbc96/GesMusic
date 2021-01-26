@@ -90,7 +90,7 @@
                   >
                     <a-select
                       mode="multiple"
-                      v-model="track_modal.fonogramas"
+                      v-model="track_modal.fonogramas_tracks"
                       style="width: 50% !important"
                       :disabled="disabled"
                     >
@@ -106,7 +106,7 @@
                   <a-form-model-item label="Título">
                     <a-select
                       mode="multiple"
-                      v-model="track_modal.fonogramas"
+                      v-model="track_modal.fonogramas_tracks"
                       :disabled="disabled"
                     >
                       <a-select-option
@@ -899,7 +899,6 @@
           this.track_modal.anhoRegistro +
 					this.track_modal.identificador;
 				}
-				console.log(this.track_modal.duracionTrk);
         form_data.append('isrcTrk', this.track_modal.isrcTrk);
         form_data.append('tituloTrk', this.track_modal.tituloTrk);
         form_data.append('ordenTrk', this.track_modal.ordenTrk);
@@ -912,6 +911,7 @@
         form_data.append('bonusTrk', this.track_modal.bonusTrk);
         form_data.append('gestionTrk', this.track_modal.gestionTrk);
         form_data.append('paisgrabTrk', this.track_modal.paisgrabTrk);
+        form_data.append('fonograma_id', this.track_modal.fonogramas_tracks);
         this.text_button = 'Creando...';
         return form_data;
       },
@@ -926,9 +926,9 @@
           this.action_cancel_title = '¿Desea cancelar la edición del Track?';
           this.action_title = '¿Desea guardar los cambios en el Track?';
           this.action_close = 'La edición del Track se canceló correctamente';
-          this.track.fonogramas = [];
+          this.track.fonogramas_tracks = [];
           this.track.fonogramas.forEach((element) => {
-            this.track.fonogramas.push(element.id);
+            this.track.fonogramas_tracks.push(element.id);
           });
           this.track_modal = { ...this.track };
           this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
@@ -944,9 +944,9 @@
           }
           this.text_header_button = 'Detalles';
           this.text_button = 'Detalles';
-          this.track.fonogramas = [];
+          this.track.fonogramas_tracks = [];
           this.track.fonogramas.forEach((element) => {
-            this.track.fonogramas.push(element.id);
+            this.track.fonogramas_tracks.push(element.id);
           });
           this.track_modal = { ...this.track };
           this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;

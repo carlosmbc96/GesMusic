@@ -91,7 +91,7 @@ class TrackController extends Controller
             $this->crearDirectorios($track);
         }
         $track->save();
-        return response()->json($fonograma);
+        return response()->json($track);
     }
 
     public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Fonograma

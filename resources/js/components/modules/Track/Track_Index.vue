@@ -857,7 +857,7 @@
        */
       load_tracks() {
         axios
-          .post('/tracks/listar' /* , { relations: ["productos"] } */)
+          .post('/tracks/listar' , { relations: ["fonogramas"] })
           .then((response) => {
             this.tracks_list = response.data;
             this.series_data = [];

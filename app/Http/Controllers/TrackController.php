@@ -88,7 +88,7 @@ class TrackController extends Controller
                     "track_id" => $track->id
                 ]);
             }
-            $this->crearDirectorios($track);
+            $this->crearDirectorios($fonogramas);
         }
         $track->save();
         return response()->json($track);
@@ -134,7 +134,7 @@ class TrackController extends Controller
             }
         } else if (count($track->fonogramas) !== 0) {
             for ($i = 0; $i < count($track->fonogramas); $i++) {
-                array_push($productosOld, $track->fonogramas[$i]->pivot->fonograma_id);
+                array_push($fonogramasOld, $track->fonogramas[$i]->pivot->fonograma_id);
                 $track->fonogramas[$i]->pivot->delete();
             }
         }

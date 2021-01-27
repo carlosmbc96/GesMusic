@@ -781,7 +781,7 @@
         this.waiting = true;
         let form_data = this.prepare_create();
         if (this.action_modal === 'editar') {
-          this.text_button = 'Editando...';
+					this.text_button = 'Editando...';
           axios
             .post(`/tracks/editar`, form_data, {
               headers: {
@@ -929,7 +929,7 @@
           this.track.fonogramas_tracks = [];
           this.track.fonogramas.forEach((element) => {
             this.track.fonogramas_tracks.push(element.id);
-          });
+					});
           this.track_modal = { ...this.track };
           this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
           this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
@@ -944,10 +944,11 @@
           }
           this.text_header_button = 'Detalles';
           this.text_button = 'Detalles';
-          this.track.fonogramas_tracks = [];
-          this.track.fonogramas.forEach((element) => {
+					this.track.fonogramas_tracks = [];
+          this.track.fonogramas_tracks.forEach((element) => {
             this.track.fonogramas_tracks.push(element.id);
-          });
+					});
+
           this.track_modal = { ...this.track };
           this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
           this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;

@@ -88,7 +88,7 @@ class TrackController extends Controller
                     "track_id" => $track->id
                 ]);
             }
-            $this->crearDirectorios($fonogramas);
+            $this->crearDirectorios($track);
         }
         $track->save();
         return response()->json($fonograma);

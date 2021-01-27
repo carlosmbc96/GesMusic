@@ -307,14 +307,14 @@ export default {
     let validate_codig_unique = (rule, value, callback) => {
       this.projects_list.forEach((element) => {
         if (element.codigProy.substr(5) === value.replace(/ /g, "")) {
-          callback(new Error("Código ya usado"));
+          callback(new Error("Código usado"));
         }
       });
       callback();
     };
     let code_required = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("Inserte el código"));
+        callback(new Error("Campo requerido"));
       } else callback();
     };
     return {
@@ -370,7 +370,7 @@ export default {
         descripEsp: [
           {
             whitespace: true,
-            message: "Inserte una descripción",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
@@ -382,7 +382,7 @@ export default {
         descripIng: [
           {
             whitespace: true,
-            message: "Inserte una descripción",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {

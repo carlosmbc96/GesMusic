@@ -621,6 +621,12 @@ export default {
   color: rgba(115, 25, 84) !important;
 }
 .ant-spin-dot-item {
-    background-color: rgba(115, 25, 84) !important;
+  background-color: rgba(115, 25, 84) !important;
+}
+.detalles-img
+  .ant-upload-list-picture-card
+  .ant-upload-list-item-actions
+  .anticon-delete {
+  display: none !important;
 }
 </style>

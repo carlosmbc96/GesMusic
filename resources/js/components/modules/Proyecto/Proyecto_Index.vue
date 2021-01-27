@@ -48,7 +48,7 @@
                 export_view = !export_view;
               }
             "
-          /></a-tooltip>
+        /></a-tooltip>
         <span><a-icon class="e-icon-export" type="export" /></span>
       </div>
       <transition
@@ -85,63 +85,65 @@
     </div>
     <div class="clearfix"></div>
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      locale="es-ES"
-      :childGrid="products_childs"
-      :dataSource="projects_list"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigProy"
-          headerText="Código"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          field="nombreProy"
-          headerText="Nombre"
-          width="150"
-          textAlign="Left"
-        />
-        <e-column
-          field="añoProy"
-          headerText="Año"
-          width="90"
-          textAlign="Left"
-        />
-        <e-column
-          headerText="Estado"
-          width="115"
-          :template="status_template"
-          :visible="true"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="140"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        locale="es-ES"
+        :childGrid="products_childs"
+        :dataSource="projects_list"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :pdfExportComplete="pdf_export_complete"
+        :excelExportComplete="excel_export_complete"
+        :queryCellInfo="customise_cell"
+        :pdfQueryCellInfo="pdf_customise_cell"
+        :excelQueryCellInfo="excel_customise_cell"
+        :allowExcelExport="true"
+        :allowPdfExport="true"
+      >
+        <e-columns>
+          <e-column
+            field="codigProy"
+            headerText="Código"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="nombreProy"
+            headerText="Nombre"
+            width="150"
+            textAlign="Left"
+          />
+          <e-column
+            field="añoProy"
+            headerText="Año"
+            width="90"
+            textAlign="Left"
+          />
+          <e-column
+            headerText="Estado"
+            width="115"
+            :template="status_template"
+            :visible="true"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="140"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <modal_management
@@ -559,7 +561,7 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_projects();
+                  this.$parent.$parent.$parent.load_projects();
                   this.checked = !this.checked;
                   this.$toast.success(
                     `El Proyecto se ${action} correctamente`,
@@ -637,19 +639,19 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-								if (this.data.deleted_at === null)
-									this.$parent.$parent.action_management = "detalles";
-									this.$parent.$parent.visible_management = true;
+                this.$parent.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null)
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
               },
               /*
@@ -673,61 +675,67 @@ export default {
                       [
                         "<button>Si</button>",
                         (instance, toast) => {
-                          this.$toast.question("¿Desea eliminar el Proyecto?", "Confirmación", {
-                            timeout: 5000,
-                            close: false,
-                            color: "#F58983",
-                            overlay: true,
-                            displayMode: "once",
-                            zindex: 9999,
-                            title: "Hey",
-                            position: "center",
-                            buttons: [
-                              [
-                                "<button>Si</button>",
-                                (instance, toast) => {
-                                  axios
-                                    .delete(
-                                      `proyectos/eliminar/${this.data.id}`
-                                    )
-                                    .then((ress) => {
-                                      this.$parent.$parent.refresh_table();
-                                      this.$toast.success(
-                                        "El Proyecto ha sido eliminado correctamente",
-                                        "¡Éxito!",
-                                        { timeout: 1000, color: "red" }
-                                      );
-                                    })
-                                    .catch((err) => {
-                                      console.log(err);
-                                      this.$toast.error(
-                                        "Ha ocurrido un error",
-                                        "¡Error!",
-                                        {
-                                          timeout: 1000,
-                                        }
-                                      );
-                                    });
-                                  instance.hide(
-                                    { transitionOut: "fadeOut" },
-                                    toast,
-                                    "button"
-                                  );
-                                },
-                                true,
+                          this.$toast.question(
+                            "¿Desea eliminar el Proyecto?",
+                            "Confirmación",
+                            {
+                              timeout: 5000,
+                              close: false,
+                              color: "#F58983",
+                              overlay: true,
+                              displayMode: "once",
+                              zindex: 9999,
+                              title: "Hey",
+                              position: "center",
+                              buttons: [
+                                [
+                                  "<button>Si</button>",
+                                  (instance, toast) => {
+                                    this.$parent.$parent.$parent.change_spin();
+                                    axios
+                                      .delete(
+                                        `proyectos/eliminar/${this.data.id}`
+                                      )
+                                      .then((ress) => {
+                                        this.$parent.$parent.$parent.refresh_table();
+                                        this.$toast.success(
+                                          "El Proyecto ha sido eliminado correctamente",
+                                          "¡Éxito!",
+                                          { timeout: 1000, color: "red" }
+                                        );
+                                        this.$parent.$parent.$parent.change_spin();
+                                      })
+                                      .catch((err) => {
+                                        console.log(err);
+                                        this.$toast.error(
+                                          "Ha ocurrido un error",
+                                          "¡Error!",
+                                          {
+                                            timeout: 1000,
+                                          }
+                                        );
+                                      });
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                  true,
+                                ],
+                                [
+                                  "<button>No</button>",
+                                  function (instance, toast) {
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                ],
                               ],
-                              [
-                                "<button>No</button>",
-                                function (instance, toast) {
-                                  instance.hide(
-                                    { transitionOut: "fadeOut" },
-                                    toast,
-                                    "button"
-                                  );
-                                },
-                              ],
-                            ],
-                          });
+                            }
+                          );
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -754,6 +762,7 @@ export default {
           }),
         };
       },
+      spinning: false,
       export_view: false, //* Vista del panel de exportaciones
       projects_list: [], //* Lista de proyectos que es cargada en la tabla
       products_childs: {}, //* Objeto de productos hijos de los proyectos
@@ -763,9 +772,9 @@ export default {
     };
   },
   created() {
-		this.load_projects();
+    this.load_projects();
   },
-	methods: {
+  methods: {
     /*
      * Método para modificar el estilo de las filas de la tabla
      */
@@ -812,6 +821,9 @@ export default {
      * Método que carga los proyectos de la bd
      */
     load_projects() {
+      if (this.action_management !== "detalles") {
+        this.change_spin();
+      }
       axios
         .post("/proyectos/listar", { relations: ["productos"] })
         .then((response) => {
@@ -891,6 +903,9 @@ export default {
             };
             this.$refs.gridObj.refresh();
           });
+          if (this.action_management !== "detalles") {
+            this.change_spin();
+          }
         });
     },
     /*
@@ -910,6 +925,12 @@ export default {
      */
     refresh_table() {
       this.load_projects();
+    },
+    /*
+     * Método que activa y desactiva el spin
+     */
+    change_spin() {
+      this.spinning = !this.spinning;
     },
     /*
      * Método con la lógica de los botones del toolbar de la tabla

@@ -102,24 +102,25 @@
                         </div>
                       </div>
                     </a-upload>
-                    <a-upload
-                      v-else
-                      @preview="handle_preview"
-                      :file-list="file_list"
-                      list-type="picture-card"
-                    >
-                      <div v-if="file_list.length < 1">
-                        <img />
-                      </div>
-                    </a-upload>
-                    <br />
-                    <a-modal
-                      :visible="preview_visible"
-                      :footer="null"
-                      @cancel="preview_cancel"
-                    >
-                      <img style="width: 100%" :src="preview_image" />
-                    </a-modal>
+                    <div class="detalles-img" v-else>
+                      <a-upload
+                        @preview="handle_preview"
+                        :file-list="file_list"
+                        list-type="picture-card"
+                      >
+                        <div v-if="file_list.length < 1">
+                          <img />
+                        </div>
+                      </a-upload>
+                      <br />
+                      <a-modal
+                        :visible="preview_visible"
+                        :footer="null"
+                        @cancel="preview_cancel"
+                      >
+                        <img style="width: 100%" :src="preview_image" />
+                      </a-modal>
+                    </div>
                   </a-col>
                   <a-col span="6">
                     <a-form-model-item
@@ -388,18 +389,18 @@ export default {
           {
             pattern: "^[a-zA-Z0-9'(?!),.;: \n]*$",
             message: "Caracter no válido",
-            trigger: "change",
+            trigger: "",
           },
         ],
         nombreProy: [
           {
             required: true,
-            message: "Inserte el nombre",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
             whitespace: true,
-            message: "Inserte el nombre",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
@@ -410,7 +411,7 @@ export default {
         ],
         añoProy: {
           required: true,
-          message: "Seleccione un año",
+          message: "Campo requerido",
           trigger: "change",
         },
       },
@@ -455,10 +456,6 @@ export default {
     },
   },
   methods: {
-    /* container(node) {
-        console.log(node._self);
-        () => node._self
-      }, */
     validate() {
       if (this.project_modal.codigProy === undefined) {
         this.project_modal.codigProy = this.codigo;
@@ -614,10 +611,10 @@ export default {
      */
     handle_cancel(e) {
       if (e === "cancelar") {
+        console.log(this.project_modal.codigProy);
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
-        this.$emit("actualizar");
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
             timeout: 1000,
@@ -625,6 +622,7 @@ export default {
           });
         }
       } else {
+        console.log(this.project_modal.codigProy);
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
@@ -653,6 +651,7 @@ export default {
           this.project.descripIng === null ? "" : this.project.descripIng;
         this.project.codigProy = this.project.codigProy.substr(5);
         this.project_modal = { ...this.project };
+        console.log(this.project_modal.codigProy);
         if (this.project_modal.identificadorProy !== null) {
           if (
             this.project_modal.identificadorProy !==

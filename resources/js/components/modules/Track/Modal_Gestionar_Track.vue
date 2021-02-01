@@ -65,7 +65,7 @@
         <div slot="tabBarExtraContent">{{ text_header_button }} Track</div>
         <a-tab-pane
           key="1"
-          v-if="tab_visibility && action_modal !== 'detalles'"
+          v-if="action_modal === 'crear' || action_modal === 'editar'"
         >
           <span slot="tab"> Fonograma </span>
           <a-spin :spinning="spinning">
@@ -168,7 +168,12 @@
                       <a-mentions readonly :placeholder="track_modal.ordenTrk">
                       </a-mentions>
                     </a-form-model-item>
-                    <a-row v-if="action_modal === 'crear'">
+                    <a-row
+                      v-if="
+                        action_modal === 'crear' ||
+                          action_modal === 'crear_track'
+                      "
+                    >
                       <a-col span="4">
                         <a-tooltip
                           placement="bottom"
@@ -530,7 +535,7 @@
           </a-row>
           <a-row>
             <a-button
-              v-if="tab_visibility && action_modal !== 'detalles'"
+              v-if="action_modal === 'crear' || action_modal === 'editar'"
               :disabled="disabled"
               style="float: left"
               type="default"
@@ -686,9 +691,15 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear") {
+    if (this.action_modal === "crear" || this.action_modal === "crear_track") {
+      console.log(this.tracks_list);
       this.codigo = this.generar_codigo(this.tracks_list);
-    } else if (this.action_modal === "detalles") {
+      console.log(this.codigo);
+    }
+    if (
+      this.action_modal === "detalles" ||
+      this.action_modal === "crear_track"
+    ) {
       this.active_tab = "2";
     }
   },
@@ -821,10 +832,33 @@ export default {
             this.text_button = "Crear";
             this.spinning = false;
             this.waiting = false;
+            if (this.action_modal === "crear_track") {
+              let tracks = [];
+              axios
+                .post("/tracks/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      tracks.push(element);
+                    }
+                  });
+                  this.$store.state["tracks"].push(tracks[tracks.length - 1]);
+                  this.$store.state["created_tracks"].push(
+                    tracks[tracks.length - 1]
+                  );
+                  this.$store.state["all_tracks_statics"].push(
+                    tracks[tracks.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }
             this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha creado el Track correctamente",
+              "Se ha creado el track correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
@@ -851,7 +885,6 @@ export default {
       );
     },
     prepare_create() {
-      console.log(this.track_modal.fonogramas_tracks);
       this.track_modal.muestraTrk = this.muestraTrk === false ? 0 : 1;
       this.track_modal.bonusTrk = this.bonusTrk === false ? 0 : 1;
       this.track_modal.envivoTrk = this.envivoTrk === false ? 0 : 1;
@@ -889,7 +922,10 @@ export default {
       if (this.track_modal.identificador === undefined) {
         this.track_modal.identificador = this.codigo;
       }
-      if (this.action_modal === "crear") {
+      if (
+        this.action_modal === "crear" ||
+        this.action_modal === "crear_track"
+      ) {
         this.track_modal.isrcTrk =
           "" +
           this.track_modal.codigPais.toUpperCase() +

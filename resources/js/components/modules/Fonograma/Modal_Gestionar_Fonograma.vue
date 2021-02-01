@@ -539,6 +539,199 @@
             :vista_editar="vista_editar"
             @close_modal="show = $event"
           />
+          <a-row v-if="action_modal === 'crear'">
+            <a-col span="1"></a-col>
+            <a-col span="20">
+              <div class="section-title">
+                <h4>Tracks</h4>
+              </div>
+              <a-row>
+                <a-col span="5">
+                  <h5>Orden</h5>
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getTracksFormGetters.length === 0"
+                  >
+                  </a-mentions>
+                </a-col>
+                <a-col span="1"></a-col>
+                <a-col span="5">
+                  <h5>Título</h5>
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getTracksFormGetters.length === 0"
+                  >
+                  </a-mentions>
+                </a-col>
+                <a-col span="1"></a-col>
+                <a-col span="5">
+                  <h5>Duración</h5>
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getTracksFormGetters.length === 0"
+                  >
+                  </a-mentions>
+                </a-col>
+                <a-col span="1"></a-col>
+                <a-col span="5">
+                  <h5>Género</h5>
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getTracksFormGetters.length === 0"
+                  >
+                  </a-mentions>
+                </a-col>
+                <a-col span="1"></a-col>
+              </a-row>
+              <a-form-model-item
+                v-for="(track, index) in $store.getters.getTracksFormGetters"
+                :key="track.key"
+                v-bind="index === 0 ? formItemLayout : {}"
+              >
+                <a-row>
+                  <a-col span="5">
+                    <a-mentions readonly :placeholder="track.ordenTrk">
+                    </a-mentions>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="5">
+                    <a-mentions readonly :placeholder="track.tituloTrk">
+                    </a-mentions>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="5">
+                    <a-mentions readonly :placeholder="track.duracionTrk">
+                    </a-mentions>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="5">
+                    <a-mentions readonly :placeholder="track.generoTrk">
+                    </a-mentions>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="1">
+                    <a-button
+                      style="margin-top: 4px"
+                      class="dynamic-delete-button"
+                      @click="remove_track(track)"
+                    >
+                      <small>
+                        <b style="vertical-align: top"> x </b>
+                      </small>
+                    </a-button>
+                  </a-col>
+                </a-row>
+              </a-form-model-item>
+              <a-row style="margin-top: 40px">
+                <a-col span="12">
+                  <div class="section-title">
+                    <h4>Selector de tracks</h4>
+                  </div>
+                  <a-form-model
+                    ref="formularioAgregarTrack"
+                    :layout="'horizontal'"
+                    :model="fonogram_modal"
+                  >
+                    <a-form-model-item has-feedback>
+                      <a-select
+                        placeholder="ISRC"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        v-model="fonogram_modal.tracks"
+                        :disabled="disabled"
+                      >
+                        <a-select-option
+                          v-for="track in $store.getters
+                            .getAllTracksFormGetters"
+                          :key="track.isrcTrk"
+                          :value="track.id"
+                        >
+                          {{ track.isrcTrk }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item>
+                      <a-select
+                        placeholder="Título"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        v-model="fonogram_modal.tracks"
+                        :disabled="disabled"
+                      >
+                        <a-select-option
+                          v-for="track in $store.getters
+                            .getAllTracksFormGetters"
+                          :key="track.tituloTrk"
+                          :value="track.id"
+                        >
+                          {{ track.tituloTrk }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-row>
+                      <a-col span="12">
+                        <a-form-model-item v-bind="formItemLayout">
+                          <a-button
+                            :disabled="disabled"
+                            style="
+                          color: white;
+                          background-color: rgb(45, 171, 229) !important;
+                        "
+                            @click="add_track"
+                          >
+                            <a-icon type="plus" />
+                            Agregar Track
+                          </a-button>
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col span="12">
+                        <a-form-model-item
+                          v-bind="formItemLayout"
+                          style="float: right"
+                        >
+                          <a-button
+                            :disabled="disabled"
+                            style="
+                          color: white;
+                          background-color: rgb(45, 171, 229) !important;
+                        "
+                            @click="new_track"
+                          >
+                            <a-icon type="plus" />
+                            Crear Track
+                          </a-button>
+                        </a-form-model-item>
+                      </a-col>
+                    </a-row>
+                  </a-form-model>
+                </a-col>
+                <a-col span="12"> </a-col>
+              </a-row>
+            </a-col>
+            <a-col span="1"></a-col>
+          </a-row>
+          <a-col span="24">
+            <a-button
+              :disabled="disabled"
+              style="float: right"
+              type="default"
+              @click="siguiente('tab_3', '4')"
+            >
+              Siguiente
+              <a-icon type="right" />
+            </a-button>
+            <a-button
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('2')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-col>
         </a-tab-pane>
         <!-- Tab 4 -->
         <a-tab-pane key="4" :disabled="tab_4">
@@ -556,11 +749,18 @@
         </a-tab-pane>
       </a-tabs>
     </a-modal>
+    <modal_management
+      v-if="visible_management"
+      :action="action_management"
+      @close_modal="visible_management = $event"
+      :tracks_list="$store.getters.getAllTracksStaticsFormGetters"
+    />
   </div>
 </template>
 
 <script>
 import tabla_tracks from "../Track/Tabla_Tracks";
+import modal_management from "../Track/Modal_Gestionar_Track";
 export default {
   props: ["action", "fonogram", "fonograms_list"],
   data() {
@@ -585,6 +785,8 @@ export default {
       tab_2: true,
       tab_3: true,
       tab_4: true,
+      visible_management: false,
+      action_management: "crear_track",
       tabs_list: [],
       active_tab: "1",
       tab_visibility: true,
@@ -614,6 +816,13 @@ export default {
       action_modal: this.action,
       list_nomenclators: [],
       codigo: "",
+      tracksFong: [],
+      formItemLayout: {
+        wrapperCol: {
+          xs: { span: 24, offset: 0 },
+          sm: { span: 20, offset: 4 },
+        },
+      },
       rules: {
         codigFong: [
           {
@@ -765,6 +974,28 @@ export default {
         if (this.tabs_list.indexOf("tab_1") !== -1) {
           this.$refs.formularioGenerales.resetFields();
         }
+        if (this.$store.getters.getCreatedTracksFormGetters.length !== 0) {
+          for (
+            let index = 0;
+            index < this.$store.getters.getCreatedTracksFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `tracks/eliminar/${this.$store.getters.getCreatedTracksFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 1000,
+                });
+              });
+          }
+        }
+        this.$store.state["tracks"] = [];
+        this.$store.state["created_tracks"] = [];
+        this.$store.state["all_tracks"] = [];
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;
@@ -1102,6 +1333,20 @@ export default {
           console.log(error);
         });
       axios
+        .post("/tracks/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              this.$store.state["all_tracks"].push(element);
+              this.$store.state["all_tracks_statics"].push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
         .post("/fonogramas/nomencladores")
         .then((response) => {
           this.list_nomenclators = response.data;
@@ -1115,6 +1360,45 @@ export default {
             timeout: 1000,
           });
         });
+    },
+
+    add_track() {
+      if (this.fonogram_modal.tracks !== undefined) {
+        this.$store.state["tracks"].push(
+          this.get_track(this.fonogram_modal.tracks).track
+        );
+        this.$store.state["all_tracks"].splice(
+          this.get_track(this.fonogram_modal.tracks).index,
+          1
+        );
+        this.fonogram_modal.tracks = undefined;
+      }
+    },
+
+    remove_track(item) {
+      let index = this.$store.getters.getTracksFormGetters.indexOf(item);
+      this.$store.state["tracks"].splice(index, 1);
+      this.$store.state["all_tracks"].push(item);
+    },
+
+    new_track() {
+      this.visible_management = true;
+    },
+
+    get_track(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllTracksFormGetters.length;
+        index++
+      ) {
+        if (this.$store.getters.getAllTracksFormGetters[index].id === id) {
+          return {
+            track: this.$store.getters.getAllTracksFormGetters[index],
+            index: index,
+          };
+        }
+      }
+      return -1;
     },
 
     //Metodos para generar el codigo
@@ -1175,6 +1459,7 @@ export default {
   },
   components: {
     tabla_tracks,
+    modal_management,
   },
 };
 </script>

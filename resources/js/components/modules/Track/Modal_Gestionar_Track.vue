@@ -65,7 +65,7 @@
         <div slot="tabBarExtraContent">{{ text_header_button }} Track</div>
         <a-tab-pane
           key="1"
-          v-if="tab_visibility && action_modal !== 'detalles'"
+          v-if="action_modal === 'crear' || action_modal === 'editar'"
         >
           <span slot="tab"> Fonograma </span>
           <a-spin :spinning="spinning">
@@ -168,7 +168,12 @@
                       <a-mentions readonly :placeholder="track_modal.ordenTrk">
                       </a-mentions>
                     </a-form-model-item>
-                    <a-row v-if="action_modal === 'crear'">
+                    <a-row
+                      v-if="
+                        action_modal === 'crear' ||
+                          action_modal === 'crear_track'
+                      "
+                    >
                       <a-col span="4">
                         <a-tooltip
                           placement="bottom"
@@ -296,7 +301,7 @@
                       <a-time-picker
                         :default-open-value="moment('00:00:00', 'HH:mm:ss')"
                         :disabled="disabled"
-												:valueFormat="'HH:mm:ss'"
+                        :valueFormat="'HH:mm:ss'"
                         v-model="track_modal.duracionTrk"
                       />
                     </a-form-model-item>
@@ -530,7 +535,7 @@
           </a-row>
           <a-row>
             <a-button
-              v-if="tab_visibility && action_modal !== 'detalles'"
+              v-if="action_modal === 'crear' || action_modal === 'editar'"
               :disabled="disabled"
               style="float: left"
               type="default"
@@ -686,9 +691,18 @@
     created() {
       this.load_nomenclators();
       this.set_action();
-      if (this.action_modal === 'crear') {
-        this.codigo = this.generar_codigo(this.tracks_list);
-      } else if (this.action_modal === 'detalles') {
+      if (
+        this.action_modal === 'crear' ||
+        this.action_modal === 'crear_track'
+      ) {
+				console.log(this.tracks_list);
+				this.codigo = this.generar_codigo(this.tracks_list);
+				console.log(this.codigo);
+      }
+      if (
+        this.action_modal === 'detalles' ||
+        this.action_modal === 'crear_track'
+      ) {
         this.active_tab = '2';
       }
     },
@@ -781,7 +795,7 @@
         this.waiting = true;
         let form_data = this.prepare_create();
         if (this.action_modal === 'editar') {
-					this.text_button = 'Editando...';
+          this.text_button = 'Editando...';
           axios
             .post(`/tracks/editar`, form_data, {
               headers: {
@@ -821,6 +835,29 @@
               this.text_button = 'Crear';
               this.spinning = false;
               this.waiting = false;
+              if (this.action_modal === 'crear_track') {
+                let tracks = [];
+                axios
+                  .post('/tracks/listar')
+                  .then((response) => {
+                    let prod = response.data;
+                    prod.forEach((element) => {
+                      if (!element.deleted_at) {
+                        tracks.push(element);
+                      }
+                    });
+                    this.$store.state['tracks'].push(tracks[tracks.length - 1]);
+                    this.$store.state['created_tracks'].push(
+                      tracks[tracks.length - 1]
+                    );
+                    this.$store.state['all_tracks_statics'].push(
+                      tracks[tracks.length - 1]
+                    );
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
               this.handle_cancel();
               this.$emit('actualizar');
               this.$toast.success(
@@ -890,15 +927,18 @@
         }
         if (this.track_modal.identificador === undefined) {
           this.track_modal.identificador = this.codigo;
-				}
-				if(this.action_modal === "crear") {
-					this.track_modal.isrcTrk =
-          '' +
-          this.track_modal.codigPais.toUpperCase() +
-          this.track_modal.codigRegistro.toUpperCase() +
-          this.track_modal.anhoRegistro +
-					this.track_modal.identificador;
-				}
+        }
+        if (
+          this.action_modal === 'crear' ||
+          this.action_modal === 'crear_track'
+        ) {
+          this.track_modal.isrcTrk =
+            '' +
+            this.track_modal.codigPais.toUpperCase() +
+            this.track_modal.codigRegistro.toUpperCase() +
+            this.track_modal.anhoRegistro +
+            this.track_modal.identificador;
+        }
         form_data.append('isrcTrk', this.track_modal.isrcTrk);
         form_data.append('tituloTrk', this.track_modal.tituloTrk);
         form_data.append('ordenTrk', this.track_modal.ordenTrk);
@@ -929,7 +969,7 @@
           this.track.fonogramas_tracks = [];
           this.track.fonogramas.forEach((element) => {
             this.track.fonogramas_tracks.push(element.id);
-					});
+          });
           this.track_modal = { ...this.track };
           this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
           this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
@@ -944,10 +984,10 @@
           }
           this.text_header_button = 'Detalles';
           this.text_button = 'Detalles';
-					this.track.fonogramas_tracks = [];
+          this.track.fonogramas_tracks = [];
           this.track.fonogramas_tracks.forEach((element) => {
             this.track.fonogramas_tracks.push(element.id);
-					});
+          });
 
           this.track_modal = { ...this.track };
           this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
@@ -1002,8 +1042,7 @@
         let answer = [];
         for (let i = 0; i < arr.length; i++) {
           answer.push(parseInt(arr[i].isrcTrk.substr(7)));
-				}
-				console.log(answer);
+        }
         return answer;
       },
       //Método de ordenamiento en burbuja
@@ -1019,7 +1058,7 @@
         return arr;
       },
       generar_codigo(arr) {
-        let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
+				let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
         let answer = 1;
         for (let i = 0; i < list.length; i++) {
           if (list[0] !== 1) {
@@ -1034,7 +1073,7 @@
             answer = list[i] + 1;
             break;
           }
-        }
+				}
         return this.crear_codigo(answer);
       },
       crear_codigo(number) {

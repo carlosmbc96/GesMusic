@@ -552,575 +552,569 @@
 </template>
 
 <script>
-  import axios from '../../../config/axios/axios';
-  import moment from '../../../../../node_modules/moment';
-  export default {
-    props: ['action', 'track', 'tracks_list'],
-    data() {
-      let validate_ISRC_unique = (rule, value, callback) => {
-        this.tracks_list.forEach((element) => {
-          if (element.isrcTrk === value) {
-            callback(new Error('ISRC ya usado'));
+import axios from "../../../config/axios/axios";
+import moment from "../../../../../node_modules/moment";
+export default {
+  props: ["action", "track", "tracks_list"],
+  data() {
+    let validate_ISRC_unique = (rule, value, callback) => {
+      this.tracks_list.forEach((element) => {
+        if (element.isrcTrk === value) {
+          callback(new Error("ISRC ya usado"));
+        }
+      });
+      callback();
+    };
+    return {
+      tab_2: true,
+      tabs_list: [],
+      active_tab: "1",
+      tab_visibility: true,
+      action_cancel_title: "",
+      fonograms: [],
+      action_title: "",
+      show: true,
+      used: false,
+      disabled: false,
+      waiting: false,
+      text_button: "",
+      text_header_button: "",
+      spinning: false,
+      track_modal: {},
+      paises: [],
+      generos: [],
+      subgeneros: [],
+      moods: [],
+      gestiones: [],
+      muestraTrk: false,
+      bonusTrk: false,
+      envivoTrk: false,
+      disabled: false,
+      activated: true,
+      file_list: [],
+      preview_image: "",
+      valid_image: true,
+      preview_visible: false,
+      show_error: "",
+      show_used_error: "",
+      action_modal: this.action,
+      list_nomenclators: [],
+      codigo: "",
+      rules: {
+        codigPais: [
+          {
+            required: true,
+            message: " ",
+            trigger: "change",
+          },
+          {
+            pattern: "^[a-zA-Z]*$",
+            message: " ",
+            trigger: "change",
+          },
+          {
+            len: 2,
+            message: " ",
+            trigger: "change",
+          },
+        ],
+        codigRegistro: [
+          {
+            required: true,
+            message: " ",
+            trigger: "change",
+          },
+          {
+            pattern: "^[a-zA-Z]*$",
+            message: " ",
+            trigger: "change",
+          },
+          {
+            len: 3,
+            message: " ",
+            trigger: "change",
+          },
+        ],
+        anhoRegistro: [
+          {
+            required: true,
+            message: " ",
+            trigger: "change",
+          },
+          {
+            pattern: "^[0-9]*$",
+            message: " ",
+            trigger: "change",
+          },
+          {
+            len: 2,
+            message: " ",
+            trigger: "change",
+          },
+        ],
+        tituloTrk: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+          {
+            pattern: "^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+        duracionTrk: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+        ],
+        generoTrk: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+        ],
+        gestionTrk: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+        ],
+      },
+    };
+  },
+  created() {
+    this.load_nomenclators();
+    this.set_action();
+    if (this.action_modal === "crear" || this.action_modal === "crear_track") {
+      console.log(this.tracks_list);
+      this.codigo = this.generar_codigo(this.tracks_list);
+      console.log(this.codigo);
+    }
+    if (
+      this.action_modal === "detalles" ||
+      this.action_modal === "crear_track"
+    ) {
+      this.active_tab = "2";
+    }
+  },
+  computed: {
+    active() {
+      if (this.text_button === "Editar") {
+        return !this.compare_object;
+      } else
+        return (
+          this.track_modal.tituloTrk &&
+          this.track_modal.duracionTrk &&
+          this.track_modal.generoTrk &&
+          this.track_modal.gestionTrk
+        );
+    },
+  },
+  methods: {
+    moment,
+    siguiente(tab, siguienteTab) {
+      if (tab === "tab_1") {
+        this.$refs.formularioFonograma.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            if (this.tabs_list.indexOf(tab) === -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
           }
         });
-        callback();
-      };
-      return {
-        tab_2: true,
-        tabs_list: [],
-        active_tab: '1',
-        tab_visibility: true,
-        action_cancel_title: '',
-        fonograms: [],
-        action_title: '',
-        show: true,
-        used: false,
-        disabled: false,
-        waiting: false,
-        text_button: '',
-        text_header_button: '',
-        spinning: false,
-        track_modal: {},
-        paises: [],
-        generos: [],
-        subgeneros: [],
-        moods: [],
-        gestiones: [],
-        muestraTrk: false,
-        bonusTrk: false,
-        envivoTrk: false,
-        disabled: false,
-        activated: true,
-        file_list: [],
-        preview_image: '',
-        valid_image: true,
-        preview_visible: false,
-        show_error: '',
-        show_used_error: '',
-        action_modal: this.action,
-        list_nomenclators: [],
-        codigo: '',
-        rules: {
-          codigPais: [
-            {
-              required: true,
-              message: ' ',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[a-zA-Z]*$',
-              message: ' ',
-              trigger: 'change',
-            },
-            {
-              len: 2,
-              message: ' ',
-              trigger: 'change',
-            },
-          ],
-          codigRegistro: [
-            {
-              required: true,
-              message: ' ',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[a-zA-Z]*$',
-              message: ' ',
-              trigger: 'change',
-            },
-            {
-              len: 3,
-              message: ' ',
-              trigger: 'change',
-            },
-          ],
-          anhoRegistro: [
-            {
-              required: true,
-              message: ' ',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[0-9]*$',
-              message: ' ',
-              trigger: 'change',
-            },
-            {
-              len: 2,
-              message: ' ',
-              trigger: 'change',
-            },
-          ],
-          tituloTrk: [
-            {
-              required: true,
-              message: 'Campo requerido',
-              trigger: 'change',
-            },
-            {
-              pattern: '^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$',
-              message: 'Caracter no válido',
-              trigger: 'change',
-            },
-          ],
-          duracionTrk: [
-            {
-              required: true,
-              message: 'Campo requerido',
-              trigger: 'change',
-            },
-          ],
-          generoTrk: [
-            {
-              required: true,
-              message: 'Campo requerido',
-              trigger: 'change',
-            },
-          ],
-          gestionTrk: [
-            {
-              required: true,
-              message: 'Campo requerido',
-              trigger: 'change',
-            },
-          ],
-        },
-      };
-    },
-    created() {
-      this.load_nomenclators();
-      this.set_action();
-      if (
-        this.action_modal === 'crear' ||
-        this.action_modal === 'crear_track'
-      ) {
-				console.log(this.tracks_list);
-				this.codigo = this.generar_codigo(this.tracks_list);
-				console.log(this.codigo);
-      }
-      if (
-        this.action_modal === 'detalles' ||
-        this.action_modal === 'crear_track'
-      ) {
-        this.active_tab = '2';
-      }
-    },
-    computed: {
-      active() {
-        if (this.text_button === 'Editar') {
-          return !this.compare_object;
-        } else
-          return (
-            this.track_modal.tituloTrk &&
-            this.track_modal.duracionTrk &&
-            this.track_modal.generoTrk &&
-            this.track_modal.gestionTrk
-          );
-      },
-    },
-    methods: {
-      moment,
-      siguiente(tab, siguienteTab) {
-        if (tab === 'tab_1') {
-          this.$refs.formularioFonograma.validate((valid) => {
+      } else if (tab === "tab_2") {
+        if (this.action_modal !== "detalles") {
+          this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
-              this.tab_2 = false;
-              if (this.tabs_list.indexOf(tab) === -1) {
+              this.tab_3 = false;
+              if (this.tabs_list.indexOf(tab) == -1) {
                 this.tabs_list.push(tab);
               }
               this.active_tab = siguienteTab;
             }
           });
-        } else if (tab === 'tab_2') {
-          if (this.action_modal !== 'detalles') {
-            this.$refs.formularioGenerales.validate((valid) => {
-              if (valid) {
-                this.tab_3 = false;
-                if (this.tabs_list.indexOf(tab) == -1) {
-                  this.tabs_list.push(tab);
-                }
-                this.active_tab = siguienteTab;
-              }
-            });
-          }
         }
-      },
-      handle_cancel(e) {
-        if (e === 'cancelar') {
-          if (this.tabs_list.indexOf('tab_1') !== -1) {
-            this.$refs.formularioGenerales.resetFields();
-          }
-          this.tabs_list = [];
-          this.active_tab = '1';
-          this.tab_visibility = true;
-          this.show = false;
-          this.$emit('close_modal', this.show);
-          if (this.action_modal !== 'detalles') {
-            this.$toast.success(this.action_close, '¡Éxito!', {
-              timeout: 1000,
-              color: 'orange',
-            });
-          }
-        } else {
-          if (this.tabs_list.indexOf('tab_1') !== -1) {
-            this.$refs.formularioGenerales.resetFields();
-          }
-          this.tabs_list = [];
-          this.active_tab = '1';
-          this.tab_visibility = true;
-          this.show = false;
-          this.$emit('close_modal', this.show);
-        }
-      },
-      validate() {
-        if (this.track_modal.identificador === undefined) {
-          this.track_modal.identificador = this.codigo;
-        }
-        if (!this.used) {
-          if (this.tabs_list.indexOf('tab_1') !== -1) {
-            this.$refs.formularioGenerales.validate((valid) => {
-              if (valid) {
-                return this.confirm();
-              }
-            });
-          } else return this.confirm();
-        }
-      },
-      atras(tabAnterior) {
-        this.active_tab = tabAnterior;
-      },
-      confirm() {
-        this.spinning = true;
-        this.waiting = true;
-        let form_data = this.prepare_create();
-        if (this.action_modal === 'editar') {
-          this.text_button = 'Editando...';
-          axios
-            .post(`/tracks/editar`, form_data, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            })
-            .then((response) => {
-              this.text_button = 'Editar';
-              this.spinning = false;
-              this.waiting = false;
-              this.handle_cancel();
-              this.$emit('actualizar');
-              this.$toast.success(
-                'Se ha modificado el track correctamente',
-                '¡Éxito!',
-                { timeout: 1000 }
-              );
-            })
-            .catch((error) => {
-              this.text_button = 'Editar';
-              this.spinning = false;
-              this.waiting = false;
-              this.handle_cancel();
-              this.$toast.error('Ha ocurrido un error', '¡Error!', {
-                timeout: 1000,
-              });
-            });
-        } else {
-          this.text_button = 'Creando...';
-          axios
-            .post('/tracks', form_data, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            })
-            .then((res) => {
-              this.text_button = 'Crear';
-              this.spinning = false;
-              this.waiting = false;
-              if (this.action_modal === 'crear_track') {
-                let tracks = [];
-                axios
-                  .post('/tracks/listar')
-                  .then((response) => {
-                    let prod = response.data;
-                    prod.forEach((element) => {
-                      if (!element.deleted_at) {
-                        tracks.push(element);
-                      }
-                    });
-                    this.$store.state['tracks'].push(tracks[tracks.length - 1]);
-                    this.$store.state['created_tracks'].push(
-                      tracks[tracks.length - 1]
-                    );
-                    this.$store.state['all_tracks_statics'].push(
-                      tracks[tracks.length - 1]
-                    );
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              }
-              this.handle_cancel();
-              this.$emit('actualizar');
-              this.$toast.success(
-                'Se ha creado el track correctamente',
-                '¡Éxito!',
-                { timeout: 1000 }
-              );
-            })
-            .catch((err) => {
-              this.text_button = 'Crear';
-              this.spinning = false;
-              this.waiting = false;
-              this.handle_cancel();
-              this.$toast.error('Ha ocurrido un error', '¡Error!', {
-                timeout: 1000,
-              });
-            });
-        }
-      },
-      /*
-       *Métodoo usado para filtrar la búsqueda de los select
-       */
-      filter_option(input, option) {
-        return (
-          option.componentOptions.children[0].text
-            .toLowerCase()
-            .indexOf(input.toLowerCase()) >= 0
-        );
-      },
-      prepare_create() {
-        this.track_modal.muestraTrk = this.muestraTrk === false ? 0 : 1;
-        this.track_modal.bonusTrk = this.bonusTrk === false ? 0 : 1;
-        this.track_modal.envivoTrk = this.envivoTrk === false ? 0 : 1;
-        if (this.track_modal.ordenTrk === undefined) {
-          this.track_modal.ordenTrk = '';
-        } else if (this.track_modal.ordenTrk === null) {
-          this.track_modal.ordenTrk = '';
-        }
-        if (this.track_modal.subgeneroTrk === undefined) {
-          this.track_modal.subgeneroTrk = '';
-        } else if (this.track_modal.subgeneroTrk === null) {
-          this.track_modal.subgeneroTrk = '';
-        }
-        if (this.track_modal.moodTrk === undefined) {
-          this.track_modal.moodTrk = '';
-        } else if (this.track_modal.moodTrk === null) {
-          this.track_modal.moodTrk = '';
-        }
-        if (this.track_modal.paisgrabTrk === undefined) {
-          this.track_modal.paisgrabTrk = '';
-        } else if (this.track_modal.paisgrabTrk === null) {
-          this.track_modal.paisgrabTrk = '';
-        }
-        let moods = '';
-        if (this.track_modal.moodTrk !== '') {
-          this.track_modal.moodTrk.forEach((item) => {
-            moods += item + ' ';
-          });
-          this.track_modal.moodTrk = moods;
-        }
-        let form_data = new FormData();
-        if (
-          this.action_modal === 'editar' ||
-          this.action_modal === 'detalles'
-        ) {
-          form_data.append('id', this.track_modal.id);
-        }
-        if (this.track_modal.identificador === undefined) {
-          this.track_modal.identificador = this.codigo;
-        }
-        if (
-          this.action_modal === 'crear' ||
-          this.action_modal === 'crear_track'
-        ) {
-          this.track_modal.isrcTrk =
-            '' +
-            this.track_modal.codigPais.toUpperCase() +
-            this.track_modal.codigRegistro.toUpperCase() +
-            this.track_modal.anhoRegistro +
-            this.track_modal.identificador;
-        }
-        form_data.append('isrcTrk', this.track_modal.isrcTrk);
-        form_data.append('tituloTrk', this.track_modal.tituloTrk);
-        form_data.append('ordenTrk', this.track_modal.ordenTrk);
-        form_data.append('duracionTrk', this.track_modal.duracionTrk);
-        form_data.append('muestraTrk', this.track_modal.muestraTrk);
-        form_data.append('envivoTrk', this.track_modal.envivoTrk);
-        form_data.append('generoTrk', this.track_modal.generoTrk);
-        form_data.append('moodTrk', moods);
-        form_data.append('subgeneroTrk', this.track_modal.subgeneroTrk);
-        form_data.append('bonusTrk', this.track_modal.bonusTrk);
-        form_data.append('gestionTrk', this.track_modal.gestionTrk);
-        form_data.append('paisgrabTrk', this.track_modal.paisgrabTrk);
-        form_data.append('fonograma_id', this.track_modal.fonogramas_tracks);
-        this.text_button = 'Creando...';
-        return form_data;
-      },
-      set_action() {
-        if (this.action === 'editar') {
-          if (this.track.deleted_at !== null) {
-            this.disabled = true;
-            this.activated = false;
-          }
-          this.text_header_button = 'Editar';
-          this.text_button = 'Editar';
-          this.action_cancel_title = '¿Desea cancelar la edición del Track?';
-          this.action_title = '¿Desea guardar los cambios en el Track?';
-          this.action_close = 'La edición del Track se canceló correctamente';
-          this.track.fonogramas_tracks = [];
-          this.track.fonogramas.forEach((element) => {
-            this.track.fonogramas_tracks.push(element.id);
-          });
-          this.track_modal = { ...this.track };
-          this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
-          this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
-          this.bonusTrk = this.track_modal.bonusTrk === 0 ? false : true;
-          if (this.track_modal.moodTrk !== null) {
-            this.track_modal.moodTrk = this.track_modal.moodTrk.split(' ');
-          } else delete this.track_modal.moodTrk;
-        } else if (this.action_modal === 'detalles') {
-          if (this.track.deleted_at !== null) {
-            this.disabled = true;
-            this.activated = false;
-          }
-          this.text_header_button = 'Detalles';
-          this.text_button = 'Detalles';
-          this.track.fonogramas_tracks = [];
-          this.track.fonogramas_tracks.forEach((element) => {
-            this.track.fonogramas_tracks.push(element.id);
-          });
-
-          this.track_modal = { ...this.track };
-          this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
-          this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
-          this.bonusTrk = this.track_modal.bonusTrk === 0 ? false : true;
-          if (this.track_modal.moodTrk !== null) {
-            this.track_modal.moodTrk = this.track_modal.moodTrk.split(' ');
-          } else delete this.track_modal.moodTrk;
-        } else {
-          this.text_button = 'Crear';
-          this.text_header_button = 'Crear';
-          this.action_cancel_title = '¿Desea cancelar la creación del track?';
-          this.action_title = '¿Desea crear el track?';
-          this.action_close = 'La creación del track se canceló correctamente';
-        }
-      },
-      load_nomenclators() {
-        //* Carga de productos
-        axios
-          .post('/fonogramas/listar')
-          .then((response) => {
-            let fong = response.data;
-            fong.forEach((element) => {
-              if (!element.deleted_at) {
-                this.fonograms.push(element);
-              }
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        axios
-          .post('/tracks/nomencladores')
-          .then((response) => {
-            this.list_nomenclators = response.data;
-            this.moods = this.list_nomenclators[2][0];
-            this.generos = this.list_nomenclators[0][0];
-            this.subgeneros = this.list_nomenclators[1][0];
-            this.paises = this.list_nomenclators[4][0];
-            this.gestiones = this.list_nomenclators[3][0];
-          })
-          .catch((error) => {
-            this.$toast.error('Ha ocurrido un error', '¡Error!', {
-              timeout: 1000,
-            });
-          });
-      },
-
-      //Metodos para generar el codigo
-      //Este es el único método que varia de un módulo a otro
-      crear_arr_codig(arr) {
-        let answer = [];
-        for (let i = 0; i < arr.length; i++) {
-          answer.push(parseInt(arr[i].isrcTrk.substr(7)));
-        }
-        return answer;
-      },
-      //Método de ordenamiento en burbuja
-      ordenamiento_burbuja(arr) {
-        const l = arr.length;
-        for (let i = 0; i < l; i++) {
-          for (let j = 0; j < l - 1 - i; j++) {
-            if (arr[j] > arr[j + 1]) {
-              [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-            }
-          }
-        }
-        return arr;
-      },
-      generar_codigo(arr) {
-				let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
-        let answer = 1;
-        for (let i = 0; i < list.length; i++) {
-          if (list[0] !== 1) {
-            answer = 1;
-            break;
-          }
-          if (i === list.length - 1) {
-            answer = list[i] + 1;
-            break;
-          }
-          if (!(list[i] + 1 === list[i + 1])) {
-            answer = list[i] + 1;
-            break;
-          }
-				}
-        return this.crear_codigo(answer);
-      },
-      crear_codigo(number) {
-        switch (number.toString().length) {
-          case 1:
-            return '0000' + number;
-          case 2:
-            return '000' + number;
-          case 3:
-            return '00' + number;
-          case 4:
-            return '0' + number;
-          case 5:
-            return number.toString();
-          default:
-            break;
-        }
-      },
-      //Fin de metodos para generar el codigo
+      }
     },
-  };
+    handle_cancel(e) {
+      if (e === "cancelar") {
+        if (this.tabs_list.indexOf("tab_1") !== -1) {
+          this.$refs.formularioGenerales.resetFields();
+        }
+        this.tabs_list = [];
+        this.active_tab = "1";
+        this.tab_visibility = true;
+        this.show = false;
+        this.$emit("close_modal", this.show);
+        if (this.action_modal !== "detalles") {
+          this.$toast.success(this.action_close, "¡Éxito!", {
+            timeout: 1000,
+            color: "orange",
+          });
+        }
+      } else {
+        if (this.tabs_list.indexOf("tab_1") !== -1) {
+          this.$refs.formularioGenerales.resetFields();
+        }
+        this.tabs_list = [];
+        this.active_tab = "1";
+        this.tab_visibility = true;
+        this.show = false;
+        this.$emit("close_modal", this.show);
+      }
+    },
+    validate() {
+      if (this.track_modal.identificador === undefined) {
+        this.track_modal.identificador = this.codigo;
+      }
+      if (!this.used) {
+        if (this.tabs_list.indexOf("tab_1") !== -1) {
+          this.$refs.formularioGenerales.validate((valid) => {
+            if (valid) {
+              return this.confirm();
+            }
+          });
+        } else return this.confirm();
+      }
+    },
+    atras(tabAnterior) {
+      this.active_tab = tabAnterior;
+    },
+    confirm() {
+      this.spinning = true;
+      this.waiting = true;
+      let form_data = this.prepare_create();
+      if (this.action_modal === "editar") {
+        this.text_button = "Editando...";
+        axios
+          .post(`/tracks/editar`, form_data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            this.text_button = "Editar";
+            this.spinning = false;
+            this.waiting = false;
+            this.handle_cancel();
+            this.$emit("actualizar");
+            this.$toast.success(
+              "Se ha modificado el track correctamente",
+              "¡Éxito!",
+              { timeout: 1000 }
+            );
+          })
+          .catch((error) => {
+            this.text_button = "Editar";
+            this.spinning = false;
+            this.waiting = false;
+            this.handle_cancel();
+            this.$toast.error("Ha ocurrido un error", "¡Error!", {
+              timeout: 1000,
+            });
+          });
+      } else {
+        this.text_button = "Creando...";
+        axios
+          .post("/tracks", form_data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            this.text_button = "Crear";
+            this.spinning = false;
+            this.waiting = false;
+            if (this.action_modal === "crear_track") {
+              let tracks = [];
+              axios
+                .post("/tracks/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      tracks.push(element);
+                    }
+                  });
+                  this.$store.state["tracks"].push(tracks[tracks.length - 1]);
+                  this.$store.state["created_tracks"].push(
+                    tracks[tracks.length - 1]
+                  );
+                  this.$store.state["all_tracks_statics"].push(
+                    tracks[tracks.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }
+            this.handle_cancel();
+            this.$emit("actualizar");
+            this.$toast.success(
+              "Se ha creado el track correctamente",
+              "¡Éxito!",
+              { timeout: 1000 }
+            );
+          })
+          .catch((err) => {
+            this.text_button = "Crear";
+            this.spinning = false;
+            this.waiting = false;
+            this.handle_cancel();
+            this.$toast.error("Ha ocurrido un error", "¡Error!", {
+              timeout: 1000,
+            });
+          });
+      }
+    },
+    /*
+     *Métodoo usado para filtrar la búsqueda de los select
+     */
+    filter_option(input, option) {
+      return (
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      );
+    },
+    prepare_create() {
+      this.track_modal.muestraTrk = this.muestraTrk === false ? 0 : 1;
+      this.track_modal.bonusTrk = this.bonusTrk === false ? 0 : 1;
+      this.track_modal.envivoTrk = this.envivoTrk === false ? 0 : 1;
+      if (this.track_modal.ordenTrk === undefined) {
+        this.track_modal.ordenTrk = "";
+      } else if (this.track_modal.ordenTrk === null) {
+        this.track_modal.ordenTrk = "";
+      }
+      if (this.track_modal.subgeneroTrk === undefined) {
+        this.track_modal.subgeneroTrk = "";
+      } else if (this.track_modal.subgeneroTrk === null) {
+        this.track_modal.subgeneroTrk = "";
+      }
+      if (this.track_modal.moodTrk === undefined) {
+        this.track_modal.moodTrk = "";
+      } else if (this.track_modal.moodTrk === null) {
+        this.track_modal.moodTrk = "";
+      }
+      if (this.track_modal.paisgrabTrk === undefined) {
+        this.track_modal.paisgrabTrk = "";
+      } else if (this.track_modal.paisgrabTrk === null) {
+        this.track_modal.paisgrabTrk = "";
+      }
+      let moods = "";
+      if (this.track_modal.moodTrk !== "") {
+        this.track_modal.moodTrk.forEach((item) => {
+          moods += item + " ";
+        });
+        this.track_modal.moodTrk = moods;
+      }
+      let form_data = new FormData();
+      if (this.action_modal === "editar" || this.action_modal === "detalles") {
+        form_data.append("id", this.track_modal.id);
+      }
+      if (this.track_modal.identificador === undefined) {
+        this.track_modal.identificador = this.codigo;
+      }
+      if (
+        this.action_modal === "crear" ||
+        this.action_modal === "crear_track"
+      ) {
+        this.track_modal.isrcTrk =
+          "" +
+          this.track_modal.codigPais.toUpperCase() +
+          this.track_modal.codigRegistro.toUpperCase() +
+          this.track_modal.anhoRegistro +
+          this.track_modal.identificador;
+      }
+      form_data.append("isrcTrk", this.track_modal.isrcTrk);
+      form_data.append("tituloTrk", this.track_modal.tituloTrk);
+      form_data.append("ordenTrk", this.track_modal.ordenTrk);
+      form_data.append("duracionTrk", this.track_modal.duracionTrk);
+      form_data.append("muestraTrk", this.track_modal.muestraTrk);
+      form_data.append("envivoTrk", this.track_modal.envivoTrk);
+      form_data.append("generoTrk", this.track_modal.generoTrk);
+      form_data.append("moodTrk", moods);
+      form_data.append("subgeneroTrk", this.track_modal.subgeneroTrk);
+      form_data.append("bonusTrk", this.track_modal.bonusTrk);
+      form_data.append("gestionTrk", this.track_modal.gestionTrk);
+      form_data.append("paisgrabTrk", this.track_modal.paisgrabTrk);
+      form_data.append("fonograma_id", this.track_modal.fonogramas_tracks);
+      this.text_button = "Creando...";
+      return form_data;
+    },
+    set_action() {
+      if (this.action === "editar") {
+        if (this.track.deleted_at !== null) {
+          this.disabled = true;
+          this.activated = false;
+        }
+        this.text_header_button = "Editar";
+        this.text_button = "Editar";
+        this.action_cancel_title = "¿Desea cancelar la edición del Track?";
+        this.action_title = "¿Desea guardar los cambios en el Track?";
+        this.action_close = "La edición del Track se canceló correctamente";
+        this.track.fonogramas_tracks = [];
+        this.track.fonogramas.forEach((element) => {
+          this.track.fonogramas_tracks.push(element.id);
+        });
+        this.track_modal = { ...this.track };
+        this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
+        this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
+        this.bonusTrk = this.track_modal.bonusTrk === 0 ? false : true;
+        if (this.track_modal.moodTrk !== null) {
+          this.track_modal.moodTrk = this.track_modal.moodTrk.split(" ");
+        } else delete this.track_modal.moodTrk;
+      } else if (this.action_modal === "detalles") {
+        if (this.track.deleted_at !== null) {
+          this.disabled = true;
+          this.activated = false;
+        }
+        this.text_header_button = "Detalles";
+        this.text_button = "Detalles";
+        this.track.fonogramas_tracks = [];
+        this.track.fonogramas_tracks.forEach((element) => {
+          this.track.fonogramas_tracks.push(element.id);
+        });
+
+        this.track_modal = { ...this.track };
+        this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
+        this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
+        this.bonusTrk = this.track_modal.bonusTrk === 0 ? false : true;
+        if (this.track_modal.moodTrk !== null) {
+          this.track_modal.moodTrk = this.track_modal.moodTrk.split(" ");
+        } else delete this.track_modal.moodTrk;
+      } else {
+        this.text_button = "Crear";
+        this.text_header_button = "Crear";
+        this.action_cancel_title = "¿Desea cancelar la creación del track?";
+        this.action_title = "¿Desea crear el track?";
+        this.action_close = "La creación del track se canceló correctamente";
+      }
+    },
+    load_nomenclators() {
+      //* Carga de productos
+      axios
+        .post("/fonogramas/listar")
+        .then((response) => {
+          let fong = response.data;
+          fong.forEach((element) => {
+            if (!element.deleted_at) {
+              this.fonograms.push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
+        .post("/tracks/nomencladores")
+        .then((response) => {
+          this.list_nomenclators = response.data;
+          this.moods = this.list_nomenclators[2][0];
+          this.generos = this.list_nomenclators[0][0];
+          this.subgeneros = this.list_nomenclators[1][0];
+          this.paises = this.list_nomenclators[4][0];
+          this.gestiones = this.list_nomenclators[3][0];
+        })
+        .catch((error) => {
+          this.$toast.error("Ha ocurrido un error", "¡Error!", {
+            timeout: 1000,
+          });
+        });
+    },
+
+    //Metodos para generar el codigo
+    //Este es el único método que varia de un módulo a otro
+    crear_arr_codig(arr) {
+      let answer = [];
+      for (let i = 0; i < arr.length; i++) {
+        answer.push(parseInt(arr[i].isrcTrk.substr(7)));
+      }
+      return answer;
+    },
+    //Método de ordenamiento en burbuja
+    ordenamiento_burbuja(arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) {
+        for (let j = 0; j < l - 1 - i; j++) {
+          if (arr[j] > arr[j + 1]) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+      return arr;
+    },
+    generar_codigo(arr) {
+      let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
+      let answer = 1;
+      for (let i = 0; i < list.length; i++) {
+        if (list[0] !== 1) {
+          answer = 1;
+          break;
+        }
+        if (i === list.length - 1) {
+          answer = list[i] + 1;
+          break;
+        }
+        if (!(list[i] + 1 === list[i + 1])) {
+          answer = list[i] + 1;
+          break;
+        }
+      }
+      return this.crear_codigo(answer);
+    },
+    crear_codigo(number) {
+      switch (number.toString().length) {
+        case 1:
+          return "0000" + number;
+        case 2:
+          return "000" + number;
+        case 3:
+          return "00" + number;
+        case 4:
+          return "0" + number;
+        case 5:
+          return number.toString();
+        default:
+          break;
+      }
+    },
+    //Fin de metodos para generar el codigo
+  },
+};
 </script>
 
 <style>
-  #modal_gestionar_tracks .ant-col-6 {
-    width: 50% !important;
-  }
-  #modal_gestionar_tracks .ant-upload-list-item,
-  .ant-upload-list-item-undefined,
-  .ant-upload-list-item-list-type-picture-card,
-  .ant-upload,
-  .ant-upload-select,
-  .ant-upload-select-picture-card,
-  .ant-upload-list-picture-card-container {
-    width: 170px !important;
-    height: 170px !important;
-  }
-  #modal_gestionar_tracks .ant-select-search input {
-    border-color: rgb(255, 255, 255) !important;
-  }
-  #modal_gestionar_tracks .ant-mentions textarea {
-    height: 32px !important;
-  }
-  #modal_gestionar_tracks .description textarea {
-    height: 150px !important;
-  }
-  #small .ant-form-item-control {
-    width: 85%;
-  }
+#modal_gestionar_tracks .ant-col-6 {
+  width: 50% !important;
+}
+#modal_gestionar_tracks .ant-upload-list-item,
+.ant-upload-list-item-undefined,
+.ant-upload-list-item-list-type-picture-card,
+.ant-upload,
+.ant-upload-select,
+.ant-upload-select-picture-card,
+.ant-upload-list-picture-card-container {
+  width: 170px !important;
+  height: 170px !important;
+}
+#modal_gestionar_tracks .ant-select-search input {
+  border-color: rgb(255, 255, 255) !important;
+}
+#modal_gestionar_tracks .ant-mentions textarea {
+  height: 32px !important;
+}
+#modal_gestionar_tracks .description textarea {
+  height: 150px !important;
+}
+#small .ant-form-item-control {
+  width: 85%;
+}
 </style>

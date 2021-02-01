@@ -7,19 +7,17 @@ require("./bootstrap");
 window.Vue = require("vue");
 
 //support vuex
-import Vuex from "vuex"
-Vue.use(Vuex)
-import storeData from "./config/store/store"
+import Vuex from "vuex";
+Vue.use(Vuex);
+import storeData from "./config/store/store";
 
-const store = new Vuex.Store(
-   storeData
-)
+const store = new Vuex.Store(storeData);
 //Vue-Router
 import VueRouter from "vue-router";
 import { routes } from "./config/router/routes";
 import LoadScript from "vue-plugin-load-script";
-import 'animate.css'
-import '@syncfusion/ej2-base/styles/material.css'
+import "animate.css";
+import "@syncfusion/ej2-base/styles/material.css";
 /* import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-buttons/styles/material.css';
 import '@syncfusion/ej2-calendars/styles/material.css';
@@ -65,8 +63,8 @@ import App from "./components/App";
  */
 
 const app = new Vue({
-	el: "#app",
-	store,
+  el: "#app",
+  store,
   router,
   render: (h) => h(App),
 });

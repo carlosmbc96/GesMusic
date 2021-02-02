@@ -59,6 +59,7 @@ Route::post('/fonogramas/editar', 'FonogramaController@update'); // Ruta que Gua
 Route::delete('/fonogramas/desactivar/{id}', 'FonogramaController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/fonogramas/eliminar/{id}', 'FonogramaController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::post('/fonogramas/nomencladores', 'FonogramaController@nomenclators');
+Route::post('/fonogramas/tracks', 'FonogramaController@fonogramaTracks');
 
 // RUTAS DEL RECURSO: AUDIOVISUAL
 Route::get('/audiovisuales/restaurar/{id}', 'AudiovisualController@restoreLog');

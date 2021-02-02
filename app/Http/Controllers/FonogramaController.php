@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Fonograma;
+use App\Fonograma_Track;
 use App\Producto;
 use App\Producto_Fonograma;
 use App\Proyecto;
@@ -202,6 +203,15 @@ class FonogramaController extends Controller
             $producto = Producto::findOrFail($productos[$i]);
             $proyecto = Proyecto::findOrFail($producto->proyecto_id);
             Storage::disk('local')->deleteDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $codigFong);
+        }
+    }
+    public function fonogramaTracks(Request $request)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Fonograma
+    {
+        for ($i = 0; $i < count($request->tracks); $i++) {
+            Fonograma_Track::create([
+                "track_id" => $request->tracks[$i],
+                "fonograma_id" => $request->idFong
+            ]);
         }
     }
 }

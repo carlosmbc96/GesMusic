@@ -1,137 +1,79 @@
 <template>
-  <div id="interprete_index">
-    <h1 style="color: white !important">Intérpretes</h1>
-    <hr style="border-color: white !important" />
-
-    <!-- Inicio Sección de Analítica | Gráficas -->
-    <ejs-chart
-      style="display: block; margin: 20px"
-      :theme="theme"
-      align="center"
-      id="chartcontainer"
-      ref="chartObj"
-      :background="background_chart"
-      :primaryXAxis="primary_x_axis"
-      :primaryYAxis="primary_y_axis"
-      :chartArea="chart_area"
-      width="50%"
-      height="60%"
-      :tooltip="tooltip"
-      :load="load"
-      :legendSettings="{ visible: false }"
-      v-if="interpretes_list.length !== 0"
-    >
-      <e-series-collection>
-        <e-series
-          :dataSource="series_data"
-          type="Column"
-          xName="status"
-          yName="interpretes"
-          name="Estado"
-          :marker="marker"
-          :animation="animation_series"
-        />
-      </e-series-collection>
-    </ejs-chart>
-    <!-- Fin Sección de Analítica | Gráficas -->
-
+  <div id="tabla_tracks">
     <!-- Inicio Sección de Tabla de datos -->
-    <!-- Seccion Panel de exportaciones -->
-    <div id="exportPanelContainer">
-      <div id="arrowDropUpExports">
-        <a-tooltip :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
-          ><span
-            class="e-icons export-icons"
-            :class="export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'"
-            @click="
-              () => {
-                export_view = !export_view;
-              }
-            "
-          ></span
-        ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
-      </div>
-      <transition
-        enter-active-class="animate__animated animate__slideInUp"
-        leave-active-class="animate__animated animate__slideOutDown"
-      >
-        <div id="dropUpExports" v-if="export_view">
-          <a-tooltip title="Imprimir"
-            ><span
-              @click="panel_export_click('print')"
-              class="e-icons export-icons e-print-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a PDF"
-            ><span
-              @click="panel_export_click('pdf')"
-              class="e-icons export-icons e-pdf-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a Excel"
-            ><span
-              @click="panel_export_click('excel')"
-              class="e-icons export-icons e-excel-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a CSV"
-            ><span
-              @click="panel_export_click('csv')"
-              class="e-icons export-icons e-csv-export"
-            ></span
-          ></a-tooltip>
-        </div>
-      </transition>
-    </div>
-    <div class="clearfix"></div>
     <!-- Tabla -->
     <a-spin :spinning="spinning">
       <ejs-grid
         id="datatable"
         ref="gridObj"
+        :dataSource="tracks_list"
         locale="es-ES"
-        :childGrid="artisticos_childs"
-        :dataSource="interpretes_list"
         :toolbar="toolbar"
         :toolbarClick="click_toolbar"
         :allowPaging="true"
         :pageSettings="page_settings"
         :allowFiltering="true"
         :filterSettings="filter_settings"
+        :allowSelection="false"
         :allowTextWrap="true"
         :allowSorting="true"
-        :pdfExportComplete="pdf_export_complete"
-        :excelExportComplete="excel_export_complete"
         :queryCellInfo="customise_cell"
-        :pdfQueryCellInfo="pdf_customise_cell"
-        :excelQueryCellInfo="excel_customise_cell"
-        :allowExcelExport="true"
-        :allowPdfExport="true"
       >
         <e-columns>
           <e-column
-            field="codigInterp"
-            headerText="Código"
-            width="110"
+            field="ordenTrk"
+            headerText="Orden"
+            width="100"
             textAlign="Left"
           />
           <e-column
-            field="nombreInterp"
-            headerText="Nombre"
-            width="110"
+            field="isrcTrk"
+            headerText="ISRC"
+            width="105"
             textAlign="Left"
+          />
+          <e-column
+            field="tituloTrk"
+            headerText="Título"
+            width="98"
+            textAlign="Left"
+          />
+          <e-column
+            field="duracionTrk"
+            headerText="Duración"
+            width="120"
+            textAlign="Left"
+          />
+          <e-column
+            field="generoTrk"
+            headerText="Género"
+            width="105"
+            textAlign="Left"
+          />
+          <e-column
+            field="subgeneroTrk"
+            headerText="Subgénero"
+            width="123"
+            textAlign="Left"
+          />
+          <e-column
+            :displayAsCheckBox="true"
+            field="bonusTrk"
+            headerText="Bonus"
+            width="100"
+            textAlign="Center"
+            type="boolean"
           />
           <e-column
             headerText="Estado"
-            width="145"
-            :template="status_template"
+            width="115"
+            :template="status"
             :visible="true"
             textAlign="Center"
           />
           <e-column
             headerText="Acciones"
-            width="146"
+            width="160"
             :template="actions_template"
             :visible="true"
             textAlign="Center"
@@ -146,9 +88,9 @@
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :interp="row_selected"
+      :track="row_selected"
       @close_modal="visible_management = $event"
-      :interp_list="interpretes_list"
+      :tracks_list="all_tracks"
     />
     <!-- Fin Sección de Modals -->
   </div>
@@ -159,8 +101,8 @@
  *Importaciones
  */
 import Vue from "vue";
-import axios from "../../../../config/axios/axios";
-import modal_management from "./Modal_Gestionar_Interprete";
+import axios from "../../../config/axios/axios";
+import modal_management from "./Modal_Gestionar_Track";
 import {
   GridPlugin,
   Edit,
@@ -173,7 +115,6 @@ import {
   Sort,
   Toolbar,
   Reorder,
-  DetailRow,
   PdfExport,
   ExcelExport,
   PdfExportProperties,
@@ -193,7 +134,7 @@ import * as weekData from "cldr-data/supplemental/weekData.json";
 import * as timeZoneNames from "cldr-data/main/es/timeZoneNames.json";
 import * as numbers from "cldr-data/main/es/numbers.json";
 import * as gregorian from "cldr-data/main/es/ca-gregorian.json";
-import { image } from "../../../../../../public/assets/logo_base64";
+import { image } from "../../../../../public/assets/logo_base64";
 Vue.use(GridPlugin);
 Vue.use(ButtonPlugin);
 Vue.use(ChartPlugin);
@@ -253,85 +194,36 @@ L10n.load({
   },
 });
 setCulture("es-ES");
-/*
- *  Código para configurar el tema del gráfico
- */
-let selected_theme = location.hash.split("/")[1];
-selected_theme = selected_theme ? selected_theme : "Material";
-let theme = (
-  selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
-).replace(/-dark/i, "Dark");
 export default {
-  name: "Autor_Index",
+  name: "tabla_tracks",
+  props: ["fonograma", "vista_editar", "detalles_prop"],
   data() {
     return {
-      //* Variables de configuración del gráfico
-      theme: theme,
-      chart_area: { border: { width: 0 } },
-      width: Browser.isDevice ? "100%" : "60%",
-      marker: {
-        dataLabel: {
-          visible: true,
-          position: "Top",
-          font: { fontWeight: "600", color: "#ffffff" },
-        },
-      },
-      tooltip: {
-        enable: true,
-        header: "Intérpretes por Estado",
-        format: "${point.x} : ${point.y} Interprétes",
-        fill: "rgba(115, 25, 84, 0.9)",
-        border: { width: 0 },
-      },
-      animation_series: { enable: true, duration: 1000, delay: 50 },
-      palettes: ["#E94649", "#F6B53F", "#6FAAB0", "#C4C24A"],
-      background_chart: "transparent",
-      series_data: [],
-      primary_x_axis: {
-        valueType: "Category",
-        title: "Estado",
-        titleStyle: {
-          color: "white",
-          size: "16px",
-          fontWeight: "bold",
-        },
-        interval: 1,
-        majorGridLines: { width: 0 },
-        majorTickLines: { width: 1, color: "white" },
-        lineStyle: { color: "white" },
-        labelStyle: { color: "white" },
-      },
-      primary_y_axis: {
-        title: "Intérpretes",
-        titleStyle: {
-          color: "white",
-          size: "16px",
-          fontWeight: "bold",
-        },
-        interval: 5,
-        majorGridLines: { width: 0 },
-        majorTickLines: { width: 1, color: "white" },
-        lineStyle: { color: "white" },
-        labelStyle: { color: "white" },
-      },
       //* Variables de configuración de la tabla
-      page_settings: { pageSizes: [5, 10, 20, 30], pageCount: 5, pageSize: 10 },
+      page_settings: {
+        pageSizes: [5, 10, 20, 30],
+        pageCount: 5,
+        pageSize: 10,
+      },
       filter_settings: { type: "Menu" },
-      toolbar: [
-        {
-          text: "Añadir Intérprete",
-          tooltipText: "Añadir Intérprete",
-          prefixIcon: "e-add-icon",
-          id: "add",
-        },
-        "Search",
-      ],
+      toolbar: this.detalles_prop
+        ? ["Search"]
+        : [
+            {
+              text: "Añadir Track",
+              tooltipText: "Añadir Track",
+              prefixIcon: "e-add-icon",
+              id: "add",
+            },
+            "Search",
+          ],
       status_template: () => {
         return {
           template: Vue.component("columnTemplate", {
             template: `
               <div>
                 <a-popconfirm
+                    :disabled="$parent.$parent.$parent.detalles"
                     :placement="position"
                     @confirm="confirm_change_status"
 										ok-text="Si"
@@ -340,10 +232,10 @@ export default {
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p>¿Desea {{ action }} al Intérprete?</p>
+                      <p>¿Desea {{ action }} el Track?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -377,7 +269,7 @@ export default {
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará al Intérprete?",
+                    "¿Esta acción inactivará el Track?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -385,7 +277,7 @@ export default {
                       overlay: true,
                       displayMode: "once",
                       color: "#AB7598",
-                      zindex: 999,
+                      zindex: 9999999,
                       title: "Hey",
                       position: "center",
                       buttons: [
@@ -393,7 +285,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea inactivar al Intérprete?",
+                              "¿Desea inactivar el Track?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -401,7 +293,7 @@ export default {
                                 color: "#8F4776",
                                 overlay: true,
                                 displayMode: "once",
-                                zindex: 9999,
+                                zindex: 999999999,
                                 title: "Hey",
                                 position: "center",
                                 buttons: [
@@ -411,8 +303,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "interpretes/desactivar/" +
-                                            this.data.id
+                                          "tracks/desactivar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -467,7 +358,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará al Intérprete?",
+                    "¿Esta acción ativará el Track?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -475,7 +366,7 @@ export default {
                       overlay: true,
                       displayMode: "once",
                       color: "#D7DE7A",
-                      zindex: 999,
+                      zindex: 999999,
                       title: "Hey",
                       position: "center",
                       buttons: [
@@ -483,7 +374,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea activar al Intérprete?",
+                              "¿Desea activar el Track?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -491,7 +382,7 @@ export default {
                                 color: "#C9D34D",
                                 overlay: true,
                                 displayMode: "once",
-                                zindex: 9999,
+                                zindex: 999999,
                                 title: "Hey",
                                 position: "center",
                                 buttons: [
@@ -500,10 +391,7 @@ export default {
                                     (instance, toast) => {
                                       this.loading = true;
                                       axios
-                                        .get(
-                                          "interpretes/restaurar/" +
-                                            this.data.id
-                                        )
+                                        .get("tracks/restaurar/" + this.data.id)
                                         .catch((errors) => {
                                           error = true;
                                         })
@@ -557,10 +445,10 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.$parent.load_interpretes();
+                  this.$parent.$parent.$parent.load_tracks();
                   this.checked = !this.checked;
                   this.$toast.success(
-                    `El Intérprete se ${action} correctamente`,
+                    `El Track se ${action} correctamente`,
                     "¡Éxito!",
                     {
                       timeout: 1000,
@@ -577,30 +465,6 @@ export default {
           }),
         };
       },
-      status_child_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
-                </div>`,
-            data: function () {
-              return {
-                data: {},
-              };
-            },
-            computed: {
-              status() {
-                return this.data.deleted_at == null ? "Activo" : "Inactivo";
-              },
-              class_badge() {
-                return this.data.deleted_at == null
-                  ? "e-badge-success"
-                  : "e-badge-warning";
-              },
-            },
-          }),
-        };
-      },
       actions_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -610,18 +474,18 @@ export default {
 							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 <a-tooltip title="Editar" placement="bottom">
-                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                <a-button  v-if="!$parent.$parent.$parent.detalles" size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 <a-popconfirm
                     placement="leftBottom"
                     @confirm="del_physical_btn_click"
 										ok-text="Si"
                     cancel-text="No"
-                    title="¿Desea eliminar al Intérprete?"
+                    title="¿Desea eliminar el Track?"
                 >
                 <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
                 <a-tooltip title="Eliminar" placement="bottom">
-                <a-button size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
+                <a-button v-if="false" size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
@@ -645,6 +509,7 @@ export default {
                */
               edit_btn_click(args) {
                 this.$parent.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected.tabla = true;
                 if (this.data.deleted_at === null) {
                   this.$parent.$parent.$parent.action_management = "editar";
                   this.$parent.$parent.$parent.visible_management = true;
@@ -663,7 +528,7 @@ export default {
                     overlay: true,
                     displayMode: "once",
                     color: "#F8A6A2",
-                    zindex: 999,
+                    zindex: 99999999,
                     title: "Hey",
                     position: "center",
                     buttons: [
@@ -671,7 +536,7 @@ export default {
                         "<button>Si</button>",
                         (instance, toast) => {
                           this.$toast.question(
-                            "¿Desea eliminar al Intérprete?",
+                            "¿Desea eliminar el Track?",
                             "Confirmación",
                             {
                               timeout: 5000,
@@ -679,26 +544,22 @@ export default {
                               color: "#F58983",
                               overlay: true,
                               displayMode: "once",
-                              zindex: 9999,
+                              zindex: 9999999999,
                               title: "Hey",
                               position: "center",
                               buttons: [
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
-                                    this.$parent.$parent.$parent.change_spin();
                                     axios
-                                      .delete(
-                                        `interpretes/eliminar/${this.data.id}`
-                                      )
+                                      .delete(`tracks/eliminar/${this.data.id}`)
                                       .then((ress) => {
                                         this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
-                                          "El Intérprete ha sido eliminado correctamente",
+                                          "El Track ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
-                                        this.$parent.$parent.$parent.change_spin();
                                       })
                                       .catch((err) => {
                                         console.log(err);
@@ -757,26 +618,49 @@ export default {
           }),
         };
       },
-      spinning: false,
+      status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function () {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
+      status: "",
       export_view: false, //* Vista del panel de exportaciones
-      interpretes_list: [], //* Lista de Intérprete que es cargada en la tabla
-      artisticos_childs: [],
-      row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
-      visible_details: false, //* variable para visualizar el modal de detalles del Intérprete
-      visible_management: false, //* variable para visualizar el modal de gestión del Intérprete
+      tracks_list: [], //* Lista de tracks que es cargada en la tabla
+      row_selected: {}, //* Fila de la tabla seleccionada | fonograma seleccionado
+      visible_details: false, //* variable para visualizar el modal de detalles del fonograma
+      visible_management: false, //* variable para visualizar el modal de gestión del fonograma
+      all_tracks: [],
+      spinning: false,
+      detalles: this.detalles_prop,
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
     };
   },
   created() {
-    this.load_interpretes();
+    this.status = this.detalles_prop
+      ? this.status_child_template
+      : this.status_template;
+    this.load_tracks();
   },
   methods: {
-    /*
-     * Método que activa y desactiva el spin
-     */
-    change_spin() {
-      this.spinning = !this.spinning;
-    },
     /*
      * Método para modificar el estilo de las filas de la tabla
      */
@@ -786,278 +670,54 @@ export default {
       }
     },
     /*
-     * Método para modificar el estilo de las filas de la tabla para el pdf
+     * Método que carga los productos de la bd
      */
-    pdf_customise_cell(args) {
-      if (args.column.headerText == "Estado") {
-        if (args.data["deleted_at"] != null) {
-          args.style = { backgroundColor: "#f36b64" };
-          args.value = "Incativo";
-        } else {
-          args.style = { backgroundColor: "#4cc4b1" };
-          args.value = "Activo";
-        }
-      }
-      if (args.column.field == "created_at") {
-        args.value = moment(args.value).format("LLL");
-      }
-    },
-    /*
-     * Método para modificar el estilo de las filas de la tabla para el excel
-     */
-    excel_customise_cell(args) {
-      if (args.column.headerText == "Estado") {
-        if (args.data["deleted_at"] != null) {
-          args.style = { backColor: "#f36b64" };
-          args.value = "Incativo";
-        } else {
-          args.style = { backColor: "#4cc4b1" };
-          args.value = "Activo";
-        }
-      }
-      if (args.column.field == "created_at") {
-        args.value = moment(args.value).format("ll");
-      }
-    },
-    /*
-     * Método que carga los Intérpretes de la bd
-     */
-    load_interpretes() {
-      if (this.action_management !== "detalles") {
-        this.change_spin();
-      }
-      axios
-        .post("interpretes/listar", { relations: ["artisticos"] })
-        .then((response) => {
-          this.interpretes_list = response.data;
-          this.series_data = [];
-          this.interpretes_list.forEach((inter) => {
-            let index = this.series_data.findIndex((serie) =>
-              inter.deleted_at != null
-                ? serie.status === "Inactivo"
-                : serie.status === "Activo"
-            );
-            if (index != -1) {
-              this.series_data[index].interpretes += 1;
-            } else {
-              this.series_data.push({
-                status: inter.deleted_at != null ? "Inactivo" : "Activo",
-                interpretes: 1,
+    load_tracks() {
+      this.spinning = true;
+      this.$emit("reload");
+      if (this.vista_editar) {
+        axios
+          .post("/tracks/listar", { relations: ["fonogramas"] })
+          .then((response) => {
+            this.tracks_list = [];
+            let pertenece = false;
+            response.data.forEach((track) => {
+              track.fonogramas.forEach((fonograma) => {
+                if (fonograma.id === this.fonograma.id) {
+                  pertenece = true;
+                }
               });
-            }
+              if (pertenece) {
+                this.tracks_list.push(track);
+              }
+              pertenece = false;
+            });
+            this.spinning = false;
           });
-          this.series_data.sort(function (a, b) {
-            return a.status > b.status ? 1 : -1;
-          });
-          axios.post("/artisticos/listar").then((res) => {
-            this.artisticos_childs = {
-              dataSource: res.data,
-              queryString: "interprete_id",
-              ref: "childGrid",
-              columns: [
-                {
-                  field: "codigArts",
-                  headerText: "Código",
-                  width: "110",
-                  textAlign: "Left",
-                },
-                {
-                  field: "NombreArts",
-                  headerText: "Nombre Artístico",
-                  width: "150",
-                  textAlign: "Left",
-                },
-                {
-                  displayAsCheckBox: "true",
-                  field: "actualNombreArts",
-                  headerText: "Nombre Artístico Actual",
-                  width: "200",
-                  textAlign: "Center",
-                  type: "boolean",
-                },
-                {
-                  headerText: "Estado",
-                  template: this.status_child_template,
-                  width: "105",
-                  visible: true,
-                  textAlign: "Center",
-                },
-              ],
-              load: function () {
-                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
-                  "id"
-                ];
-              },
-            };
-            this.$refs.gridObj.refresh();
-          });
-          if (this.action_management !== "detalles") {
-            this.change_spin();
-          }
+        axios.post("/tracks/listar").then((response) => {
+          this.all_tracks = response.data;
         });
-    },
-    /*
-     * Método de configuración del gráfico
-     */
-    load(args) {
-      let selected_theme = location.hash.split("/")[1];
-      selected_theme = selected_theme ? selected_theme : "Material";
-      if (selected_theme === "highcontrast") {
-        args.chart.series[0].marker.dataLabel.font.color = "#000000";
-        args.chart.series[1].marker.dataLabel.font.color = "#000000";
-        args.chart.series[2].marker.dataLabel.font.color = "#000000";
       }
     },
     /*
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.load_interpretes();
+      this.tracks_list = null;
+      this.load_tracks();
     },
     /*
-     * Método con la lógica de los botones del toolbar de la tabla
+     * Método con la lógica de crear
      */
     click_toolbar(args) {
       if (args.item.id === "add") {
         this.action_management = "crear";
         this.visible_management = true;
-        this.row_selected = {};
+        this.row_selected = {
+          modal_detalles: true,
+          fonogramas_tracks: this.fonograma.id,
+        };
       }
-    },
-    /*
-     * Método con la lógica de los botones del panel de exportación
-     */
-    panel_export_click(args) {
-      let pdfExportProperties = {
-        hierarchyExportMode: "Expanded",
-        fileName: "Reporte_Intérpretes.pdf",
-        pageOrientation: "Landscape",
-        header: {
-          fromTop: 0,
-          height: 120,
-          contents: [
-            {
-              type: "PageNumber",
-              pageNumberType: "Number",
-              format: "Página {$current} de {$total}", //optional
-              position: { x: 0, y: 0 },
-              style: {
-                textBrushColor: "#a9a9a9",
-                fontSize: 10,
-                hAlign: "Center",
-                fontFamily: "Calibri",
-              },
-            },
-            {
-              type: "Text",
-              value: "Reporte de Intérpretes",
-              position: { x: 0, y: 40 },
-              style: {
-                textBrushColor: "#731954",
-                fontSize: 20,
-                fontFamily: "Calibri",
-              },
-            },
-            {
-              type: "Line",
-              style: { penColor: "#731954", penSize: 1, dashStyle: "Solid" },
-              points: { x1: 0, y1: 70, x2: 280, y2: 70 },
-            },
-            {
-              type: "Text",
-              value: "Fecha del reporte: " + new moment().format("LLL"),
-              position: { x: 0, y: 75 },
-              style: {
-                textBrushColor: "#808080",
-                fontSize: 12,
-                fontFamily: "Calibri",
-              },
-            },
-            {
-              type: "Image",
-              src: image,
-              position: { x: 775, y: 0 },
-              size: { height: 110, width: 250 },
-            },
-          ],
-        },
-        theme: {
-          header: {
-            fontColor: "#731954",
-            bold: true,
-            borders: { color: "#731954", lineStyle: "Thin" },
-          },
-        },
-      };
-      let excelExportProperties = {
-        hierarchyExportMode: "Expanded",
-        fileName: "",
-        header: {
-          headerRows: 3,
-          rows: [
-            {
-              cells: [
-                {
-                  colSpan: 4,
-                  value: "Reporte de Intérpretes",
-                  style: {
-                    fontColor: "#731954",
-                    fontSize: 20,
-                    fontFamily: "Calibri",
-                    hAlign: "Center",
-                    bold: true,
-                  },
-                },
-              ],
-            },
-            {
-              cells: [
-                {
-                  colSpan: 4,
-                  value: "Fecha del reporte: " + new moment().format("LLL"),
-                  style: {
-                    fontColor: "#808080",
-                    fontSize: 12,
-                    hAlign: "Center",
-                    fontFamily: "Calibri",
-                    bold: true,
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        theme: {
-          header: {
-            fontColor: "#731954",
-            bold: true,
-          },
-        },
-      };
-      if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[3].visible = false;
-        this.$refs.gridObj.pdfExport(pdfExportProperties);
-      } else if (args === "excel") {
-        excelExportProperties.fileName = "Reporte_Intérpretes.xlsx";
-        this.$refs.gridObj.getColumns()[3].visible = false;
-        this.$refs.gridObj.excelExport(excelExportProperties);
-      } else if (args === "csv") {
-        excelExportProperties.fileName = "Reporte_Intérpretes.csv";
-        this.$refs.gridObj.getColumns()[3].visible = false;
-        this.$refs.gridObj.csvExport(excelExportProperties);
-      } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[3].visible = false;
-        this.$refs.gridObj.print(pdfExportProperties);
-      }
-    },
-    /*
-     * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
-     */
-    pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[3].visible = true;
-    },
-    excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[3].visible = true;
     },
   },
   components: {
@@ -1075,7 +735,6 @@ export default {
       Sort,
       Reorder,
       Toolbar,
-      DetailRow,
       PdfExport,
       ExcelExport,
     ],
@@ -1085,60 +744,61 @@ export default {
 </script>
 
 <style>
-#interprete_index .e-headercontent,
-#interprete_index .e-sortfilter,
-#interprete_index thead,
-#interprete_index tr,
-#interprete_index td,
-#interprete_index th,
-#interprete_index .e-pagercontainer,
-#interprete_index .e-pagerdropdown,
-#interprete_index .e-first,
-#interprete_index .e-prev,
-#interprete_index .e-numericcontainer,
-#interprete_index .e-next,
-#interprete_index .e-last,
-#interprete_index .e-table,
-#interprete_index .e-input-group,
-#interprete_index .e-content,
-#interprete_index .e-toolbar-items,
-#interprete_index .e-tbar-btn,
-#interprete_index .e-toolbar-item,
-#interprete_index .e-gridheader,
-#interprete_index .e-gridcontent,
-#interprete_index .e-gridpager,
-#interprete_index .e-toolbar {
+#tabla_tracks .e-headercontent,
+#tabla_tracks .e-sortfilter,
+#tabla_tracks thead,
+#tabla_tracks tr,
+#tabla_tracks td,
+#tabla_tracks th,
+#tabla_tracks .e-pagercontainer,
+#tabla_tracks .e-pagerdropdown,
+#tabla_tracks .e-first,
+#tabla_tracks .e-prev,
+#tabla_tracks .e-numericcontainer,
+#tabla_tracks .e-next,
+#tabla_tracks .e-last,
+#tabla_tracks .e-table,
+#tabla_tracks .e-input-group,
+#tabla_tracks .e-content,
+#tabla_tracks .e-toolbar-items,
+#tabla_tracks .e-tbar-btn,
+#tabla_tracks .e-toolbar-item,
+#tabla_tracks .e-gridheader,
+#tabla_tracks .e-gridcontent,
+#tabla_tracks .e-gridpager,
+#tabla_tracks .e-toolbar {
   background-color: transparent !important;
 }
-#interprete_index .e-grid {
+#tabla_tracks .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-#interprete_index .e-gridheader {
+#tabla_tracks .e-grid {
+  border-radius: 5px !important;
+}
+#tabla_tracks .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-#interprete_index td {
+#tabla_tracks td {
   border-color: lightgrey !important;
 }
-#interprete_index .e-grid,
-#interprete_index .e-toolbar,
-#interprete_index .e-grid .e-headercontent {
+#tabla_tracks .e-grid,
+#tabla_tracks .e-toolbar,
+#tabla_tracks .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-#interprete_index .e-row:hover {
+#tabla_tracks .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-#interprete_index .e-detailrowcollapse .e-icon-grightarrow,
-#interprete_index .e-detailrowexpand .e-icon-gdownarrow,
-#interprete_index thead span,
-#interprete_index .e-icon-filter {
+#tabla_tracks thead span,
+#tabla_tracks .e-icon-filter {
   color: rgb(115, 25, 84) !important;
   font-weight: bold !important;
 }
-#interprete_index .ant-switch-inner {
+#tabla_tracks .ant-switch-inner {
   width: auto !important;
 }
-#interprete_index .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+#tabla_tracks .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
 .e-badge.e-badge-success[href]:not(.e-badge-ghost) {
   color: white !important;
 }

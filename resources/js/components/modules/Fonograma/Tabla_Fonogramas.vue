@@ -47,7 +47,7 @@
           <e-column
             headerText="Estado"
             width="120"
-            :template="status_template"
+            :template="status"
             :visible="true"
             textAlign="Center"
           />
@@ -603,6 +603,31 @@ export default {
           }),
         };
       },
+      status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function () {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
+      status: "",
       export_view: false, //* Vista del panel de exportaciones
       fonograms_list: [], //* Lista de fonogramas que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | fonograma seleccionado
@@ -615,6 +640,9 @@ export default {
     };
   },
   created() {
+    this.status = this.detalles_prop
+      ? this.status_child_template
+      : this.status_template;
     this.load_fonograms();
   },
   methods: {
@@ -755,7 +783,8 @@ export default {
 #tabla_fonogramas .ant-switch-inner {
   width: auto !important;
 }
-#tabla_fonogramas span {
-  display: initial !important;
+#tabla_fonogramas .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+.e-badge.e-badge-success[href]:not(.e-badge-ghost) {
+  color: white !important;
 }
 </style>

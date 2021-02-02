@@ -148,7 +148,7 @@
                   <a-form-model-item v-else>
                     <i
                       class="fa fa-check-square-o hidden-xs"
-                      v-if="actualNombreArts === 1"
+                      v-if="artisticos_modal.actualNombreArts === 1"
                     />
                     <i class="fa fa-square-o" v-else />
                     ¿Es el actual Nombre Artístico?
@@ -300,11 +300,11 @@
             },
             {
               whitespace: true,
-              message: 'Inserte el nombre',
+              message: 'Espacio no válido',
               trigger: 'change',
             },
             {
-              pattern: '^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$',
+              pattern: '^[-üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$',
               message: 'Caracter no válido',
               trigger: 'change',
             },
@@ -312,7 +312,7 @@
           descripNombreArts: [
             {
               whitespace: true,
-              message: 'Inserte una descripción',
+              message: 'Espacio no válido',
               trigger: 'change',
             },
             {
@@ -360,7 +360,6 @@
           this.$refs.general_form.resetFields();
           this.show = false;
           this.$emit('close_modal', this.show);
-          this.$emit('actualizar');
           if (this.action_modal !== 'detalles') {
             this.$toast.success(this.action_close, '¡Éxito!', {
               timeout: 1000,

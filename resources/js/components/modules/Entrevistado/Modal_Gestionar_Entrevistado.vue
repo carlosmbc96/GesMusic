@@ -139,20 +139,18 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Descripción del entrevistado"
+                    label="Descripción del Entrevistado"
                     prop="descripEspEntrv"
                   >
-                    <div class="description">
                       <a-input
                         :disabled="disabled"
-                        style="width: 100%; height: 100px"
+                        style="width: 100%; height: 150px"
                         v-model="entrevistados_modal.descripEspEntrv"
                         type="textarea"
                       />
-                    </div>
                   </a-form-model-item>
                   <a-form-model-item
-                    label="Descripción del entrevistado"
+                    label="Descripción del Entrevistado"
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
@@ -305,7 +303,7 @@
             },
             {
               whitespace: true,
-              message: 'Inserte el nombre',
+              message: 'Espacio no válido',
               trigger: 'change',
             },
             {
@@ -378,7 +376,6 @@
           this.$refs.general_form.resetFields();
           this.show = false;
           this.$emit('close_modal', this.show);
-          this.$emit('actualizar');
           if (this.action_modal !== 'detalles') {
             this.$toast.success(this.action_close, '¡Éxito!', {
               timeout: 1000,
@@ -637,9 +634,6 @@
 </script>
 
 <style>
-  #modal_gestionar_entrevistados .ant-form-item-control {
-    width: 80% !important;
-  }
   #modal_gestionar_entrevistados .ant-mentions textarea {
     height: 32px !important;
   }

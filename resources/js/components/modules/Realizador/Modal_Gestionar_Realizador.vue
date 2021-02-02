@@ -90,7 +90,7 @@
                     :help="show_used_error"
                   >
                     <a-input
-                      addon-before="ENTR-"
+                      addon-before="REAL-"
                       :default-value="codigo"
                       :disabled="action_modal === 'editar'"
                       v-model="realizadores_modal.codigRealiz"
@@ -101,7 +101,7 @@
                     label="Código"
                   >
                     <a-input
-                      addon-before="ENTR-"
+                      addon-before="REAL-"
                       :disabled="action_modal === 'editar'"
                       v-model="realizadores_modal.codigRealiz"
                     />
@@ -137,20 +137,18 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Descripción del realizador"
+                    label="Descripción del Realizador"
                     prop="descripEspRealiz"
                   >
-                    <div class="description">
                       <a-input
                         :disabled="disabled"
-                        style="width: 100%; height: 100px"
+                        style="width: 100%; height: 150px"
                         v-model="realizadores_modal.descripEspRealiz"
                         type="textarea"
                       />
-                    </div>
                   </a-form-model-item>
                   <a-form-model-item
-                    label="Descripción del realizador"
+                    label="Descripción del Realizador"
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
@@ -303,11 +301,11 @@
             },
             {
               whitespace: true,
-              message: 'Inserte el nombre',
+              message: 'Espacio no válido',
               trigger: 'change',
             },
             {
-              pattern: '^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$',
+              pattern: '^[-üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$',
               message: 'Caracter no válido',
               trigger: 'change',
             },
@@ -329,7 +327,7 @@
           descripEspRealiz: [
             {
               whitespace: true,
-              message: 'Inserte una descripción',
+              message: 'Espacio no válido',
               trigger: 'change',
             },
             {
@@ -376,7 +374,6 @@
           this.$refs.general_form.resetFields();
           this.show = false;
           this.$emit('close_modal', this.show);
-          this.$emit('actualizar');
           if (this.action_modal !== 'detalles') {
             this.$toast.success(this.action_close, '¡Éxito!', {
               timeout: 1000,
@@ -428,10 +425,10 @@
               ? ''
               : this.realizador.descripEspRealiz;
           this.action_cancel_title =
-            '¿Desea cancelar la edición del realizador?';
-          this.action_title = '¿Desea guardar los cambios en el realizador?';
+            '¿Desea cancelar la edición del Realizador?';
+          this.action_title = '¿Desea guardar los cambios en el Realizador?';
           this.action_close =
-            'La edición del realizador se canceló correctamente';
+            'La edición del Realizador se canceló correctamente';
           this.realizador.codigRealiz = this.realizador.codigRealiz.substr(5);
           this.realizadores_modal = { ...this.realizador };
         } else if (this.action_modal === 'detalles') {
@@ -450,10 +447,10 @@
           this.text_button = 'Crear';
           this.text_header_button = 'Crear';
           this.action_cancel_title =
-            '¿Desea cancelar la creación del realizador?';
-          this.action_title = '¿Desea crear el realizador?';
+            '¿Desea cancelar la creación del Realizador?';
+          this.action_title = '¿Desea crear el Realizador?';
           this.action_close =
-            'La creación del realizador se canceló correctamente';
+            'La creación del Realizador se canceló correctamente';
         }
       },
       confirm() {
@@ -474,7 +471,7 @@
               this.waiting = false;
               this.$emit('actualizar');
               this.$toast.success(
-                'Se ha modificado el realizador correctamente',
+                'Se ha modificado el Realizador correctamente',
                 '¡Éxito!',
                 { timeout: 1000 }
               );
@@ -501,7 +498,7 @@
               this.waiting = false;
               this.$emit('actualizar');
               this.$toast.success(
-                'Se ha creado el realizador correctamente',
+                'Se ha creado el Realizador correctamente',
                 '¡Éxito!',
                 { timeout: 1000 }
               );
@@ -534,7 +531,7 @@
           this.realizadores_modal.codigRealiz = this.codigo;
         }
         this.realizadores_modal.codigRealiz =
-          'ENTR-' + this.realizadores_modal.codigRealiz;
+          'REAL-' + this.realizadores_modal.codigRealiz;
         form_data.append('codigRealiz', this.realizadores_modal.codigRealiz);
         form_data.append(
           'nombreApellidosRealiz',
@@ -635,9 +632,6 @@
 </script>
 
 <style>
-  #modal_gestionar_realizadores .ant-form-item-control {
-    width: 80% !important;
-  }
   #modal_gestionar_realizadores .ant-mentions textarea {
     height: 32px !important;
   }

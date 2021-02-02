@@ -139,8 +139,8 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Reseña biográfica del Interprete"
-                    prop="biogInterp"
+                    label="Reseña biográfica del Intérprete"
+                    prop="reseñaBiogInterp"
                   >
                     <a-input
                       :disabled="disabled"
@@ -235,21 +235,26 @@ export default {
         nombreInterp: [
           {
             required: true,
-            message: "Inserte el nombre",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
             whitespace: true,
-            message: "Inserte el nombre",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
-            pattern: "^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
+            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
             message: "Caracter no válido",
             trigger: "change",
           },
         ],
-        biogInterp: [
+        reseñaBiogInterp: [
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
           {
             pattern: "^[ a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()]*$",
             message: "Caracter no válido",
@@ -278,7 +283,6 @@ export default {
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
-        this.$emit("actualizar");
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
             timeout: 1000,

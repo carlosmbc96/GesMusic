@@ -17,7 +17,7 @@ class CreateAudiovisualesTable extends Migration
             $table->string('portadillaAud')->nullable();  // Url del Archivo de Portada del Audiovisual
             $table->string('clasifAud')->nullable();  // Clasificación Audiovisual *nom
             $table->string('generoAud')->nullable();  // Género Audiovisual *nom
-            $table->string('duracionAud')->nullable();  // Duración Audiovisual
+            $table->time('duracionAud')->nullable();  // Duración Audiovisual
             $table->string('añoFinAud')->nullable();  // Año que se terminó el Audiovisual *nom
             $table->string('paisGrabAud')->nullable();  // País de Grabación del Audiovisual *nom
             $table->string('territorioAud')->nullable();  // Territorio del Audiovisual

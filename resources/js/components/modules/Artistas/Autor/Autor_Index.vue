@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export"/></span>
+        <span><a-icon class="e-icon-export" type="export" /></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -86,82 +86,84 @@
     </div>
     <div class="clearfix"></div>
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      locale="es-ES"
-      :dataSource="autors_list"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigAutr"
-          headerText="Código"
-          width="115"
-          textAlign="Left"
-        />
-        <e-column
-          field="ciAutr"
-          headerText="Carnet de Identidad"
-          width="130"
-          textAlign="Left"
-        />
-        <e-column
-          field="nombresAutr"
-          headerText="Nombre"
-          width="120"
-          textAlign="Left"
-        />
-        <e-column
-          field="apellidosAutr"
-          headerText="Apellidos"
-          width="128"
-          textAlign="Left"
-        />
-        <e-column
-          field="sexoAutr"
-          headerText="Sexo"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          :displayAsCheckBox="true"
-          field="fallecidoAutr"
-          headerText="Fallecido"
-          width="125"
-          textAlign="Center"
-          type="boolean"
-        />
-        <e-column
-          headerText="Estado"
-          width="115"
-          :template="status_template"
-          :visible="true"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="155"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        locale="es-ES"
+        :dataSource="autors_list"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :pdfExportComplete="pdf_export_complete"
+        :excelExportComplete="excel_export_complete"
+        :queryCellInfo="customise_cell"
+        :pdfQueryCellInfo="pdf_customise_cell"
+        :excelQueryCellInfo="excel_customise_cell"
+        :allowExcelExport="true"
+        :allowPdfExport="true"
+      >
+        <e-columns>
+          <e-column
+            field="codigAutr"
+            headerText="Código"
+            width="115"
+            textAlign="Left"
+          />
+          <e-column
+            field="ciAutr"
+            headerText="Carnet de Identidad"
+            width="130"
+            textAlign="Left"
+          />
+          <e-column
+            field="nombresAutr"
+            headerText="Nombre"
+            width="120"
+            textAlign="Left"
+          />
+          <e-column
+            field="apellidosAutr"
+            headerText="Apellidos"
+            width="128"
+            textAlign="Left"
+          />
+          <e-column
+            field="sexoAutr"
+            headerText="Sexo"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            :displayAsCheckBox="true"
+            field="fallecidoAutr"
+            headerText="Fallecido"
+            width="125"
+            textAlign="Center"
+            type="boolean"
+          />
+          <e-column
+            headerText="Estado"
+            width="115"
+            :template="status_template"
+            :visible="true"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="155"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
@@ -331,7 +333,7 @@ export default {
           size: "16px",
           fontWeight: "bold",
         },
-        interval: 10,
+        interval: 5,
         majorGridLines: { width: 0 },
         majorTickLines: { width: 1, color: "white" },
         lineStyle: { color: "white" },
@@ -366,14 +368,14 @@ export default {
                       <p>¿Desea {{ action }} al Autor?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 action: "",
                 position: "",
@@ -455,7 +457,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -476,7 +478,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -541,7 +543,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -562,7 +564,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -578,7 +580,7 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_autors();
+                  this.$parent.$parent.$parent.load_autors();
                   this.checked = !this.checked;
                   this.$toast.success(
                     `El Autor se ${action} correctamente`,
@@ -593,30 +595,6 @@ export default {
                     timeout: 1000,
                   });
                 }
-              },
-            },
-          }),
-        };
-      },
-      status_child_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
-                </div>`,
-            data: function() {
-              return {
-                data: {},
-              };
-            },
-            computed: {
-              status() {
-                return this.data.deleted_at == null ? "Activo" : "Inactivo";
-              },
-              class_badge() {
-                return this.data.deleted_at == null
-                  ? "e-badge-success"
-                  : "e-badge-warning";
               },
             },
           }),
@@ -646,7 +624,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
               };
@@ -656,19 +634,19 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-								if (this.data.deleted_at === null)
-									this.$parent.$parent.action_management = "detalles";
-									this.$parent.$parent.visible_management = true;
+                this.$parent.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null)
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
               },
               /*
@@ -707,17 +685,19 @@ export default {
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
+                                    this.$parent.$parent.$parent.change_spin();
                                     axios
                                       .delete(
                                         `autores/eliminar/${this.data.id}`
                                       )
                                       .then((ress) => {
-                                        this.$parent.$parent.refresh_table();
+                                        this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
                                           "El Autor ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
+                                        this.$parent.$parent.$parent.change_spin();
                                       })
                                       .catch((err) => {
                                         console.log(err);
@@ -739,7 +719,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function(instance, toast) {
+                                  function (instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -760,7 +740,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function(instance, toast) {
+                        function (instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -776,9 +756,9 @@ export default {
           }),
         };
       },
+      spinning: false,
       export_view: false, //* Vista del panel de exportaciones
       autors_list: [], //* Lista de autores que es cargada en la tabla
-      /* products_childs: {}, //* Objeto de productos hijos de los autores */
       row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
       visible_details: false, //* variable para visualizar el modal de detalles del autor
       visible_management: false, //* variable para visualizar el modal de gestión del autor
@@ -789,6 +769,12 @@ export default {
     this.load_autors();
   },
   methods: {
+    /*
+     * Método que activa y desactiva el spin
+     */
+    change_spin() {
+      this.spinning = !this.spinning;
+    },
     /*
      * Método para modificar el estilo de las filas de la tabla
      */
@@ -835,6 +821,9 @@ export default {
      * Método que carga los autores de la bd
      */
     load_autors() {
+      if (this.action_management !== "detalles") {
+        this.change_spin();
+      }
       axios
         .post("autores/listar" /* { relations: ["productos"] } */)
         .then((response) => {
@@ -855,10 +844,13 @@ export default {
               });
             }
           });
-          this.series_data.sort(function(a, b) {
-              return a.status > b.status ? 1 : -1;
+          this.series_data.sort(function (a, b) {
+            return a.status > b.status ? 1 : -1;
           });
           this.$refs.gridObj.refresh();
+          if (this.action_management !== "detalles") {
+            this.change_spin();
+          }
         });
     },
     /*

@@ -3,8 +3,6 @@
     <a-modal
       :closable="false"
       width="80.4%"
-      okText="Guardar"
-      cancelText="Cancelar"
       :visible="show"
       id="modal_gestionar_proyectos"
     >
@@ -215,16 +213,15 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Descripción en Español del proyecto"
+                      label="Descripción en español del Proyecto"
                       prop="descripEsp"
                     >
-                      <div class="description">
                         <a-input
+                          style="width: 100%; height: 150px"
                           :disabled="disabled"
                           v-model="project_modal.descripEsp"
                           type="textarea"
                         />
-                      </div>
                     </a-form-model-item>
                     <a-form-model-item
                       label="Descripción en Español del proyecto"
@@ -243,16 +240,15 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Descripción en Inglés del proyecto"
+                      label="Descripción en inglés del Proyecto"
                       prop="descripIng"
                     >
-                      <div class="description">
                         <a-input
+                          style="width: 100%; height: 150px"
                           :disabled="disabled"
                           v-model="project_modal.descripIng"
                           type="textarea"
                         />
-                      </div>
                     </a-form-model-item>
                     <a-form-model-item
                       label="Descripción en Inglés del proyecto"
@@ -273,15 +269,16 @@
           </div>
         </a-tab-pane>
         <!-- Fin del contenido del tab Generales -->
-        <a-tab-pane key="2" v-if="action_modal === 'editar'">
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
           <span slot="tab"> Productos </span>
           <a-col span="12">
             <div class="section-title">
               <h4>Productos del proyecto</h4>
             </div>
           </a-col>
-          <br />
+          <br /><br />
           <tabla_productos
+            :detalles_prop="detalles"
             @reload="reload_parent"
             :proyecto="project_modal"
             :vista_editar="vista_editar"
@@ -319,6 +316,7 @@ export default {
       } else callback();
     };
     return {
+      detalles: false,
       action_cancel_title: "",
       action_title: "",
       show_used_error: "",
@@ -519,13 +517,13 @@ export default {
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;
+            this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
               "El Proyecto se modificó correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
-            this.handle_cancel();
           })
           .catch((error) => {
             this.text_button = "Editar";
@@ -547,13 +545,13 @@ export default {
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
+            this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
               "El Proyecto se creó correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
-            this.handle_cancel();
           })
           .catch((err) => {
             this.text_button = "Crear";
@@ -629,12 +627,15 @@ export default {
       }
     },
     reload_parent() {
-      this.$emit("refresh");
+      this.$emit("actualizar");
     },
     /*
      *Método que asigna el texto del botón y llena o no la varable project_modal en dependencia de la acción recivida por props
      */
     set_action() {
+      if (this.action_modal === "detalles") {
+        this.active_tab = "2";
+      }
       if (this.action_modal === "editar") {
         if (this.project.deleted_at !== null) {
           this.disabled = true;
@@ -672,6 +673,7 @@ export default {
             });
         }
       } else if (this.action_modal === "detalles") {
+        this.detalles = true;
         if (this.project.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;

@@ -177,16 +177,17 @@
                           </div>
                         </div>
                       </a-upload>
-                      <a-upload
-                        v-else
-                        @preview="handle_preview"
-                        :file-list="file_list"
-                        list-type="picture-card"
-                      >
-                        <div v-if="file_list.length < 1">
-                          <img />
-                        </div>
-                      </a-upload>
+                      <div v-else class="detalles-img">
+                        <a-upload
+                          @preview="handle_preview"
+                          :file-list="file_list"
+                          list-type="picture-card"
+                        >
+                          <div v-if="file_list.length < 1">
+                            <img />
+                          </div>
+                        </a-upload>
+                      </div>
                       <br />
                       <a-modal
                         :visible="preview_visible"
@@ -326,35 +327,38 @@
                     </a-col>
                   </a-row>
                   <div v-if="action_modal === 'editar'">
-                    <div class="section-title">
+                    <div class="section-title" style="width: 46%">
                       <h4>Datos Descripciones</h4>
                     </div>
-                    <a-row>
-                      <a-form-model-item
-                        has-feedback
-                        label="Descripción en español del producto"
-                        prop="descripEspPro"
-                      >
-                        <a-input
-                          :disabled="disabled"
-                          style="width: 100%; height: 100px"
-                          v-model="product_modal.descripEspPro"
-                          type="textarea"
-                        />
-                      </a-form-model-item>
-                      <a-form-model-item
-                        has-feedback
-                        label="Descripción en inglés del producto"
-                        prop="descripIngPro"
-                      >
-                        <a-input
-                          :disabled="disabled"
-                          style="width: 100%; height: 100px"
-                          v-model="product_modal.descripIngPro"
-                          type="textarea"
-                        />
-                      </a-form-model-item>
-                    </a-row>
+                    <div id="desciption-problem-icon">
+                      <a-row>
+                        <a-form-model-item
+                          has-feedback
+                          label="Descripción en español del Producto"
+                          prop="descripEspPro"
+                        >
+                          <a-input
+                            :disabled="disabled"
+                            style="width: 100%; height: 150px"
+                            v-model="product_modal.descripEspPro"
+                            type="textarea"
+                          />
+                        </a-form-model-item>
+                        <a-form-model-item
+                          has-feedback
+                          label="Descripción en inglés del Producto"
+                          prop="descripIngPro"
+                        >
+                          <a-input
+                            :disabled="disabled"
+                            style="width: 100%; height: 150px"
+                            v-model="product_modal.descripIngPro"
+                            type="textarea"
+                          />
+                        </a-form-model-item>
+                      </a-row>
+                    </div>
+
                     <div class="section-title">
                       <h4>Datos Gestión</h4>
                     </div>
@@ -399,7 +403,6 @@
                         label="Código de barra"
                       >
                         <a-input
-                          placeholder="0123456789000"
                           :disabled="disabled"
                           v-model="product_modal.codigBarProd"
                         />
@@ -502,7 +505,7 @@
                       <a-form-model-item label="Destinos comerciales" v-else>
                         <a-mentions
                           readonly
-                          :placeholder="product.destinosComerPro"
+                          :placeholder="product_modal.destinosComerPro"
                         >
                         </a-mentions>
                       </a-form-model-item>
@@ -722,63 +725,65 @@
                     <h4>Datos Descripciones</h4>
                   </div>
                   <a-row>
-                    <a-col span="11">
-                      <a-form-model-item
-                        v-if="action_modal !== 'detalles'"
-                        has-feedback
-                        label="Descripción en español del producto"
-                        prop="descripEspPro"
-                      >
-                        <a-input
-                          :disabled="disabled"
-                          style="width: 100%; height: 100px"
-                          v-model="product_modal.descripEspPro"
-                          type="textarea"
-                        />
-                      </a-form-model-item>
-                      <a-form-model-item
-                        label="Descripción en español del producto"
-                        v-else
-                      >
-                        <div class="description">
-                          <a-mentions
-                            class=""
-                            style="height: 150px !important"
-                            readonly
-                            :placeholder="product.descripEspPro"
-                          >
-                          </a-mentions>
-                        </div>
-                      </a-form-model-item>
-                    </a-col>
-                    <a-col span="11" style="float: right">
-                      <a-form-model-item
-                        v-if="action_modal !== 'detalles'"
-                        has-feedback
-                        label="Descripción en inglés del producto"
-                        prop="descripIngPro"
-                      >
-                        <a-input
-                          :disabled="disabled"
-                          style="width: 100%; height: 100px"
-                          v-model="product_modal.descripIngPro"
-                          type="textarea"
-                        />
-                      </a-form-model-item>
-                      <a-form-model-item
-                        label="Descripción en inglés del producto"
-                        v-else
-                      >
-                        <div id="ing">
-                          <a-mentions
-                            style="height: 150px !important"
-                            readonly
-                            :placeholder="product.descripIngPro"
-                          >
-                          </a-mentions>
-                        </div>
-                      </a-form-model-item>
-                    </a-col>
+                    <div id="desciption-problem-icon">
+                      <a-col span="11">
+                        <a-form-model-item
+                          v-if="action_modal !== 'detalles'"
+                          has-feedback
+                          label="Descripción en español del Producto"
+                          prop="descripEspPro"
+                        >
+                          <a-input
+                            :disabled="disabled"
+                            style="width: 100%; height: 150px"
+                            v-model="product_modal.descripEspPro"
+                            type="textarea"
+                          />
+                        </a-form-model-item>
+                        <a-form-model-item
+                          label="Descripción en español del Producto"
+                          v-else
+                        >
+                          <div class="description">
+                            <a-mentions
+                              class=""
+                              style="height: 150px !important"
+                              readonly
+                              :placeholder="product.descripEspPro"
+                            >
+                            </a-mentions>
+                          </div>
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col span="11" style="float: right">
+                        <a-form-model-item
+                          v-if="action_modal !== 'detalles'"
+                          has-feedback
+                          label="Descripción en inglés del Producto"
+                          prop="descripIngPro"
+                        >
+                          <a-input
+                            :disabled="disabled"
+                            style="width: 100%; height: 150px"
+                            v-model="product_modal.descripIngPro"
+                            type="textarea"
+                          />
+                        </a-form-model-item>
+                        <a-form-model-item
+                          label="Descripción en inglés del producto"
+                          v-else
+                        >
+                          <div id="ing">
+                            <a-mentions
+                              style="height: 150px !important"
+                              readonly
+                              :placeholder="product.descripIngPro"
+                            >
+                            </a-mentions>
+                          </div>
+                        </a-form-model-item>
+                      </a-col>
+                    </div>
                   </a-row>
                 </a-row>
                 <a-row>
@@ -786,7 +791,7 @@
                     <div v-if="action_modal === 'detalles'">
                       <div
                         class="section-title"
-                        v-if="list_compare_autores.length !== 0"
+                        v-if="producto.autoresProd.length !== 0"
                       >
                         <h4>Gestión de Autores</h4>
                       </div>
@@ -838,7 +843,7 @@
                   >
                     <div
                       class="section-title"
-                      v-if="list_compare_interpretes.length !== 0"
+                      v-if="producto.interpretesProd.length !== 0"
                     >
                       <h4>Gestión de Intérpretes</h4>
                     </div>
@@ -876,11 +881,7 @@
             </a-form-model>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane
-          key="3"
-          :disabled="tab_3"
-          v-if="tab_visibility && action_modal !== 'crear'"
-        >
+        <a-tab-pane key="3" :disabled="tab_3" v-if="action_modal !== 'crear'">
           <span slot="tab"> Multimedias </span>
           <a-row>
             <a-col span="12">
@@ -1053,18 +1054,17 @@ export default {
         },
       },
       rules: {
-        //*
         proyecto_id: [
           {
             required: true,
-            message: "Seleccione el código",
+            message: "Campo requerido",
             trigger: "change",
           },
         ],
         descripEspPro: [
           {
             whitespace: true,
-            message: "Inserte una descripción",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
@@ -1076,19 +1076,12 @@ export default {
         descripIngPro: [
           {
             whitespace: true,
-            message: "Inserte una descripción",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
             pattern: "^[ a-zA-Z0-9',.;:\n]*$",
             message: "Caracter no válido",
-            trigger: "change",
-          },
-        ],
-        nombreProy: [
-          {
-            required: true,
-            message: "Seleccione el nombre",
             trigger: "change",
           },
         ],
@@ -1104,7 +1097,7 @@ export default {
           },
           {
             pattern: "^[0-9]*$",
-            message: "Solo números",
+            message: "Solo dígitos",
             trigger: "change",
           },
           {
@@ -1113,14 +1106,14 @@ export default {
           },
           {
             len: 4,
-            message: "Formato de 4 números",
+            message: "Formato de 4 dígitos",
             trigger: "change",
           },
         ],
         tituloProd: [
           {
             required: true,
-            message: "Inserte el titulo",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
@@ -1130,14 +1123,14 @@ export default {
           },
           {
             whitespace: true,
-            message: "Inserte el titulo",
+            message: "Espacio no válido",
             trigger: "change",
           },
         ],
         añoProd: [
           {
             required: true,
-            message: "Seleccione el año",
+            message: "Campo requerido",
             trigger: "change",
           },
         ],
@@ -1174,8 +1167,7 @@ export default {
         codigBarProd: [
           {
             len: 13,
-            message: "Formato de 13 números",
-            /* validator: validate_cod_bar, */
+            message: "Formato de 13 dígitos",
             trigger: "change",
           },
           {
@@ -1185,7 +1177,7 @@ export default {
           },
           {
             pattern: "^[0-9]*$",
-            message: "Solo números",
+            message: "Solo dígitos",
             trigger: "change",
           },
         ],
@@ -1193,21 +1185,10 @@ export default {
     };
   },
   created() {
-    if (this.action_modal === "detalles") {
-      this.detalles = true;
-      this.producto = { ...this.product };
-      if (this.producto.interpretesProd !== null) {
-        let list_help = this.producto.interpretesProd.split(".");
-        this.producto.interpretesProd = list_help[0];
-        this.producto.interpretesProd = this.producto.interpretesProd.split(
-          "-"
-        );
-        this.producto.interpretesProd.pop();
-      }
-      if (this.producto.autoresProd !== null) {
-        this.producto.autoresProd = this.producto.autoresProd.split("-");
-        this.producto.autoresProd.pop();
-      }
+    if (this.product.tabla) {
+      this.tabs_list.push("tab_1")
+      this.tab_visibility = false;
+      this.active_tab = "2";
     }
     //* Carga de proyectos
     axios
@@ -1251,9 +1232,6 @@ export default {
         this.roles_interp = this.list_nomenclators[6][0];
       })
       .catch((error) => {});
-    if (this.action_modal === "detalles") {
-      this.active_tab = "2";
-    }
     if (this.action_modal === "editar") {
       this.list_compare_autores =
         this.product.autoresProd === null ? [] : this.product.autoresProd;
@@ -1379,14 +1357,24 @@ export default {
         this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
           "-"
         );
+        this.product_modal.destinosComerPro.pop();
       } else delete this.product_modal.destinosComerPro;
     } else if (this.action_modal === "detalles") {
-      this.list_compare_autores =
-        this.product.autoresProd === null ? [] : this.product.autoresProd;
-      this.list_compare_interpretes =
-        this.product.interpretesProd === null
-          ? []
-          : this.product.interpretesProd;
+      this.active_tab = "2";
+      this.detalles = true;
+      this.producto = { ...this.product };
+      if (this.producto.interpretesProd !== null) {
+        let list_help = this.producto.interpretesProd.split(".");
+        this.producto.interpretesProd = list_help[0];
+        this.producto.interpretesProd = this.producto.interpretesProd.split(
+          "-"
+        );
+        this.producto.interpretesProd.pop();
+      } else this.producto.interpretesProd = [];
+      if (this.producto.autoresProd !== null) {
+        this.producto.autoresProd = this.producto.autoresProd.split("-");
+        this.producto.autoresProd.pop();
+      } else this.producto.autoresProd = [];
       this.product.descripEspPro =
         this.product.descripEspPro === null ? "" : this.product.descripEspPro;
       this.product.descripIngPro =
@@ -1396,6 +1384,12 @@ export default {
         this.activated = false;
       }
       this.product_modal = { ...this.product };
+      if (this.product_modal.destinosComerPro !== null) {
+        this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
+          "-"
+        );
+        this.product_modal.destinosComerPro.pop();
+      } else this.product_modal.destinosComerPro = [];
       if (this.product_modal.identificadorProd !== null) {
         if (
           this.product_modal.identificadorProd !==
@@ -1428,80 +1422,6 @@ export default {
         this.product_modal.variosInterpretesProd === 0 ? false : true;
       this.text_button = "Detalles";
       this.text_header_button = "Detalles";
-      let list_help = [];
-      let list_roles = [];
-      let list_roles_help = [];
-      if (this.product_modal.interpretesProd !== null) {
-        list_help = this.product_modal.interpretesProd.split(".");
-        this.product_modal.interpretesProd = list_help[0];
-        list_roles = list_help[1];
-        if (list_roles !== undefined) {
-          list_roles = list_roles.split("|");
-          list_roles.forEach((element) => {
-            list_roles_help.push(element.split(","));
-          });
-        }
-        this.product_modal.interpretesProd = this.product_modal.interpretesProd.split(
-          "-"
-        );
-        if (list_roles !== undefined) {
-          this.product_modal.interpretesProd.pop();
-        }
-        let roles = [];
-        for (let i = 0; i < this.product_modal.interpretesProd.length; i++) {
-          if (list_roles_help.length !== 0) {
-            list_roles_help[i].forEach((element) => {
-              if (element === "") {
-                roles = [];
-              } else roles = list_roles_help[i];
-              return roles;
-            });
-          }
-          this.interpretesProd.push({
-            id: this.product_modal.interpretesProd[i].id,
-            key: i + 1,
-            role: roles,
-            value: this.product_modal.interpretesProd[i],
-          });
-        }
-        this.product_modal.interpretesProd = [];
-      } else {
-        this.product_modal.interpretesProd = [];
-        this.interpretesProd = [
-          {
-            value: "",
-            role: [],
-            key: 2,
-          },
-        ];
-      }
-      if (this.product_modal.autoresProd !== null) {
-        this.product_modal.autoresProd = this.product_modal.autoresProd.split(
-          "-"
-        );
-        this.product_modal.autoresProd.pop();
-        for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
-          this.autoresProd.push({
-            id: this.product_modal.autoresProd[i].id,
-            key: i - 1,
-            value: this.product_modal.autoresProd[i],
-          });
-        }
-        this.product_modal.autoresProd = [];
-      } else {
-        this.product_modal.autoresProd = [];
-        this.autoresProd = [
-          {
-            value: "",
-            key: 1,
-          },
-        ];
-      }
-      if (this.product_modal.destinosComerPro !== null) {
-        this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
-          "-"
-        );
-      } else delete this.product_modal.destinosComerPro;
     } else {
       this.text_button = "Crear";
       this.text_header_button = "Crear";
@@ -2363,9 +2283,6 @@ export default {
 }
 #modal_gestionar_productos .interpretes-select {
   width: 80% !important;
-}
-#modal_gestionar_productos textarea {
-  height: 150px !important;
 }
 #modal_gestionar_productos .dynamic-delete-button {
   cursor: pointer;

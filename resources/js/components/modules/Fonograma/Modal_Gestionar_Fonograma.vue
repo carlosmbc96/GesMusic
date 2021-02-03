@@ -533,7 +533,7 @@
             </a-col>
           </a-row>
           <tabla_tracks
-						v-if="action_modal !== 'crear'"
+            v-if="action_modal !== 'crear'"
             :detalles_prop="detalles"
             @reload="reload_parent"
             :fonograma="fonogram_modal"
@@ -1073,6 +1073,23 @@ export default {
             },
           })
           .then((res) => {
+            console.log(this.getTracksID());
+            axios
+              .post("/fonogramas/tracks", {
+                tracks: this.getTracksID(),
+                idFong: res.data.id,
+              })
+              .then((res) => {
+                this.$store.state["tracks"] = [];
+                this.$store.state["all_tracks_statics"] = [];
+                this.$store.state["all_tracks"] = [];
+                this.$store.state["created_tracks"] = [];
+              })
+              .catch((error) => {
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 1000,
+                });
+              });
             this.text_button = "Crear";
             this.spinning = false;
             this.waiting = false;
@@ -1454,6 +1471,15 @@ export default {
       }
     },
     //Fin de metodos para generar el codigo
+
+    getTracksID() {
+      let answer = [];
+      let all_tracks = this.$store.getters.getTracksFormGetters;
+      for (let index = 0; index < all_tracks.length; index++) {
+        answer.push(all_tracks[index].id);
+      }
+      return answer;
+    },
   },
   components: {
     tabla_tracks,

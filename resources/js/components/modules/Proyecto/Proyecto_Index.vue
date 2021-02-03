@@ -49,7 +49,7 @@
               }
             "
         /></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
+        <span><a-icon class="e-icon-export" type="export"/></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -288,7 +288,7 @@ export default {
         border: { width: 0 },
       },
       animation_series: { enable: true, duration: 1000, delay: 50 },
-      palettes: ["#E94649", "#F6B53F", "#6FAAB0", "#C4C24A"],
+      palettes: ["#E94649"],
       background_chart: "transparent",
       series_data: [],
       primary_x_axis: {
@@ -312,7 +312,7 @@ export default {
           size: "16px",
           fontWeight: "bold",
         },
-        interval: 10,
+        interval: 5,
         majorGridLines: { width: 0 },
         majorTickLines: { width: 1, color: "white" },
         lineStyle: { color: "white" },
@@ -347,14 +347,14 @@ export default {
                       <p>¿Desea {{ action }} el Proyecto?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 55%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -437,7 +437,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -458,7 +458,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -524,7 +524,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -545,7 +545,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -585,9 +585,9 @@ export default {
         return {
           template: Vue.component("columnTemplate", {
             template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
+                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
-            data: function () {
+            data: function() {
               return {
                 data: {},
               };
@@ -629,7 +629,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -725,7 +725,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -746,7 +746,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -895,7 +895,7 @@ export default {
                   textAlign: "Center",
                 },
               ],
-              load: function () {
+              load: function() {
                 this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
                   "id"
                 ];

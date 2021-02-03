@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
+        <span><a-icon class="e-icon-export" type="export"/></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -86,68 +86,70 @@
     </div>
     <div class="clearfix"></div>
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      locale="es-ES"
-      :dataSource="fonograms_list"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigFong"
-          headerText="Código"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          field="tituloFong"
-          headerText="Título"
-          width="150"
-          textAlign="Left"
-        />
-        <e-column
-          field="añoFong"
-          headerText="Año"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          field="clasficacionFong"
-          headerText="Clasificación"
-          width="150"
-          textAlign="Left"
-        />
-        <e-column
-          headerText="Estado"
-          width="120"
-          :template="status_template"
-          :visible="true"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="140"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        locale="es-ES"
+        :dataSource="fonograms_list"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :pdfExportComplete="pdf_export_complete"
+        :excelExportComplete="excel_export_complete"
+        :queryCellInfo="customise_cell"
+        :pdfQueryCellInfo="pdf_customise_cell"
+        :excelQueryCellInfo="excel_customise_cell"
+        :allowExcelExport="true"
+        :allowPdfExport="true"
+      >
+        <e-columns>
+          <e-column
+            field="codigFong"
+            headerText="Código"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="tituloFong"
+            headerText="Título"
+            width="150"
+            textAlign="Left"
+          />
+          <e-column
+            field="añoFong"
+            headerText="Año"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="clasficacionFong"
+            headerText="Clasificación"
+            width="150"
+            textAlign="Left"
+          />
+          <e-column
+            headerText="Estado"
+            width="120"
+            :template="status_template"
+            :visible="true"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="140"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
@@ -359,7 +361,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -442,7 +444,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -463,7 +465,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -528,7 +530,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -549,7 +551,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -565,7 +567,7 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_fonograms();
+                  this.$parent.$parent.$parent.load_fonograms();
                   this.checked = !this.checked;
                   this.$toast.success(
                     `El Fonograma se ${action} correctamente`,
@@ -609,7 +611,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -619,19 +621,19 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null)
-                  this.$parent.$parent.action_management = "detalles";
-                this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
               },
               /*
@@ -670,17 +672,19 @@ export default {
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
+                                    this.$parent.$parent.$parent.change_spin();
                                     axios
                                       .delete(
                                         `fonogramas/eliminar/${this.data.id}`
                                       )
                                       .then((ress) => {
-                                        this.$parent.$parent.refresh_table();
+                                        this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
                                           "El Fonograma ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
+                                        this.$parent.$parent.$parent.change_spin();
                                       })
                                       .catch((err) => {
                                         console.log(err);
@@ -702,7 +706,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -723,7 +727,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -739,9 +743,9 @@ export default {
           }),
         };
       },
+      spinning: false,
       export_view: false, //* Vista del panel de exportaciones
       fonograms_list: [], //* Lista de Fonogramas que es cargada en la tabla
-      //products_childs: {}, //* Objeto de productos hijos de los Fonogramas
       row_selected: {}, //* Fila de la tabla seleccionada | Fonograma seleccionado
       fonograms_list: [],
       visible_details: false, //* variable para visualizar el modal de detalles del Fonograma
@@ -753,6 +757,12 @@ export default {
     this.load_fonograms();
   },
   methods: {
+    /*
+     * Método que activa y desactiva el spin
+     */
+    change_spin() {
+      this.spinning = !this.spinning;
+    },
     /*
      * Método para modificar el estilo de las filas de la tabla
      */
@@ -802,20 +812,23 @@ export default {
      * Método que carga los Audiovisuales de la bd
      */
     load_fonograms() {
+      if (this.action_management !== "detalles") {
+        this.change_spin();
+      }
       axios
         .post("/fonogramas/listar", { relations: ["productos"] })
         .then((response) => {
           this.fonograms_list = response.data;
-          /* this.series_data = [];
+          this.series_data = [];
           this.fonograms_list.forEach((fonograma) => {
             let index = this.series_data.findIndex(
-              (serie) => serie.years === parseInt(fonograms_list.clasficacionFong)
+              (serie) => serie.years === parseInt(fonograma.añoFong.toString())
             );
             if (index != -1) {
               this.series_data[index].fonograms += 1;
             } else {
               this.series_data.push({
-                years: parseInt(fonograma.clasficacionFong),
+                years: parseInt(fonograma.añoFong.toString()),
                 fonograms: 1,
               });
             }
@@ -828,7 +841,10 @@ export default {
             this.series_data[this.series_data.length - 1].fonograms < 5
           ) {
             this.primary_y_axis.interval = 5;
-          } */
+          }
+          if (this.action_management !== "detalles") {
+            this.change_spin();
+          }
         });
     },
     /*

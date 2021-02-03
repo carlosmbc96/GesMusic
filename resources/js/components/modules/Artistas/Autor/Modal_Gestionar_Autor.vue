@@ -100,16 +100,17 @@
                         </div>
                       </div>
                     </a-upload>
-                    <a-upload
-                      v-else
-                      @preview="handle_preview"
-                      :file-list="file_list"
-                      list-type="picture-card"
-                    >
-                      <div v-if="file_list.length < 1">
-                        <img />
-                      </div>
-                    </a-upload>
+                    <div class="detalles-img" v-else>
+                      <a-upload
+                        @preview="handle_preview"
+                        :file-list="file_list"
+                        list-type="picture-card"
+                      >
+                        <div v-if="file_list.length < 1">
+                          <img />
+                        </div>
+                      </a-upload>
+                    </div>
                     <br />
                     <a-modal
                       :visible="preview_visible"
@@ -268,7 +269,7 @@
                       >
                         <a-input
                           :disabled="disabled"
-                          style="width: 100%; height: 100px"
+                          style="width: 100%; height: 150px"
                           v-model="author_modal.biogAutr"
                           type="textarea"
                         />
@@ -303,7 +304,7 @@
                       <a-form-model-item v-else>
                         <i
                           class="fa fa-check-square-o hidden-xs"
-                          v-if="fallecidoAutr === 1"
+                          v-if="author.fallecidoAutr === 1"
                         />
                         <i class="fa fa-square-o" v-else />
                         ¿El Autor es Fallecido?
@@ -322,10 +323,10 @@
                     <a-form-model-item v-else>
                       <i
                         class="fa fa-check-square-o hidden-xs"
-                        v-if="obrasCatEditAutr === 1"
+                        v-if="author.obrasCatEditAutr === 1"
                       />
                       <i class="fa fa-square-o" v-else />
-                      ¿El Autor tiene Obras en el Catalgo Editorial de Bismusic?
+                      ¿El Autor tiene Obras en el Catálgo Editorial de Bismusic?
                     </a-form-model-item>
                   </a-col>
                 </a-row>
@@ -346,7 +347,7 @@ export default {
     let validate_codig_unique = (rule, value, callback) => {
       this.autors_list.forEach((element) => {
         if (element.codigAutr.substr(5) === value.replace(/ /g, "")) {
-          callback(new Error("Código ya usado"));
+          callback(new Error("Código usado"));
         }
       });
       callback();
@@ -412,8 +413,6 @@ export default {
             len: 4,
             message: "Formato de 4 dígitos",
             trigger: "change",
-            /* validator: validate_length,
-            trigger: "change", */
           },
         ],
         ciAutr: [
@@ -424,7 +423,7 @@ export default {
           },
           {
             whitespace: true,
-            message: "Inserte el carnet de identidad",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
@@ -450,11 +449,11 @@ export default {
           },
           {
             whitespace: true,
-            message: "Inserte el nombre",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
-            pattern: "^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
+            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z ]*$",
             message: "Caracter no válido",
             trigger: "change",
           },
@@ -467,11 +466,11 @@ export default {
           },
           {
             whitespace: true,
-            message: "Inserte los apellidos",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
-            pattern: "^[a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ\n,.;:¿?!¡()]*$",
+            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z ]*$",
             message: "Caracter no válido",
             trigger: "change",
           },
@@ -486,7 +485,7 @@ export default {
         biogAutr: [
           {
             whitespace: true,
-            message: "Inserte una reseña biográfica",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
@@ -530,7 +529,6 @@ export default {
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
-        this.$emit("actualizar");
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
             timeout: 1000,
@@ -664,10 +662,12 @@ export default {
         this.action_close = "La edición del Autor se canceló correctamente";
         this.author.biogAutr =
           this.author.biogAutr === null ? "" : this.author.biogAutr;
-        this.author.codigAutr = this.author.codigAutr.substr(5);
         this.author_modal = { ...this.author };
+        this.author_modal.codigAutr = this.author.codigAutr.substr(5);
         this.fallecidoAutr =
           this.author_modal.fallecidoAutr === 0 ? false : true;
+        this.obrasCatEditAutr =
+          this.author_modal.obrasCatEditAutr === 0 ? false : true;
         if (this.author_modal.fotoAutr !== null) {
           if (
             this.author_modal.fotoAutr !==

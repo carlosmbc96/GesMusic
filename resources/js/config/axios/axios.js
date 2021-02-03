@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 /*Globally*/
 
-axios.defaults.baseURL='http://localhost:8000/api';
-axios.defaults.headers.common['Authorization']='token';
-axios.defaults.headers.get['Accepts']='application/text';
+axios.defaults.baseURL = "http://localhost:8000/api";
+axios.defaults.headers.common["Authorization"] = "token";
+axios.defaults.headers.get["Accepts"] = "application/text";
 
 /* const reqInt=axios.interceptors.request.use(
   config=>{
@@ -21,4 +21,3 @@ const respInt=axios.interceptors.response.use(
 // axios.interceptors.request.eject(reqInt)
 // axios.interceptors.response.eject(respInt)
 export default axios;
-

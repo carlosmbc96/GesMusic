@@ -102,7 +102,7 @@ export default {
     });
   },
   watch: {
-    router: function () {
+    router: function() {
       return this.router === "/"
         ? (this.content = false)
         : (this.content = true);
@@ -345,6 +345,15 @@ export default {
 }
 .ant-switch-inner {
   width: 50px !important;
+}
+.ant-modal-root.ant-modal-confirm.ant-modal-confirm-info.ant-modal-info.ant-modal-confirm.ant-modal-confirm-info.ant-modal-info
+  .ant-modal {
+  margin-left: auto !important;
+  margin-top: auto !important;
+}
+.ant-modal-root.ant-modal-confirm.ant-modal-confirm-info.ant-modal-info.ant-modal-confirm.ant-modal-confirm-info.ant-modal-info
+  .ant-modal-content {
+  background-color: white !important;
 }
 .ant-modal {
   margin-left: 17% !important;
@@ -628,5 +637,11 @@ export default {
   .ant-upload-list-item-actions
   .anticon-delete {
   display: none !important;
+}
+.e-spinner-pane .e-spin-hide {
+  display: none !important;
+}
+#desciption-problem-icon .ant-form-item-children-icon {
+  margin-top: -19px !important;
 }
 </style>

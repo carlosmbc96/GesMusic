@@ -354,7 +354,7 @@
                         v-model="muestraTrk"
                         :value="muestraTrk"
                       >
-                        ¿El track tiene una pista de muestra?
+                        ¿El Track tiene una pista de muestra?
                       </a-checkbox>
                     </a-form-model-item>
                     <a-form-model-item style="margin-top: 20px" v-else>
@@ -363,7 +363,7 @@
                         v-if="track.muestraTrk === 1"
                       />
                       <i class="fa fa-square-o" v-else />
-                      ¿El track tiene una pista de muestra?
+                      ¿El Track tiene una pista de muestra?
                     </a-form-model-item>
                   </a-col>
                   <a-col span="11" style="float: right">
@@ -433,7 +433,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Estados de ánimo del track"
+                      label="Estados de ánimo del Track"
                       prop="moodTrk"
                     >
                       <a-select
@@ -452,7 +452,7 @@
                       </a-select>
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Estados de ánimo del track"
+                      label="Estados de ánimo del Track"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions readonly :placeholder="track_modal.moodTrk">
@@ -691,10 +691,9 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
+    console.log(this.tabs_list.indexOf("tab_1"));
     if (this.action_modal === "crear" || this.action_modal === "crear_track") {
-      console.log(this.tracks_list);
       this.codigo = this.generar_codigo(this.tracks_list);
-      console.log(this.codigo);
     }
     if (
       this.action_modal === "detalles" ||
@@ -806,7 +805,7 @@ export default {
             this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha modificado el track correctamente",
+              "Se ha modificado el Track correctamente",
               "¡Éxito!",
               { timeout: 1000 }
             );
@@ -950,6 +949,10 @@ export default {
       return form_data;
     },
     set_action() {
+      if (this.track.fonogramas_tracks || this.track.tabla) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+      }
       if (this.action === "editar") {
         if (this.track.deleted_at !== null) {
           this.disabled = true;
@@ -991,11 +994,12 @@ export default {
           this.track_modal.moodTrk = this.track_modal.moodTrk.split(" ");
         } else delete this.track_modal.moodTrk;
       } else {
+        this.track_modal = { ...this.track };
         this.text_button = "Crear";
         this.text_header_button = "Crear";
-        this.action_cancel_title = "¿Desea cancelar la creación del track?";
-        this.action_title = "¿Desea crear el track?";
-        this.action_close = "La creación del track se canceló correctamente";
+        this.action_cancel_title = "¿Desea cancelar la creación del Track?";
+        this.action_title = "¿Desea crear el Track?";
+        this.action_close = "La creación del Track se canceló correctamente";
       }
     },
     load_nomenclators() {

@@ -2,81 +2,79 @@
   <div id="tabla_productos">
     <!-- Inicio Sección de Tabla de datos -->
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      :dataSource="products_list"
-      locale="es-ES"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowSelection="false"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigProd"
-          headerText="Código"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          field="tituloProd"
-          headerText="Título"
-          width="110"
-          textAlign="Left"
-        />
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        :dataSource="products_list"
+        locale="es-ES"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowSelection="false"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :queryCellInfo="customise_cell"
+        :allowExcelExport="true"
+        :allowPdfExport="true"
+      >
+        <e-columns>
+          <e-column
+            field="codigProd"
+            headerText="Código"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="tituloProd"
+            headerText="Título"
+            width="110"
+            textAlign="Left"
+          />
 
-        <e-column
-          field="añoProd"
-          headerText="Año"
-          width="95"
-          textAlign="Left"
-        />
-        <e-column
-          field="estadodigProd"
-          headerText="Estado de Digitalización"
-          width="145"
-          textAlign="Left"
-        />
-        <e-column
-          field="statusComProd"
-          headerText="Estatus Comercial"
-          width="125"
-          textAlign="Left"
-        />
-        <e-column
-          field="genMusicPro"
-          headerText="Género Musical"
-          width="114"
-          textAlign="Left"
-        />
-        <e-column
-          headerText="Estado"
-          :template="status_template"
-          width="115"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="140"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+          <e-column
+            field="añoProd"
+            headerText="Año"
+            width="95"
+            textAlign="Left"
+          />
+          <e-column
+            field="estadodigProd"
+            headerText="Estado de Digitalización"
+            width="145"
+            textAlign="Left"
+          />
+          <e-column
+            field="statusComProd"
+            headerText="Estatus Comercial"
+            width="125"
+            textAlign="Left"
+          />
+          <e-column
+            field="genMusicPro"
+            headerText="Género Musical"
+            width="114"
+            textAlign="Left"
+          />
+          <e-column
+            headerText="Estado"
+            :template="status"
+            width="115"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="140"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
@@ -190,17 +188,9 @@ L10n.load({
   },
 });
 setCulture("es-ES");
-/*
- *  Código para configurar el tema del gráfico
- */
-let selected_theme = location.hash.split("/")[1];
-selected_theme = selected_theme ? selected_theme : "Material";
-let theme = (
-  selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
-).replace(/-dark/i, "Dark");
 export default {
   name: "Proyecto_Index",
-  props: ["proyecto", "vista_editar"],
+  props: ["proyecto", "vista_editar", "detalles_prop"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -210,46 +200,28 @@ export default {
         pageSize: 10,
       },
       filter_settings: { type: "Menu" },
-      commands: [
-        {
-          type: "Detalles",
-          buttonOption: {
-            iconCss: "e-icons e-eye-icon",
-            click: this.detail_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-        {
-          type: "Editar",
-          buttonOption: {
-            iconCss: "e-icons e-edit-icon",
-            click: this.edit_btn_click,
-            cssClass: "e-commands-custom",
-          },
-        },
-      ],
-      toolbar: [
-        {
-          text: "Añadir Producto",
-          click: this.add_btn_click,
-          tooltipText: "Añadir Producto",
-          prefixIcon: "e-add-icon",
-          id: "add",
-        },
-        "Search",
-      ],
+      toolbar: this.detalles_prop
+        ? ["Search"]
+        : [
+            {
+              text: "Añadir Producto",
+              tooltipText: "Añadir Producto",
+              prefixIcon: "e-add-icon",
+              id: "add",
+            },
+            "Search",
+          ],
       status_template: () => {
         return {
           template: Vue.component("columnTemplate", {
             template: `
               <div>
                 <a-popconfirm
+                    :disabled="$parent.$parent.$parent.detalles"
                     :placement="position"
                     @confirm="confirm_change_status"
 										ok-text="Si"
 										cancel-text="No"
-										:visible="visible_pop"
-										@visibleChange="handle_visible_pop_change"
 								>
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
@@ -257,14 +229,14 @@ export default {
                       <p>¿Desea {{ action }} el Producto?</p>
                     </template>
                     <a-tooltip :title="project.deleted_at ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
-                      <a-switch :disabled="project.deleted_at" style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :disabled="project.deleted_at || $parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -371,7 +343,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -392,7 +364,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -457,7 +429,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -478,7 +450,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -494,7 +466,7 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_products();
+                  this.$parent.$parent.$parent.load_products();
                   this.checked = !this.checked;
                   this.$toast.success(
                     `El Producto se ${action} correctamente`,
@@ -523,25 +495,12 @@ export default {
 							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 <a-tooltip title="Editar" placement="bottom">
-                <a-button size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                <a-button v-if="!$parent.$parent.$parent.detalles" size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
-                <a-popconfirm
-                    placement="leftBottom"
-                    @confirm="del_physical_btn_click"
-										ok-text="Si"
-                    cancel-text="No"
-                    title="¿Desea eliminar el Producto?"
-                >
-                <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
-                <a-tooltip title="Eliminar" placement="bottom">
-                <a-button v-if="visible_pop" size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
-                </a-tooltip>
-                </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
-                visible_pop: false,
               };
             },
             methods: {
@@ -549,127 +508,53 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null)
-                  this.$parent.$parent.action_management = "detalles";
-                this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-                this.$parent.$parent.row_selected.modal_detalles = true;
+                this.$parent.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected.tabla = true;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
-              },
-              /*
-               * Método con la lógica del botón borrado físico
-               */
-              del_physical_btn_click(args) {
-                this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    zindex: 999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar el Producto?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    axios
-                                      .delete(
-                                        `productos/eliminar/${this.data.id}`
-                                      )
-                                      .then((ress) => {
-                                        this.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El producto ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 1000, color: "red" }
-                                        );
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 1000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
-                              ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
-                    ],
-                  }
-                );
               },
             },
           }),
         };
       },
+      status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function() {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
+      status: "",
+      spinning: false,
+      detalles: this.detalles_prop,
       export_view: false, //* Vista del panel de exportaciones
       products_list: [], //* Lista de productos que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | producto seleccionado
@@ -680,6 +565,9 @@ export default {
     };
   },
   created() {
+    this.status = this.detalles_prop
+      ? this.status_child_template
+      : this.status_template;
     this.load_products();
   },
   methods: {
@@ -696,6 +584,7 @@ export default {
      */
     load_products() {
       this.$emit("reload");
+      this.spinning = true;
       if (this.vista_editar) {
         axios
           .post("/productos/listar", {
@@ -704,6 +593,7 @@ export default {
           })
           .then((response) => {
             this.products_list = response.data;
+            this.spinning = false;
           });
         axios
           .post("/productos/listar", { relations: ["proyecto"] })
@@ -726,107 +616,10 @@ export default {
         this.action_management = "crear";
         this.visible_management = true;
         this.row_selected = {
-          modal_detalles: true,
+          tabla: true,
           proyecto_id: this.proyecto.id,
         };
       }
-    },
-    /*
-     * Método con la lógica del botón borrado físico
-     */
-    del_physical_btn_click(args) {
-      let target = args.target;
-      if (target.classList.contains("e-delete-physical-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.$toast.question(
-        "¿Seguro, esta acción es irrevercible, eliminará de forma definitiva este producto del sistema?",
-        "Confirmar",
-        {
-          timeout: 5000,
-          close: false,
-          overlay: true,
-          displayMode: "once",
-          id: "question",
-          zindex: 999999999,
-          title: "Hey",
-          position: "center",
-          buttons: [
-            [
-              "<button><b>YES</b></button>",
-              (instance, toast) => {
-                axios
-                  .delete(`productos/eliminar/${row_obj.data.id}`)
-                  .then((ress) => {
-                    this.refresh_table();
-                    this.$emit("reload");
-                    this.$toast.success(
-                      "El producto ha sido eliminado correctamente",
-                      "¡Éxito!",
-                      { timeout: 1000 }
-                    );
-                  })
-                  .catch((err) => {
-                    this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                      timeout: 1000,
-                    });
-                  });
-                instance.hide({ transitionOut: "fadeOut" }, toast, "button");
-              },
-              true,
-            ],
-            [
-              "<button>NO</button>",
-              function (instance, toast) {
-                instance.hide({ transitionOut: "fadeOut" }, toast, "button");
-              },
-            ],
-          ],
-        }
-      );
-    },
-    /*
-     * Método con la lógica del botón detalles
-     */
-    detail_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-eye-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-    },
-    /*
-     * Método con la lógica del botón editar
-     */
-    edit_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-edit-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      this.row_selected.modal_detalles = true;
-      if (this.row_selected.deleted_at == null) {
-        this.action_management = "editar";
-        this.visible_management = true;
-      }
-    },
-    add_btn_click(args) {
-      this.proyecto_id = this.proyecto.codigProy;
     },
   },
   components: {
@@ -907,7 +700,8 @@ export default {
 #tabla_productos .ant-switch-inner {
   width: auto !important;
 }
-#tabla_productos span {
-  display: initial !important;
+#tabla_productos .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+.e-badge.e-badge-success[href]:not(.e-badge-ghost) {
+  color: white !important;
 }
 </style>

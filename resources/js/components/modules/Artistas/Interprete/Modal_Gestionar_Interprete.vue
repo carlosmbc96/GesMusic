@@ -139,8 +139,8 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Reseña biográfica del Interprete"
-                    prop="biogInterp"
+                    label="Reseña biográfica del Intérprete"
+                    prop="reseñaBiogInterp"
                   >
                     <a-input
                       :disabled="disabled"
@@ -235,21 +235,26 @@ export default {
         nombreInterp: [
           {
             required: true,
-            message: "Inserte el nombre",
+            message: "Campo requerido",
             trigger: "change",
           },
           {
             whitespace: true,
-            message: "Inserte el nombre",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
-            pattern: "^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
+            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
             message: "Caracter no válido",
             trigger: "change",
           },
         ],
-        biogInterp: [
+        reseñaBiogInterp: [
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
           {
             pattern: "^[ a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()]*$",
             message: "Caracter no válido",
@@ -278,7 +283,6 @@ export default {
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
-        this.$emit("actualizar");
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
             timeout: 1000,
@@ -315,8 +319,8 @@ export default {
         this.action_title = "¿Desea guardar los cambios en el Intérprete?";
         this.action_close =
           "La edición del Intérprete se canceló correctamente";
-        this.interp.codigInterp = this.interp.codigInterp.substr(5);
         this.interp_modal = { ...this.interp };
+        this.interp_modal.codigInterp = this.interp.codigInterp.substr(5);
       } else if (this.action_modal === "detalles") {
         if (this.interp.deleted_at !== null) {
           this.disabled = true;

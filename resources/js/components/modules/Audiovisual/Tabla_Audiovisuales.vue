@@ -65,7 +65,7 @@
           <e-column
             headerText="Estado"
             width="118"
-            :template="status_template"
+            :template="status"
             :visible="true"
             textAlign="Center"
           />
@@ -215,6 +215,30 @@ export default {
             },
             "Search",
           ],
+      status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function() {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
       status_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -233,14 +257,14 @@ export default {
                       <p>¿Desea {{ action }} el Audiovisual?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch :disabled="$parent.$parent.$parent.detalles" style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -275,7 +299,7 @@ export default {
                       overlay: true,
                       displayMode: "once",
                       color: "#AB7598",
-                      zindex: 99999999,
+                      zindex: 9999,
                       title: "Hey",
                       position: "center",
                       buttons: [
@@ -291,7 +315,7 @@ export default {
                                 color: "#8F4776",
                                 overlay: true,
                                 displayMode: "once",
-                                zindex: 99999999999,
+                                zindex: 99999,
                                 title: "Hey",
                                 position: "center",
                                 buttons: [
@@ -323,7 +347,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -344,7 +368,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -365,7 +389,7 @@ export default {
                       overlay: true,
                       displayMode: "once",
                       color: "#D7DE7A",
-                      zindex: 99999999,
+                      zindex: 9999,
                       title: "Hey",
                       position: "center",
                       buttons: [
@@ -381,7 +405,7 @@ export default {
                                 color: "#C9D34D",
                                 overlay: true,
                                 displayMode: "once",
-                                zindex: 999999999999,
+                                zindex: 99999,
                                 title: "Hey",
                                 position: "center",
                                 buttons: [
@@ -410,7 +434,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -431,7 +455,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -478,20 +502,8 @@ export default {
                 <a-tooltip title="Editar" placement="bottom">
                 <a-button v-if="!$parent.$parent.$parent.detalles"size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
-                <a-popconfirm
-                    placement="leftBottom"
-                    @confirm="del_physical_btn_click"
-										ok-text="Si"
-                    cancel-text="No"
-                    title="¿Desea eliminar el Audiovisual?"
-                >
-                <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
-                <a-tooltip title="Eliminar" placement="bottom">
-                <a-button v-if="false" size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="delete" theme="filled" style="color: black; font-size: 20px;" /></a-icon></a-button>
-                </a-tooltip>
-                </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -517,113 +529,13 @@ export default {
                   this.$parent.$parent.$parent.visible_management = true;
                 }
               },
-              /*
-               * Método con la lógica del botón borrado físico
-               */
-              del_physical_btn_click(args) {
-                this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    zindex: 9999999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar el Audiovisual?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999999999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    axios
-                                      .delete(
-                                        `audiovisuales/eliminar/${this.data.id}`
-                                      )
-                                      .then((ress) => {
-                                        this.$parent.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El Audiovisual ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 1000, color: "red" }
-                                        );
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 1000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
-                              ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
-                    ],
-                  }
-                );
-              },
             },
           }),
         };
       },
       export_view: false, //* Vista del panel de exportaciones
       spinning: false,
+      status: "",
       detalles: this.detalles_prop,
       audiovisuals_list: [], //* Lista de Audiovisuales que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | Audiovisual seleccionado
@@ -634,6 +546,9 @@ export default {
     };
   },
   created() {
+    this.status = this.detalles_prop
+      ? this.status_child_template
+      : this.status_template;
     this.load_audiovisuals();
   },
   methods: {
@@ -774,7 +689,8 @@ export default {
 #tabla_audiovisuales .ant-switch-inner {
   width: auto !important;
 }
-#tabla_audiovisuales span {
-  display: initial !important;
+#tabla_audiovisuales .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+.e-badge.e-badge-success[href]:not(.e-badge-ghost) {
+  color: white !important;
 }
 </style>

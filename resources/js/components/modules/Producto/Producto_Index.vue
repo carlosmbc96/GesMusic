@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
+        <span><a-icon class="e-icon-export" type="export"/></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -86,80 +86,82 @@
     </div>
     <div class="clearfix"></div>
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      locale="es-ES"
-      :dataSource="products_list"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigProd"
-          headerText="Código"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          field="tituloProd"
-          headerText="Título"
-          width="110"
-          textAlign="Left"
-        />
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        locale="es-ES"
+        :dataSource="products_list"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :pdfExportComplete="pdf_export_complete"
+        :excelExportComplete="excel_export_complete"
+        :queryCellInfo="customise_cell"
+        :pdfQueryCellInfo="pdf_customise_cell"
+        :excelQueryCellInfo="excel_customise_cell"
+        :allowExcelExport="true"
+        :allowPdfExport="true"
+      >
+        <e-columns>
+          <e-column
+            field="codigProd"
+            headerText="Código"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="tituloProd"
+            headerText="Título"
+            width="110"
+            textAlign="Left"
+          />
 
-        <e-column
-          field="añoProd"
-          headerText="Año"
-          width="95"
-          textAlign="Left"
-        />
-        <e-column
-          field="estadodigProd"
-          headerText="Estado de Digitalización"
-          width="145"
-          textAlign="Left"
-        />
-        <e-column
-          field="statusComProd"
-          headerText="Estatus Comercial"
-          width="125"
-          textAlign="Left"
-        />
-        <e-column
-          field="genMusicPro"
-          headerText="Género Musical"
-          width="114"
-          textAlign="Left"
-        />
-        <e-column
-          headerText="Estado"
-          :template="status_template"
-          width="115"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="155"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+          <e-column
+            field="añoProd"
+            headerText="Año"
+            width="95"
+            textAlign="Left"
+          />
+          <e-column
+            field="estadodigProd"
+            headerText="Estado de Digitalización"
+            width="145"
+            textAlign="Left"
+          />
+          <e-column
+            field="statusComProd"
+            headerText="Estatus Comercial"
+            width="125"
+            textAlign="Left"
+          />
+          <e-column
+            field="genMusicPro"
+            headerText="Género Musical"
+            width="114"
+            textAlign="Left"
+          />
+          <e-column
+            headerText="Estado"
+            :template="status_template"
+            width="115"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="155"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
@@ -171,6 +173,7 @@
       @close_modal="visible_management = $event"
       :products_list="products_list"
     />
+    <help v-if="show_help" :content="content"></help>
     <!-- Fin Sección de Modals -->
   </div>
 </template>
@@ -182,6 +185,7 @@
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
 import modal_management from "./Modal_Gestionar_Producto";
+import help from "../Help";
 import {
   GridPlugin,
   Edit,
@@ -329,7 +333,7 @@ export default {
           size: "16px",
           fontWeight: "bold",
         },
-        interval: 10,
+        interval: 5,
         majorGridLines: { width: 0 },
         majorTickLines: { width: 1, color: "white" },
         lineStyle: { color: "white" },
@@ -347,30 +351,6 @@ export default {
         },
         "Search",
       ],
-      status_child_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 70%!important" class="e-badge" :class="class_badge">{{ status }}</span>
-                </div>`,
-            data: function () {
-              return {
-                data: {},
-              };
-            },
-            computed: {
-              status() {
-                return this.data.deleted_at == null ? "Activo" : "Inactivo";
-              },
-              class_badge() {
-                return this.data.deleted_at == null
-                  ? "e-badge-success"
-                  : "e-badge-warning";
-              },
-            },
-          }),
-        };
-      },
       actions_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -395,7 +375,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -405,19 +385,19 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null)
-                  this.$parent.$parent.action_management = "detalles";
-                this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
               },
               /*
@@ -456,17 +436,19 @@ export default {
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
+                                    this.$parent.$parent.$parent.change_spin();
                                     axios
                                       .delete(
                                         `productos/eliminar/${this.data.id}`
                                       )
                                       .then((ress) => {
-                                        this.$parent.$parent.refresh_table();
+                                        this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
                                           "El producto ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
+                                        this.$parent.$parent.$parent.change_spin();
                                       })
                                       .catch((err) => {
                                         this.$toast.error(
@@ -487,7 +469,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -508,7 +490,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -543,14 +525,14 @@ export default {
                       <p>¿Desea {{ action }} el Producto?</p>
                     </template>
                     <a-tooltip :title="data.proyecto === null ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
-                      <a-switch :disabled="data.proyecto === null" style="width: 100%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :disabled="data.proyecto === null" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -637,7 +619,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -658,7 +640,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -723,7 +705,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -744,7 +726,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -760,7 +742,7 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_products();
+                  this.$parent.$parent.$parent.load_products();
                   this.checked = !this.checked;
                   this.$toast.success(
                     `El Producto se ${action} correctamente`,
@@ -780,6 +762,9 @@ export default {
           }),
         };
       },
+      spinning: false,
+      show_help: false,
+      content: "",
       export_view: false, //* Vista del panel de exportaciones
       products_list: [], //* Lista de productos que es cargada en la
       row_selected: {}, //* Fila de la tabla seleccionada | producto seleccionado
@@ -837,6 +822,16 @@ export default {
      * Método que carga los productos de la bd
      */
     load_products() {
+      if (this.action_management !== "detalles") {
+        this.change_spin();
+      }
+      axios.post("/proyectos/listar").then((response) => {
+        if (response.data.length === 0) {
+          this.content =
+            "No se puede gestionar Productos sin Proyectos existentes, vaya al módulo de Proyectos y cree al menos un Proyecto!";
+          this.show_help = true;
+        }
+      });
       axios
         .post("/productos/listar", { relations: ["proyecto"] })
         .then((response) => {
@@ -858,7 +853,16 @@ export default {
           this.series_data.sort((x, y) => {
             return x.years - y.years;
           });
+          if (this.action_management !== "detalles") {
+            this.change_spin();
+          }
         });
+    },
+    /*
+     * Método que activa y desactiva el spin
+     */
+    change_spin() {
+      this.spinning = !this.spinning;
     },
     /*
      * Método de configuración del gráfico
@@ -1061,6 +1065,7 @@ export default {
   },
   components: {
     modal_management,
+    help,
   },
   provide: {
     grid: [

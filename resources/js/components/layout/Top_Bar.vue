@@ -26,9 +26,7 @@
         data-toggle="collapse"
         data-target=".navbar-collapse"
       >
-      <img
-            src="../../../../public/assets/images/sidebar-toggler.png"
-          />
+        <img src="../../../../public/assets/images/sidebar-toggler.png" />
         <!-- <span></span> -->
       </a>
       <!-- BEGIN PAGE TOP -->
@@ -112,6 +110,6 @@ export default {
   background-color: rgba(255, 255, 255, 0.4) !important;
 }
 .page-header.navbar .menu-toggler {
-    opacity: 1 !important;
+  opacity: 1 !important;
 }
 </style>

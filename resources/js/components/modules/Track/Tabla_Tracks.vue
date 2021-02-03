@@ -1,12 +1,12 @@
 <template>
-  <div id="tabla_fonogramas">
+  <div id="tabla_tracks">
     <!-- Inicio Sección de Tabla de datos -->
     <!-- Tabla -->
     <a-spin :spinning="spinning">
       <ejs-grid
         id="datatable"
         ref="gridObj"
-        :dataSource="fonograms_list"
+        :dataSource="tracks_list"
         locale="es-ES"
         :toolbar="toolbar"
         :toolbarClick="click_toolbar"
@@ -21,39 +21,59 @@
       >
         <e-columns>
           <e-column
-            field="codigFong"
-            headerText="Código"
-            width="110"
+            field="ordenTrk"
+            headerText="Orden"
+            width="100"
             textAlign="Left"
           />
           <e-column
-            field="tituloFong"
+            field="isrcTrk"
+            headerText="ISRC"
+            width="105"
+            textAlign="Left"
+          />
+          <e-column
+            field="tituloTrk"
             headerText="Título"
-            width="150"
+            width="98"
             textAlign="Left"
           />
           <e-column
-            field="añoFong"
-            headerText="Año"
-            width="110"
+            field="duracionTrk"
+            headerText="Duración"
+            width="120"
             textAlign="Left"
           />
           <e-column
-            field="clasficacionFong"
-            headerText="Clasificación"
-            width="150"
+            field="generoTrk"
+            headerText="Género"
+            width="105"
             textAlign="Left"
+          />
+          <e-column
+            field="subgeneroTrk"
+            headerText="Subgénero"
+            width="123"
+            textAlign="Left"
+          />
+          <e-column
+            :displayAsCheckBox="true"
+            field="bonusTrk"
+            headerText="Bonus"
+            width="100"
+            textAlign="Center"
+            type="boolean"
           />
           <e-column
             headerText="Estado"
-            width="120"
+            width="115"
             :template="status"
             :visible="true"
             textAlign="Center"
           />
           <e-column
             headerText="Acciones"
-            width="140"
+            width="160"
             :template="actions_template"
             :visible="true"
             textAlign="Center"
@@ -68,9 +88,9 @@
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :fonogram="row_selected"
+      :track="row_selected"
       @close_modal="visible_management = $event"
-      :fonograms_list="all_fonogramas"
+      :tracks_list="all_tracks"
     />
     <!-- Fin Sección de Modals -->
   </div>
@@ -82,7 +102,7 @@
  */
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
-import modal_management from "./Modal_Gestionar_Fonograma";
+import modal_management from "./Modal_Gestionar_Track";
 import {
   GridPlugin,
   Edit,
@@ -175,8 +195,8 @@ L10n.load({
 });
 setCulture("es-ES");
 export default {
-  name: "tabla_fonogramas",
-  props: ["producto", "vista_editar", "detalles_prop"],
+  name: "tabla_tracks",
+  props: ["fonograma", "vista_editar", "detalles_prop"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -190,8 +210,8 @@ export default {
         ? ["Search"]
         : [
             {
-              text: "Añadir Fonograma",
-              tooltipText: "Añadir Fonograma",
+              text: "Añadir Track",
+              tooltipText: "Añadir Track",
               prefixIcon: "e-add-icon",
               id: "add",
             },
@@ -212,7 +232,7 @@ export default {
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p>¿Desea {{ action }} el Fonograma?</p>
+                      <p>¿Desea {{ action }} el Track?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
                       <a-switch :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
@@ -222,7 +242,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -249,7 +269,7 @@ export default {
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Fonograma?",
+                    "¿Esta acción inactivará el Track?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -265,7 +285,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea inactivar el Fonograma?",
+                              "¿Desea inactivar el Track?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -283,8 +303,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "fonogramas/desactivar/" +
-                                            this.data.id
+                                          "tracks/desactivar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -305,7 +324,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -326,7 +345,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -339,7 +358,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará el Fonograma?",
+                    "¿Esta acción ativará el Track?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -355,7 +374,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea activar el Fonograma?",
+                              "¿Desea activar el Track?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -372,9 +391,7 @@ export default {
                                     (instance, toast) => {
                                       this.loading = true;
                                       axios
-                                        .get(
-                                          "fonogramas/restaurar/" + this.data.id
-                                        )
+                                        .get("tracks/restaurar/" + this.data.id)
                                         .catch((errors) => {
                                           error = true;
                                         })
@@ -391,7 +408,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -412,7 +429,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -428,10 +445,10 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.$parent.load_fonograms();
+                  this.$parent.$parent.$parent.load_tracks();
                   this.checked = !this.checked;
                   this.$toast.success(
-                    `El Fonograma se ${action} correctamente`,
+                    `El Track se ${action} correctamente`,
                     "¡Éxito!",
                     {
                       timeout: 1000,
@@ -464,7 +481,7 @@ export default {
                     @confirm="del_physical_btn_click"
 										ok-text="Si"
                     cancel-text="No"
-                    title="¿Desea eliminar el Fonograma?"
+                    title="¿Desea eliminar el Track?"
                 >
                 <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
                 <a-tooltip title="Eliminar" placement="bottom">
@@ -472,7 +489,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -519,7 +536,7 @@ export default {
                         "<button>Si</button>",
                         (instance, toast) => {
                           this.$toast.question(
-                            "¿Desea eliminar el Fonograma?",
+                            "¿Desea eliminar el Track?",
                             "Confirmación",
                             {
                               timeout: 5000,
@@ -535,13 +552,11 @@ export default {
                                   "<button>Si</button>",
                                   (instance, toast) => {
                                     axios
-                                      .delete(
-                                        `fonogramas/eliminar/${this.data.id}`
-                                      )
+                                      .delete(`tracks/eliminar/${this.data.id}`)
                                       .then((ress) => {
                                         this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
-                                          "El Fonograma ha sido eliminado correctamente",
+                                          "El Track ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
@@ -566,7 +581,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -587,7 +602,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -609,7 +624,7 @@ export default {
             template: `<div>
                 <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
-            data: function () {
+            data: function() {
               return {
                 data: {},
               };
@@ -629,11 +644,11 @@ export default {
       },
       status: "",
       export_view: false, //* Vista del panel de exportaciones
-      fonograms_list: [], //* Lista de fonogramas que es cargada en la tabla
+      tracks_list: [], //* Lista de tracks que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | fonograma seleccionado
       visible_details: false, //* variable para visualizar el modal de detalles del fonograma
       visible_management: false, //* variable para visualizar el modal de gestión del fonograma
-      all_fonogramas: [],
+      all_tracks: [],
       spinning: false,
       detalles: this.detalles_prop,
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
@@ -643,7 +658,7 @@ export default {
     this.status = this.detalles_prop
       ? this.status_child_template
       : this.status_template;
-    this.load_fonograms();
+    this.load_tracks();
   },
   methods: {
     /*
@@ -657,30 +672,30 @@ export default {
     /*
      * Método que carga los productos de la bd
      */
-    load_fonograms() {
+    load_tracks() {
       this.spinning = true;
       this.$emit("reload");
       if (this.vista_editar) {
         axios
-          .post("/fonogramas/listar", { relations: ["productos"] })
+          .post("/tracks/listar", { relations: ["fonogramas"] })
           .then((response) => {
-            this.fonograms_list = [];
+            this.tracks_list = [];
             let pertenece = false;
-            response.data.forEach((fonograma) => {
-              fonograma.productos.forEach((producto) => {
-                if (producto.id === this.producto.id) {
+            response.data.forEach((track) => {
+              track.fonogramas.forEach((fonograma) => {
+                if (fonograma.id === this.fonograma.id) {
                   pertenece = true;
                 }
               });
               if (pertenece) {
-                this.fonograms_list.push(fonograma);
+                this.tracks_list.push(track);
               }
               pertenece = false;
             });
             this.spinning = false;
           });
-        axios.post("/fonogramas/listar").then((response) => {
-          this.all_fonogramas = response.data;
+        axios.post("/tracks/listar").then((response) => {
+          this.all_tracks = response.data;
         });
       }
     },
@@ -688,8 +703,8 @@ export default {
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.fonograms_list = null;
-      this.load_fonograms();
+      this.tracks_list = null;
+      this.load_tracks();
     },
     /*
      * Método con la lógica de crear
@@ -700,7 +715,7 @@ export default {
         this.visible_management = true;
         this.row_selected = {
           modal_detalles: true,
-          productos_fongs: this.producto.id,
+          fonogramas_tracks: this.fonograma.id,
         };
       }
     },
@@ -729,61 +744,61 @@ export default {
 </script>
 
 <style>
-#tabla_fonogramas .e-headercontent,
-#tabla_fonogramas .e-sortfilter,
-#tabla_fonogramas thead,
-#tabla_fonogramas tr,
-#tabla_fonogramas td,
-#tabla_fonogramas th,
-#tabla_fonogramas .e-pagercontainer,
-#tabla_fonogramas .e-pagerdropdown,
-#tabla_fonogramas .e-first,
-#tabla_fonogramas .e-prev,
-#tabla_fonogramas .e-numericcontainer,
-#tabla_fonogramas .e-next,
-#tabla_fonogramas .e-last,
-#tabla_fonogramas .e-table,
-#tabla_fonogramas .e-input-group,
-#tabla_fonogramas .e-content,
-#tabla_fonogramas .e-toolbar-items,
-#tabla_fonogramas .e-tbar-btn,
-#tabla_fonogramas .e-toolbar-item,
-#tabla_fonogramas .e-gridheader,
-#tabla_fonogramas .e-gridcontent,
-#tabla_fonogramas .e-gridpager,
-#tabla_fonogramas .e-toolbar {
+#tabla_tracks .e-headercontent,
+#tabla_tracks .e-sortfilter,
+#tabla_tracks thead,
+#tabla_tracks tr,
+#tabla_tracks td,
+#tabla_tracks th,
+#tabla_tracks .e-pagercontainer,
+#tabla_tracks .e-pagerdropdown,
+#tabla_tracks .e-first,
+#tabla_tracks .e-prev,
+#tabla_tracks .e-numericcontainer,
+#tabla_tracks .e-next,
+#tabla_tracks .e-last,
+#tabla_tracks .e-table,
+#tabla_tracks .e-input-group,
+#tabla_tracks .e-content,
+#tabla_tracks .e-toolbar-items,
+#tabla_tracks .e-tbar-btn,
+#tabla_tracks .e-toolbar-item,
+#tabla_tracks .e-gridheader,
+#tabla_tracks .e-gridcontent,
+#tabla_tracks .e-gridpager,
+#tabla_tracks .e-toolbar {
   background-color: transparent !important;
 }
-#tabla_fonogramas .e-grid {
+#tabla_tracks .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-#tabla_fonogramas .e-grid {
+#tabla_tracks .e-grid {
   border-radius: 5px !important;
 }
-#tabla_fonogramas .e-gridheader {
+#tabla_tracks .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-#tabla_fonogramas td {
+#tabla_tracks td {
   border-color: lightgrey !important;
 }
-#tabla_fonogramas .e-grid,
-#tabla_fonogramas .e-toolbar,
-#tabla_fonogramas .e-grid .e-headercontent {
+#tabla_tracks .e-grid,
+#tabla_tracks .e-toolbar,
+#tabla_tracks .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-#tabla_fonogramas .e-row:hover {
+#tabla_tracks .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-#tabla_fonogramas thead span,
-#tabla_fonogramas .e-icon-filter {
+#tabla_tracks thead span,
+#tabla_tracks .e-icon-filter {
   color: rgb(115, 25, 84) !important;
   font-weight: bold !important;
 }
-#tabla_fonogramas .ant-switch-inner {
+#tabla_tracks .ant-switch-inner {
   width: auto !important;
 }
-#tabla_fonogramas .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+#tabla_tracks .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
 .e-badge.e-badge-success[href]:not(.e-badge-ghost) {
   color: white !important;
 }

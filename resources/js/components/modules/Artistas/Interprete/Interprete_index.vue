@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
+        <span><a-icon class="e-icon-export" type="export"/></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -86,56 +86,59 @@
     </div>
     <div class="clearfix"></div>
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      locale="es-ES"
-      :dataSource="interpretes_list"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigInterp"
-          headerText="Código"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          field="nombreInterp"
-          headerText="Nombre"
-          width="110"
-          textAlign="Left"
-        />
-        <e-column
-          headerText="Estado"
-          width="145"
-          :template="status_template"
-          :visible="true"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="146"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        locale="es-ES"
+        :childGrid="artisticos_childs"
+        :dataSource="interpretes_list"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :pdfExportComplete="pdf_export_complete"
+        :excelExportComplete="excel_export_complete"
+        :queryCellInfo="customise_cell"
+        :pdfQueryCellInfo="pdf_customise_cell"
+        :excelQueryCellInfo="excel_customise_cell"
+        :allowExcelExport="true"
+        :allowPdfExport="true"
+      >
+        <e-columns>
+          <e-column
+            field="codigInterp"
+            headerText="Código"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            field="nombreInterp"
+            headerText="Nombre"
+            width="110"
+            textAlign="Left"
+          />
+          <e-column
+            headerText="Estado"
+            width="145"
+            :template="status_template"
+            :visible="true"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="146"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
@@ -275,7 +278,7 @@ export default {
       },
       tooltip: {
         enable: true,
-        header: "Intérpretes por estado",
+        header: "Intérpretes por Estado",
         format: "${point.x} : ${point.y} Interprétes",
         fill: "rgba(115, 25, 84, 0.9)",
         border: { width: 0 },
@@ -305,7 +308,7 @@ export default {
           size: "16px",
           fontWeight: "bold",
         },
-        interval: 10,
+        interval: 5,
         majorGridLines: { width: 0 },
         majorTickLines: { width: 1, color: "white" },
         lineStyle: { color: "white" },
@@ -340,14 +343,14 @@ export default {
                       <p>¿Desea {{ action }} al Intérprete?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 30%!important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -408,7 +411,8 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "interpretes/desactivar/" + this.data.id
+                                          "interpretes/desactivar/" +
+                                            this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -429,7 +433,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -450,7 +454,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -497,7 +501,8 @@ export default {
                                       this.loading = true;
                                       axios
                                         .get(
-                                          "interpretes/restaurar/" + this.data.id
+                                          "interpretes/restaurar/" +
+                                            this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -515,7 +520,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -536,7 +541,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -552,7 +557,7 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_interpretes();
+                  this.$parent.$parent.$parent.load_interpretes();
                   this.checked = !this.checked;
                   this.$toast.success(
                     `El Intérprete se ${action} correctamente`,
@@ -576,9 +581,9 @@ export default {
         return {
           template: Vue.component("columnTemplate", {
             template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
+                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
-            data: function () {
+            data: function() {
               return {
                 data: {},
               };
@@ -620,7 +625,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -630,19 +635,19 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-								if (this.data.deleted_at === null)
-									this.$parent.$parent.action_management = "detalles";
-									this.$parent.$parent.visible_management = true;
+                this.$parent.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null)
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
               },
               /*
@@ -665,61 +670,67 @@ export default {
                       [
                         "<button>Si</button>",
                         (instance, toast) => {
-                          this.$toast.question("¿Desea eliminar al Intérprete?", "Confirmación", {
-                            timeout: 5000,
-                            close: false,
-                            color: "#F58983",
-                            overlay: true,
-                            displayMode: "once",
-                            zindex: 9999,
-                            title: "Hey",
-                            position: "center",
-                            buttons: [
-                              [
-                                "<button>Si</button>",
-                                (instance, toast) => {
-                                  axios
-                                    .delete(
-                                      `interpretes/eliminar/${this.data.id}`
-                                    )
-                                    .then((ress) => {
-                                      this.$parent.$parent.refresh_table();
-                                      this.$toast.success(
-                                        "El Intérprete ha sido eliminado correctamente",
-                                        "¡Éxito!",
-                                        { timeout: 1000, color: "red" }
-                                      );
-                                    })
-                                    .catch((err) => {
-                                      console.log(err);
-                                      this.$toast.error(
-                                        "Ha ocurrido un error",
-                                        "¡Error!",
-                                        {
-                                          timeout: 1000,
-                                        }
-                                      );
-                                    });
-                                  instance.hide(
-                                    { transitionOut: "fadeOut" },
-                                    toast,
-                                    "button"
-                                  );
-                                },
-                                true,
+                          this.$toast.question(
+                            "¿Desea eliminar al Intérprete?",
+                            "Confirmación",
+                            {
+                              timeout: 5000,
+                              close: false,
+                              color: "#F58983",
+                              overlay: true,
+                              displayMode: "once",
+                              zindex: 9999,
+                              title: "Hey",
+                              position: "center",
+                              buttons: [
+                                [
+                                  "<button>Si</button>",
+                                  (instance, toast) => {
+                                    this.$parent.$parent.$parent.change_spin();
+                                    axios
+                                      .delete(
+                                        `interpretes/eliminar/${this.data.id}`
+                                      )
+                                      .then((ress) => {
+                                        this.$parent.$parent.$parent.refresh_table();
+                                        this.$toast.success(
+                                          "El Intérprete ha sido eliminado correctamente",
+                                          "¡Éxito!",
+                                          { timeout: 1000, color: "red" }
+                                        );
+                                        this.$parent.$parent.$parent.change_spin();
+                                      })
+                                      .catch((err) => {
+                                        console.log(err);
+                                        this.$toast.error(
+                                          "Ha ocurrido un error",
+                                          "¡Error!",
+                                          {
+                                            timeout: 1000,
+                                          }
+                                        );
+                                      });
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                  true,
+                                ],
+                                [
+                                  "<button>No</button>",
+                                  function(instance, toast) {
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                ],
                               ],
-                              [
-                                "<button>No</button>",
-                                function (instance, toast) {
-                                  instance.hide(
-                                    { transitionOut: "fadeOut" },
-                                    toast,
-                                    "button"
-                                  );
-                                },
-                              ],
-                            ],
-                          });
+                            }
+                          );
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -730,7 +741,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -746,9 +757,10 @@ export default {
           }),
         };
       },
+      spinning: false,
       export_view: false, //* Vista del panel de exportaciones
       interpretes_list: [], //* Lista de Intérprete que es cargada en la tabla
-      /* products_childs: {}, //* Objeto de productos hijos de los Intérprete */
+      artisticos_childs: [],
       row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
       visible_details: false, //* variable para visualizar el modal de detalles del Intérprete
       visible_management: false, //* variable para visualizar el modal de gestión del Intérprete
@@ -759,6 +771,12 @@ export default {
     this.load_interpretes();
   },
   methods: {
+    /*
+     * Método que activa y desactiva el spin
+     */
+    change_spin() {
+      this.spinning = !this.spinning;
+    },
     /*
      * Método para modificar el estilo de las filas de la tabla
      */
@@ -805,8 +823,11 @@ export default {
      * Método que carga los Intérpretes de la bd
      */
     load_interpretes() {
+      if (this.action_management !== "detalles") {
+        this.change_spin();
+      }
       axios
-        .post("interpretes/listar",  { relations: ["artisticos"] } )
+        .post("interpretes/listar", { relations: ["artisticos"] })
         .then((response) => {
           this.interpretes_list = response.data;
           this.series_data = [];
@@ -826,9 +847,53 @@ export default {
             }
           });
           this.series_data.sort(function(a, b) {
-              return a.status > b.status ? 1 : -1;
+            return a.status > b.status ? 1 : -1;
           });
-					this.$refs.gridObj.refresh();
+          axios.post("/artisticos/listar").then((res) => {
+            this.artisticos_childs = {
+              dataSource: res.data,
+              queryString: "interprete_id",
+              ref: "childGrid",
+              columns: [
+                {
+                  field: "codigArts",
+                  headerText: "Código",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  field: "NombreArts",
+                  headerText: "Nombre Artístico",
+                  width: "150",
+                  textAlign: "Left",
+                },
+                {
+                  displayAsCheckBox: "true",
+                  field: "actualNombreArts",
+                  headerText: "Nombre Artístico Actual",
+                  width: "200",
+                  textAlign: "Center",
+                  type: "boolean",
+                },
+                {
+                  headerText: "Estado",
+                  template: this.status_child_template,
+                  width: "105",
+                  visible: true,
+                  textAlign: "Center",
+                },
+              ],
+              load: function() {
+                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
+                  "id"
+                ];
+              },
+            };
+            this.$refs.gridObj.refresh();
+          });
+          if (this.action_management !== "detalles") {
+            this.change_spin();
+          }
         });
     },
     /*

@@ -3,8 +3,6 @@
     <a-modal
       :closable="false"
       width="80.4%"
-      okText="Guardar"
-      cancelText="Cancelar"
       :visible="show"
       id="modal_gestionar_fonogramas"
     >
@@ -168,16 +166,18 @@
                           </div>
                         </div>
                       </a-upload>
-                      <a-upload
-                        v-if="action_modal === 'detalles'"
-                        @preview="handle_preview"
-                        :file-list="file_list"
-                        list-type="picture-card"
-                      >
-                        <div v-if="file_list.length < 1">
-                          <img />
-                        </div>
-                      </a-upload>
+                      <div class="detalles-img" v-else>
+                        <a-upload
+                          v-if="action_modal === 'detalles'"
+                          @preview="handle_preview"
+                          :file-list="file_list"
+                          list-type="picture-card"
+                        >
+                          <div v-if="file_list.length < 1">
+                            <img />
+                          </div>
+                        </a-upload>
+                      </div>
                       <br />
                       <a-modal
                         :visible="preview_visible"
@@ -187,6 +187,7 @@
                         <img style="width: 100%" :src="preview_image" />
                       </a-modal>
                       <a-form-model-item
+                        style="margin-top: -17px"
                         v-if="action_modal !== 'detalles'"
                         has-feedback
                         label="Año de creación"
@@ -305,7 +306,7 @@
                         </a-select>
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Clasificación del fonograma"
+                        label="Clasificación del Fonograma"
                         v-else
                       >
                         <a-mentions
@@ -317,7 +318,7 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="País del dueño del producto"
+                        label="País del dueño del Producto"
                         prop="propiedadFong"
                       >
                         <a-select
@@ -352,7 +353,7 @@
                 </a-col>
                 <a-col span="11" style="float: right">
                   <div class="section-title">
-                    <h4>Datos del dueño de los derechos del fonograma</h4>
+                    <h4>Datos del dueño de los derechos del Fonograma</h4>
                   </div>
                   <a-row style="margin-bottom: 30px">
                     <a-form-model-item
@@ -406,7 +407,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Territorio del fonograma"
+                      label="Territorio"
                       prop="territorioFong"
                     >
                       <a-select
@@ -426,7 +427,7 @@
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
-                    <a-form-model-item label="Territorio del fonograma" v-else>
+                    <a-form-model-item label="Territorio" v-else>
                       <a-mentions
                         readonly
                         :placeholder="fonogram_modal.territorioFong"
@@ -438,68 +439,66 @@
               </a-row>
               <div>
                 <a-row>
-                  <div class="section-title">
+                  <div class="section-title" style="width: 46%">
                     <h4>Datos Descripciones</h4>
                   </div>
                   <a-row>
-                    <a-col span="11">
-                      <a-form-model-item
-                        v-if="action_modal !== 'detalles'"
-                        has-feedback
-                        label="Descripción en español del fonograma"
-                        prop="descripEspFong"
-                      >
-                        <div class="description">
+                    <div id="desciption-problem-icon">
+                      <a-col span="11">
+                        <a-form-model-item
+                          v-if="action_modal !== 'detalles'"
+                          has-feedback
+                          label="Descripción en español del Fonograma"
+                          prop="descripEspFong"
+                        >
                           <a-input
                             :disabled="disabled"
-                            style="width: 100%; height: 100px"
+                            style="width: 100%; height: 150px"
                             v-model="fonogram_modal.descripEspFong"
                             type="textarea"
                           />
-                        </div>
-                      </a-form-model-item>
-                      <a-form-model-item
-                        label="Descripción en español del fonograma"
-                        v-else
-                      >
-                        <div class="description">
-                          <a-mentions
-                            readonly
-                            :placeholder="fonogram_modal.descripEspFong"
-                          >
-                          </a-mentions>
-                        </div>
-                      </a-form-model-item>
-                    </a-col>
-                    <a-col span="11" style="float: right">
-                      <a-form-model-item
-                        v-if="action_modal !== 'detalles'"
-                        has-feedback
-                        label="Descripción en inglés del fonograma"
-                        prop="descripIngFong"
-                      >
-                        <div class="description">
+                        </a-form-model-item>
+                        <a-form-model-item
+                          label="Descripción en español del Fonograma"
+                          v-else
+                        >
+                          <div class="description">
+                            <a-mentions
+                              readonly
+                              :placeholder="fonogram_modal.descripEspFong"
+                            >
+                            </a-mentions>
+                          </div>
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col span="11" style="float: right">
+                        <a-form-model-item
+                          v-if="action_modal !== 'detalles'"
+                          has-feedback
+                          label="Descripción en inglés del Fonograma"
+                          prop="descripIngFong"
+                        >
                           <a-input
                             :disabled="disabled"
-                            style="width: 100%; height: 100px"
+                            style="width: 100%; height: 150px"
                             v-model="fonogram_modal.descripIngFong"
                             type="textarea"
                           />
-                        </div>
-                      </a-form-model-item>
-                      <a-form-model-item
-                        label="Descripción en inglés del fonograma"
-                        v-else
-                      >
-                        <div class="description">
-                          <a-mentions
-                            readonly
-                            :placeholder="fonogram_modal.descripIngFong"
-                          >
-                          </a-mentions>
-                        </div>
-                      </a-form-model-item>
-                    </a-col>
+                        </a-form-model-item>
+                        <a-form-model-item
+                          label="Descripción en inglés del Fonograma"
+                          v-else
+                        >
+                          <div class="description">
+                            <a-mentions
+                              readonly
+                              :placeholder="fonogram_modal.descripIngFong"
+                            >
+                            </a-mentions>
+                          </div>
+                        </a-form-model-item>
+                      </a-col>
+                    </div>
                   </a-row>
                 </a-row>
               </div>
@@ -524,8 +523,22 @@
           </a-spin>
         </a-tab-pane>
         <!-- Tab 3 -->
-        <a-tab-pane key="3" :disabled="tab_3">
+        <a-tab-pane key="3" :disabled="tab_3" v-if="action_modal !== 'crear'">
           <span slot="tab"> Repertorio </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Tracks del Fonograma</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <tabla_tracks
+            :detalles_prop="detalles"
+            @reload="reload_parent"
+            :fonograma="fonogram_modal"
+            :vista_editar="vista_editar"
+            @close_modal="show = $event"
+          />
           <a-row v-if="action_modal === 'crear'">
             <a-col span="1"></a-col>
             <a-col span="20">
@@ -746,6 +759,7 @@
 </template>
 
 <script>
+import tabla_tracks from "../Track/Tabla_Tracks";
 import modal_management from "../Track/Modal_Gestionar_Track";
 export default {
   props: ["action", "fonogram", "fonograms_list"],
@@ -766,6 +780,8 @@ export default {
       } else callback();
     };
     return {
+      detalles: false,
+      vista_editar: true,
       tab_2: true,
       tab_3: true,
       tab_4: true,
@@ -844,11 +860,35 @@ export default {
             message: "Caracter no válido",
             trigger: "change",
           },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+        ],
+        dueñoDerchFong: [
+          {
+            pattern: "^[ a-zA-Z-üáéíóúÁÉÍÓÚñÑ]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+        ],
+        añoFong: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
         ],
         descripEspFong: [
           {
             whitespace: true,
-            message: "Inserte una descripción",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
@@ -860,7 +900,7 @@ export default {
         descripIngFong: [
           {
             whitespace: true,
-            message: "Inserte una descripción",
+            message: "Espacio no válido",
             trigger: "change",
           },
           {
@@ -879,7 +919,7 @@ export default {
       this.codigo = this.generar_codigo(this.fonograms_list);
     } else if (this.action_modal === "detalles") {
       this.active_tab = "2";
-      this.fonogram_modal.codigFong = "FONG-" + this.fonogram.codigFong;
+      this.fonogram_modal.codigFong = this.fonogram.codigFong;
     }
   },
   computed: {
@@ -927,11 +967,8 @@ export default {
       }
     },
     handle_cancel(e) {
-      if (this.action_modal === "detalles") {
-        this.fonogram.codigFong = "FONG-" + this.fonogram.codigFong;
-      }
       if (e === "cancelar") {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
+        if (this.$refs.formularioGenerales !== undefined) {
           this.$refs.formularioGenerales.resetFields();
         }
         if (this.$store.getters.getCreatedTracksFormGetters.length !== 0) {
@@ -1066,6 +1103,9 @@ export default {
           .indexOf(input.toLowerCase()) >= 0
       );
     },
+    reload_parent() {
+      this.$emit("refresh");
+    },
     prepare_create() {
       if (this.fonogram_modal.descripEspFong === undefined) {
         this.fonogram_modal.descripEspFong = "";
@@ -1147,6 +1187,7 @@ export default {
       if (this.fonogram.productos_fongs || this.fonogram.tabla) {
         this.tab_visibility = false;
         this.active_tab = "2";
+        this.tabs_list.push("tab_1");
       }
       if (this.action === "editar") {
         if (this.fonogram.deleted_at !== null) {
@@ -1167,11 +1208,12 @@ export default {
             ? ""
             : this.fonogram.descripIngFong;
         this.fonogram.productos_fongs = [];
-        this.fonogram.codigFong = this.fonogram.codigFong.substr(5);
+        this.fonogram.codigFong = this.fonogram.codigFong;
         this.fonogram.productos.forEach((element) => {
           this.fonogram.productos_fongs.push(element.id);
         });
         this.fonogram_modal = { ...this.fonogram };
+        this.fonogram_modal.codigFong = this.fonogram.codigFong.substr(5);
         if (this.fonogram_modal.portadillaFong !== null) {
           if (
             this.fonogram_modal.portadillaFong !==
@@ -1192,6 +1234,8 @@ export default {
             });
         }
       } else if (this.action_modal === "detalles") {
+        this.active_tab = "2";
+        this.detalles = true;
         this.action_cancel_title = "¿Desea cerrar la vista de detalles?";
         this.action_title = "¿Desea guardar los cambios en el Fonograma?";
         this.action_close = "La vista de detalles fue cerrada correctamente";
@@ -1411,6 +1455,7 @@ export default {
     //Fin de metodos para generar el codigo
   },
   components: {
+    tabla_tracks,
     modal_management,
   },
 };

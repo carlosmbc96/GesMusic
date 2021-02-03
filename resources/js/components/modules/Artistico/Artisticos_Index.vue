@@ -2,39 +2,6 @@
   <div id="artisticos_index">
     <h1 style="color: white !important">Nombres Artísticos</h1>
     <hr style="border-color: white !important" />
-
-    <!-- Inicio Sección de Analítica | Gráficas -->
-    <!-- <ejs-chart
-      style="display: block; margin: 20px"
-      :theme="theme"
-      align="center"
-      id="chartcontainer"
-      ref="chartObj"
-      :background="background_chart"
-      :primaryXAxis="primary_x_axis"
-      :primaryYAxis="primary_y_axis"
-      :chartArea="chart_area"
-      :tooltip="tooltip"
-      :load="load"
-      :legendSettings="{ visible: false }"
-      width="50%"
-      height="60%"
-      v-if="autors_list.length !== 0"
-    >
-      <e-series-collection>
-        <e-series
-          :dataSource="series_data"
-          type="Column"
-          xName="status"
-          yName="autors"
-          name="Estados"
-          :marker="marker"
-          :animation="animation_series"
-        />
-      </e-series-collection>
-    </ejs-chart> -->
-    <!-- Fin Sección de Analítica | Gráficas -->
-
     <!-- Inicio Sección de Tabla de datos -->
     <!-- Seccion Panel de exportaciones -->
     <div id="exportPanelContainer">
@@ -86,70 +53,72 @@
     </div>
     <div class="clearfix"></div>
     <!-- Tabla -->
-    <ejs-grid
-      id="datatable"
-      ref="gridObj"
-      locale="es-ES"
-      :dataSource="artisticos_list"
-      :toolbar="toolbar"
-      :toolbarClick="click_toolbar"
-      :allowPaging="true"
-      :pageSettings="page_settings"
-      :allowFiltering="true"
-      :filterSettings="filter_settings"
-      :allowTextWrap="true"
-      :allowSorting="true"
-      :pdfExportComplete="pdf_export_complete"
-      :excelExportComplete="excel_export_complete"
-      :queryCellInfo="customise_cell"
-      :pdfQueryCellInfo="pdf_customise_cell"
-      :excelQueryCellInfo="excel_customise_cell"
-      :allowExcelExport="true"
-      :allowPdfExport="true"
-    >
-      <e-columns>
-        <e-column
-          field="codigArts"
-          headerText="Código"
-          width="115"
-          textAlign="Left"
-        />
-        <e-column
-          field="NombreArts"
-          headerText="Nombre Artístico"
-          width="150"
-          textAlign="Left"
-        />
-        <e-column
-          field="descripNombreArts"
-          headerText="Descripción"
-          width="150"
-          textAlign="Left"
-        />
-        <e-column
-          :displayAsCheckBox="true"
-          field="actualNombreArts"
-          headerText="Nombre Artístico Actual"
-          width="200"
-          textAlign="Center"
-          type="boolean"
-        />
-        <e-column
-          headerText="Estado"
-          width="115"
-          :template="status_template"
-          :visible="true"
-          textAlign="Center"
-        />
-        <e-column
-          headerText="Acciones"
-          width="155"
-          :template="actions_template"
-          :visible="true"
-          textAlign="Center"
-        />
-      </e-columns>
-    </ejs-grid>
+    <a-spin :spinning="spinning">
+      <ejs-grid
+        id="datatable"
+        ref="gridObj"
+        locale="es-ES"
+        :dataSource="artisticos_list"
+        :toolbar="toolbar"
+        :toolbarClick="click_toolbar"
+        :allowPaging="true"
+        :pageSettings="page_settings"
+        :allowFiltering="true"
+        :filterSettings="filter_settings"
+        :allowTextWrap="true"
+        :allowSorting="true"
+        :pdfExportComplete="pdf_export_complete"
+        :excelExportComplete="excel_export_complete"
+        :queryCellInfo="customise_cell"
+        :pdfQueryCellInfo="pdf_customise_cell"
+        :excelQueryCellInfo="excel_customise_cell"
+        :allowExcelExport="true"
+        :allowPdfExport="true"
+      >
+        <e-columns>
+          <e-column
+            field="codigArts"
+            headerText="Código"
+            width="115"
+            textAlign="Left"
+          />
+          <e-column
+            field="NombreArts"
+            headerText="Nombre Artístico"
+            width="150"
+            textAlign="Left"
+          />
+          <e-column
+            field="descripNombreArts"
+            headerText="Descripción"
+            width="150"
+            textAlign="Left"
+          />
+          <e-column
+            :displayAsCheckBox="true"
+            field="actualNombreArts"
+            headerText="Nombre Artístico Actual"
+            width="200"
+            textAlign="Center"
+            type="boolean"
+          />
+          <e-column
+            headerText="Estado"
+            width="115"
+            :template="status_template"
+            :visible="true"
+            textAlign="Center"
+          />
+          <e-column
+            headerText="Acciones"
+            width="155"
+            :template="actions_template"
+            :visible="true"
+            textAlign="Center"
+          />
+        </e-columns>
+      </ejs-grid>
+    </a-spin>
     <!-- Fin Sección de Tabla de datos -->
 
     <!-- Inicio Sección de Modals -->
@@ -161,6 +130,7 @@
       @close_modal="visible_management = $event"
       :artisticos_list="artisticos_list"
     />
+    <help v-if="show_help" :content="content"></help>
     <!-- Fin Sección de Modals -->
   </div>
 </template>
@@ -172,6 +142,7 @@
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
 import modal_management from "./Modal_Gestionar_Artisticos";
+import help from "../Help";
 import {
   GridPlugin,
   Edit,
@@ -264,67 +235,10 @@ L10n.load({
   },
 });
 setCulture("es-ES");
-/*
- *  Código para configurar el tema del gráfico
- */
-/* let selected_theme = location.hash.split("/")[1];
-selected_theme = selected_theme ? selected_theme : "Material";
-let theme = (
-  selected_theme.charAt(0).toUpperCase() + selected_theme.slice(1)
-).replace(/-dark/i, "Dark"); */
 export default {
   name: "Artisticos_Index",
   data() {
     return {
-      /* //* Variables de configuración del gráfico
-      theme: theme,
-      chart_area: { border: { width: 0 } },
-      width: Browser.isDevice ? "100%" : "60%",
-      marker: {
-        dataLabel: {
-          visible: true,
-          position: "Top",
-          font: { fontWeight: "600", color: "#ffffff" },
-        },
-      },
-      tooltip: {
-        enable: true,
-        header: "Autores por Estados",
-        format: "${point.x} : ${point.y} Autores",
-        fill: "rgba(115, 25, 84, 0.9)",
-        border: { width: 0 },
-      },
-      animation_series: { enable: true, duration: 1000, delay: 50 },
-      palettes: ["#E94649", "#F6B53F", "#6FAAB0", "#C4C24A"],
-      background_chart: "transparent",
-      series_data: [],
-      primary_x_axis: {
-        valueType: "Category",
-        title: "Estado",
-        titleStyle: {
-          color: "white",
-          size: "16px",
-          fontWeight: "bold",
-        },
-        interval: 1,
-        majorGridLines: { width: 0 },
-        majorTickLines: { width: 1, color: "white" },
-        lineStyle: { color: "white" },
-        labelStyle: { color: "white" },
-      },
-      primary_y_axis: {
-        title: "Autores",
-        titleStyle: {
-          color: "white",
-          size: "16px",
-          fontWeight: "bold",
-        },
-        interval: 10,
-        majorGridLines: { width: 0 },
-        majorTickLines: { width: 1, color: "white" },
-        lineStyle: { color: "white" },
-        labelStyle: { color: "white" },
-      }, */
       //* Variables de configuración de la tabla
       page_settings: { pageSizes: [5, 10, 20, 30], pageCount: 5, pageSize: 10 },
       filter_settings: { type: "Menu" },
@@ -354,7 +268,7 @@ export default {
                       <p>¿Desea {{ action }} el Nombre Artístico?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch style="width: 100% !important" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -422,7 +336,8 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "artisticos/desactivar/" + this.data.id
+                                          "artisticos/desactivar/" +
+                                            this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -566,7 +481,7 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.load_artisticos();
+                  this.$parent.$parent.$parent.load_artisticos();
                   this.checked = !this.checked;
                   this.$toast.success(
                     `El Nombre Artístico se ${action} correctamente`,
@@ -581,30 +496,6 @@ export default {
                     timeout: 1000,
                   });
                 }
-              },
-            },
-          }),
-        };
-      },
-      status_child_template: () => {
-        return {
-          template: Vue.component("columnTemplate", {
-            template: `<div>
-                <span style="font-size: 12px!important; border-radius: 20px!important; width: 100%!important" class="e-badge" :class="class_badge">{{ status }}</span>
-                </div>`,
-            data: function() {
-              return {
-                data: {},
-              };
-            },
-            computed: {
-              status() {
-                return this.data.deleted_at == null ? "Activo" : "Inactivo";
-              },
-              class_badge() {
-                return this.data.deleted_at == null
-                  ? "e-badge-success"
-                  : "e-badge-warning";
               },
             },
           }),
@@ -644,19 +535,19 @@ export default {
                * Método con la lógica del botón detalles
                */
               detail_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
-								if (this.data.deleted_at === null)
-									this.$parent.$parent.action_management = "detalles";
-									this.$parent.$parent.visible_management = true;
+                this.$parent.$parent.$parent.row_selected = this.data;
+                if (this.data.deleted_at === null)
+                  this.$parent.$parent.$parent.action_management = "detalles";
+                this.$parent.$parent.$parent.visible_management = true;
               },
               /*
                * Método con la lógica del botón editar
                */
               edit_btn_click(args) {
-                this.$parent.$parent.row_selected = this.data;
+                this.$parent.$parent.$parent.row_selected = this.data;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.action_management = "editar";
-                  this.$parent.$parent.visible_management = true;
+                  this.$parent.$parent.$parent.action_management = "editar";
+                  this.$parent.$parent.$parent.visible_management = true;
                 }
               },
               /*
@@ -695,17 +586,19 @@ export default {
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
+                                    this.$parent.$parent.$parent.change_spin();
                                     axios
                                       .delete(
                                         `artisticos/eliminar/${this.data.id}`
                                       )
                                       .then((ress) => {
-                                        this.$parent.$parent.refresh_table();
+                                        this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
                                           "El Nombre Artístico ha sido eliminado correctamente",
                                           "¡Éxito!",
                                           { timeout: 1000, color: "red" }
                                         );
+                                        this.$parent.$parent.$parent.change_spin();
                                       })
                                       .catch((err) => {
                                         console.log(err);
@@ -764,9 +657,11 @@ export default {
           }),
         };
       },
+      spinning: false,
+      show_help: false,
+      content: "",
       export_view: false, //* Vista del panel de exportaciones
       artisticos_list: [], //* Lista de artisticos que es cargada en la tabla
-      /* products_childs: {}, //* Objeto de productos hijos de los artisticos */
       row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
       visible_details: false, //* variable para visualizar el modal de detalles del autor
       visible_management: false, //* variable para visualizar el modal de gestión del autor
@@ -777,6 +672,12 @@ export default {
     this.load_artisticos();
   },
   methods: {
+    /*
+     * Método que activa y desactiva el spin
+     */
+    change_spin() {
+      this.spinning = !this.spinning;
+    },
     /*
      * Método para modificar el estilo de las filas de la tabla
      */
@@ -823,44 +724,25 @@ export default {
      * Método que carga los autores de la bd
      */
     load_artisticos() {
+      if (this.action_management !== "detalles") {
+        this.change_spin();
+      }
+      axios.post("/interpretes/listar").then((response) => {
+        if (response.data.length === 0) {
+          this.content =
+            "No se pueden gestionar Nombres Artísticos sin haber creado previamente un Intérprete , vaya al módulo de Intérpretes y cree al menos un Intérprete!";
+          this.show_help = true;
+        }
+      });
       axios
         .post("artisticos/listar" /* { relations: ["productos"] } */)
         .then((response) => {
           this.artisticos_list = response.data;
-          /* this.series_data = []; */
-          /* this.autors_list.forEach((autor) => {
-            let index = this.series_data.findIndex((serie) =>
-              autor.deleted_at != null
-                ? serie.status === "Inactivo"
-                : serie.status === "Activo"
-            );
-            if (index != -1) {
-              this.series_data[index].autors += 1;
-            } else {
-              this.series_data.push({
-                status: autor.deleted_at != null ? "Inactivo" : "Activo",
-                autors: 1,
-              });
-            }
-          });
-          this.series_data.sort(function(a, b) {
-              return a.status > b.status ? 1 : -1;
-          });
-          this.$refs.gridObj.refresh(); */
+          if (this.action_management !== "detalles") {
+            this.change_spin();
+          }
         });
     },
-    /*
-     * Método de configuración del gráfico
-     */
-    /* load(args) {
-      let selected_theme = location.hash.split("/")[1];
-      selected_theme = selected_theme ? selected_theme : "Material";
-      if (selected_theme === "highcontrast") {
-        args.chart.series[0].marker.dataLabel.font.color = "#000000";
-        args.chart.series[1].marker.dataLabel.font.color = "#000000";
-        args.chart.series[2].marker.dataLabel.font.color = "#000000";
-      }
-    }, */
     /*
      * Método que actualiza los datos de la tabla
      */
@@ -1015,6 +897,7 @@ export default {
   },
   components: {
     modal_management,
+    help,
   },
   provide: {
     grid: [

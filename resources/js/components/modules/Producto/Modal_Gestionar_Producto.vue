@@ -956,12 +956,19 @@
         </a-tab-pane>
       </a-tabs>
     </a-modal>
+    <help
+      @close="show_help = false"
+      v-if="show_help"
+      :content="content"
+      :type="type"
+    ></help>
   </div>
 </template>
 
 <script>
 import tabla_audiovisuales from "../Audiovisual/Tabla_Audiovisuales";
 import tabla_fonogramas from "../Fonograma/Tabla_Fonogramas";
+import help from "../Help";
 export default {
   name: "modal_product_managment",
   props: ["action", "product", "products_list"],
@@ -990,6 +997,9 @@ export default {
           title: "Fonogramas",
         },
       ],
+      type: "",
+      content: "",
+      show_help: false,
       current: 0,
       vista_editar: true,
       action_cancel_title: "",
@@ -1303,6 +1313,7 @@ export default {
         if (list_roles !== undefined) {
           this.product_modal.interpretesProd.pop();
         }
+        this.product.interpretesProd = [];
         let roles = [];
         for (let i = 0; i < this.product_modal.interpretesProd.length; i++) {
           if (list_roles_help.length !== 0) {
@@ -1319,11 +1330,24 @@ export default {
             role: roles,
             value: this.product_modal.interpretesProd[i],
           });
+          this.product.interpretesProd.push({
+            id: this.product_modal.interpretesProd[i].id,
+            key: i + 1,
+            role: roles,
+            value: this.product_modal.interpretesProd[i],
+          });
         }
         this.product_modal.interpretesProd = [];
       } else {
         this.product_modal.interpretesProd = [];
         this.interpretesProd = [
+          {
+            value: "",
+            role: [],
+            key: 2,
+          },
+        ];
+        this.product.interpretesProd = [
           {
             value: "",
             role: [],
@@ -1336,8 +1360,14 @@ export default {
           "-"
         );
         this.product_modal.autoresProd.pop();
+        this.product.autoresProd = [];
         for (let i = 0; i < this.product_modal.autoresProd.length; i++) {
           this.autoresProd.push({
+            id: this.product_modal.autoresProd[i].id,
+            key: i - 1,
+            value: this.product_modal.autoresProd[i],
+          });
+          this.product.autoresProd.push({
             id: this.product_modal.autoresProd[i].id,
             key: i - 1,
             value: this.product_modal.autoresProd[i],
@@ -1352,13 +1382,26 @@ export default {
             key: 1,
           },
         ];
+        this.product.autoresProd = [
+          {
+            value: "",
+            key: 1,
+          },
+        ];
       }
+      if (this.product.destinosComerPro !== null) {
+        this.product.destinosComerPro = this.product.destinosComerPro.split(
+          "-"
+        );
+        this.product.destinosComerPro.pop();
+      } else this.product.destinosComerPro = [];
+
       if (this.product_modal.destinosComerPro !== null) {
         this.product_modal.destinosComerPro = this.product_modal.destinosComerPro.split(
           "-"
         );
         this.product_modal.destinosComerPro.pop();
-      } else delete this.product_modal.destinosComerPro;
+      } else this.product_modal.destinosComerPro = [];
     } else if (this.action_modal === "detalles") {
       this.active_tab = "2";
       this.detalles = true;
@@ -1483,6 +1526,18 @@ export default {
      *Método que compara los campos editables del producto para saber si se ha modificado
      */
     compare_object() {
+      this.product_modal.producPrincProd =
+        this.producPrincProd === true ? 1 : 0;
+      this.product_modal.activoCatalbisPro =
+        this.activoCatalbisPro === true ? 1 : 0;
+      this.product_modal.catalDigitalPro =
+        this.catalDigitalPro === true ? 1 : 0;
+      this.product_modal.primeraPantProd =
+        this.primeraPantProd === true ? 1 : 0;
+      this.product_modal.codigBarProd =
+        this.product_modal.codigBarProd === ""
+          ? null
+          : this.product_modal.codigBarProd;
       return (
         this.product_modal.tituloProd === this.product.tituloProd &&
         this.product_modal.añoProd === this.product.añoProd &&
@@ -1490,7 +1545,10 @@ export default {
         this.product_modal.descripIngPro === this.product.descripIngPro &&
         this.product_modal.producPrincProd === this.product.producPrincProd &&
         this.product_modal.codigBarProd === this.product.codigBarProd &&
-        this.product_modal.destinosComerPro === undefined &&
+        this.compareArrays(
+          this.product_modal.destinosComerPro,
+          this.product.destinosComerPro
+        ) &&
         this.product_modal.statusComProd === this.product.statusComProd &&
         this.product_modal.sellodiscProd === this.product.sellodiscProd &&
         this.product_modal.genMusicPro === this.product.genMusicPro &&
@@ -1498,9 +1556,18 @@ export default {
           this.product.activoCatalbisPro &&
         this.product_modal.catalDigitalPro === this.product.catalDigitalPro &&
         this.product_modal.primeraPantProd === this.product.primeraPantProd &&
-        this.product_modal.estadodigProd === this.product.estadodigProd &&
-        this.product_modal.autoresProd === this.list_compare_autores &&
-        this.product_modal.interpretesProd === this.list_compare_interpretes
+        this.product_modal.estadodigProd ===
+          this.product
+            .estadodigProd /* &&
+        this.compareInterpAndAtr(this.autoresProd, this.product.autoresProd) &&
+        this.compareInterpAndAtr(
+          this.interpretesProd,
+          this.product.interpretesProd
+        ) &&
+        this.compareInterpRoles(
+          this.interpretesProd,
+          this.product.interpretesProd
+        ) */
       );
     },
   },
@@ -1509,19 +1576,84 @@ export default {
       this.current = current;
     },
     validate() {
+      let valid_form = 0;
+      let form = "";
       if (this.product_modal.codigProd === undefined) {
         this.product_modal.codigProd = this.codigo;
       }
       if (!this.used) {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
-          this.$refs.formularioGenerales.validate((valid) => {
-            if (valid) {
-              if (this.file_list.length !== 0) {
-                return this.confirm();
-              }
+        if (!this.product.tabla) {
+          this.$refs.formularioproject.validate((valid) => {
+            if (!valid) {
+              valid_form++;
+              form = "proyecto";
             }
           });
-        } else this.confirm();
+          this.$refs.formularioGenerales.validate((valid) => {
+            if (!valid) {
+              valid_form++;
+              form = "generales";
+            }
+          });
+          if (valid_form === 2) {
+            this.content =
+              "Hay problemas en las pestañas Proyecto y Generales, por favor antes de continuar revíselas!";
+            this.type = "warning";
+            this.show_help = true;
+          } else if (valid_form === 1 && form === "proyecto") {
+            this.content =
+              "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!";
+            this.type = "warning";
+            this.show_help = true;
+          } else if (valid_form === 1 && form === "generales") {
+            this.content =
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!";
+            this.type = "warning";
+            this.show_help = true;
+          } else this.confirm();
+        }
+      }
+    },
+    compareArrays(old_array, new_array) {
+      let igual_cont = 0;
+      if (new_array.length === old_array.length) {
+        for (let i = 0; i < old_array.length; i++) {
+          if (old_array[i] === new_array[i]) {
+            igual_cont++;
+          }
+        }
+        if (igual_cont !== new_array.length) {
+          return false;
+        } else return true;
+      } else return false;
+    },
+    compareInterpAndAtr(old_array, new_array) {
+      let igual_cont = 0;
+      if (new_array.length === old_array.length) {
+        for (let i = 0; i < old_array.length; i++) {
+          if (old_array[i].value === new_array[i].value) {
+            igual_cont++;
+          }
+        }
+        if (igual_cont !== new_array.length) {
+          return false;
+        } else return true;
+      } else return false;
+    },
+    compareInterpRoles(old_array, new_array) {
+      let igual_cont = 0;
+      console.log("as");
+      for (let i = 0; i < old_array.length; i++) {
+        if (new_array[i].role.length === old_array[i].role.length) {
+          for (let j = 0; j < new_array[i].role.length; j++) {
+            if (new_array[i].role[j] === old_array[i].role[j]) {
+              igual_cont++;
+            }
+          }
+          if (igual_cont !== new_array[i].role.length) {
+            return false;
+          } else return true;
+        } else return false;
       }
     },
     reload_parent() {
@@ -2200,6 +2332,7 @@ export default {
   components: {
     tabla_audiovisuales,
     tabla_fonogramas,
+    help,
   },
 };
 </script>

@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export"/></span>
+        <span><a-icon class="e-icon-export" type="export" /></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -173,7 +173,7 @@
       @close_modal="visible_management = $event"
       :products_list="products_list"
     />
-    <help v-if="show_help" :content="content"></help>
+    <help v-if="show_help" :content="content" :type="type"></help>
     <!-- Fin Sección de Modals -->
   </div>
 </template>
@@ -375,7 +375,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
               };
@@ -469,7 +469,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function(instance, toast) {
+                                  function (instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -490,7 +490,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function(instance, toast) {
+                        function (instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -532,7 +532,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 action: "",
                 position: "",
@@ -619,7 +619,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -640,7 +640,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -705,7 +705,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -726,7 +726,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -763,6 +763,7 @@ export default {
         };
       },
       spinning: false,
+      type: "",
       show_help: false,
       content: "",
       export_view: false, //* Vista del panel de exportaciones
@@ -829,6 +830,7 @@ export default {
         if (response.data.length === 0) {
           this.content =
             "No se puede gestionar Productos sin Proyectos existentes, vaya al módulo de Proyectos y cree al menos un Proyecto!";
+          this.type = "info";
           this.show_help = true;
         }
       });

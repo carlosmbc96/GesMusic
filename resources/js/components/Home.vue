@@ -351,9 +351,24 @@ export default {
   margin-left: auto !important;
   margin-top: auto !important;
 }
+.ant-modal-root.ant-modal-confirm.ant-modal-confirm-warning.ant-modal-warning.ant-modal-confirm.ant-modal-confirm-warning.ant-modal-warning
+  .ant-modal {
+  margin-left: auto !important;
+  margin-top: auto !important;
+}
 .ant-modal-root.ant-modal-confirm.ant-modal-confirm-info.ant-modal-info.ant-modal-confirm.ant-modal-confirm-info.ant-modal-info
   .ant-modal-content {
   background-color: white !important;
+}
+.ant-modal-root.ant-modal-confirm.ant-modal-confirm-warning.ant-modal-warning.ant-modal-confirm.ant-modal-confirm-warning.ant-modal-warning
+  .ant-modal-content {
+  position: relative !important;
+  background-color: white !important;
+  background-clip: padding-box !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  pointer-events: auto !important;
 }
 .ant-modal {
   margin-left: 17% !important;

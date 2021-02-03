@@ -2,13 +2,27 @@
 
 <script>
 export default {
-  props: ["content"],
+  props: ["content", "type"],
   created() {
-    this.$info({
-      title: "Ayuda del Sistema!",
-      content: this.content,
-      okText: "Continuar",
-    });
+    if (this.type === "info") {
+      this.$info({
+        title: "Ayuda del Sistema!",
+        content: this.content,
+        okText: "Continuar",
+        onOk: () => {
+          this.$emit("close");
+        },
+      });
+    } else {
+      this.$warning({
+        title: "Ayuda del Sistema!",
+        content: this.content,
+        okText: "Continuar",
+        onOk: () => {
+          this.$emit("close");
+        },
+      });
+    }
   },
 };
 </script>

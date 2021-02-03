@@ -523,16 +523,17 @@
           </a-spin>
         </a-tab-pane>
         <!-- Tab 3 -->
-        <a-tab-pane key="3" :disabled="tab_3" v-if="action_modal !== 'crear'">
+        <a-tab-pane key="3" :disabled="tab_3">
           <span slot="tab"> Repertorio </span>
           <a-row>
-            <a-col span="12">
+            <a-col span="12" v-if="action_modal !== 'crear'">
               <div class="section-title">
                 <h4>Tracks del Fonograma</h4>
               </div>
             </a-col>
           </a-row>
           <tabla_tracks
+						v-if="action_modal !== 'crear'"
             :detalles_prop="detalles"
             @reload="reload_parent"
             :fonograma="fonogram_modal"

@@ -694,6 +694,7 @@ export default {
     console.log(this.tabs_list.indexOf("tab_1"));
     if (this.action_modal === "crear" || this.action_modal === "crear_track") {
       this.codigo = this.generar_codigo(this.tracks_list);
+      console.log(this.tracks_list);
     }
     if (
       this.action_modal === "detalles" ||
@@ -774,7 +775,7 @@ export default {
         this.track_modal.identificador = this.codigo;
       }
       if (!this.used) {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
+        if (this.$refs.formularioGenerales !== undefined) {
           this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
               return this.confirm();
@@ -949,7 +950,7 @@ export default {
       return form_data;
     },
     set_action() {
-      if (this.track.fonogramas_tracks || this.track.tabla) {
+      if (this.track && (this.track.fonogramas_tracks || this.track.tabla)) {
         this.tab_visibility = false;
         this.active_tab = "2";
       }

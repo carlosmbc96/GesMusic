@@ -102,7 +102,7 @@ export default {
     });
   },
   watch: {
-    router: function () {
+    router: function() {
       return this.router === "/"
         ? (this.content = false)
         : (this.content = true);

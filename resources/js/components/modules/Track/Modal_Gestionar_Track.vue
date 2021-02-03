@@ -691,10 +691,9 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
+    console.log(this.tabs_list.indexOf("tab_1"));
     if (this.action_modal === "crear" || this.action_modal === "crear_track") {
-      console.log(this.tracks_list);
       this.codigo = this.generar_codigo(this.tracks_list);
-      console.log(this.codigo);
     }
     if (
       this.action_modal === "detalles" ||

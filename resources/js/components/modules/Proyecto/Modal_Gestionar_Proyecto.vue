@@ -216,12 +216,12 @@
                       label="Descripción en español del Proyecto"
                       prop="descripEsp"
                     >
-                        <a-input
-                          style="width: 100%; height: 150px"
-                          :disabled="disabled"
-                          v-model="project_modal.descripEsp"
-                          type="textarea"
-                        />
+                      <a-input
+                        style="width: 100%; height: 150px"
+                        :disabled="disabled"
+                        v-model="project_modal.descripEsp"
+                        type="textarea"
+                      />
                     </a-form-model-item>
                     <a-form-model-item
                       label="Descripción en Español del proyecto"
@@ -243,12 +243,12 @@
                       label="Descripción en inglés del Proyecto"
                       prop="descripIng"
                     >
-                        <a-input
-                          style="width: 100%; height: 150px"
-                          :disabled="disabled"
-                          v-model="project_modal.descripIng"
-                          type="textarea"
-                        />
+                      <a-input
+                        style="width: 100%; height: 150px"
+                        :disabled="disabled"
+                        v-model="project_modal.descripIng"
+                        type="textarea"
+                      />
                     </a-form-model-item>
                     <a-form-model-item
                       label="Descripción en Inglés del proyecto"
@@ -609,7 +609,6 @@ export default {
      */
     handle_cancel(e) {
       if (e === "cancelar") {
-        console.log(this.project_modal.codigProy);
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
@@ -620,7 +619,6 @@ export default {
           });
         }
       } else {
-        console.log(this.project_modal.codigProy);
         this.$refs.general_form.resetFields();
         this.show = false;
         this.$emit("close_modal", this.show);
@@ -650,8 +648,8 @@ export default {
           this.project.descripEsp === null ? "" : this.project.descripEsp;
         this.project.descripIng =
           this.project.descripIng === null ? "" : this.project.descripIng;
-        this.project.codigProy = this.project.codigProy.substr(5);
         this.project_modal = { ...this.project };
+        this.project_modal.codigProy = this.project.codigProy.substr(5);
         console.log(this.project_modal.codigProy);
         if (this.project_modal.identificadorProy !== null) {
           if (

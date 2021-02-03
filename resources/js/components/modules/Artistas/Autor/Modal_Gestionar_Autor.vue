@@ -662,8 +662,8 @@ export default {
         this.action_close = "La edición del Autor se canceló correctamente";
         this.author.biogAutr =
           this.author.biogAutr === null ? "" : this.author.biogAutr;
-        this.author.codigAutr = this.author.codigAutr.substr(5);
         this.author_modal = { ...this.author };
+        this.author_modal.codigAutr = this.author.codigAutr.substr(5);
         this.fallecidoAutr =
           this.author_modal.fallecidoAutr === 0 ? false : true;
         this.obrasCatEditAutr =

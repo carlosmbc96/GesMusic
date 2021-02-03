@@ -319,8 +319,8 @@ export default {
         this.action_title = "¿Desea guardar los cambios en el Intérprete?";
         this.action_close =
           "La edición del Intérprete se canceló correctamente";
-        this.interp.codigInterp = this.interp.codigInterp.substr(5);
         this.interp_modal = { ...this.interp };
+        this.interp_modal.codigInterp = this.interp.codigInterp.substr(5);
       } else if (this.action_modal === "detalles") {
         if (this.interp.deleted_at !== null) {
           this.disabled = true;

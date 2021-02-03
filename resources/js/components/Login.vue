@@ -25,7 +25,12 @@
             </a-input>
           </a-form-model-item>
           <a-form-model-item style="margin-top: -5%">
-            <a-button html-type="submit" style="border-color: rgb(255,255,255,0.8) !important" > Autenticarse </a-button>
+            <a-button
+              html-type="submit"
+              style="border-color: rgb(255,255,255,0.8) !important"
+            >
+              Autenticarse
+            </a-button>
           </a-form-model-item>
         </a-form-model>
         <a-checkbox> Recuérdame </a-checkbox>

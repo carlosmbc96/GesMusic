@@ -1186,7 +1186,7 @@ export default {
   },
   created() {
     if (this.product.tabla) {
-      this.tabs_list.push("tab_1")
+      this.tabs_list.push("tab_1");
       this.tab_visibility = false;
       this.active_tab = "2";
     }
@@ -1247,8 +1247,8 @@ export default {
         this.disabled = true;
         this.activated = false;
       }
-      this.product.codigProd = this.product.codigProd.substr(5);
       this.product_modal = { ...this.product };
+      this.product_modal.codigProd = this.product.codigProd.substr(5);
       if (this.product_modal.identificadorProd !== null) {
         if (
           this.product_modal.identificadorProd !==
@@ -1940,10 +1940,7 @@ export default {
     },
     handle_cancel(e) {
       if (e === "cancelar") {
-        if (!this.product.proyecto_id) {
-          this.$refs.formularioproject.resetFields();
-        }
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
+        if (this.$refs.formularioGenerales !== undefined) {
           this.$refs.formularioGenerales.resetFields();
         }
         this.tabs_list = [];
@@ -1958,12 +1955,7 @@ export default {
           });
         }
       } else {
-        if (!this.product.proyecto_id) {
-          this.$refs.formularioproject.resetFields();
-        }
-        if (this.tabs_list.indexOf("tab_1") != -1) {
-          this.$refs.formularioGenerales.resetFields();
-        }
+        this.$refs.formularioGenerales.resetFields();
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;
@@ -1996,14 +1988,10 @@ export default {
     },
     remove_interprete(item) {
       let index = this.interpretesProd.indexOf(item);
-      let interprete = this.interpretesProd[index];
-      if (interprete.value !== "") {
+      if (item.value !== "") {
         this.copia_interpretes.push(
           this.list_interpretes[
-            this.find_element_interprete(
-              interprete.value,
-              this.list_interpretes
-            )
+            this.find_element_interprete(item.value, this.list_interpretes)
           ]
         );
       }
@@ -2067,27 +2055,23 @@ export default {
     },
     change_interprete(item) {
       let index = this.interpretesProd.indexOf(item);
-      let interprete = this.interpretesProd[index];
       if (this.copia_interpretes.length === 1) {
         this.copia_interpretes.splice(0, this.copia_interpretes.length);
       } else {
         this.copia_interpretes.splice(
-          this.find_element_interprete(
-            interprete.value,
-            this.copia_interpretes
-          ),
+          this.find_element_interprete(item.value, this.copia_interpretes),
           1
         );
       }
       this.interpretesProd[index].id = this.find_element_interprete(
-        interprete.value,
+        item.value,
         this.list_interpretes
       );
       if (this.pivot != "") {
         this.add_arr_elem_interprete(this.pivot, this.copia_interpretes);
         this.pivot = "";
       }
-      document.getElementById(interprete.key).blur();
+      document.getElementById(item.key).blur();
     },
     last_interprete(item) {
       let index = this.interpretesProd.indexOf(item);

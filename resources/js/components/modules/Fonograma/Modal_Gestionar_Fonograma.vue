@@ -967,11 +967,8 @@ export default {
       }
     },
     handle_cancel(e) {
-      if (this.action_modal === "detalles") {
-        this.fonogram.codigFong = "FONG-" + this.fonogram.codigFong;
-      }
       if (e === "cancelar") {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
+        if (this.$refs.formularioGenerales !== undefined) {
           this.$refs.formularioGenerales.resetFields();
         }
         if (this.$store.getters.getCreatedTracksFormGetters.length !== 0) {
@@ -1211,12 +1208,12 @@ export default {
             ? ""
             : this.fonogram.descripIngFong;
         this.fonogram.productos_fongs = [];
-        this.fonogram.codigFong = this.fonogram.codigFong.substr(5);
+        this.fonogram.codigFong = this.fonogram.codigFong;
         this.fonogram.productos.forEach((element) => {
           this.fonogram.productos_fongs.push(element.id);
         });
         this.fonogram_modal = { ...this.fonogram };
-        this.fonogram_modal.codigFong = this.fonogram_modal.codigFong.substr(5);
+        this.fonogram_modal.codigFong = this.fonogram.codigFong.substr(5);
         if (this.fonogram_modal.portadillaFong !== null) {
           if (
             this.fonogram_modal.portadillaFong !==

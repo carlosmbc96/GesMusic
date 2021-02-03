@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
+        <span><a-icon class="e-icon-export" type="export"/></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -360,7 +360,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -443,7 +443,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -464,7 +464,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -530,7 +530,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -551,7 +551,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -611,7 +611,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -706,7 +706,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -727,7 +727,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -823,24 +823,24 @@ export default {
       axios.post("/realizadores/listar").then((response) => {
         this.realizadores_list = response.data;
         this.series_data = [];
-          this.realizadores_list.forEach((realizador) => {
-            let index = this.series_data.findIndex((serie) =>
-              realizador.deleted_at != null
-                ? serie.status === "Inactivo"
-                : serie.status === "Activo"
-            );
-            if (index != -1) {
-              this.series_data[index].realizadores += 1;
-            } else {
-              this.series_data.push({
-                status: realizador.deleted_at != null ? "Inactivo" : "Activo",
-                realizadores: 1,
-              });
-            }
-          });
-          this.series_data.sort(function (a, b) {
-            return a.status > b.status ? 1 : -1;
-          });
+        this.realizadores_list.forEach((realizador) => {
+          let index = this.series_data.findIndex((serie) =>
+            realizador.deleted_at != null
+              ? serie.status === "Inactivo"
+              : serie.status === "Activo"
+          );
+          if (index != -1) {
+            this.series_data[index].realizadores += 1;
+          } else {
+            this.series_data.push({
+              status: realizador.deleted_at != null ? "Inactivo" : "Activo",
+              realizadores: 1,
+            });
+          }
+        });
+        this.series_data.sort(function(a, b) {
+          return a.status > b.status ? 1 : -1;
+        });
         if (this.action_management !== "detalles") {
           this.change_spin();
         }

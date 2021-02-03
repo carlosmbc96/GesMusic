@@ -1226,7 +1226,7 @@ export default {
     },
     handle_cancel(e) {
       if (e === "cancelar") {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
+        if (this.$refs.general_form !== undefined) {
           this.$refs.general_form.resetFields();
         }
         this.tabs_list = [];
@@ -1241,9 +1241,7 @@ export default {
           });
         }
       } else {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
-          this.$refs.general_form.resetFields();
-        }
+        this.$refs.general_form.resetFields();
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;
@@ -1509,11 +1507,12 @@ export default {
             ? ""
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
-        this.audiovisual.codigAud = this.audiovisual.codigAud.substr(5);
+        this.audiovisual.codigAud = this.audiovisual.codigAud;
         this.audiovisual.productos.forEach((element) => {
           this.audiovisual.productos_audvs.push(element.id);
         });
         this.audiovisual_modal = { ...this.audiovisual };
+        this.audiovisual_modal.codigAud = this.audiovisual.codigAud.substr(5);
         this.makingOfAud =
           this.audiovisual_modal.makingOfAud === 0 ? false : true;
         if (this.audiovisual_modal.etiquetasAud !== null) {
@@ -1563,7 +1562,7 @@ export default {
             ? ""
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
-        this.audiovisual.codigAud = this.audiovisual.codigAud.substr(5);
+        this.audiovisual.codigAud = this.audiovisual.codigAud;
         this.audiovisual.productos.forEach((element) => {
           this.audiovisual.productos_audvs.push(element.id);
         });

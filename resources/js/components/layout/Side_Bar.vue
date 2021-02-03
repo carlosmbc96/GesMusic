@@ -462,36 +462,36 @@
 </template>
 
 <script>
-  export default {
-    name: 'Side_Bar',
-    methods: {
-      change_route(route) {
-        if (route !== this.$router.currentRoute.fullPath) {
-          this.$router.push(route);
-          return this.$emit('change_route', this.$router.currentRoute.fullPath);
-        }
-      },
+export default {
+  name: "Side_Bar",
+  methods: {
+    change_route(route) {
+      if (route !== this.$router.currentRoute.fullPath) {
+        this.$router.push(route);
+        return this.$emit("change_route", this.$router.currentRoute.fullPath);
+      }
     },
-  };
+  },
+};
 </script>
 
 <style>
-  .page-sidebar-menu > li > a {
-    border-top: none !important;
-  }
-  .nav-item {
-    border-bottom: 1px solid white !important;
-  }
-  .sub-menu .nav-item {
-    border: none !important;
-  }
-  .router-link-exact-active {
-    background: rgba(255, 255, 255, 0.2) !important;
-    color: #e4e9f2 !important;
-  }
-  .page-sidebar,
-  .navbar-collapse,
-  .collapse {
-    background-color: rgb(115, 25, 84, 0.2) !important;
-  }
+.page-sidebar-menu > li > a {
+  border-top: none !important;
+}
+.nav-item {
+  border-bottom: 1px solid white !important;
+}
+.sub-menu .nav-item {
+  border: none !important;
+}
+.router-link-exact-active {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #e4e9f2 !important;
+}
+.page-sidebar,
+.navbar-collapse,
+.collapse {
+  background-color: rgb(115, 25, 84, 0.2) !important;
+}
 </style>

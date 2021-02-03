@@ -1510,10 +1510,10 @@ export default {
     active() {
       if (this.text_button === "Editar") {
         return (
-          !this.compare_object ||
+          !this.compare_object /* ||
           (this.valid_image &&
             this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.product_modal.id)
+            this.file_list[0].uid !== this.product_modal.id) */
         );
       } else
         return (

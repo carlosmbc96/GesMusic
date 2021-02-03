@@ -130,7 +130,7 @@
       @close_modal="visible_management = $event"
       :artisticos_list="artisticos_list"
     />
-    <help v-if="show_help" :content="content"></help>
+    <help v-if="show_help" :content="content" :type="type"></help>
     <!-- Fin Sección de Modals -->
   </div>
 </template>
@@ -660,6 +660,7 @@ export default {
       spinning: false,
       show_help: false,
       content: "",
+      type: "",
       export_view: false, //* Vista del panel de exportaciones
       artisticos_list: [], //* Lista de artisticos que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | autor seleccionado
@@ -731,6 +732,7 @@ export default {
         if (response.data.length === 0) {
           this.content =
             "No se pueden gestionar Nombres Artísticos sin haber creado previamente un Intérprete , vaya al módulo de Intérpretes y cree al menos un Intérprete!";
+          this.type = "info";
           this.show_help = true;
         }
       });

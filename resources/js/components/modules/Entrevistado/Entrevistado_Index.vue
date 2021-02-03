@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export"/></span>
+        <span><a-icon class="e-icon-export" type="export" /></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -155,7 +155,7 @@
       @close_modal="visible_management = $event"
       :entrevistados_list="entrevistados_list"
     />
-    <help v-if="show_help" :content="content"></help>
+    <help v-if="show_help" :content="content" :type="type"></help>
     <!-- Fin Sección de Modals -->
   </div>
 </template>
@@ -360,7 +360,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 action: "",
                 position: "",
@@ -443,7 +443,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -464,7 +464,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -530,7 +530,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -551,7 +551,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -611,7 +611,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
               };
@@ -706,7 +706,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function(instance, toast) {
+                                  function (instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -727,7 +727,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function(instance, toast) {
+                        function (instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -746,6 +746,7 @@ export default {
       spinning: false,
       show_help: false,
       content: "",
+      type: "",
       export_view: false, //* Vista del panel de exportaciones
       entrevistados_list: [], //* Lista de entrevistadoes que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | entrevistado seleccionado
@@ -817,6 +818,7 @@ export default {
         if (response.data.length === 0) {
           this.content =
             "No se pueden gestionar Entrevistados sin Audiovisuales existentes, vaya al módulo de Audiovisuales y cree al menos un Audiovisual!";
+          this.type = "info";
           this.show_help = true;
         }
       });
@@ -838,7 +840,7 @@ export default {
             });
           }
         });
-        this.series_data.sort(function(a, b) {
+        this.series_data.sort(function (a, b) {
           return a.status > b.status ? 1 : -1;
         });
         if (this.action_management !== "detalles") {

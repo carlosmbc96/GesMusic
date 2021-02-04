@@ -808,7 +808,7 @@ export default {
             this.$toast.success(
               "Se ha modificado el Track correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((error) => {
@@ -817,7 +817,7 @@ export default {
             this.waiting = false;
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       } else {
@@ -860,7 +860,7 @@ export default {
             this.$toast.success(
               "Se ha creado el track correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((err) => {
@@ -869,7 +869,7 @@ export default {
             this.waiting = false;
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       }
@@ -1030,7 +1030,7 @@ export default {
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
-            timeout: 1000,
+            timeout: 2000,
           });
         });
     },

@@ -956,19 +956,12 @@
         </a-tab-pane>
       </a-tabs>
     </a-modal>
-    <help
-      @close="show_help = false"
-      v-if="show_help"
-      :content="content"
-      :type="type"
-    ></help>
   </div>
 </template>
 
 <script>
 import tabla_audiovisuales from "../Audiovisual/Tabla_Audiovisuales";
 import tabla_fonogramas from "../Fonograma/Tabla_Fonogramas";
-import help from "../Help";
 export default {
   name: "modal_product_managment",
   props: ["action", "product", "products_list"],
@@ -997,9 +990,6 @@ export default {
           title: "Fonogramas",
         },
       ],
-      type: "",
-      content: "",
-      show_help: false,
       current: 0,
       vista_editar: true,
       action_cancel_title: "",
@@ -1509,12 +1499,11 @@ export default {
   computed: {
     active() {
       if (this.text_button === "Editar") {
-        return (
-          !this.compare_object /* ||
+        return !this
+          .compare_object /* ||
           (this.valid_image &&
             this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.product_modal.id) */
-        );
+            this.file_list[0].uid !== this.product_modal.id) */;
       } else
         return (
           this.product_modal.añoProd &&
@@ -1596,20 +1585,20 @@ export default {
             }
           });
           if (valid_form === 2) {
-            this.content =
-              "Hay problemas en las pestañas Proyecto y Generales, por favor antes de continuar revíselas!";
-            this.type = "warning";
-            this.show_help = true;
+            this.$message.warning(
+              "Hay problemas en las pestañas Proyecto y Generales, por favor antes de continuar revíselas!",
+              5
+            );
           } else if (valid_form === 1 && form === "proyecto") {
-            this.content =
-              "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!";
-            this.type = "warning";
-            this.show_help = true;
+            this.$message.warning(
+              "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!",
+              5
+            );
           } else if (valid_form === 1 && form === "generales") {
-            this.content =
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!";
-            this.type = "warning";
-            this.show_help = true;
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              5
+            );
           } else this.confirm();
         }
       }
@@ -1895,7 +1884,7 @@ export default {
             this.$toast.success(
               "Se ha modificado el producto correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
             this.handle_cancel();
           })
@@ -1905,7 +1894,7 @@ export default {
             this.text_button = "Editar";
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       } else {
@@ -2045,7 +2034,7 @@ export default {
             this.$toast.success(
               "Se ha creado el producto correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
             this.handle_cancel();
           })
@@ -2055,7 +2044,7 @@ export default {
             this.text_button = "Crear";
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       }
@@ -2082,7 +2071,7 @@ export default {
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
-            timeout: 1000,
+            timeout: 2000,
             color: "orange",
           });
         }
@@ -2332,7 +2321,6 @@ export default {
   components: {
     tabla_audiovisuales,
     tabla_fonogramas,
-    help,
   },
 };
 </script>

@@ -285,7 +285,7 @@ export default {
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
-            timeout: 1000,
+            timeout: 2000,
             color: "orange",
           });
         }
@@ -359,7 +359,7 @@ export default {
             this.$toast.success(
               "Se ha modificado el interprete correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
             this.handle_cancel();
           })
@@ -368,7 +368,7 @@ export default {
             this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       } else {
@@ -386,7 +386,7 @@ export default {
             this.$toast.success(
               "Se ha creado el interprete correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
             this.handle_cancel();
           })
@@ -395,7 +395,7 @@ export default {
             this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       }

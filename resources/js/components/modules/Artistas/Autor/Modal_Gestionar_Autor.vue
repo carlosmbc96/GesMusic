@@ -531,7 +531,7 @@ export default {
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
-            timeout: 1000,
+            timeout: 2000,
             color: "orange",
           });
         }
@@ -574,7 +574,7 @@ export default {
             this.$toast.success(
               "Se ha modificado el autor correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((error) => {
@@ -583,7 +583,7 @@ export default {
             this.waiting = false;
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       } else {
@@ -602,7 +602,7 @@ export default {
             this.$toast.success(
               "Se ha creado el autor correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((err) => {
@@ -611,7 +611,7 @@ export default {
             this.waiting = false;
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       }
@@ -767,7 +767,7 @@ export default {
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
-            timeout: 1000,
+            timeout: 2000,
           });
         });
     },

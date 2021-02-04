@@ -365,27 +365,24 @@
                     </a-row>
                     <a-row>
                       <a-col span="11">
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Etiquetas"
-                          prop="etiquetasAud"
-                        >
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            mode="multiple"
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.etiquetasAud"
+                        <div id="etiqueta">
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            has-feedback
+                            label="Etiquetas"
+                            prop="etiquetasAud"
                           >
-                            <a-select-option
-                              v-for="nomenclator in etiquetas"
-                              :key="nomenclator.id"
-                              :value="nomenclator.nombreTer"
+                            <a-select
+                              :getPopupContainer="
+                                (trigger) => trigger.parentNode
+                              "
+                              mode="tags"
+                              :disabled="disabled"
+                              v-model="audiovisual_modal.etiquetasAud"
                             >
-                              {{ nomenclator.nombreTer }}
-                            </a-select-option>
-                          </a-select>
-                        </a-form-model-item>
+                            </a-select>
+                          </a-form-model-item>
+                        </div>
                         <a-form-model-item
                           label="Etiquetas"
                           v-if="action_modal === 'detalles'"
@@ -754,8 +751,8 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Nacionalidad Dueño del Producto"
-                      prop="propiedadAud"
+                      label="Derechos sobre el Audiovisual"
+                      prop="derechosAud"
                     >
                       <a-select
                         :getPopupContainer="(trigger) => trigger.parentNode"
@@ -763,7 +760,7 @@
                         :filter-option="filter_option"
                         show-search
                         :disabled="disabled"
-                        v-model="audiovisual_modal.propiedadAud"
+                        v-model="audiovisual_modal.derechosAud"
                       >
                         <a-select-option
                           v-for="nomenclator in nacionalidades"
@@ -775,12 +772,12 @@
                       </a-select>
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Nacionalidad Dueño del Producto"
+                      label="Derechos sobre el Audiovisual"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions
                         readonly
-                        :placeholder="audiovisual_modal.propiedadAud"
+                        :placeholder="audiovisual_modal.derechosAud"
                       >
                       </a-mentions>
                     </a-form-model-item>
@@ -1078,18 +1075,6 @@ export default {
             trigger: "change",
           },
         ],
-        /* duracionAud: [
-          {
-            pattern: "^[0-9:]*$",
-            message: "Formato 00:00:00",
-            trigger: "change",
-          },
-        ], */
-        etiquetasAud: [
-          {
-            trigger: "change",
-          },
-        ],
         paisGrabAud: [
           {
             trigger: "change",
@@ -1136,7 +1121,7 @@ export default {
             trigger: "change",
           },
         ],
-        propiedadAud: [
+        derechosAud: [
           {
             trigger: "change",
           },
@@ -1236,7 +1221,7 @@ export default {
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
-            timeout: 1000,
+            timeout: 2000,
             color: "orange",
           });
         }
@@ -1292,7 +1277,7 @@ export default {
             this.$toast.success(
               "Se ha modificado el audiovisual correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((error) => {
@@ -1301,7 +1286,7 @@ export default {
             this.waiting = false;
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       } else {
@@ -1321,7 +1306,7 @@ export default {
             this.$toast.success(
               "Se ha creado el audiovisual correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((err) => {
@@ -1330,7 +1315,7 @@ export default {
             this.waiting = false;
             this.handle_cancel();
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       }
@@ -1397,10 +1382,10 @@ export default {
       } else if (this.audiovisual_modal.dueñoDerchAud === null) {
         this.audiovisual_modal.dueñoDerchAud = "";
       }
-      if (this.audiovisual_modal.propiedadAud === undefined) {
-        this.audiovisual_modal.propiedadAud = "";
-      } else if (this.audiovisual_modal.propiedadAud === null) {
-        this.audiovisual_modal.propiedadAud = "";
+      if (this.audiovisual_modal.derechosAud === undefined) {
+        this.audiovisual_modal.derechosAud = "";
+      } else if (this.audiovisual_modal.derechosAud === null) {
+        this.audiovisual_modal.derechosAud = "";
       }
       if (this.audiovisual_modal.nacioDueñoDerchAud === undefined) {
         this.audiovisual_modal.nacioDueñoDerchAud = "";
@@ -1464,7 +1449,7 @@ export default {
         "nacioDueñoDerchAud",
         this.audiovisual_modal.nacioDueñoDerchAud
       );
-      form_data.append("propiedadAud", this.audiovisual_modal.propiedadAud);
+      form_data.append("derechosAud", this.audiovisual_modal.derechosAud);
       form_data.append("makingOfAud", this.audiovisual_modal.makingOfAud);
       form_data.append("descripEspAud", this.audiovisual_modal.descripEspAud);
       form_data.append("descripIngAud", this.audiovisual_modal.descripIngAud);
@@ -1656,12 +1641,11 @@ export default {
           this.territorios = this.list_nomenclators[4][0];
           this.idiomas = this.list_nomenclators[5][0];
           this.subtitulos = this.list_nomenclators[6][0];
-          this.etiquetas = this.list_nomenclators[7][0];
-          this.nacionalidades = this.list_nomenclators[8][0];
+          this.nacionalidades = this.list_nomenclators[7][0];
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
-            timeout: 1000,
+            timeout: 2000,
           });
         });
     },
@@ -1756,5 +1740,8 @@ export default {
 }
 #small .ant-form-item-control {
   width: 85%;
+}
+#etiqueta .ant-select-dropdown {
+  display: none !important;
 }
 </style>

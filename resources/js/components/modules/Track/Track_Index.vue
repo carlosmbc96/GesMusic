@@ -588,13 +588,13 @@ export default {
                     `El Track se ${action} correctamente`,
                     "¡Éxito!",
                     {
-                      timeout: 1000,
+                      timeout: 2000,
                       color: action === "inactivó" ? "blue" : "grey",
                     }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 1000,
+                    timeout: 2000,
                   });
                 }
               },
@@ -696,7 +696,7 @@ export default {
                                         this.$toast.success(
                                           "El Track ha sido eliminado correctamente",
                                           "¡Éxito!",
-                                          { timeout: 1000, color: "red" }
+                                          { timeout: 2000, color: "red" }
                                         );
                                         this.$parent.$parent.$parent.change_spin();
                                       })
@@ -706,7 +706,7 @@ export default {
                                           "Ha ocurrido un error",
                                           "¡Error!",
                                           {
-                                            timeout: 1000,
+                                            timeout: 2000,
                                           }
                                         );
                                       });

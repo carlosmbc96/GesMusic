@@ -33,7 +33,7 @@ class Audiovisual extends Model
         'archivoAud',  // Url del Archivo Audiovisual Media
         'dueñoDerchAud',  // Nombre y Apellidos del Dueño de los Derechos del Audivisual
         'nacioDueñoDerchAud',  // Nacionalidad del Dueño de los Derechos del Audivisual
-        'propiedadAud',  // Nacionalidad Dueño Producto *nom
+        'derechosAud',  // Nacionalidad Dueño Producto *nom
         'makingOfAud',  // ¿El Audiovisual tiene Making-Of?
         'dirArbolAud',  // Ruta URL del directorio donde se almacena el Audiovisual
         'descripEspAud',  // Descripción en Español Media

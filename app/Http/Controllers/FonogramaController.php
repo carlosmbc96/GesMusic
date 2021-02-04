@@ -161,10 +161,15 @@ class FonogramaController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Fonograma
     {
         $productos = [];
+        $tracks = [];
         $fonograma = Fonograma::withTrashed()->findOrFail($id);
-        for ($i = 0; $i < count($fonograma->productos); $i++) {
-            array_push($productos, $fonograma->productos[$i]->pivot->producto_id);
-            $fonograma->productos[$i]->pivot->delete();
+        for ($i = 0; $i < count($fonograma->productos()->withTrashed()->get()); $i++) {
+            array_push($productos, $fonograma->productos()->withTrashed()->get()[$i]->pivot->producto_id);
+            $fonograma->productos()->withTrashed()->get()[$i]->pivot->delete();
+        }
+        for ($i = 0; $i < count($fonograma->tracks()->withTrashed()->get()); $i++) {
+            array_push($tracks, $fonograma->tracks()->withTrashed()->get()[$i]->pivot->track_id);
+            $fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
         }
         if (substr($fonograma->portadillaFong, 33) !== "Logo ver vertical_Ltr Negras.png") {
             Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 33));
@@ -212,6 +217,15 @@ class FonogramaController extends Controller
                 "track_id" => $request->tracks[$i],
                 "fonograma_id" => $request->idFong
             ]);
+        }
+    }
+    public function eliminarRelacionTrk(Request $request)
+    {
+        $fonograma = Fonograma::withTrashed()->findOrFail($request->idFong);
+        for ($i = 0; $i < count($fonograma->tracks()->withTrashed()->get()); $i++) {
+            if ($fonograma->tracks()->withTrashed()->get()[$i]->pivot->track_id === $request->idTrk) {
+                $fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
+            }
         }
     }
 }

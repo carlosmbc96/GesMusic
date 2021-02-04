@@ -28,7 +28,7 @@ class CreateAudiovisualesTable extends Migration
             $table->string('archivoAud')->nullable();  // Url del Archivo Audiovisual Media
             $table->string('dueñoDerchAud')->nullable();  // Nombre y Apellidos del Dueño de los Derechos del Audivisual
             $table->string('nacioDueñoDerchAud')->nullable();  // Nacionalidad del Dueño de los Derechos del Audivisual
-            $table->string('propiedadAud')->nullable();  // Nacionalidad Dueño Producto *nom
+            $table->string('derechosAud')->nullable();  // Nacionalidad Dueño Producto *nom
             $table->boolean('makingOfAud')->nullable();  // ¿El Audiovisual tiene Making-Of?
             $table->string('dirArbolAud')->nullable();  // Ruta URL del directorio donde se almacena el Audiovisual
             $table->text('descripEspAud')->nullable();  // Descripción en Español Media

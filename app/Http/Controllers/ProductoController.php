@@ -115,7 +115,7 @@ class ProductoController extends Controller
             for ($i = 0; $i < count($directorios); $i++) {
                 $directorio = substr($directorios[$i], 20);
                 $nuevo_directorio = $codigProy . "/" . $directorio;
-                Storage::disk('local')->makeDirectory("/Proyectos/".$nuevo_directorio);
+                Storage::disk('local')->makeDirectory("/Proyectos/" . $nuevo_directorio);
             }
         }
         $producto->update([
@@ -152,11 +152,11 @@ class ProductoController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Producto
     {
         $producto = Producto::withTrashed()->findOrFail($id);
-        for ($i = 0; $i < count($producto->audiovisuales); $i++) {
-            $producto->audiovisuales[$i]->pivot->delete();
+        for ($i = 0; $i < count($producto->audiovisuales()->withTrashed()->get()); $i++) {
+            $producto->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
         }
-        for ($i = 0; $i < count($producto->fonogramas); $i++) {
-            $producto->fonogramas[$i]->pivot->delete();
+        for ($i = 0; $i < count($producto->fonogramas()->withTrashed()->get()); $i++) {
+            $producto->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
         }
         Storage::disk('local')->deleteDirectory('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
         if (substr($producto->identificadorProd, 33) !== "Logo ver vertical_Ltr Negras.png") {
@@ -172,5 +172,23 @@ class ProductoController extends Controller
     public function fonogramasRelation($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Producto
     {
         return response()->json(Producto::findOrFail($id)->fonogramas);
+    }
+    public function eliminarRelacionAud(Request $request)
+    {
+        $producto = Producto::withTrashed()->findOrFail($request->idProd);
+        for ($i = 0; $i < count($producto->audiovisuales()->withTrashed()->get()); $i++) {
+            if ($producto->audiovisuales()->withTrashed()->get()[$i]->pivot->audiovisual_id === $request->idAud) {
+                $producto->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
+    }
+    public function eliminarRelacionFong(Request $request)
+    {
+        $producto = Producto::withTrashed()->findOrFail($request->idProd);
+        for ($i = 0; $i < count($producto->fonogramas()->withTrashed()->get()); $i++) {
+            if ($producto->fonogramas()->withTrashed()->get()[$i]->pivot->fonograma_id === $request->idFong) {
+                $producto->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
     }
 }

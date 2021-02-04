@@ -60,10 +60,10 @@ class AudiovisualController extends Controller
         $territorio = Vocabulario::findorFail(36)->terminos;  // Nomenclador: Territorios
         $idiom = Vocabulario::findorFail(18)->terminos;  // Nomenclador: Idiomas
         $idiomSubt = Vocabulario::findorFail(19)->terminos;  // Nomenclador: Idiomas de Subtitulos
-        $etiquetas = Vocabulario::findorFail(11)->terminos;  // Nomenclador: Etiquetas
+        //$derechosAud = Vocabulario::findorFail(11)->terminos;  // Nomenclador: Etiquetas
         $nacionalid = Vocabulario::findorFail(22)->terminos;  // Nomenclador: Nacionalidades
         //$estdContract= Vocabulario::findorFail(8)->terminos;  // Nomenclador: Estados Contractuales
-        return response()->json([[$clasfAudiov], [$genAudiov], [$anos], [$paises], [$territorio], [$idiom], [$idiomSubt], [$etiquetas], [$nacionalid]/* $estdContract */]);  // Se envian las variables
+        return response()->json([[$clasfAudiov], [$genAudiov], [$anos], [$paises], [$territorio], [$idiom], [$idiomSubt], [$nacionalid]]);  // Se envian las variables
     }
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Audiovisual
@@ -82,7 +82,7 @@ class AudiovisualController extends Controller
             "subtitulosAud" => $request->subtitulosAud,
             "etiquetasAud" => $request->etiquetasAud,
             "dueñoDerchAud" => $request->dueñoDerchAud,
-            "propiedadAud" => $request->propiedadAud,
+            "derechosAud" => $request->derechosAud,
             "makingOfAud" => $request->makingOfAud,
             "descripEspAud" => $request->descripEspAud,
             "descripIngAud" => $request->descripIngAud,
@@ -134,7 +134,7 @@ class AudiovisualController extends Controller
             "subtitulosAud" => $request->subtitulosAud,
             "etiquetasAud" => $request->etiquetasAud,
             "dueñoDerchAud" => $request->dueñoDerchAud,
-            "propiedadAud" => $request->propiedadAud,
+            "derechosAud" => $request->derechosAud,
             "nacioDueñoDerchAud" => $request->nacioDueñoDerchAud,
             "makingOfAud" => $request->makingOfAud,
             "descripEspAud" => $request->descripEspAud,
@@ -184,10 +184,10 @@ class AudiovisualController extends Controller
     {
         $productos = [];
         $audiovisual = Audiovisual::withTrashed()->findOrFail($id);
-        if (count($audiovisual->productos) !== 0) {
-            for ($i = 0; $i < count($audiovisual->productos); $i++) {
-                array_push($productos, $audiovisual->productos[$i]->pivot->producto_id);
-                $audiovisual->productos[$i]->pivot->delete();
+        if (count($audiovisual->productos()->withTrashed()->get()) !== 0) {
+            for ($i = 0; $i < count($audiovisual->productos()->withTrashed()->get()); $i++) {
+                array_push($productos, $audiovisual->productos()->withTrashed()->get()[$i]->pivot->producto_id);
+                $audiovisual->productos()->withTrashed()->get()[$i]->pivot->delete();
             }
             $this->eliminarDirectorios($productos, $audiovisual->codigAud);
         }

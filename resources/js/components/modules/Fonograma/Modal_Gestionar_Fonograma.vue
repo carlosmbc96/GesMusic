@@ -540,6 +540,7 @@
             :vista_editar="vista_editar"
             @close_modal="show = $event"
           />
+          <br>
           <a-row v-if="action_modal === 'crear'">
             <a-col span="1"></a-col>
             <a-col span="20">
@@ -986,7 +987,7 @@ export default {
               .catch((err) => {
                 console.log(err);
                 this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                  timeout: 1000,
+                  timeout: 2000,
                 });
               });
           }
@@ -1001,7 +1002,7 @@ export default {
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
-            timeout: 1000,
+            timeout: 2000,
             color: "orange",
           });
         }
@@ -1053,7 +1054,7 @@ export default {
             this.$toast.success(
               "Se ha modificado el fonograma correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((error) => {
@@ -1061,7 +1062,7 @@ export default {
             this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       } else {
@@ -1087,7 +1088,7 @@ export default {
               })
               .catch((error) => {
                 this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                  timeout: 1000,
+                  timeout: 2000,
                 });
               });
             this.text_button = "Crear";
@@ -1098,7 +1099,7 @@ export default {
             this.$toast.success(
               "Se ha creado el fonograma correctamente",
               "¡Éxito!",
-              { timeout: 1000 }
+              { timeout: 2000 }
             );
           })
           .catch((err) => {
@@ -1106,7 +1107,7 @@ export default {
             this.spinning = false;
             this.waiting = false;
             this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 1000,
+              timeout: 2000,
             });
           });
       }
@@ -1372,7 +1373,7 @@ export default {
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
-            timeout: 1000,
+            timeout: 2000,
           });
         });
     },

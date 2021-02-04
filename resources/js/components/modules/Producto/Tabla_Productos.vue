@@ -472,13 +472,13 @@ export default {
                     `El Producto se ${action} correctamente`,
                     "¡Éxito!",
                     {
-                      timeout: 1000,
+                      timeout: 2000,
                       color: action === "inactivó" ? "blue" : "grey",
                     }
                   );
                 } else {
                   this.$toast.error("Ha ocurrido un error", "¡Error!", {
-                    timeout: 1000,
+                    timeout: 2000,
                   });
                 }
               },
@@ -584,7 +584,7 @@ export default {
      */
     load_products() {
       this.$emit("reload");
-      this.spinning = true;
+      this.change_spin()
       if (this.vista_editar) {
         axios
           .post("/productos/listar", {
@@ -593,7 +593,7 @@ export default {
           })
           .then((response) => {
             this.products_list = response.data;
-            this.spinning = false;
+           this.change_spin()
           });
         axios
           .post("/productos/listar", { relations: ["proyecto"] })

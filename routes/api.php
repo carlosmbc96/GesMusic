@@ -49,6 +49,8 @@ Route::delete('/productos/desactivar/{id}', 'ProductoController@destroyLog')->na
 Route::delete('/productos/eliminar/{id}', 'ProductoController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::post('/productos/nomencladores', 'ProductoController@nomenclators');
 Route::get('/productos/fonogramas/{id}', 'ProductoController@fonogramasRelation');
+Route::post('/productos/desvincularAud', 'ProductoController@eliminarRelacionAud');
+Route::post('/productos/desvincularFong', 'ProductoController@eliminarRelacionFong');
 
 
 // RUTAS DEL RECURSO: FONOGRAMA
@@ -60,6 +62,7 @@ Route::delete('/fonogramas/desactivar/{id}', 'FonogramaController@destroyLog'); 
 Route::delete('/fonogramas/eliminar/{id}', 'FonogramaController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::post('/fonogramas/nomencladores', 'FonogramaController@nomenclators');
 Route::post('/fonogramas/tracks', 'FonogramaController@fonogramaTracks');
+Route::post('/fonogramas/desvincularTrk', 'FonogramaController@eliminarRelacionTrk');
 
 // RUTAS DEL RECURSO: AUDIOVISUAL
 Route::get('/audiovisuales/restaurar/{id}', 'AudiovisualController@restoreLog');

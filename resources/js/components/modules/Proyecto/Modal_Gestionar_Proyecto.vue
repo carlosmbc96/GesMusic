@@ -63,6 +63,7 @@
         <!-- Contenido del tab Generales -->
         <a-tab-pane key="1">
           <span slot="tab"> Generales </span>
+          <!-- <span v-else slot="tab"> Generales </span> -->
           <div>
             <a-row>
               <a-col span="12">
@@ -193,17 +194,17 @@
                         has-feedback
                         label="Nombre Completo"
                       >
-                        <a-input
-                          :disabled="disabled"
-                          v-model="project_modal.nombreProy"
-                        />
+                          <a-input
+                            :disabled="disabled"
+                            v-model="project_modal.nombreProy"
+                          />
                       </a-form-model-item>
                       <a-form-model-item label="Nombre Completo" v-else>
-                        <a-mentions
-                          readonly
-                          :placeholder="project_modal.nombreProy"
-                        >
-                        </a-mentions>
+                          <a-mentions
+                            readonly
+                            :placeholder="project_modal.nombreProy"
+                          >
+                          </a-mentions>
                       </a-form-model-item>
                     </div>
                   </a-col>
@@ -462,6 +463,11 @@ export default {
         this.$refs.general_form.validate((valid) => {
           if (valid) {
             return this.confirm();
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              5
+            );
           }
         });
       }

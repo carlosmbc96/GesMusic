@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Producto;
+use App\Producto_Audiovisual;
+use App\Producto_Fonograma;
 use App\Proyecto;
 use App\Vocabulario;
 use Illuminate\Http\Request;
@@ -152,10 +154,10 @@ class ProductoController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Producto
     {
         $producto = Producto::withTrashed()->findOrFail($id);
-        for ($i = 0; $i < count($producto->audiovisuales()->withTrashed()->get()); $i++) {
+        for ($i = count($producto->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
             $producto->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
         }
-        for ($i = 0; $i < count($producto->fonogramas()->withTrashed()->get()); $i++) {
+        for ($i = count($producto->fonogramas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
             $producto->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
         }
         Storage::disk('local')->deleteDirectory('/Proyectos/' . $producto->proyecto()->withTrashed()->get()[0]->codigProy . "/" . $producto->codigProd);
@@ -182,13 +184,32 @@ class ProductoController extends Controller
             }
         }
     }
-    public function eliminarRelacionFong(Request $request)
+    public function actualizarRelacionesFong(Request $request)
     {
-        $producto = Producto::withTrashed()->findOrFail($request->idProd);
-        for ($i = 0; $i < count($producto->fonogramas()->withTrashed()->get()); $i++) {
-            if ($producto->fonogramas()->withTrashed()->get()[$i]->pivot->fonograma_id === $request->idFong) {
-                $producto->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
-            }
+        $producto = Producto::withTrashed()->findOrFail($request->id);
+        for ($i = count($producto->fonogramas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+            $producto->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
         }
+        foreach ($request->fonogramas as $fonograma) {
+            Producto_Fonograma::create([
+                "producto_id" => $request->id,
+                "fonograma_id" => $fonograma
+            ]);
+        }
+        return response()->json($producto);
+    }
+    public function actualizarRelacionesAud(Request $request)
+    {
+        $producto = Producto::withTrashed()->findOrFail($request->id);
+        for ($i = count($producto->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+            $producto->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+        }
+        foreach ($request->audiovisuales as $audiovisual) {
+            Producto_Audiovisual::create([
+                "producto_id" => $request->id,
+                "audiovisual_id" => $audiovisual
+            ]);
+        }
+        return response()->json($producto);
     }
 }

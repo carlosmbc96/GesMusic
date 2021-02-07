@@ -1178,7 +1178,7 @@ export default {
     active() {
       if (this.text_button === "Editar") {
         return (
-          !this.compare_object ||
+          /* !this.compare_object || */
           (this.valid_image &&
             this.file_list.length !== 0 &&
             this.file_list[0].uid !== this.audiovisual_modal.id)
@@ -1194,6 +1194,44 @@ export default {
     },
   },
   methods: {
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+    */
+    /* compare_object() {
+      this.audiovisual_modal.makingOfAud =
+        this.makingOfAud === true ? 1 : 0;
+      return (
+        this.audiovisual_modal.paisGrabAud === this.audiovisual.paisGrabAud &&
+        this.audiovisual_modal.fenomRefAud === this.audiovisual.fenomRefAud &&
+        this.audiovisual_modal.duracionAud === this.audiovisual.duracionAud &&
+        this.audiovisual_modal.tituloAud === this.audiovisual.tituloAud &&
+        this.audiovisual_modal.generoAud === this.audiovisual.generoAud &&
+        this.audiovisual_modal.clasifAud === this.audiovisual.clasifAud &&
+        this.compareArrays(
+          this.product_modal.destinosComerPro,
+          this.product.destinosComerPro
+        ) &&
+        this.audiovisual_modal.añoFinAud === this.audiovisual.añoFinAud &&
+        this.audiovisual_modal.dueñoDerchAud === this.audiovisual.dueñoDerchAud &&
+        this.product_modal.genMusicPro === this.product.genMusicPro &&
+        this.product_modal.activoCatalbisPro ===
+          this.product.activoCatalbisPro &&
+        this.product_modal.catalDigitalPro === this.product.catalDigitalPro &&
+        this.product_modal.primeraPantProd === this.product.primeraPantProd &&
+        this.product_modal.estadodigProd ===
+          this.product
+            .estadodigProd */ /* &&
+        this.compareInterpAndAtr(this.autoresProd, this.product.autoresProd) &&
+        this.compareInterpAndAtr(
+          this.interpretesProd,
+          this.product.interpretesProd
+        ) &&
+        this.compareInterpRoles(
+          this.interpretesProd,
+          this.product.interpretesProd
+        ) */
+      /* );
+    }, */
     moment,
     siguiente(tab, siguienteTab) {
       if (tab === "tab_1") {
@@ -1262,7 +1300,11 @@ export default {
               if (this.file_list.length !== 0) {
                 return this.confirm();
               }
-            }
+            } else
+              this.$message.warning(
+                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                5
+              );
           });
         } else return this.confirm();
       }

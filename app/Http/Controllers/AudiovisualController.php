@@ -177,22 +177,22 @@ class AudiovisualController extends Controller
 		return response()->json(Audiovisual::findOrFail($id)->delete());
 	}
 
-	public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Audiovisual
-	{
-		$productos = [];
-		$audiovisual = Audiovisual::withTrashed()->findOrFail($id);
-		if (count($audiovisual->productos()->withTrashed()->get()) !== 0) {
-			for ($i = 0; $i < count($audiovisual->productos()->withTrashed()->get()); $i++) {
-				array_push($productos, $audiovisual->productos()->withTrashed()->get()[$i]->pivot->producto_id);
-				$audiovisual->productos()->withTrashed()->get()[$i]->pivot->delete();
-			}
-			$this->eliminarDirectorios($productos, $audiovisual->codigAud);
-		}
-		if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
-			Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
-		}
-		return response()->json($audiovisual->forceDelete());
-	}
+    public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Audiovisual
+    {
+        $productos = [];
+        $audiovisual = Audiovisual::withTrashed()->findOrFail($id);
+        if (count($audiovisual->productos()->withTrashed()->get()) !== 0) {
+            for ($i = count($audiovisual->productos()->withTrashed()->get()) - 1; $i >= 0; $i++) {
+                array_push($productos, $audiovisual->productos()->withTrashed()->get()[$i]->pivot->producto_id);
+                $audiovisual->productos()->withTrashed()->get()[$i]->pivot->delete();
+            }
+            $this->eliminarDirectorios($productos, $audiovisual->codigAud);
+        }
+        if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
+            Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
+        }
+        return response()->json($audiovisual->forceDelete());
+    }
 
 	public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Audiovisual
 	{

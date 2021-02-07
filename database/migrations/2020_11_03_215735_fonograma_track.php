@@ -10,6 +10,7 @@ class FonogramaTrack extends Migration
     {
         Schema::create('fonograma_track', function (Blueprint $table) {
             $table->id()->index();  // Identificador Único de la Tabla: Parámetros
+            $table->string('ordenTrk')->nullable();  // Orden Track Repertorio
 
             $table->softDeletes();  // Eliminación lógica del Registro
             $table->timestamps();  // Fecha de Creación y Actualización del Registro

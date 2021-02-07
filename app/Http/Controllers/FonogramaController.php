@@ -157,15 +157,11 @@ class FonogramaController extends Controller
 
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Fonograma
     {
-        $productos = [];
-        $tracks = [];
         $fonograma = Fonograma::withTrashed()->findOrFail($id);
-        for ($i = 0; $i < count($fonograma->productos()->withTrashed()->get()); $i++) {
-            array_push($productos, $fonograma->productos()->withTrashed()->get()[$i]->pivot->producto_id);
+        for ($i = count($fonograma->productos()->withTrashed()->get()) - 1; $i >= 0; $i--) {
             $fonograma->productos()->withTrashed()->get()[$i]->pivot->delete();
         }
-        for ($i = 0; $i < count($fonograma->tracks()->withTrashed()->get()); $i++) {
-            array_push($tracks, $fonograma->tracks()->withTrashed()->get()[$i]->pivot->track_id);
+        for ($i = count($fonograma->tracks()->withTrashed()->get()) - 1; $i >= 0; $i--) {
             $fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
         }
         if (substr($fonograma->portadillaFong, 33) !== "Logo ver vertical_Ltr Negras.png") {
@@ -211,7 +207,8 @@ class FonogramaController extends Controller
     {
         for ($i = 0; $i < count($request->tracks); $i++) {
             Fonograma_Track::create([
-                "track_id" => $request->tracks[$i],
+                "track_id" => $request->tracks[$i][$i],
+                "ordenTrk" => $request->tracks[$i][1],
                 "fonograma_id" => $request->idFong
             ]);
         }
@@ -224,5 +221,19 @@ class FonogramaController extends Controller
                 $fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
             }
         }
+    }
+    public function actualizarRelacionesTrk(Request $request)
+    {
+        $fonograma = Fonograma::withTrashed()->findOrFail($request->id);
+        for ($i = count($fonograma->tracks()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+            $fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
+        }
+        foreach ($request->tracks as $track) {
+            Fonograma_Track::create([
+                "fonograma_id" => $request->id,
+                "track_id" => $track
+            ]);
+        }
+        return response()->json($fonograma);
     }
 }

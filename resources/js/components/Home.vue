@@ -17,7 +17,7 @@
                 class="portlet light"
                 style="background-color: rgba(255, 255, 255, 0.4)"
               >
-                <router-view />
+                  <router-view />
               </div>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default {
     });
   },
   watch: {
-    router: function() {
+    router: function () {
       return this.router === "/"
         ? (this.content = false)
         : (this.content = true);
@@ -145,6 +145,11 @@ export default {
   content: "\e22c" !important;
   color: rgb(115, 25, 84) !important;
   font-size: 18px !important;
+}
+.e-transfer-icon:before {
+  content: "\e359" !important;
+  color: rgb(115, 25, 84) !important;
+  font-size: 20px !important;
 }
 .e-print-export:before {
   content: "\e813" !important;

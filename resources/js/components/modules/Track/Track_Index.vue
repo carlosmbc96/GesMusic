@@ -835,8 +835,8 @@ export default {
             let index = this.series_data.findIndex(
               (serie) => serie.generos === track.generoTrk
             );
-            if (index != -1) {
-              this.series_data[index].traks += 1;
+            if (index !== -1) {
+              this.series_data[index].tracks += 1;
             } else {
               this.series_data.push({
                 generos: track.generoTrk,

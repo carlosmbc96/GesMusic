@@ -1203,6 +1203,9 @@ export default {
       return form_data;
     },
     set_action() {
+      console.log(this.active_tab);
+      console.log(this.tab_visibility);
+      console.log(this.action_modal);
       if (this.fonogram.productos_fongs || this.fonogram.tabla) {
         this.tab_visibility = false;
         this.active_tab = "2";

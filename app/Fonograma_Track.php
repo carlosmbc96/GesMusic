@@ -14,7 +14,8 @@ class Fonograma_Track extends Model
     // Atributos del Modelo Producto
     protected $fillable = [
         'fonograma_id',
-        'track_id'
+        'track_id',
+        'ordenTrk'
     ];
     //SECCIÓN DE FILLABLE
 }

@@ -185,7 +185,7 @@ class AudiovisualController extends Controller
         $productos = [];
         $audiovisual = Audiovisual::withTrashed()->findOrFail($id);
         if (count($audiovisual->productos()->withTrashed()->get()) !== 0) {
-            for ($i = 0; $i < count($audiovisual->productos()->withTrashed()->get()); $i++) {
+            for ($i = count($audiovisual->productos()->withTrashed()->get()) - 1; $i >= 0; $i++) {
                 array_push($productos, $audiovisual->productos()->withTrashed()->get()[$i]->pivot->producto_id);
                 $audiovisual->productos()->withTrashed()->get()[$i]->pivot->delete();
             }

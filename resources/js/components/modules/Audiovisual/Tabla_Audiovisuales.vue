@@ -91,6 +91,12 @@
       :audiovisuals_list="all_audiovisuals"
     />
     <!-- Fin Sección de Modals -->
+    <transfer_modal
+      v-if="visible_transfer"
+      @actualizar="refresh_table"
+      :entity_id="producto.id"
+      @close_modal="visible_transfer = $event"
+    ></transfer_modal>
   </div>
 </template>
 
@@ -101,6 +107,7 @@
 import Vue from "vue";
 import axios from "../../../config/axios/axios";
 import modal_management from "./Modal_Gestionar_Audiovisual";
+import transfer_modal from "./Transfer_Modal_Audiovisual";
 import {
   GridPlugin,
   Edit,
@@ -214,6 +221,12 @@ export default {
               id: "add",
             },
             "Search",
+            {
+              text: "Gestionar Relaciones",
+              tooltipText: "Gestionar Relaciones",
+              prefixIcon: "e-transfer-icon",
+              id: "vinc_desvinc",
+            },
           ],
       status_child_template: () => {
         return {
@@ -492,23 +505,6 @@ export default {
         };
       },
       actions_template: () => {
-        const ChainBroken = {
-          template: `
-    <svg width="1em" height="1em" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M 5 7 C 2.2 7 0 9.2 0 12 C 0 14.8 2.2 17 5 17 L 8 17 C 9.9 17 11.5125 16.00625 12.3125 14.40625 L 10.09375 14.1875 C 9.49375 14.6875 8.8 15 8 15 L 5 15 C 3.3 15 2 13.7 2 12 C 2 10.3 3.3 9 5 9 L 8 9 C 9 9 9.80625 9.4875 10.40625 10.1875 L 12.8125 10.5 C 12.1125 8.5 10.2 7 8 7 L 5 7 z M 16.34375 7.84375 C 16.112563 7.8440581 15.880748 7.8741789 15.65625 7.90625 L 15.9375 9.875 C 16.43951 9.803284 17.073353 9.901973 17.59375 10.125 C 18.293583 10.531306 19.652462 11.150726 20.28125 11.40625 C 21.765569 12.074193 22.373644 13.850236 21.6875 15.375 C 21.019557 16.859319 19.243514 17.467394 17.71875 16.78125 C 17.002493 16.365409 15.574624 15.7111 14.96875 15.46875 L 14.21875 17.34375 C 14.590684 17.492524 16.466199 18.37347 16.78125 18.5625 L 16.84375 18.59375 L 16.875 18.625 C 19.350236 19.738856 22.367943 18.734431 23.5 16.21875 L 23.53125 16.15625 C 24.599844 13.693188 23.6192 10.716139 21.125 9.59375 L 21.09375 9.59375 L 21.0625 9.5625 C 20.690566 9.4137263 18.815051 8.5327803 18.5 8.34375 L 18.46875 8.3125 L 18.40625 8.28125 C 17.746548 7.9985205 17.03731 7.8428258 16.34375 7.84375 z M 8.71875 11 A 1.0004882 1.0004882 0 0 0 8.875 13 L 16.875 14 A 1.0077822 1.0077822 0 0 0 17.125 12 L 9.125 11 A 1.0001 1.0001 0 0 0 8.8125 11 A 1.0004882 1.0004882 0 0 0 8.71875 11 z" />
-    </svg>
-  `,
-        };
-        const ChainBrokenIcon = {
-          template: `
-    <a-icon :component="ChainBroken" />
-  `,
-          data() {
-            return {
-              ChainBroken,
-            };
-          },
-        };
         return {
           template: Vue.component("columnTemplate", {
             template: `
@@ -519,32 +515,13 @@ export default {
                 <a-tooltip title="Editar" placement="bottom">
                 <a-button v-if="!$parent.$parent.$parent.detalles"size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
-
-                <a-popconfirm
-                    placement="leftBottom"
-                    @confirm="del_relation_btn_click"
-										ok-text="Si"
-                    cancel-text="No"
-                    title="¿Desea desvincular el Audiovisual de este Producto?"
-                >
-                <a-icon slot="icon" type="close-circle" theme="filled" style="color: #F36B64;" />
-                <a-tooltip title="Desvincular" placement="bottom">
-                <a-button @mouseenter="changeIcon" v-if="!broken_relation" size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon :rotate="45" type="link" :style="{ fontSize: '25px', color: 'black' }"/></a-icon></a-button>
-                <a-button @mouseleave="changeIcon" v-else size="small" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><chain-broken-icon :style="{ fontSize: '25px', color: 'black' }" /></a-icon></a-button>
-                </a-tooltip>
-                </a-popconfirm>
-
                 </div>`,
             data: function (axios) {
               return {
                 data: {},
-                broken_relation: false,
               };
             },
             methods: {
-              changeIcon() {
-                this.broken_relation = !this.broken_relation;
-              },
               /*
                * Método con la lógica del botón detalles
                */
@@ -565,120 +542,13 @@ export default {
                   this.$parent.$parent.$parent.visible_management = true;
                 }
               },
-              /*
-               * Método con la lógica del botón desvincular
-               */
-              del_relation_btn_click(args) {
-                this.$toast.question(
-                  "¿Esta acción eliminará el vínculo del Audiovisual en este Producto?",
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    zindex: 9999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea desvincular el Audiovisual?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 99999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    this.$parent.$parent.$parent.change_spin();
-                                    axios
-                                      .post(`productos/desvincularAud`, {
-                                        idProd: this.$parent.$parent.$parent
-                                          .producto.id,
-                                        idAud: this.data.id,
-                                      })
-                                      .then((ress) => {
-                                        this.$parent.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El Audiovisual ha sido desvinculado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 2000, color: "red" }
-                                        );
-                                        this.$parent.$parent.$parent.change_spin();
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 2000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
-                              ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
-                    ],
-                  }
-                );
-              },
-            },
-            components: {
-              ChainBrokenIcon,
             },
           }),
         };
       },
       export_view: false, //* Vista del panel de exportaciones
       spinning: false,
+      visible_transfer: false,
       status: "",
       detalles: this.detalles_prop,
       audiovisuals_list: [], //* Lista de Audiovisuales que es cargada en la tabla
@@ -715,7 +585,7 @@ export default {
      */
     load_audiovisuals() {
       this.$emit("reload");
-      this.change_spin()
+      this.change_spin();
       if (this.vista_editar) {
         axios
           .post("/audiovisuales/listar", { relations: ["productos"] })
@@ -733,7 +603,7 @@ export default {
               }
               pertenece = false;
             });
-            this.change_spin()
+            this.change_spin();
           });
         axios.post("/audiovisuales/listar").then((response) => {
           this.all_audiovisuals = response.data;
@@ -758,11 +628,14 @@ export default {
           modal_detalles: true,
           productos_audvs: this.producto.id,
         };
+      } else if (args.item.id === "vinc_desvinc") {
+        this.visible_transfer = true;
       }
     },
   },
   components: {
     modal_management,
+    transfer_modal,
   },
   provide: {
     grid: [

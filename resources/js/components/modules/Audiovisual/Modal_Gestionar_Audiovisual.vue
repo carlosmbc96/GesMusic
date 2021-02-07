@@ -198,7 +198,49 @@
                         <a-row>
                           <a-col span="24">
                             <a-form-model-item
-                              v-if="action_modal === 'crear'"
+                              v-if="action_modal !== 'detalles'"
+                              has-feedback
+                              label="Género Audiovisual"
+                              prop="generoAud"
+                            >
+                              <a-select
+                                :getPopupContainer="
+                                  (trigger) => trigger.parentNode
+                                "
+                                option-filter-prop="children"
+                                :filter-option="filter_option"
+                                show-search
+                                :disabled="disabled"
+                                v-model="audiovisual_modal.generoAud"
+                              >
+                                <a-select-option
+                                  v-for="nomenclator in generos"
+                                  :key="nomenclator.id"
+                                  :value="nomenclator.nombreTer"
+                                >
+                                  {{ nomenclator.nombreTer }}
+                                </a-select-option>
+                              </a-select>
+                            </a-form-model-item>
+                            <a-form-model-item
+                              label="Género Audiovisual"
+                              v-if="action_modal === 'detalles'"
+                            >
+                              <a-mentions
+                                readonly
+                                :placeholder="audiovisual_modal.generoAud"
+                              >
+                              </a-mentions>
+                            </a-form-model-item>
+                            <a-form-model-item
+                              v-if="
+                                action_modal === 'crear' &&
+                                  (audiovisual_modal.generoAud ===
+                                    'Entrevista' ||
+                                    audiovisual_modal.generoAud ===
+                                      'Making of' ||
+                                    audiovisual_modal.generoAud === 'Trailers')
+                              "
                               :validate-status="show_error"
                               prop="codigAud"
                               has-feedback
@@ -213,7 +255,14 @@
                               />
                             </a-form-model-item>
                             <a-form-model-item
-                              v-if="action_modal === 'editar'"
+                              v-if="
+                                action_modal === 'editar' &&
+                                  (audiovisual_modal.generoAud ===
+                                    'Entrevista' ||
+                                    audiovisual_modal.generoAud ===
+                                      'Making of' ||
+                                    audiovisual_modal.generoAud === 'Trailers')
+                              "
                               label="Código"
                             >
                               <a-input
@@ -225,7 +274,14 @@
                             </a-form-model-item>
                             <a-form-model-item
                               label="Código"
-                              v-if="action_modal === 'detalles'"
+                              v-if="
+                                action_modal === 'detalles' &&
+                                  (audiovisual_modal.generoAud ===
+                                    'Entrevista' ||
+                                    audiovisual_modal.generoAud ===
+                                      'Making of' ||
+                                    audiovisual_modal.generoAud === 'Trailers')
+                              "
                             >
                               <a-mentions
                                 readonly
@@ -235,7 +291,14 @@
                             </a-form-model-item>
                           </a-col>
                         </a-row>
-                        <a-row v-if="action_modal === 'crear'">
+                        <a-row
+                          v-if="
+                            action_modal === 'crear' &&
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental')
+                          "
+                        >
                           <a-col span="24">
                             <a-row>
                               <a-col span="4">
@@ -342,7 +405,12 @@
                           </a-col>
                         </a-row>
                         <a-form-model-item
-                          v-if="action_modal === 'editar'"
+                          v-if="
+                            action_modal === 'editar' &&
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental')
+                          "
                           label="ISRC"
                         >
                           <a-input
@@ -352,7 +420,12 @@
                         </a-form-model-item>
                         <a-form-model-item
                           label="ISRC"
-                          v-if="action_modal === 'detalles'"
+                          v-if="
+                            action_modal === 'detalles' &&
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental')
+                          "
                         >
                           <a-mentions
                             readonly
@@ -364,39 +437,6 @@
                     </a-row>
                     <a-row>
                       <a-col span="11">
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Género Audiovisual"
-                          prop="generoAud"
-                        >
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            option-filter-prop="children"
-                            :filter-option="filter_option"
-                            show-search
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.generoAud"
-                          >
-                            <a-select-option
-                              v-for="nomenclator in generos"
-                              :key="nomenclator.id"
-                              :value="nomenclator.nombreTer"
-                            >
-                              {{ nomenclator.nombreTer }}
-                            </a-select-option>
-                          </a-select>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Género Audiovisual"
-                          v-if="action_modal === 'detalles'"
-                        >
-                          <a-mentions
-                            readonly
-                            :placeholder="audiovisual_modal.generoAud"
-                          >
-                          </a-mentions>
-                        </a-form-model-item>
                         <a-form-model-item
                           v-if="action_modal !== 'detalles'"
                           has-feedback
@@ -1302,9 +1342,7 @@ export default {
           this.spinning = false;
           this.waiting = false;
           this.isrc_validation = "duplicated-isrc-error";
-          this.$message.error(
-            "El código ISRC utilizado ya existe."
-          );
+          this.$message.error("El código ISRC utilizado ya existe.");
           this.audiovisual_modal.codigAud = this.codigo;
         }
       }
@@ -1401,27 +1439,32 @@ export default {
       if (this.action_modal === "editar" || this.action_modal === "detalles") {
         form_data.append("id", this.audiovisual_modal.id);
       } else {
-        this.audiovisual_modal.isrcAud =
-          "" +
-          this.audiovisual_modal.codigPais.toUpperCase() +
-          this.audiovisual_modal.codigRegistro.toUpperCase() +
-          this.audiovisual_modal.anhoRegistro +
-          this.audiovisual_modal.identificador;
+        if (this.is_isrc()) {
+          this.audiovisual_modal.isrcAud =
+            "" +
+            this.audiovisual_modal.codigPais.toUpperCase() +
+            this.audiovisual_modal.codigRegistro.toUpperCase() +
+            this.audiovisual_modal.anhoRegistro +
+            this.audiovisual_modal.identificador;
+        }
       }
-      if (this.audiovisual_modal.codigAud === undefined) {
-        this.audiovisual_modal.codigAud = this.codigo;
+      if (this.is_isrc()) {
+        if (this.audiovisual_modal.identificador === undefined) {
+          this.audiovisual_modal.identificador = this.codigoIsrc;
+        }
+        if (this.audiovisual_modal.codigPais === undefined) {
+          this.audiovisual_modal.codigPais = "CU";
+        }
+        form_data.append("isrcAud", this.audiovisual_modal.isrcAud);
+      } else {
+        if (this.audiovisual_modal.codigAud === undefined) {
+          this.audiovisual_modal.codigAud = this.codigo;
+        }
+        this.codigo = this.audiovisual_modal.codigAud;
+        this.audiovisual_modal.codigAud =
+          "AUDV-" + this.audiovisual_modal.codigAud;
+        form_data.append("codigAud", this.audiovisual_modal.codigAud);
       }
-      if (this.audiovisual_modal.identificador === undefined) {
-        this.audiovisual_modal.identificador = this.codigoIsrc;
-      }
-      if (this.audiovisual_modal.codigPais === undefined) {
-        this.audiovisual_modal.codigPais = "CU";
-      }
-      this.codigo = this.audiovisual_modal.codigAud;
-      this.audiovisual_modal.codigAud =
-        "AUDV-" + this.audiovisual_modal.codigAud;
-      form_data.append("codigAud", this.audiovisual_modal.codigAud);
-      form_data.append("isrcAud", this.audiovisual_modal.isrcAud);
       form_data.append("tituloAud", this.audiovisual_modal.tituloAud);
       form_data.append("clasifAud", this.audiovisual_modal.clasifAud);
       form_data.append("generoAud", this.audiovisual_modal.generoAud);
@@ -1704,6 +1747,12 @@ export default {
         }
       }
       return true;
+    },
+
+    is_isrc() {
+      return this.audiovisual_modal.generoAud === "Concierto" ||
+        this.audiovisual_modal.generoAud === "Documental" ||
+        this.audiovisual_modal.generoAud === "Video Clip";
     },
   },
 };

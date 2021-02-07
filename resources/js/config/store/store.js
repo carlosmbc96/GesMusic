@@ -1,9 +1,12 @@
+import moment from "moment";
+
 export default {
   state: {
     all_tracks: [],
     all_tracks_statics: [],
     tracks: [],
-    created_tracks: [],
+		created_tracks: [],
+		duration: moment().format("HH:mm:ss"),
   },
   getters: {
     getTracksFormGetters(state) {
@@ -17,6 +20,9 @@ export default {
     },
     getAllTracksStaticsFormGetters(state) {
       return state.all_tracks_statics;
+    },
+    getDurationFormGetters(state) {
+      return state.duration;
     },
   },
 };

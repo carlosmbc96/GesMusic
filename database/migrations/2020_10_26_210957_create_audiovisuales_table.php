@@ -20,7 +20,6 @@ class CreateAudiovisualesTable extends Migration
             $table->time('duracionAud')->nullable();  // Duración Audiovisual
             $table->string('añoFinAud')->nullable();  // Año que se terminó el Audiovisual *nom
             $table->string('paisGrabAud')->nullable();  // País de Grabación del Audiovisual *nom
-            $table->string('territorioAud')->nullable();  // Territorio del Audiovisual
             $table->string('idiomaAud')->nullable();  // Idioma Audiovisual *nom
             $table->string('subtitulosAud')->nullable();  // Subtitulos Audiovisual *nom
             $table->string('fenomRefAud')->nullable();  // Fenómeno de Referencia del Audiovisual

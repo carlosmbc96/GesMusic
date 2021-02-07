@@ -186,47 +186,6 @@
                       >
                         <img style="width: 100%" :src="preview_image" />
                       </a-modal>
-                      <a-form-model-item
-                        style="margin-top: -17px"
-                        v-if="action_modal !== 'detalles'"
-                        has-feedback
-                        label="Año de creación"
-                        prop="añoFong"
-                      >
-                        <a-select
-                          :getPopupContainer="(trigger) => trigger.parentNode"
-                          option-filter-prop="children"
-                          :filter-option="filter_option"
-                          show-search
-                          :disabled="disabled"
-                          v-model="fonogram_modal.añoFong"
-                        >
-                          <a-select-option
-                            v-for="nomenclator in anhos"
-                            :key="nomenclator.id"
-                            :value="nomenclator.nombreTer"
-                          >
-                            {{ nomenclator.nombreTer }}
-                          </a-select-option>
-                        </a-select>
-                      </a-form-model-item>
-                      <a-form-model-item label="Año de creación" v-else>
-                        <a-mentions
-                          readonly
-                          :placeholder="fonogram_modal.añoFong"
-                        >
-                        </a-mentions>
-                      </a-form-model-item>
-                      <a-form-model-item
-                        label="Duración"
-                        v-if="action_modal === 'detalles'"
-                      >
-                        <a-mentions
-                          readonly
-                          :placeholder="fonogram_modal.duracionFong"
-                        >
-                        </a-mentions>
-                      </a-form-model-item>
                     </a-col>
                     <a-col span="11" style="float: right">
                       <a-form-model-item
@@ -282,6 +241,40 @@
                         >
                         </a-mentions>
                       </a-form-model-item>
+                    </a-col>
+                  </a-row>
+                  <a-row>
+                    <a-col span="11">
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Año de creación"
+                        prop="añoFong"
+                      >
+                        <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          :disabled="disabled"
+                          v-model="fonogram_modal.añoFong"
+                        >
+                          <a-select-option
+                            v-for="nomenclator in anhos"
+                            :key="nomenclator.id"
+                            :value="nomenclator.nombreTer"
+                          >
+                            {{ nomenclator.nombreTer }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item label="Año de creación" v-else>
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.añoFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
@@ -315,36 +308,19 @@
                         >
                         </a-mentions>
                       </a-form-model-item>
-                      <a-form-model-item
-                        v-if="action_modal !== 'detalles'"
-                        has-feedback
-                        label="País del dueño del Producto"
-                        prop="propiedadFong"
-                      >
-                        <a-select
-                          :getPopupContainer="(trigger) => trigger.parentNode"
-                          option-filter-prop="children"
-                          :filter-option="filter_option"
-                          show-search
-                          :disabled="disabled"
-                          v-model="fonogram_modal.propiedadFong"
-                        >
-                          <a-select-option
-                            v-for="nomenclator in paises"
-                            :key="nomenclator.id"
-                            :value="nomenclator.nombreTer"
-                          >
-                            {{ nomenclator.nombreTer }}
-                          </a-select-option>
-                        </a-select>
-                      </a-form-model-item>
-                      <a-form-model-item
-                        label="País del dueño del producto"
-                        v-else
-                      >
+                    </a-col>
+                    <a-col span="11" style="float: right">
+                      <a-form-model-item label="Duración total" v-if="action_modal === 'crear'">
                         <a-mentions
                           readonly
-                          :placeholder="fonogram_modal.propiedadFong"
+                          :placeholder="$store.getters.getDurationFormGetters"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item label="Duración total" v-else>
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.duracionFong"
                         >
                         </a-mentions>
                       </a-form-model-item>
@@ -404,104 +380,63 @@
                       >
                       </a-mentions>
                     </a-form-model-item>
+                    <div class="section-title">
+                      <h4>Datos Descripciones</h4>
+                    </div>
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Territorio"
-                      prop="territorioFong"
+                      label="Descripción en español del Fonograma"
+                      prop="descripEspFong"
                     >
-                      <a-select
-                        :getPopupContainer="(trigger) => trigger.parentNode"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
+                      <a-input
                         :disabled="disabled"
-                        v-model="fonogram_modal.territorioFong"
-                      >
-                        <a-select-option
-                          v-for="nomenclator in territorios"
-                          :key="nomenclator.id"
-                          :value="nomenclator.nombreTer"
-                        >
-                          {{ nomenclator.nombreTer }}
-                        </a-select-option>
-                      </a-select>
+                        style="width: 100%; height: 150px"
+                        v-model="fonogram_modal.descripEspFong"
+                        type="textarea"
+                      />
                     </a-form-model-item>
-                    <a-form-model-item label="Territorio" v-else>
-                      <a-mentions
-                        readonly
-                        :placeholder="fonogram_modal.territorioFong"
-                      >
-                      </a-mentions>
+                    <a-form-model-item
+                      label="Descripción en español del Fonograma"
+                      v-else
+                    >
+                      <div class="description">
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.descripEspFong"
+                        >
+                        </a-mentions>
+                      </div>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Descripción en inglés del Fonograma"
+                      prop="descripIngFong"
+                    >
+                      <a-input
+                        :disabled="disabled"
+                        style="width: 100%; height: 150px"
+                        v-model="fonogram_modal.descripIngFong"
+                        type="textarea"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Descripción en inglés del Fonograma"
+                      v-else
+                    >
+                      <div class="description">
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.descripIngFong"
+                        >
+                        </a-mentions>
+                      </div>
                     </a-form-model-item>
                   </a-row>
                 </a-col>
               </a-row>
-              <div>
-                <a-row>
-                  <div class="section-title" style="width: 46%">
-                    <h4>Datos Descripciones</h4>
-                  </div>
-                  <a-row>
-                    <div id="desciption-problem-icon">
-                      <a-col span="11">
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Descripción en español del Fonograma"
-                          prop="descripEspFong"
-                        >
-                          <a-input
-                            :disabled="disabled"
-                            style="width: 100%; height: 150px"
-                            v-model="fonogram_modal.descripEspFong"
-                            type="textarea"
-                          />
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Descripción en español del Fonograma"
-                          v-else
-                        >
-                          <div class="description">
-                            <a-mentions
-                              readonly
-                              :placeholder="fonogram_modal.descripEspFong"
-                            >
-                            </a-mentions>
-                          </div>
-                        </a-form-model-item>
-                      </a-col>
-                      <a-col span="11" style="float: right">
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Descripción en inglés del Fonograma"
-                          prop="descripIngFong"
-                        >
-                          <a-input
-                            :disabled="disabled"
-                            style="width: 100%; height: 150px"
-                            v-model="fonogram_modal.descripIngFong"
-                            type="textarea"
-                          />
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Descripción en inglés del Fonograma"
-                          v-else
-                        >
-                          <div class="description">
-                            <a-mentions
-                              readonly
-                              :placeholder="fonogram_modal.descripIngFong"
-                            >
-                            </a-mentions>
-                          </div>
-                        </a-form-model-item>
-                      </a-col>
-                    </div>
-                  </a-row>
-                </a-row>
-              </div>
+              <div></div>
               <a-button
                 style="float: right"
                 type="default"
@@ -540,7 +475,7 @@
             :vista_editar="vista_editar"
             @close_modal="show = $event"
           />
-          <br>
+          <br />
           <a-row v-if="action_modal === 'crear'">
             <a-col span="1"></a-col>
             <a-col span="20">
@@ -709,7 +644,16 @@
                     </a-row>
                   </a-form-model>
                 </a-col>
-                <a-col span="12"> </a-col>
+                <a-col span="10" style="float: right">
+                  <div class="section-title">
+                    <h4>Duración total</h4>
+                  </div>
+                  <a-mentions
+                    readonly
+                    :placeholder="$store.getters.getDurationFormGetters"
+                  >
+                  </a-mentions>
+                </a-col>
               </a-row>
             </a-col>
             <a-col span="1"></a-col>
@@ -763,6 +707,7 @@
 <script>
 import tabla_tracks from "../Track/Tabla_Tracks";
 import modal_management from "../Track/Modal_Gestionar_Track";
+import moment from "../../../../../node_modules/moment";
 export default {
   props: ["action", "fonogram", "fonograms_list"],
   data() {
@@ -794,7 +739,6 @@ export default {
       tab_visibility: true,
       clasficaciones: [],
       paises: [],
-      territorios: [],
       action_cancel_title: "",
       products: [],
       anhos: [],
@@ -919,6 +863,9 @@ export default {
     this.set_action();
     if (this.action_modal === "crear") {
       this.codigo = this.generar_codigo(this.fonograms_list);
+      this.$store.state.duration = moment("00:00:00", "HH:mm:ss").format(
+        "HH:mm:ss"
+      );
     } else if (this.action_modal === "detalles") {
       this.active_tab = "2";
       this.fonogram_modal.codigFong = this.fonogram.codigFong;
@@ -995,6 +942,7 @@ export default {
         this.$store.state["tracks"] = [];
         this.$store.state["created_tracks"] = [];
         this.$store.state["all_tracks"] = [];
+        this.$store.state.duration = 0;
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;
@@ -1136,20 +1084,10 @@ export default {
       } else if (this.fonogram_modal.descripIngFong === null) {
         this.fonogram_modal.descripIngFong = "";
       }
-      if (this.fonogram_modal.territorioFong === undefined) {
-        this.fonogram_modal.territorioFong = "";
-      } else if (this.fonogram_modal.territorioFong === null) {
-        this.fonogram_modal.territorioFong = "";
-      }
       if (this.fonogram_modal.dueñoDerchFong === undefined) {
         this.fonogram_modal.dueñoDerchFong = "";
       } else if (this.fonogram_modal.dueñoDerchFong === null) {
         this.fonogram_modal.dueñoDerchFong = "";
-      }
-      if (this.fonogram_modal.propiedadFong === undefined) {
-        this.fonogram_modal.propiedadFong = "";
-      } else if (this.fonogram_modal.propiedadFong === null) {
-        this.fonogram_modal.propiedadFong = "";
       }
       if (this.fonogram_modal.clasficacionFong === undefined) {
         this.fonogram_modal.clasficacionFong = "";
@@ -1173,22 +1111,21 @@ export default {
       if (this.fonogram_modal.codigFong === undefined) {
         this.fonogram_modal.codigFong = this.codigo;
       }
+      this.fonogram_modal.duracionFong = this.$store.getters.getDurationFormGetters;
       this.fonogram_modal.codigFong = "FONG-" + this.fonogram_modal.codigFong;
       form_data.append("codigFong", this.fonogram_modal.codigFong);
       form_data.append("tituloFong", this.fonogram_modal.tituloFong);
-      form_data.append("duracionFong", "00:00");
+      form_data.append("duracionFong", this.fonogram_modal.duracionFong);
       form_data.append(
         "clasficacionFong",
         this.fonogram_modal.clasficacionFong
       );
-      form_data.append("territorioFong", this.fonogram_modal.territorioFong);
       form_data.append("añoFong", this.fonogram_modal.añoFong);
       form_data.append("dueñoDerchFong", this.fonogram_modal.dueñoDerchFong);
       form_data.append(
         "nacioDueñoDerchFong",
         this.fonogram_modal.nacioDueñoDerchFong
       );
-      form_data.append("propiedadFong", this.fonogram_modal.propiedadFong);
       form_data.append("descripEspFong", this.fonogram_modal.descripEspFong);
       form_data.append("descripIngFong", this.fonogram_modal.descripIngFong);
       form_data.append("product_id", this.fonogram_modal.productos_fongs);
@@ -1367,9 +1304,8 @@ export default {
         .then((response) => {
           this.list_nomenclators = response.data;
           this.clasficaciones = this.list_nomenclators[0][0];
-          this.paises = this.list_nomenclators[2][0];
-          this.territorios = this.list_nomenclators[1][0];
-          this.anhos = this.list_nomenclators[3][0];
+          this.paises = this.list_nomenclators[1][0];
+          this.anhos = this.list_nomenclators[2][0];
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
@@ -1388,11 +1324,43 @@ export default {
           1
         );
         this.fonogram_modal.tracks = undefined;
+        this.$store.state.duration = moment(
+          this.$store.getters.getDurationFormGetters,
+          "HH:mm:ss"
+        );
+        this.$store.state.duration
+          .add(
+            moment.duration(
+              this.$store.getters.getTracksFormGetters[
+                this.$store.getters.getTracksFormGetters.length - 1
+              ].duracionTrk
+            )
+          )
+          .format("HH:mm:ss");
+        this.$store.state.duration = moment(
+          this.$store.getters.getDurationFormGetters,
+          "HH:mm:ss"
+        ).format("HH:mm:ss");
       }
     },
 
     remove_track(item) {
       let index = this.$store.getters.getTracksFormGetters.indexOf(item);
+      this.$store.state.duration = moment(
+        this.$store.getters.getDurationFormGetters,
+        "HH:mm:ss"
+      );
+      this.$store.state.duration
+        .subtract(
+          moment.duration(
+            this.$store.getters.getTracksFormGetters[index].duracionTrk
+          )
+        )
+        .format("HH:mm:ss");
+      this.$store.state.duration = moment(
+        this.$store.getters.getDurationFormGetters,
+        "HH:mm:ss"
+      ).format("HH:mm:ss");
       this.$store.state["tracks"].splice(index, 1);
       this.$store.state["all_tracks"].push(item);
     },

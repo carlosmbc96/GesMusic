@@ -25,7 +25,6 @@ class Audiovisual extends Model
         'duracionAud',  // Duración Audiovisual
         'añoFinAud',  // Año que se terminó el Audiovisual *nom
         'paisGrabAud',  // País de Grabación del Audiovisual *nom
-        'territorioAud',  // Territorio del Audiovisual
         'idiomaAud',  // Idioma Audiovisual *nom
         'subtitulosAud',  // Subtitulos Audiovisual *nom
         'fenomRefAud',  // Fenómeno de Referencia del Audiovisual

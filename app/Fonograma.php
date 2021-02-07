@@ -22,7 +22,6 @@ class Fonograma extends Model
 		'añoFong',
 		'clasficacionFong',  // Clasificación Fonograma *nom
 		'duracionFong',  // Duración total del Fonograma (suma de las duraciones de los Tracks asociados)
-		'territorioFong',  // Territorio del Fonograma *nom
 		'dueñoDerchFong',  // Nombre y Apellidos del Dueño de los Derechos del Fonograma
 		'nacioDueñoDerchFong',  // Nacionalidad del Dueño de los Derechos del Fonograma *nom
 		'propiedadFong',  // Nacionalidad Dueño Fonograma *nom

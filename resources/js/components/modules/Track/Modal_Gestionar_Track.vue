@@ -850,6 +850,23 @@ export default {
                   this.$store.state["all_tracks_statics"].push(
                     tracks[tracks.length - 1]
                   );
+                  this.$store.state.duration = moment(
+                    this.$store.getters.getDurationFormGetters,
+                    "HH:mm:ss"
+                  );
+                  this.$store.state.duration
+                    .add(
+                      moment.duration(
+                        this.$store.getters.getTracksFormGetters[
+                          this.$store.getters.getTracksFormGetters.length - 1
+                        ].duracionTrk
+                      )
+                    )
+                    .format("HH:mm:ss");
+                  this.$store.state.duration = moment(
+                    this.$store.getters.getDurationFormGetters,
+                    "HH:mm:ss"
+                  ).format("HH:mm:ss");
                 })
                 .catch((error) => {
                   console.log(error);

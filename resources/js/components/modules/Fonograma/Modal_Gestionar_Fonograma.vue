@@ -1445,11 +1445,12 @@ export default {
     //Fin de metodos para generar el codigo
 
     getTracksID() {
-      let answer = [];
+			let answer = [];
       let all_tracks = this.$store.getters.getTracksFormGetters;
       for (let index = 0; index < all_tracks.length; index++) {
-        answer.push(all_tracks[index].id);
-      }
+				answer.push([all_tracks[index].id, index + 1]);
+			}
+			console.log(answer);
       return answer;
     },
   },

@@ -207,7 +207,7 @@ class FonogramaController extends Controller
     {
         for ($i = 0; $i < count($request->tracks); $i++) {
             Fonograma_Track::create([
-                "track_id" => $request->tracks[$i][$i],
+                "track_id" => $request->tracks[$i][0],
                 "ordenTrk" => $request->tracks[$i][1],
                 "fonograma_id" => $request->idFong
             ]);

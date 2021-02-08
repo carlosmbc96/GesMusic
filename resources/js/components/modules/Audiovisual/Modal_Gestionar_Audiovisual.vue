@@ -202,6 +202,7 @@
                               has-feedback
                               label="Género Audiovisual"
                               prop="generoAud"
+                              @change="edit_code"
                             >
                               <a-select
                                 :getPopupContainer="
@@ -234,12 +235,16 @@
                             </a-form-model-item>
                             <a-form-model-item
                               v-if="
-                                action_modal === 'crear' &&
+                                (action_modal === 'crear' &&
                                   (audiovisual_modal.generoAud ===
                                     'Entrevista' ||
                                     audiovisual_modal.generoAud ===
                                       'Making of' ||
-                                    audiovisual_modal.generoAud === 'Trailers')
+                                    audiovisual_modal.generoAud ===
+                                      'Trailers')) ||
+                                  (action_modal === 'editar' &&
+                                    genero_editar !==
+                                      audiovisual_modal.generoAud)
                               "
                               :validate-status="show_error"
                               prop="codigAud"
@@ -912,7 +917,7 @@ export default {
   data() {
     let validate_codig_unique = (rule, value, callback) => {
       if (value !== undefined) {
-        this.audiovisuals_list.forEach((element) => {
+        this.lista_dividida(this.audiovisuals_list).code.forEach((element) => {
           if (element.codigAud.substr(5) === value.replace(/ /g, "")) {
             callback(new Error("Código ya usado"));
           }
@@ -921,7 +926,7 @@ export default {
       callback();
     };
     let validate_ISRC_unique = (rule, value, callback) => {
-      this.audiovisuals_list.forEach((element) => {
+      this.lista_dividida(this.audiovisuals_list).isrc.forEach((element) => {
         if (element.isrcAud === value) {
           callback(new Error("ISRC ya usado"));
         }
@@ -973,6 +978,7 @@ export default {
       codigo: "",
       codigoIsrc: "",
       isrc_validation: "",
+      genero_editar: "",
       rules: {
         codigAud: [
           {
@@ -1168,10 +1174,18 @@ export default {
     this.load_nomenclators();
     this.set_action();
     if (this.action_modal === "crear") {
-      this.codigo = this.generar_codigo(this.audiovisuals_list, "codigo");
-      this.codigoIsrc = this.generar_codigo(this.audiovisuals_list, "isrc");
+      this.codigo = this.generar_codigo(
+        this.lista_dividida(this.audiovisuals_list).code,
+        "codigo"
+      );
+      this.codigoIsrc = this.generar_codigo(
+        this.lista_dividida(this.audiovisuals_list).isrc,
+        "isrc"
+      );
     } else if (this.action_modal === "detalles") {
       this.active_tab = "2";
+    } else if (this.action_modal === "editar") {
+      this.genero_editar = this.audiovisual_modal.generoAud;
     }
   },
   computed: {
@@ -1179,9 +1193,9 @@ export default {
       if (this.text_button === "Editar") {
         return (
           /* !this.compare_object || */
-          (this.valid_image &&
-            this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.audiovisual_modal.id)
+          this.valid_image &&
+          this.file_list.length !== 0 &&
+          this.file_list[0].uid !== this.audiovisual_modal.id
         );
       } else
         return (
@@ -1196,7 +1210,7 @@ export default {
   methods: {
     /*
      *Método que compara los campos editables del producto para saber si se ha modificado
-    */
+     */
     /* compare_object() {
       this.audiovisual_modal.makingOfAud =
         this.makingOfAud === true ? 1 : 0;
@@ -1230,7 +1244,7 @@ export default {
           this.interpretesProd,
           this.product.interpretesProd
         ) */
-      /* );
+    /* );
     }, */
     moment,
     siguiente(tab, siguienteTab) {
@@ -1542,7 +1556,7 @@ export default {
         this.active_tab = "2";
         this.tabs_list.push("tab_1");
       }
-      if (this.action === "editar") {
+      if (this.action_modal === "editar") {
         if (this.audiovisual.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
@@ -1568,7 +1582,9 @@ export default {
           this.audiovisual.productos_audvs.push(element.id);
         });
         this.audiovisual_modal = { ...this.audiovisual };
-        this.audiovisual_modal.codigAud = this.audiovisual.codigAud.substr(5);
+        if (!this.is_isrc()) {
+          this.audiovisual_modal.codigAud = this.audiovisual.codigAud.substr(5);
+        }
         this.makingOfAud =
           this.audiovisual_modal.makingOfAud === 0 ? false : true;
         if (this.audiovisual_modal.etiquetasAud !== null) {
@@ -1746,7 +1762,7 @@ export default {
       return arr;
     },
     generar_codigo(arr, type) {
-      let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
+      let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr, type));
       let answer = 1;
       for (let i = 0; i < list.length; i++) {
         if (list[0] !== 1) {
@@ -1792,9 +1808,33 @@ export default {
     },
 
     is_isrc() {
-      return this.audiovisual_modal.generoAud === "Concierto" ||
+      return (
+        this.audiovisual_modal.generoAud === "Concierto" ||
         this.audiovisual_modal.generoAud === "Documental" ||
-        this.audiovisual_modal.generoAud === "Video Clip";
+        this.audiovisual_modal.generoAud === "Video Clip"
+      );
+    },
+
+    lista_dividida(array) {
+      let isrc = [];
+      let code = [];
+      for (let index = 0; index < array.length; index++) {
+        if (
+          array[index].generoAud === "Concierto" ||
+          array[index].generoAud === "Documental" ||
+          array[index].generoAud === "Video Clip"
+        ) {
+          isrc.push(array[index]);
+        } else {
+          code.push(array[index]);
+        }
+      }
+      return { isrc: isrc, code: code };
+    },
+
+    edit_code() {
+      if (this.action_modal === "editar") {
+      }
     },
   },
 };

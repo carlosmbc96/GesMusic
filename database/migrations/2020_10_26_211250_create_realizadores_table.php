@@ -20,7 +20,7 @@ class CreateRealizadoresTable extends Migration
 			$table->timestamps();  // Fecha de Creación y Actualización del Registro
 
 			// Relaciones
-			$table->foreignId('audiovisual_id')->references('id')->on('audiovisuales');
+			$table->foreignId('audiovisual_id')->nullable()->references('id')->on('audiovisuales');
 		});
 	}
 

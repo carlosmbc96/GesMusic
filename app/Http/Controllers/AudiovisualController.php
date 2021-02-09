@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Audiovisual;
+use App\Entrevistado;
 use App\Producto_Audiovisual;
 use App\Vocabulario;
 use App\Producto;
 use App\Proyecto;
+use App\Realizador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Mockery\Undefined;
@@ -177,22 +179,22 @@ class AudiovisualController extends Controller
 		return response()->json(Audiovisual::findOrFail($id)->delete());
 	}
 
-    public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Audiovisual
-    {
-        $productos = [];
-        $audiovisual = Audiovisual::withTrashed()->findOrFail($id);
-        if (count($audiovisual->productos()->withTrashed()->get()) !== 0) {
-            for ($i = count($audiovisual->productos()->withTrashed()->get()) - 1; $i >= 0; $i++) {
-                array_push($productos, $audiovisual->productos()->withTrashed()->get()[$i]->pivot->producto_id);
-                $audiovisual->productos()->withTrashed()->get()[$i]->pivot->delete();
-            }
-            $this->eliminarDirectorios($productos, $audiovisual->codigAud);
-        }
-        if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
-            Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
-        }
-        return response()->json($audiovisual->forceDelete());
-    }
+	public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Audiovisual
+	{
+		$productos = [];
+		$audiovisual = Audiovisual::withTrashed()->findOrFail($id);
+		if (count($audiovisual->productos()->withTrashed()->get()) !== 0) {
+			for ($i = count($audiovisual->productos()->withTrashed()->get()) - 1; $i >= 0; $i++) {
+				array_push($productos, $audiovisual->productos()->withTrashed()->get()[$i]->pivot->producto_id);
+				$audiovisual->productos()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			$this->eliminarDirectorios($productos, $audiovisual->codigAud);
+		}
+		if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
+			Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
+		}
+		return response()->json($audiovisual->forceDelete());
+	}
 
 	public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Audiovisual
 	{
@@ -224,6 +226,48 @@ class AudiovisualController extends Controller
 			$producto = Producto::findOrFail($productos[$i]);
 			$proyecto = Proyecto::findOrFail($producto->proyecto_id);
 			Storage::disk('local')->deleteDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $codigAud);
+		}
+	}
+	public function audiovisualRealizadores(Request $request)
+	{
+		$realizadores = Realizador::withTrashed()->get();
+		$j = 0;
+		$encontrado = false;
+		for ($k = 0; $k < count($realizadores); $k++) {
+			$realizadores[$k]->audiovisual_id = null;
+			$realizadores[$k]->save();
+		}
+		for ($i = 0; $i < count($request->realizadores); $i++) {
+			while ((!$encontrado) && ($j < count($realizadores))) {
+				if ($realizadores[$j]->id === $request->realizadores[$i]) {
+					$realizadores[$j]->audiovisual_id = $request->idAud;
+					$realizadores[$j]->save();
+					$encontrado = true;
+				} else $j++;
+			}
+			$encontrado = false;
+			$j = 0;
+		}
+	}
+	public function audiovisualEntrevistados(Request $request)
+	{
+		$entrevistados = Entrevistado::withTrashed()->get();
+		$j = 0;
+		$encontrado = false;
+		for ($k = 0; $k < count($entrevistados); $k++) {
+			$entrevistados[$k]->audiovisual_id = null;
+			$entrevistados[$k]->save();
+		}
+		for ($i = 0; $i < count($request->entrevistados); $i++) {
+			while ((!$encontrado) && ($j < count($entrevistados))) {
+				if ($entrevistados[$j]->id === $request->entrevistados[$i]) {
+					$entrevistados[$j]->audiovisual_id = $request->idAud;
+					$entrevistados[$j]->save();
+					$encontrado = true;
+				} else $j++;
+			}
+			$encontrado = false;
+			$j = 0;
 		}
 	}
 }

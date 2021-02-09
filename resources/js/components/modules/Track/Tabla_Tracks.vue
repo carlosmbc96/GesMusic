@@ -21,10 +21,11 @@
       >
         <e-columns>
           <e-column
-            field="ordenTrk"
             headerText="Orden"
             width="100"
-            textAlign="Left"
+            :template="order"
+            :visible="true"
+            textAlign="Center"
           />
           <e-column
             field="isrcTrk"
@@ -255,7 +256,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -337,7 +338,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -358,7 +359,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -421,7 +422,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -442,7 +443,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -478,6 +479,87 @@ export default {
           }),
         };
       },
+      order_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `
+							<div>
+								<a-row>
+									<a-col span="12">
+									  <label>{{ parseInt(data.index) + 1 }}</label>
+									</a-col>
+									<a-col span="12">
+										<a-row style="height: 20px">
+											<a-button
+												@click="order_up(parseInt(data.index))"
+												style="color: black; height: 12px"
+												type="link"
+												v-if="parseInt(data.index) !== 0"
+											>
+												<a-icon style="font-size: 15px" type="caret-up" />
+											</a-button>
+										</a-row>
+										<a-row style="height: 20px">
+											<a-button
+												@click="order_down(parseInt(data.index))"
+												style="color: black; height: 12px"
+												type="link"
+												v-if="
+													parseInt(data.index) !==
+														$parent.$parent.$parent.tracks_list.length - 1
+												"
+											>
+												<a-icon style="font-size: 15px" type="caret-down" />
+											</a-button>
+										</a-row>
+									</a-col>
+								</a-row>
+							</div>`,
+            data: function(axios) {
+              return {
+                data: {},
+              };
+            },
+            // created() {},
+            // computed: {
+            //   color_status() {},
+            // },
+            methods: {
+              order_up(id) {
+                let temp = this.$parent.$parent.$parent.tracks_list[
+                  parseInt(id)
+                ];
+                this.$parent.$parent.$parent.tracks_list[
+                  parseInt(id)
+                ] = this.$parent.$parent.$parent.tracks_list[parseInt(id) - 1];
+                this.$parent.$parent.$parent.tracks_list[parseInt(id)];
+                this.$parent.$parent.$parent.tracks_list[
+                  parseInt(id) - 1
+                ] = temp;
+                this.$parent.$parent.$parent.tracks_list = [
+                  ...this.$parent.$parent.$parent.tracks_list,
+								];
+								this.$store.state['tracks'] = this.$parent.$parent.$parent.tracks_list;
+              },
+              order_down(id) {
+                let temp = this.$parent.$parent.$parent.tracks_list[
+                  parseInt(id)
+                ];
+                this.$parent.$parent.$parent.tracks_list[
+                  parseInt(id)
+                ] = this.$parent.$parent.$parent.tracks_list[parseInt(id) + 1];
+                this.$parent.$parent.$parent.tracks_list[
+                  parseInt(id) + 1
+                ] = temp;
+                this.$parent.$parent.$parent.tracks_list = [
+                  ...this.$parent.$parent.$parent.tracks_list,
+								];
+								this.$store.state['tracks'] = this.$parent.$parent.$parent.tracks_list;
+              },
+            },
+          }),
+        };
+      },
       actions_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -490,7 +572,7 @@ export default {
                 <a-button  v-if="!$parent.$parent.$parent.detalles" size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -526,7 +608,7 @@ export default {
             template: `<div>
                 <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
-            data: function () {
+            data: function() {
               return {
                 data: {},
               };
@@ -545,6 +627,7 @@ export default {
         };
       },
       status: "",
+      order: "",
       export_view: false, //* Vista del panel de exportaciones
       tracks_list: [], //* Lista de tracks que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | fonograma seleccionado
@@ -561,6 +644,7 @@ export default {
     this.status = this.detalles_prop
       ? this.status_child_template
       : this.status_template;
+    this.order = this.order_template;
     this.load_tracks();
   },
   methods: {

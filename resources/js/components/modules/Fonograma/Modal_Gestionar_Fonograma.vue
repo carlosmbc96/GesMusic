@@ -1022,6 +1022,23 @@ export default {
             },
           })
           .then((response) => {
+						console.log(response.data.id);
+            axios
+              .post("/fonogramas/tracks", {
+                tracks: this.getTracksID(),
+                idFong: response.data.id,
+              })
+              .then((res) => {
+                this.$store.state["tracks"] = [];
+                this.$store.state["all_tracks_statics"] = [];
+                this.$store.state["all_tracks"] = [];
+                this.$store.state["created_tracks"] = [];
+              })
+              .catch((error) => {
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;
@@ -1476,22 +1493,25 @@ export default {
       for (let index = 0; index < all_tracks.length; index++) {
         answer.push([all_tracks[index].id, index + 1]);
       }
-      console.log(answer);
       return answer;
     },
 
     order_up(id) {
       let temp = this.$store.getters.getTracksFormGetters[id];
-      this.$store.state["tracks"][id] = this.$store.getters.getTracksFormGetters[id - 1];
-			this.$store.state["tracks"][id - 1] = temp;
-			this.$forceUpdate();
+      this.$store.state["tracks"][
+        id
+      ] = this.$store.getters.getTracksFormGetters[id - 1];
+      this.$store.state["tracks"][id - 1] = temp;
+      this.$forceUpdate();
     },
 
     order_down(id) {
       let temp = this.$store.getters.getTracksFormGetters[id];
-      this.$store.state["tracks"][id] = this.$store.getters.getTracksFormGetters[id + 1];
-			this.$store.state["tracks"][id + 1] = temp;
-			this.$forceUpdate();
+      this.$store.state["tracks"][
+        id
+      ] = this.$store.getters.getTracksFormGetters[id + 1];
+      this.$store.state["tracks"][id + 1] = temp;
+      this.$forceUpdate();
     },
   },
   components: {

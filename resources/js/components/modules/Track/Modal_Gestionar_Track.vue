@@ -153,109 +153,115 @@
                   :rules="rules"
                 >
                   <a-col span="11">
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      prop="ordenTrk"
-                      has-feedback
-                      label="Orden del repertorio"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="track_modal.ordenTrk"
-                      />
-                    </a-form-model-item>
-                    <a-form-model-item label="Orden del repertorio" v-else>
-                      <a-mentions readonly :placeholder="track_modal.ordenTrk">
-                      </a-mentions>
-                    </a-form-model-item>
                     <a-row
                       v-if="
                         action_modal === 'crear' ||
                           action_modal === 'crear_track'
                       "
+                      style="margin-top: 31px"
                     >
-                      <a-col span="4">
-                        <a-tooltip
-                          placement="bottom"
-                          title="Código de dos letras que representan el país Ej: BR (Brazil)"
-                        >
-                          <a-form-model-item
-                            :validate-status="show_error"
-                            prop="codigPais"
-                            has-feedback
-                            label="ISRC"
-                            :help="show_used_error"
-                          >
-                            <a-input
-                              placeholder="CC"
-                              :disabled="action_modal === 'editar'"
-                              v-model="track_modal.codigPais"
-                            />
-                          </a-form-model-item>
-                        </a-tooltip>
+                      <a-col span="5" style="margin-top: 8px">
+                        <label id="isrc">Código ISRC:</label>
                       </a-col>
-                      <a-col
-                        span="1"
-                        style="margin-top: 34px; text-align: center"
-                        >-</a-col
-                      >
-                      <a-col span="5">
-                        <a-tooltip
-                          placement="bottom"
-                          title="Código de registro que consta de tres letras Ej: MBR"
-                        >
-                          <a-form-model-item
-                            :validate-status="show_error"
-                            prop="codigRegistro"
-                            has-feedback
+                      <a-col span="19" style="float: right">
+                        <a-row>
+                          <a-col span="4">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Código de dos letras que representan el país Ej: BR (Brazil)"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="codigPais"
+                                has-feedback
+                                :help="show_used_error"
+                                class="isrc"
+                              >
+                                <a-input
+                                  default-value="CU"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.codigPais"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                          <a-col
+                            span="1"
+                            style="margin-top: 8px; text-align: center"
+                            >-</a-col
                           >
-                            <a-input
-                              style="margin-top: 33.2px"
-                              placeholder="XXX"
-                              :disabled="action_modal === 'editar'"
-                              v-model="track_modal.codigRegistro"
-                            />
-                          </a-form-model-item>
-                        </a-tooltip>
-                      </a-col>
-                      <a-col
-                        span="1"
-                        style="margin-top: 34px; text-align: center"
-                        >-</a-col
-                      >
-                      <a-col span="4">
-                        <a-tooltip
-                          placement="bottom"
-                          title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
-                        >
-                          <a-form-model-item
-                            :validate-status="show_error"
-                            prop="anhoRegistro"
-                            has-feedback
+                          <a-col span="5">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="codigRegistro"
+                                has-feedback
+                                class="isrc"
+                              >
+                                <a-input
+                                  placeholder="XXX"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.codigRegistro"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                          <a-col
+                            span="1"
+                            style="margin-top: 8px; text-align: center"
+                            >-</a-col
                           >
-                            <a-input
-                              style="margin-top: 33.2px"
-                              placeholder="00"
-                              :disabled="action_modal === 'editar'"
-                              v-model="track_modal.anhoRegistro"
-                            />
-                          </a-form-model-item>
-                        </a-tooltip>
-                      </a-col>
-                      <a-col
-                        span="1"
-                        style="margin-top: 34px; text-align: center"
-                        >-</a-col
-                      >
-                      <a-col span="7">
-                        <a-form-model-item has-feedback>
-                          <a-mentions
-                            style="margin-top: 33.2px"
-                            readonly
-                            :placeholder="codigo"
+                          <a-col span="4">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="anhoRegistro"
+                                has-feedback
+                                class="isrc"
+                              >
+                                <a-input
+                                  placeholder="00"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.anhoRegistro"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                          <a-col
+                            span="1"
+                            style="margin-top: 8px; text-align: center"
+                            >-</a-col
                           >
-                          </a-mentions>
-                        </a-form-model-item>
+                          <a-col span="8" style="float: right">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Código identificador de cinco dígitos Ej: 00001"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="identificador"
+                                has-feedback
+                                class="isrc"
+                              >
+                                <a-input
+                                  :default-value="codigo"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.identificador"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                        </a-row>
                       </a-col>
                     </a-row>
                     <a-form-model-item
@@ -565,6 +571,11 @@ export default {
       });
       callback();
     };
+    let code_required = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Inserte el código"));
+      } else callback();
+    };
     return {
       tab_2: true,
       tabs_list: [],
@@ -599,12 +610,16 @@ export default {
       show_used_error: "",
       action_modal: this.action,
       list_nomenclators: [],
+      isrc_validation: "",
+      codigPais: "",
+      codigRegistro: "",
+      anhoRegistro: "",
+      identificador: "",
       codigo: "",
       rules: {
         codigPais: [
           {
-            required: true,
-            message: " ",
+            validator: code_required,
             trigger: "change",
           },
           {
@@ -625,7 +640,7 @@ export default {
             trigger: "change",
           },
           {
-            pattern: "^[a-zA-Z]*$",
+            pattern: "^[a-zA-Z0-9]*$",
             message: " ",
             trigger: "change",
           },
@@ -648,6 +663,22 @@ export default {
           },
           {
             len: 2,
+            message: " ",
+            trigger: "change",
+          },
+        ],
+        identificador: [
+          {
+            validator: code_required,
+            trigger: "change",
+          },
+          {
+            pattern: "^[0-9]*$",
+            message: " ",
+            trigger: "change",
+          },
+          {
+            len: 5,
             message: " ",
             trigger: "change",
           },
@@ -694,7 +725,6 @@ export default {
     console.log(this.tabs_list.indexOf("tab_1"));
     if (this.action_modal === "crear" || this.action_modal === "crear_track") {
       this.codigo = this.generar_codigo(this.tracks_list);
-      console.log(this.tracks_list);
     }
     if (
       this.action_modal === "detalles" ||
@@ -774,12 +804,19 @@ export default {
       if (this.track_modal.identificador === undefined) {
         this.track_modal.identificador = this.codigo;
       }
+      if (this.track_modal.codigPais === undefined) {
+        this.track_modal.codigPais = "CU";
+      }
       if (!this.used) {
         if (this.$refs.formularioGenerales !== undefined) {
           this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
               return this.confirm();
-            }
+            } else
+              this.$message.warning(
+                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                5
+              );
           });
         } else return this.confirm();
       }
@@ -821,74 +858,81 @@ export default {
             });
           });
       } else {
-        this.text_button = "Creando...";
-        axios
-          .post("/tracks", form_data, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((res) => {
-            this.text_button = "Crear";
-            this.spinning = false;
-            this.waiting = false;
-            if (this.action_modal === "crear_track") {
-              let tracks = [];
-              axios
-                .post("/tracks/listar")
-                .then((response) => {
-                  let prod = response.data;
-                  prod.forEach((element) => {
-                    if (!element.deleted_at) {
-                      tracks.push(element);
-                    }
-                  });
-                  this.$store.state["tracks"].push(tracks[tracks.length - 1]);
-                  this.$store.state["created_tracks"].push(
-                    tracks[tracks.length - 1]
-                  );
-                  this.$store.state["all_tracks_statics"].push(
-                    tracks[tracks.length - 1]
-                  );
-                  this.$store.state.duration = moment(
-                    this.$store.getters.getDurationFormGetters,
-                    "HH:mm:ss"
-                  );
-                  this.$store.state.duration
-                    .add(
-                      moment.duration(
-                        this.$store.getters.getTracksFormGetters[
-                          this.$store.getters.getTracksFormGetters.length - 1
-                        ].duracionTrk
+        if (this.validate_isrc(this.track_modal.isrcTrk, this.tracks_list)) {
+          this.text_button = "Creando...";
+          axios
+            .post("/tracks", form_data, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((res) => {
+              this.text_button = "Crear";
+              this.spinning = false;
+              this.waiting = false;
+              if (this.action_modal === "crear_track") {
+                let tracks = [];
+                axios
+                  .post("/tracks/listar")
+                  .then((response) => {
+                    let prod = response.data;
+                    prod.forEach((element) => {
+                      if (!element.deleted_at) {
+                        tracks.push(element);
+                      }
+                    });
+                    this.$store.state["tracks"].push(tracks[tracks.length - 1]);
+                    this.$store.state["created_tracks"].push(
+                      tracks[tracks.length - 1]
+                    );
+                    this.$store.state["all_tracks_statics"].push(
+                      tracks[tracks.length - 1]
+                    );
+                    this.$store.state.duration = moment(
+                      this.$store.getters.getDurationFormGetters,
+                      "HH:mm:ss"
+                    );
+                    this.$store.state.duration
+                      .add(
+                        moment.duration(
+                          this.$store.getters.getTracksFormGetters[
+                            this.$store.getters.getTracksFormGetters.length - 1
+                          ].duracionTrk
+                        )
                       )
-                    )
-                    .format("HH:mm:ss");
-                  this.$store.state.duration = moment(
-                    this.$store.getters.getDurationFormGetters,
-                    "HH:mm:ss"
-                  ).format("HH:mm:ss");
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            }
-            this.handle_cancel();
-            this.$emit("actualizar");
-            this.$toast.success(
-              "Se ha creado el track correctamente",
-              "¡Éxito!",
-              { timeout: 2000 }
-            );
-          })
-          .catch((err) => {
-            this.text_button = "Crear";
-            this.spinning = false;
-            this.waiting = false;
-            this.handle_cancel();
-            this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 2000,
+                      .format("HH:mm:ss");
+                    this.$store.state.duration = moment(
+                      this.$store.getters.getDurationFormGetters,
+                      "HH:mm:ss"
+                    ).format("HH:mm:ss");
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
+              this.handle_cancel();
+              this.$emit("actualizar");
+              this.$toast.success(
+                "Se ha creado el track correctamente",
+                "¡Éxito!",
+                { timeout: 2000 }
+              );
+            })
+            .catch((err) => {
+              this.text_button = "Crear";
+              this.spinning = false;
+              this.waiting = false;
+              this.handle_cancel();
+              this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                timeout: 2000,
+              });
             });
-          });
+        } else {
+          this.spinning = false;
+          this.waiting = false;
+          this.isrc_validation = "duplicated-isrc-error";
+          this.$message.error("El código ISRC utilizado ya existe.");
+        }
       }
     },
     /*
@@ -905,11 +949,6 @@ export default {
       this.track_modal.muestraTrk = this.muestraTrk === false ? 0 : 1;
       this.track_modal.bonusTrk = this.bonusTrk === false ? 0 : 1;
       this.track_modal.envivoTrk = this.envivoTrk === false ? 0 : 1;
-      if (this.track_modal.ordenTrk === undefined) {
-        this.track_modal.ordenTrk = "";
-      } else if (this.track_modal.ordenTrk === null) {
-        this.track_modal.ordenTrk = "";
-      }
       if (this.track_modal.subgeneroTrk === undefined) {
         this.track_modal.subgeneroTrk = "";
       } else if (this.track_modal.subgeneroTrk === null) {
@@ -939,6 +978,9 @@ export default {
       if (this.track_modal.identificador === undefined) {
         this.track_modal.identificador = this.codigo;
       }
+      if (this.track_modal.codigPais === undefined) {
+        this.track_modal.codigPais = "CU";
+      }
       if (
         this.action_modal === "crear" ||
         this.action_modal === "crear_track"
@@ -952,7 +994,6 @@ export default {
       }
       form_data.append("isrcTrk", this.track_modal.isrcTrk);
       form_data.append("tituloTrk", this.track_modal.tituloTrk);
-      form_data.append("ordenTrk", this.track_modal.ordenTrk);
       form_data.append("duracionTrk", this.track_modal.duracionTrk);
       form_data.append("muestraTrk", this.track_modal.muestraTrk);
       form_data.append("envivoTrk", this.track_modal.envivoTrk);
@@ -963,7 +1004,6 @@ export default {
       form_data.append("gestionTrk", this.track_modal.gestionTrk);
       form_data.append("paisgrabTrk", this.track_modal.paisgrabTrk);
       form_data.append("fonograma_id", this.track_modal.fonogramas_tracks);
-      this.text_button = "Creando...";
       return form_data;
     },
     set_action() {
@@ -1109,6 +1149,15 @@ export default {
       }
     },
     //Fin de metodos para generar el codigo
+
+    validate_isrc(isrc, list) {
+      for (let index = 0; index < list.length; index++) {
+        if (list[index].isrcTrk === isrc) {
+          return false;
+        }
+      }
+      return true;
+    },
   },
 };
 </script>
@@ -1138,5 +1187,22 @@ export default {
 }
 #small .ant-form-item-control {
   width: 85%;
+}
+#modal_gestionar_tracks #isrc {
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  font-weight: 400;
+}
+.isrc .ant-form-item-children-icon {
+  display: none !important;
+}
+.isrc .ant-input {
+  padding-right: 0px !important;
+}
+.ant-time-picker {
+  width: 100% !important;
+}
+#modal_gestionar_tracks .duplicated-isrc-error {
+  border-color: rgb(243, 107, 100) !important;
 }
 </style>

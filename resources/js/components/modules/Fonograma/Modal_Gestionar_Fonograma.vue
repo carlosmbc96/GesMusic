@@ -310,7 +310,10 @@
                       </a-form-model-item>
                     </a-col>
                     <a-col span="11" style="float: right">
-                      <a-form-model-item label="Duración total" v-if="action_modal === 'crear'">
+                      <a-form-model-item
+                        label="Duración total"
+                        v-if="action_modal === 'crear'"
+                      >
                         <a-mentions
                           readonly
                           :placeholder="$store.getters.getDurationFormGetters"
@@ -483,16 +486,11 @@
                 <h4>Tracks</h4>
               </div>
               <a-row>
-                <a-col span="5">
+                <a-col span="2">
                   <h5>Orden</h5>
-                  <a-mentions
-                    readonly
-                    v-if="$store.getters.getTracksFormGetters.length === 0"
-                  >
-                  </a-mentions>
                 </a-col>
                 <a-col span="1"></a-col>
-                <a-col span="5">
+                <a-col span="7">
                   <h5>Título</h5>
                   <a-mentions
                     readonly
@@ -526,12 +524,42 @@
                 v-bind="index === 0 ? formItemLayout : {}"
               >
                 <a-row>
-                  <a-col span="5">
-                    <a-mentions readonly :placeholder="track.ordenTrk">
-                    </a-mentions>
+                  <a-col span="2">
+                    <a-row>
+                      <a-col span="8">
+                        <label style="margin-top: 18px">
+                          <h5>{{ index + 1 }}</h5>
+                        </label>
+                      </a-col>
+                      <a-col span="16" style="margin-top: -5px">
+                        <a-row style="height: 20px">
+                          <a-button
+                            @click="order_up(index)"
+                            style="color: black; height: 12px"
+                            type="link"
+                            v-if="index !== 0"
+                          >
+                            <a-icon style="font-size: 15px" type="caret-up" />
+                          </a-button>
+                        </a-row>
+                        <a-row style="heigth: 20px">
+                          <a-button
+                            @click="order_down(index)"
+                            style="color: black; height: 12px"
+                            type="link"
+                            v-if="
+                              index !==
+                                $store.getters.getTracksFormGetters.length - 1
+                            "
+                          >
+                            <a-icon style="font-size: 15px" type="caret-down" />
+                          </a-button>
+                        </a-row>
+                      </a-col>
+                    </a-row>
                   </a-col>
                   <a-col span="1"></a-col>
-                  <a-col span="5">
+                  <a-col span="7">
                     <a-mentions readonly :placeholder="track.tituloTrk">
                     </a-mentions>
                   </a-col>
@@ -1445,13 +1473,27 @@ export default {
     //Fin de metodos para generar el codigo
 
     getTracksID() {
-			let answer = [];
+      let answer = [];
       let all_tracks = this.$store.getters.getTracksFormGetters;
       for (let index = 0; index < all_tracks.length; index++) {
-				answer.push([all_tracks[index].id, index + 1]);
-			}
-			console.log(answer);
+        answer.push([all_tracks[index].id, index + 1]);
+      }
+      console.log(answer);
       return answer;
+    },
+
+    order_up(id) {
+      let temp = this.$store.getters.getTracksFormGetters[id];
+      this.$store.state["tracks"][id] = this.$store.getters.getTracksFormGetters[id - 1];
+			this.$store.state["tracks"][id - 1] = temp;
+			this.$forceUpdate();
+    },
+
+    order_down(id) {
+      let temp = this.$store.getters.getTracksFormGetters[id];
+      this.$store.state["tracks"][id] = this.$store.getters.getTracksFormGetters[id + 1];
+			this.$store.state["tracks"][id + 1] = temp;
+			this.$forceUpdate();
     },
   },
   components: {

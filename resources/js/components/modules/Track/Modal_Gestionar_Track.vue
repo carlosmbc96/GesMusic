@@ -156,7 +156,8 @@
                     <a-row
                       v-if="
                         action_modal === 'crear' ||
-                          action_modal === 'crear_track'
+                        action_modal === 'crear_track' ||
+                        action_modal === 'crear_track_tabla_component'
                       "
                       style="margin-top: 31px"
                     >
@@ -722,8 +723,11 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    console.log(this.tabs_list.indexOf("tab_1"));
-    if (this.action_modal === "crear" || this.action_modal === "crear_track") {
+    if (
+      this.action_modal === "crear" ||
+      this.action_modal === "crear_track" ||
+      this.action_modal === "crear_track_tabla_component"
+    ) {
       this.codigo = this.generar_codigo(this.tracks_list);
     }
     if (
@@ -785,7 +789,7 @@ export default {
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
-            timeout: 1000,
+            timeout: 2000,
             color: "orange",
           });
         }
@@ -909,11 +913,23 @@ export default {
                   .catch((error) => {
                     console.log(error);
                   });
+              } else if (this.action_modal === "crear_track_tabla_component") {
+                this.$store.state.duration = moment(
+                  this.$store.getters.getDurationFormGetters,
+                  "HH:mm:ss"
+                );
+                this.$store.state.duration
+                  .add(moment.duration(this.track_modal.duracionTrk))
+                  .format("HH:mm:ss");
+                this.$store.state.duration = moment(
+                  this.$store.getters.getDurationFormGetters,
+                  "HH:mm:ss"
+                ).format("HH:mm:ss");
               }
               this.handle_cancel();
               this.$emit("actualizar");
               this.$toast.success(
-                "Se ha creado el track correctamente",
+                "Se ha creado el Track correctamente",
                 "¡Éxito!",
                 { timeout: 2000 }
               );
@@ -983,6 +999,7 @@ export default {
       }
       if (
         this.action_modal === "crear" ||
+        this.action_modal === "crear_track_tabla_component" ||
         this.action_modal === "crear_track"
       ) {
         this.track_modal.isrcTrk =

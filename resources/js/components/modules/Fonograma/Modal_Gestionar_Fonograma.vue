@@ -323,7 +323,7 @@
                       <a-form-model-item label="Duración total" v-else>
                         <a-mentions
                           readonly
-                          :placeholder="fonogram_modal.duracionFong"
+                          :placeholder="$store.getters.getDurationFormGetters"
                         >
                         </a-mentions>
                       </a-form-model-item>
@@ -590,7 +590,7 @@
               <a-row style="margin-top: 40px">
                 <a-col span="12">
                   <div class="section-title">
-                    <h4>Selector de tracks</h4>
+                    <h4>Selector de Tracks</h4>
                   </div>
                   <a-form-model
                     ref="formularioAgregarTrack"
@@ -641,9 +641,9 @@
                           <a-button
                             :disabled="disabled"
                             style="
-                          color: white;
-                          background-color: rgb(45, 171, 229) !important;
-                        "
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
                             @click="add_track"
                           >
                             <a-icon type="plus" />
@@ -659,9 +659,9 @@
                           <a-button
                             :disabled="disabled"
                             style="
-                          color: white;
-                          background-color: rgb(45, 171, 229) !important;
-                        "
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
                             @click="new_track"
                           >
                             <a-icon type="plus" />
@@ -1028,7 +1028,7 @@ export default {
             this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha modificado el fonograma correctamente",
+              "Se ha modificado el Fonograma correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -1050,7 +1050,6 @@ export default {
             },
           })
           .then((res) => {
-            console.log(this.getTracksID());
             axios
               .post("/fonogramas/tracks", {
                 tracks: this.getTracksID(),
@@ -1073,7 +1072,7 @@ export default {
             this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha creado el fonograma correctamente",
+              "Se ha creado el Fonograma correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -1168,15 +1167,13 @@ export default {
       return form_data;
     },
     set_action() {
-      console.log(this.active_tab);
-      console.log(this.tab_visibility);
-      console.log(this.action_modal);
       if (this.fonogram.productos_fongs || this.fonogram.tabla) {
         this.tab_visibility = false;
         this.active_tab = "2";
         this.tabs_list.push("tab_1");
       }
       if (this.action === "editar") {
+        this.$store.state.duration = this.fonogram.duracionFong;
         if (this.fonogram.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
@@ -1221,6 +1218,7 @@ export default {
             });
         }
       } else if (this.action_modal === "detalles") {
+        this.$store.state.duration = this.fonogram.duracionFong;
         this.active_tab = "2";
         this.detalles = true;
         this.action_cancel_title = "¿Desea cerrar la vista de detalles?";

@@ -620,7 +620,7 @@ export default {
      */
     click_toolbar(args) {
       if (args.item.id === "add") {
-        this.action_management = "crear";
+        this.action_management = "crear_track_tabla_component";
         this.visible_management = true;
         this.row_selected = {
           modal_detalles: true,

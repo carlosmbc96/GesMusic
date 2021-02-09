@@ -235,16 +235,12 @@
                             </a-form-model-item>
                             <a-form-model-item
                               v-if="
-                                (action_modal === 'crear' &&
+                                action_modal === 'crear' &&
                                   (audiovisual_modal.generoAud ===
                                     'Entrevista' ||
                                     audiovisual_modal.generoAud ===
                                       'Making of' ||
-                                    audiovisual_modal.generoAud ===
-                                      'Trailers')) ||
-                                  (action_modal === 'editar' &&
-                                    genero_editar !==
-                                      audiovisual_modal.generoAud)
+                                    audiovisual_modal.generoAud === 'Trailers')
                               "
                               :validate-status="show_error"
                               prop="codigAud"
@@ -267,11 +263,21 @@
                                   audiovisual_modal.generoAud === 'Trailers')
                               "
                               label="Código"
+                              prop="codigAud"
                             >
                               <a-input
+                                v-if="
+                                  audiovisual_modal.generoAud === genero_pivot
+                                "
                                 addon-before="AUDV-"
-                                placeholder="0001"
-                                :disabled="action_modal === 'editar'"
+                                :disabled="true"
+                                v-model="codig_pivot"
+                              />
+                              <a-input
+                                v-else
+                                addon-before="AUDV-"
+                                :dafault-value="codig_pivot"
+                                :disabled="false"
                                 v-model="audiovisual_modal.codigAud"
                               />
                             </a-form-model-item>
@@ -405,19 +411,156 @@
                             </a-row>
                           </a-col>
                         </a-row>
+                        <a-row
+                          v-if="
+                            action_modal === 'editar' &&
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental') &&
+                              audiovisual_modal.generoAud !== genero_pivot
+                          "
+                        >
+                          <a-col span="24">
+                            <a-row>
+                              <a-col span="4">
+                                <a-tooltip
+                                  placement="bottom"
+                                  title="Código de dos letras que representan el país Ej: BR (Brazil)"
+                                >
+                                  <a-form-model-item
+                                    :validate-status="show_error"
+                                    prop="codigPais"
+                                    has-feedback
+                                    label="ISRC"
+                                    :help="show_used_error"
+                                    class="isrc"
+                                  >
+                                    <a-input
+                                      :default-value="codigPais"
+                                      :disabled="false"
+                                      v-model="audiovisual_modal.codigPais"
+                                      :class="isrc_validation"
+                                    />
+                                  </a-form-model-item>
+                                </a-tooltip>
+                              </a-col>
+                              <a-col
+                                span="1"
+                                style="margin-top: 34px; text-align: center"
+                              >
+                              </a-col>
+                              <a-col span="6">
+                                <a-tooltip
+                                  placement="bottom"
+                                  title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
+                                >
+                                  <a-form-model-item
+                                    v-if="codig_to_isrc"
+                                    :validate-status="show_error"
+                                    prop="codigRegistro"
+                                    has-feedback
+                                    class="isrc"
+                                  >
+                                    <a-input
+                                      style="margin-top: 33.2px"
+                                      placeholder="XXX"
+                                      :disabled="false"
+                                      v-model="audiovisual_modal.codigRegistro"
+                                      :class="isrc_validation"
+                                    />
+                                  </a-form-model-item>
+                                  <a-form-model-item
+                                    v-else
+                                    :validate-status="show_error"
+                                    prop="codigRegistro"
+                                    has-feedback
+                                    class="isrc"
+                                  >
+                                    <a-input
+                                      style="margin-top: 33.2px"
+                                      :default-value="codigRegistro"
+                                      :disabled="false"
+                                      v-model="audiovisual_modal.codigRegistro"
+                                      :class="isrc_validation"
+                                    />
+                                  </a-form-model-item>
+                                </a-tooltip>
+                              </a-col>
+                              <a-col
+                                span="1"
+                                style="margin-top: 34px; text-align: center"
+                              >
+                              </a-col>
+                              <a-col span="4">
+                                <a-tooltip
+                                  placement="bottom"
+                                  title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
+                                >
+                                  <a-form-model-item
+                                    :validate-status="show_error"
+                                    prop="anhoRegistro"
+                                    has-feedback
+                                    class="isrc"
+                                  >
+                                    <a-input
+                                      v-if="codig_to_isrc"
+                                      style="margin-top: 33.2px"
+                                      placeholder="00"
+                                      :disabled="false"
+                                      v-model="audiovisual_modal.anhoRegistro"
+                                      :class="isrc_validation"
+                                    />
+                                    <a-input
+                                      v-else
+                                      style="margin-top: 33.2px"
+                                      :default-value="anhoRegistro"
+                                      :disabled="false"
+                                      v-model="audiovisual_modal.anhoRegistro"
+                                      :class="isrc_validation"
+                                    />
+                                  </a-form-model-item>
+                                </a-tooltip>
+                              </a-col>
+                              <a-col
+                                span="1"
+                                style="margin-top: 34px; text-align: center"
+                              >
+                              </a-col>
+                              <a-col span="7">
+                                <a-tooltip
+                                  placement="bottom"
+                                  title="Código identificador de cinco dígitos Ej: 00001"
+                                >
+                                  <a-form-model-item
+                                    :validate-status="show_error"
+                                    prop="identificador"
+                                    has-feedback
+                                    class="isrc"
+                                  >
+                                    <a-input
+                                      style="margin-top: 33.2px"
+                                      :default-value="identificador"
+                                      :disabled="false"
+                                      v-model="audiovisual_modal.identificador"
+                                      :class="isrc_validation"
+                                    />
+                                  </a-form-model-item>
+                                </a-tooltip>
+                              </a-col>
+                            </a-row>
+                          </a-col>
+                        </a-row>
                         <a-form-model-item
                           v-if="
                             action_modal === 'editar' &&
-                            (audiovisual_modal.generoAud === 'Concierto' ||
-                              audiovisual_modal.generoAud === 'Video Clip' ||
-                              audiovisual_modal.generoAud === 'Documental')
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental') &&
+                              audiovisual_modal.generoAud === genero_pivot
                           "
                           label="ISRC"
                         >
-                          <a-input
-                            :disabled="action_modal === 'editar'"
-                            v-model="audiovisual_modal.isrcAud"
-                          />
+                          <a-input :disabled="true" v-model="isrc_pivot" />
                         </a-form-model-item>
                         <a-form-model-item
                           label="ISRC"
@@ -914,8 +1057,10 @@ export default {
     let validate_codig_unique = (rule, value, callback) => {
       if (value !== undefined) {
         this.lista_dividida(this.audiovisuals_list).code.forEach((element) => {
-          if (element.codigAud.substr(5) === value.replace(/ /g, "")) {
-            callback(new Error("Código ya usado"));
+          if (element.codigAud.substr(5) !== this.codig_pivot) {
+            if (element.codigAud.substr(5) === value.replace(/ /g, "")) {
+              callback(new Error("Código ya usado"));
+            }
           }
         });
       }
@@ -933,6 +1078,17 @@ export default {
       if (value === "") {
         callback(new Error("Inserte el código"));
       } else callback();
+    };
+    let custom_code_required = (rule, value, callback) => {
+      if (this.codig_to_isrc || this.action_modal === "crear") {
+        if (value === undefined) {
+          callback(new Error("Inserte el código"));
+        } else callback();
+      } else {
+        if (value === "") {
+          callback(new Error("Inserte el código"));
+        } else callback();
+      }
     };
     return {
       tab_2: true,
@@ -974,7 +1130,14 @@ export default {
       codigo: "",
       codigoIsrc: "",
       isrc_validation: "",
-      genero_editar: "",
+      genero_pivot: "",
+      codig_pivot: "",
+      isrc_pivot: "",
+      codigPais: "",
+      codigRegistro: "",
+      anhoRegistro: "",
+      identificador: "",
+      codig_to_isrc: false,
       rules: {
         codigAud: [
           {
@@ -1019,8 +1182,7 @@ export default {
         ],
         codigRegistro: [
           {
-            required: true,
-            message: " ",
+            validator: custom_code_required,
             trigger: "change",
           },
           {
@@ -1036,8 +1198,7 @@ export default {
         ],
         anhoRegistro: [
           {
-            required: true,
-            message: " ",
+            validator: custom_code_required,
             trigger: "change",
           },
           {
@@ -1180,8 +1341,14 @@ export default {
       );
     } else if (this.action_modal === "detalles") {
       this.active_tab = "2";
-    } else if (this.action_modal === "editar") {
-      this.genero_editar = this.audiovisual_modal.generoAud;
+    }
+    if (this.action_modal === "editar" && !this.is_isrc()) {
+      this.codigPais = "CU";
+      this.identificador = this.generar_codigo(
+        this.lista_dividida(this.audiovisuals_list).isrc,
+        "isrc"
+      );
+      this.codig_to_isrc = true;
     }
   },
   computed: {
@@ -1278,6 +1445,7 @@ export default {
         this.active_tab = "1";
         this.tab_visibility = true;
         this.show = false;
+        this.codig_to_isrc = false;
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
@@ -1295,6 +1463,26 @@ export default {
       }
     },
     validate() {
+      if (
+        this.action_modal === "editar" &&
+        this.is_isrc() &&
+        this.audiovisual_modal.generoAud !== this.genero_pivot
+      ) {
+        if (this.audiovisual_modal.identificador === undefined) {
+          this.audiovisual_modal.identificador = this.identificador;
+        }
+        if (this.audiovisual_modal.codigPais === undefined) {
+          this.audiovisual_modal.codigPais = this.codigPais;
+        }
+        if (!this.codig_to_isrc) {
+          if (this.audiovisual_modal.codigRegistro === undefined) {
+            this.audiovisual_modal.codigRegistro = this.codigRegistro;
+          }
+          if (this.audiovisual_modal.anhoRegistro === undefined) {
+            this.audiovisual_modal.anhoRegistro = this.anhoRegistro;
+          }
+        }
+      }
       if (this.audiovisual_modal.codigAud === undefined) {
         this.audiovisual_modal.codigAud = this.codigo;
       }
@@ -1328,34 +1516,47 @@ export default {
       this.waiting = true;
       let form_data = this.prepare_create();
       if (this.action_modal === "editar") {
-        this.text_button = "Editando...";
-        axios
-          .post(`/audiovisuales/editar`, form_data, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((response) => {
-            this.text_button = "Editar";
-            this.spinning = false;
-            this.waiting = false;
-            this.handle_cancel();
-            this.$emit("actualizar");
-            this.$toast.success(
-              "Se ha modificado el audiovisual correctamente",
-              "¡Éxito!",
-              { timeout: 2000 }
-            );
-          })
-          .catch((error) => {
-            this.text_button = "Editar";
-            this.spinning = false;
-            this.waiting = false;
-            this.handle_cancel();
-            this.$toast.error("Ha ocurrido un error", "¡Error!", {
-              timeout: 2000,
+        if (
+          this.validate_isrc(
+            this.audiovisual_modal.isrcAud,
+            this.audiovisuals_list
+          )
+        ) {
+          this.text_button = "Editando...";
+          axios
+            .post(`/audiovisuales/editar`, form_data, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((response) => {
+              this.text_button = "Editar";
+              this.spinning = false;
+              this.waiting = false;
+              this.handle_cancel();
+              this.$emit("actualizar");
+              this.$toast.success(
+                "Se ha modificado el audiovisual correctamente",
+                "¡Éxito!",
+                { timeout: 2000 }
+              );
+            })
+            .catch((error) => {
+              this.text_button = "Editar";
+              this.spinning = false;
+              this.waiting = false;
+              this.handle_cancel();
+              this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                timeout: 2000,
+              });
             });
-          });
+        } else {
+          this.spinning = false;
+          this.waiting = false;
+          this.isrc_validation = "duplicated-isrc-error";
+          this.$message.error("El código ISRC utilizado ya existe.");
+          this.audiovisual_modal.codigAud = this.codigo;
+        }
       } else {
         if (
           this.validate_isrc(
@@ -1491,8 +1692,13 @@ export default {
       let form_data = new FormData();
       if (this.action_modal === "editar" || this.action_modal === "detalles") {
         form_data.append("id", this.audiovisual_modal.id);
-      } else {
+      }
+      if (
+        this.action_modal === "crear" ||
+        this.audiovisual_modal.generoAud !== this.genero_pivot
+      ) {
         if (this.is_isrc()) {
+          console.log(this.audiovisual_modal.codigPais);
           this.audiovisual_modal.isrcAud =
             "" +
             this.audiovisual_modal.codigPais.toUpperCase() +
@@ -1581,6 +1787,21 @@ export default {
         this.audiovisual_modal = { ...this.audiovisual };
         if (!this.is_isrc()) {
           this.audiovisual_modal.codigAud = this.audiovisual.codigAud.substr(5);
+          this.codigoIsrc = this.generar_codigo(
+            this.lista_dividida(this.audiovisuals_list).isrc,
+            "isrc"
+          );
+          this.codig_pivot = this.audiovisual_modal.codigAud;
+        } else {
+          this.audiovisual_modal.codigAud = this.codigo = this.generar_codigo(
+            this.lista_dividida(this.audiovisuals_list).code,
+            "codigo"
+          );
+          this.isrc_pivot = this.audiovisual_modal.isrcAud;
+          this.codigPais = this.isrc_pivot.substr(0, 2);
+          this.codigRegistro = this.isrc_pivot.substr(2, 3);
+          this.anhoRegistro = this.isrc_pivot.substr(5, 2);
+          this.identificador = this.isrc_pivot.substr(7);
         }
         this.makingOfAud =
           this.audiovisual_modal.makingOfAud === 0 ? false : true;
@@ -1631,6 +1852,7 @@ export default {
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
         }
+        this.genero_pivot = this.audiovisual_modal.generoAud;
       } else if (this.action_modal === "detalles") {
         this.action_cancel_title = "¿Desea cerrar la vista de detalles?";
         this.action_title = "¿Desea guardar los cambios en el Audiovisual?";
@@ -1809,9 +2031,11 @@ export default {
     //Fin de metodos para generar el codigo
 
     validate_isrc(isrc, list) {
-      for (let index = 0; index < list.length; index++) {
-        if (list[index].isrcAud === isrc) {
-          return false;
+      if (this.is_isrc()) {
+        for (let index = 0; index < list.length; index++) {
+          if (list[index].isrcAud === isrc) {
+            return false;
+          }
         }
       }
       return true;
@@ -1840,11 +2064,6 @@ export default {
         }
       }
       return { isrc: isrc, code: code };
-    },
-
-    edit_code() {
-      if (this.action_modal === "editar") {
-      }
     },
   },
 };

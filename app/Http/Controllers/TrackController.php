@@ -65,7 +65,6 @@ class TrackController extends Controller
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Track
     {
         $track = Track::create([
-            "ordenTrk" => $request->ordenTrk,
             "tituloTrk" => $request->tituloTrk,
             "isrcTrk" => $request->isrcTrk,
             "duracionTrk" => $request->duracionTrk,
@@ -98,7 +97,6 @@ class TrackController extends Controller
     {
         $track = Track::findOrFail($request->id);
         $track->update([
-            "ordenTrk" => $request->ordenTrk,
             "tituloTrk" => $request->tituloTrk,
             "isrcTrk" => $request->isrcTrk,
             "duracionTrk" => $request->duracionTrk,

@@ -14,7 +14,6 @@ class Track extends Model
     //SECCIÓN DE FILLABLE
     // Atributos del Modelo Track
     protected $fillable = [
-        'ordenTrk',  // Orden Track Repertorio*
         'tituloTrk',  // Titulo Track*
         'isrcTrk',  // ISRC Track*
         'duracionTrk',  // Duración Track*

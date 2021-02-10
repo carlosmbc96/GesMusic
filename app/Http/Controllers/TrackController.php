@@ -147,7 +147,7 @@ class TrackController extends Controller
     public function destroyFis($id)
     {
         $track = Track::withTrashed()->findOrFail($id);
-        for ($i = 0; $i < count($track->fonogramas()->withTrashed()->get()); $i++) {
+        for ($i = count($track->fonogramas()->withTrashed()->get())-1; $i >= 0; $i--) {
             $track->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
         }
         return response()->json($track->forceDelete());

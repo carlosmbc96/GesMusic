@@ -386,60 +386,61 @@
                     <div class="section-title">
                       <h4>Datos Descripciones</h4>
                     </div>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      has-feedback
-                      label="Descripción en español del Fonograma"
-                      prop="descripEspFong"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        style="width: 100%; height: 150px"
-                        v-model="fonogram_modal.descripEspFong"
-                        type="textarea"
-                      />
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Descripción en español del Fonograma"
-                      v-else
-                    >
-                      <div class="description">
-                        <a-mentions
-                          readonly
-                          :placeholder="fonogram_modal.descripEspFong"
-                        >
-                        </a-mentions>
-                      </div>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      has-feedback
-                      label="Descripción en inglés del Fonograma"
-                      prop="descripIngFong"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        style="width: 100%; height: 150px"
-                        v-model="fonogram_modal.descripIngFong"
-                        type="textarea"
-                      />
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Descripción en inglés del Fonograma"
-                      v-else
-                    >
-                      <div class="description">
-                        <a-mentions
-                          readonly
-                          :placeholder="fonogram_modal.descripIngFong"
-                        >
-                        </a-mentions>
-                      </div>
-                    </a-form-model-item>
+                    <div id="desciption-problem-icon">
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Descripción en español del Fonograma"
+                        prop="descripEspFong"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 150px"
+                          v-model="fonogram_modal.descripEspFong"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en español del Fonograma"
+                        v-else
+                      >
+                        <div class="description">
+                          <a-mentions
+                            readonly
+                            :placeholder="fonogram_modal.descripEspFong"
+                          >
+                          </a-mentions>
+                        </div>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Descripción en inglés del Fonograma"
+                        prop="descripIngFong"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 150px"
+                          v-model="fonogram_modal.descripIngFong"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en inglés del Fonograma"
+                        v-else
+                      >
+                        <div class="description">
+                          <a-mentions
+                            readonly
+                            :placeholder="fonogram_modal.descripIngFong"
+                          >
+                          </a-mentions>
+                        </div>
+                      </a-form-model-item>
+                    </div>
                   </a-row>
                 </a-col>
               </a-row>
-              <div></div>
               <a-button
                 style="float: right"
                 type="default"
@@ -549,7 +550,7 @@
                             type="link"
                             v-if="
                               index !==
-                                $store.getters.getTracksFormGetters.length - 1
+                              $store.getters.getTracksFormGetters.length - 1
                             "
                           >
                             <a-icon style="font-size: 15px" type="caret-down" />
@@ -1482,16 +1483,20 @@ export default {
 
     order_up(id) {
       let temp = this.$store.getters.getTracksFormGetters[id];
-      this.$store.state["tracks"][id] = this.$store.getters.getTracksFormGetters[id - 1];
-			this.$store.state["tracks"][id - 1] = temp;
-			this.$forceUpdate();
+      this.$store.state["tracks"][
+        id
+      ] = this.$store.getters.getTracksFormGetters[id - 1];
+      this.$store.state["tracks"][id - 1] = temp;
+      this.$forceUpdate();
     },
 
     order_down(id) {
       let temp = this.$store.getters.getTracksFormGetters[id];
-      this.$store.state["tracks"][id] = this.$store.getters.getTracksFormGetters[id + 1];
-			this.$store.state["tracks"][id + 1] = temp;
-			this.$forceUpdate();
+      this.$store.state["tracks"][
+        id
+      ] = this.$store.getters.getTracksFormGetters[id + 1];
+      this.$store.state["tracks"][id + 1] = temp;
+      this.$forceUpdate();
     },
   },
   components: {

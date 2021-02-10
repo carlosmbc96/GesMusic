@@ -306,6 +306,7 @@
                       label="Duración"
                     >
                       <a-time-picker
+                        placeholder="hh:mm:ss"
                         :default-open-value="moment('00:00:00', 'HH:mm:ss')"
                         :disabled="disabled"
                         :valueFormat="'HH:mm:ss'"

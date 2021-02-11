@@ -240,5 +240,14 @@ class FonogramaController extends Controller
             ]);
         }
         return response()->json($fonograma);
+		}
+
+		public function updateDuration(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Fonograma
+    {
+        $fonograma = Fonograma::findOrFail($request->id);
+        $fonograma->update([
+            "duracionFong" => $request->duracionFong,
+        ]);
+        return response()->json($fonograma);
     }
 }

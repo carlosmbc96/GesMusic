@@ -84,7 +84,10 @@
               <a-row>
                 <a-col span="11">
                   <a-form-model-item
-                    v-if="action_modal === 'crear'"
+                    v-if="
+                      action_modal === 'crear' ||
+                        action_modal === 'crear_entrevistado'
+                    "
                     :validate-status="show_error"
                     prop="codigEntrv"
                     has-feedback
@@ -192,37 +195,6 @@
                     >
                     </a-mentions>
                   </a-form-model-item>
-                  <a-form-model-item
-                    v-if="action_modal !== 'detalles'"
-                    label="Audiovisual"
-                    prop="audiovisual_id"
-                    has-feedback
-                  >
-                    <a-select
-                      option-filter-prop="children"
-                      :filter-option="filter_option"
-                      show-search
-                      v-model="entrevistados_modal.audiovisual_id"
-                      :disabled="disabled"
-                    >
-                      <a-select-option
-                        v-for="audiovisual in audiovisuals"
-                        :key="audiovisual.id"
-                        :value="audiovisual.id"
-                      >
-                        {{ audiovisual.tituloAud }}
-                      </a-select-option>
-                    </a-select>
-                  </a-form-model-item>
-                  <a-form-model-item v-else label="Audiovisual">
-                    <a-mentions
-                      readonly
-                      :placeholder="
-                        get_audiovisual(entrevistados_modal.audiovisual_id)
-                      "
-                    >
-                    </a-mentions>
-                  </a-form-model-item>
                 </a-col>
               </a-row>
             </a-form-model>
@@ -319,13 +291,6 @@ export default {
             trigger: "change",
           },
         ],
-        audiovisual_id: [
-          {
-            required: true,
-            message: "Campo requerido",
-            trigger: "change",
-          },
-        ],
         descripEspEntrv: [
           {
             whitespace: true,
@@ -344,7 +309,7 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear") {
+    if (this.action_modal === "crear" || this.action_modal === "crear_entrevistado") {
       this.codigo = this.generar_codigo(this.entrevistados_list);
     }
   },
@@ -355,8 +320,7 @@ export default {
       } else
         return (
           this.entrevistados_modal.nombreApellidosEntrv &&
-          this.entrevistados_modal.sexoEntrv &&
-          this.entrevistados_modal.audiovisual_id
+          this.entrevistados_modal.sexoEntrv
         );
     },
   },
@@ -473,6 +437,31 @@ export default {
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;
+            if (this.action_modal === "crear_entrevistado") {
+              let entrevistados = [];
+              axios
+                .post("/entrevistados/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      entrevistados.push(element);
+                    }
+                  });
+                  this.$store.state["entrevistados"].push(
+                    entrevistados[entrevistados.length - 1]
+                  );
+                  this.$store.state["created_entrevistados"].push(
+                    entrevistados[entrevistados.length - 1]
+                  );
+                  this.$store.state["all_entrevistados_statics"].push(
+                    entrevistados[entrevistados.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }
             this.$emit("actualizar");
             this.$toast.success(
               "Se ha modificado el Entrevistado correctamente",
@@ -500,6 +489,31 @@ export default {
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
+            if (this.action_modal === "crear_entrevistad") {
+              let entrevistados = [];
+              axios
+                .post("/entrevistados/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      entrevistados.push(element);
+                    }
+                  });
+                  this.$store.state["entrevistados"].push(
+                    entrevistados[entrevistados.length - 1]
+                  );
+                  this.$store.state["created_entrevistados"].push(
+                    entrevistados[entrevistados.length - 1]
+                  );
+                  this.$store.state["all_entrevistados_statics"].push(
+                    entrevistados[entrevistados.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }
             this.$emit("actualizar");
             this.$toast.success(
               "Se ha creado el Entrevistado correctamente",
@@ -543,10 +557,6 @@ export default {
         this.entrevistados_modal.descripEspEntrv
       );
       form_data.append("sexoEntrv", this.entrevistados_modal.sexoEntrv);
-      form_data.append(
-        "audiovisual_id",
-        this.entrevistados_modal.audiovisual_id
-      );
       this.text_button = "Creando...";
       return form_data;
     },

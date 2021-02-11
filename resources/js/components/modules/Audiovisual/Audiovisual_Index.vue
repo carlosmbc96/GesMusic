@@ -837,7 +837,7 @@ export default {
         this.change_spin();
       }
       axios
-        .post("/audiovisuales/listar", { relations: ["productos"] })
+        .post("/audiovisuales/listar", { relations: ["productos", "realizadores", "entrevistados"] })
         .then((response) => {
           this.audiovisuals_list = response.data;
           this.series_data = [];

@@ -889,7 +889,7 @@ export default {
   },
   created() {
     this.load_nomenclators();
-    this.set_action();
+		this.set_action();
     if (this.action_modal === "crear") {
       this.codigo = this.generar_codigo(this.fonograms_list);
       this.$store.state.duration = moment("00:00:00", "HH:mm:ss").format(
@@ -1023,7 +1023,6 @@ export default {
             },
           })
           .then((response) => {
-						console.log(response.data.id);
             axios
               .post("/fonogramas/tracks", {
                 tracks: this.getTracksID(),
@@ -1234,7 +1233,8 @@ export default {
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
-        }
+				}
+				this.$store.state["tracks"] = this.fonogram_modal.tracks;
       } else if (this.action_modal === "detalles") {
         this.$store.state.duration = this.fonogram.duracionFong;
         this.active_tab = "2";
@@ -1489,8 +1489,9 @@ export default {
     //Fin de metodos para generar el codigo
 
     getTracksID() {
-      let answer = [];
-      let all_tracks = this.$store.getters.getTracksFormGetters;
+			let answer = [];
+			let all_tracks = this.$store.getters.getTracksFormGetters;
+			console.log(this.fonogram_modal);
       for (let index = 0; index < all_tracks.length; index++) {
         answer.push([all_tracks[index].id, index + 1]);
       }
@@ -1507,6 +1508,7 @@ export default {
     },
 
     order_down(id) {
+			console.log(this.$store.getters.getAllTracksStaticsFormGetters);
       let temp = this.$store.getters.getTracksFormGetters[id];
       this.$store.state["tracks"][
         id

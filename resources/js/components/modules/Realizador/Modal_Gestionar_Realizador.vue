@@ -82,7 +82,7 @@
 							<a-row>
 								<a-col span="11">
 									<a-form-model-item
-										v-if="action_modal === 'crear'"
+										v-if="action_modal === 'crear' || action_modal === 'crear_realizador'"
 										:validate-status="show_error"
 										prop="codigRealiz"
 										has-feedback
@@ -190,37 +190,6 @@
 										>
 										</a-mentions>
 									</a-form-model-item>
-									<a-form-model-item
-										v-if="action_modal !== 'detalles'"
-										label="Audiovisual"
-										prop="audiovisual_id"
-										has-feedback
-									>
-										<a-select
-											option-filter-prop="children"
-											:filter-option="filter_option"
-											show-search
-											v-model="realizadores_modal.audiovisual_id"
-											:disabled="disabled"
-										>
-											<a-select-option
-												v-for="audiovisual in audiovisuals"
-												:key="audiovisual.id"
-												:value="audiovisual.id"
-											>
-												{{ audiovisual.tituloAud }}
-											</a-select-option>
-										</a-select>
-									</a-form-model-item>
-									<a-form-model-item v-else label="Audiovisual">
-										<a-mentions
-											readonly
-											:placeholder="
-												get_audiovisual(realizadores_modal.audiovisual_id)
-											"
-										>
-										</a-mentions>
-									</a-form-model-item>
 								</a-col>
 							</a-row>
 						</a-form-model>
@@ -317,13 +286,6 @@ export default {
 						trigger: "change",
 					},
 				],
-				audiovisual_id: [
-					{
-						required: true,
-						message: "Campo requerido",
-						trigger: "change",
-					},
-				],
 				descripEspRealiz: [
 					{
 						whitespace: true,
@@ -342,7 +304,7 @@ export default {
 	created() {
 		this.load_nomenclators();
 		this.set_action();
-		if (this.action_modal === "crear") {
+		if (this.action_modal === "crear" || this.action_modal === "crear_realizador") {
 			this.codigo = this.generar_codigo(this.realizadores_list);
 		}
 	},
@@ -353,8 +315,7 @@ export default {
 			} else
 				return (
 					this.realizadores_modal.nombreApellidosRealiz &&
-					this.realizadores_modal.sexoRealiz &&
-					this.realizadores_modal.audiovisual_id
+					this.realizadores_modal.sexoRealiz
 				);
 		},
 	},
@@ -468,6 +429,29 @@ export default {
 						this.text_button = "Editar";
 						this.spinning = false;
 						this.waiting = false;
+						if (this.action_modal === "crear_realizador") {
+                let realizadores = [];
+                axios
+                  .post("/realizadores/listar")
+                  .then((response) => {
+                    let prod = response.data;
+                    prod.forEach((element) => {
+                      if (!element.deleted_at) {
+                        realizadores.push(element);
+                      }
+                    });
+                    this.$store.state["realizadores"].push(realizadores[realizadores.length - 1]);
+                    this.$store.state["created_realizadores"].push(
+                      realizadores[realizadores.length - 1]
+                    );
+                    this.$store.state["all_realizadores_statics"].push(
+                      realizadores[realizadores.length - 1]
+                    );
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
 						this.$emit("actualizar");
 						this.$toast.success(
 							"Se ha modificado el Realizador correctamente",
@@ -495,6 +479,29 @@ export default {
 						this.text_button = "Creando...";
 						this.spinning = false;
 						this.waiting = false;
+						if (this.action_modal === "crear_realizador") {
+                let realizadores = [];
+                axios
+                  .post("/realizadores/listar")
+                  .then((response) => {
+                    let prod = response.data;
+                    prod.forEach((element) => {
+                      if (!element.deleted_at) {
+                        realizadores.push(element);
+                      }
+                    });
+                    this.$store.state["realizadores"].push(realizadores[realizadores.length - 1]);
+                    this.$store.state["created_realizadores"].push(
+                      realizadores[realizadores.length - 1]
+                    );
+                    this.$store.state["all_realizadores_statics"].push(
+                      realizadores[realizadores.length - 1]
+                    );
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
 						this.$emit("actualizar");
 						this.$toast.success(
 							"Se ha creado el Realizador correctamente",
@@ -538,10 +545,6 @@ export default {
 				this.realizadores_modal.descripEspRealiz
 			);
 			form_data.append("sexoRealiz", this.realizadores_modal.sexoRealiz);
-			form_data.append(
-				"audiovisual_id",
-				this.realizadores_modal.audiovisual_id
-			);
 			this.text_button = "Creando...";
 			return form_data;
 		},

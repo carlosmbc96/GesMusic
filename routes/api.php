@@ -63,6 +63,7 @@ Route::delete('/fonogramas/eliminar/{id}', 'FonogramaController@destroyFis'); //
 Route::post('/fonogramas/nomencladores', 'FonogramaController@nomenclators');
 Route::post('/fonogramas/tracks', 'FonogramaController@fonogramaTracks');
 Route::post('/fonogramas/actualizarRelacionesTrk', 'FonogramaController@actualizarRelacionesTrk');
+Route::post('/fonogramas/editarDuracion', 'FonogramaController@updateDuration');
 
 // RUTAS DEL RECURSO: AUDIOVISUAL
 Route::get('/audiovisuales/restaurar/{id}', 'AudiovisualController@restoreLog');

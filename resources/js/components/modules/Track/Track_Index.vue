@@ -50,7 +50,7 @@
             "
           ></span
         ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
+        <span><a-icon class="e-icon-export" type="export"/></span>
       </div>
       <transition
         enter-active-class="animate__animated animate__slideInUp"
@@ -379,7 +379,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -461,7 +461,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -482,7 +482,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -545,7 +545,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -566,7 +566,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -626,7 +626,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -688,32 +688,57 @@ export default {
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
-                                    console.log(this.data);
                                     let durationFong;
-                                    let fonogamas = this.data.fonogramas;
-                                    let durationTrk = moment(
-                                      this.data.durationTrk,
-                                      "HH:mm:ss"
-                                    );
+                                    let fonogramas = this.data.fonogramas;
+                                    let form_data = new FormData();
                                     for (
                                       let i = 0;
                                       i < fonogramas.length;
                                       i++
                                     ) {
                                       durationFong = moment(
-                                        this.fonograma[i].durationFong,
+                                        fonogramas[i].duracionFong,
                                         "HH:mm:ss"
                                       );
-                                      duracionFong
+                                      durationFong
                                         .subtract(
-                                          moment.duration(
-                                            durationTrk
-                                          )
+                                          moment.duration(this.data.duracionTrk)
                                         )
                                         .format("HH:mm:ss");
+                                      durationFong = moment(
+                                        durationFong,
+                                        "HH:mm:ss"
+																			).format("HH:mm:ss");
+                                      form_data.append("id", fonogramas[i].id);
+                                      form_data.append(
+                                        "duracionFong",
+                                        durationFong
+                                      );
+                                      axios
+                                        .post(
+                                          `/fonogramas/editarDuracion`,
+                                          form_data,
+                                          {
+                                            headers: {
+                                              "Content-Type":
+                                                "multipart/form-data",
+                                            },
+                                          }
+                                        )
+                                        .then((response) => {})
+                                        .catch((error) => {
+                                          this.$toast.error(
+                                            "Ha ocurrido un error",
+                                            "¡Error!",
+                                            {
+                                              timeout: 2000,
+                                            }
+                                          );
+																				});
+																				form_data = new FormData();
                                     }
                                     this.$parent.$parent.$parent.change_spin();
-                                    /* axios
+                                    axios
                                       .delete(`tracks/eliminar/${this.data.id}`)
                                       .then((ress) => {
                                         this.$parent.$parent.$parent.refresh_table();
@@ -733,7 +758,7 @@ export default {
                                             timeout: 2000,
                                           }
                                         );
-                                      }); */
+                                      });
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -744,7 +769,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -765,7 +790,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,

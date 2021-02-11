@@ -102,6 +102,7 @@
 <script>
 import difference from "lodash/difference";
 import axios from "axios";
+import moment from "../../../../../node_modules/moment";
 
 const leftTableColumns = [
   {
@@ -187,7 +188,8 @@ export default {
       } else return false;
     },
     submit() {
-      this.change_spin();
+			this.change_spin();
+			this.edit_duration_fong(this.entity_id, this.new_relations);
       axios
         .post("fonogramas/actualizarRelacionesTrk", {
           id: this.entity_id,
@@ -247,6 +249,28 @@ export default {
         },
         selectedRowKeys: selectedKeys,
       };
+    },
+    edit_duration_fong(fonograma, tracks) {
+      let durationFong = moment("00:00:00", "HH:mm:ss");
+      let form_data = new FormData();
+      for (let i = 0; i < tracks.length; i++) {
+        durationFong.add(moment.duration(tracks[i].duracionTrk)).format("HH:mm:ss");
+        durationFong = moment(durationFong, "HH:mm:ss");
+			}
+      form_data.append("id", fonograma);
+      form_data.append("duracionFong", durationFong.format("HH:mm:ss"));
+      axios
+        .post(`/fonogramas/editarDuracion`, form_data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {})
+        .catch((error) => {
+          this.$toast.error("Ha ocurrido un error", "¡Error!", {
+            timeout: 2000,
+          });
+        });
     },
   },
 };

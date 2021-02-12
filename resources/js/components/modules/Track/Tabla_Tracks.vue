@@ -256,7 +256,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 action: "",
                 position: "",
@@ -338,7 +338,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -359,7 +359,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -422,7 +422,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -443,7 +443,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -515,7 +515,7 @@ export default {
 									</a-col>
 								</a-row>
 							</div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
               };
@@ -538,8 +538,10 @@ export default {
                 ] = temp;
                 this.$parent.$parent.$parent.tracks_list = [
                   ...this.$parent.$parent.$parent.tracks_list,
-								];
-								this.$store.state['tracks'] = this.$parent.$parent.$parent.tracks_list;
+                ];
+                this.$store.state[
+                  "tracks"
+                ] = this.$parent.$parent.$parent.tracks_list;
               },
               order_down(id) {
                 let temp = this.$parent.$parent.$parent.tracks_list[
@@ -553,8 +555,10 @@ export default {
                 ] = temp;
                 this.$parent.$parent.$parent.tracks_list = [
                   ...this.$parent.$parent.$parent.tracks_list,
-								];
-								this.$store.state['tracks'] = this.$parent.$parent.$parent.tracks_list;
+                ];
+                this.$store.state[
+                  "tracks"
+                ] = this.$parent.$parent.$parent.tracks_list;
               },
             },
           }),
@@ -572,7 +576,7 @@ export default {
                 <a-button  v-if="!$parent.$parent.$parent.detalles" size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
                 </a-tooltip>
                 </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
               };
@@ -608,7 +612,7 @@ export default {
             template: `<div>
                 <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
                 </div>`,
-            data: function() {
+            data: function () {
               return {
                 data: {},
               };
@@ -670,21 +674,9 @@ export default {
       this.$emit("reload");
       if (this.vista_editar) {
         axios
-          .post("/tracks/listar", { relations: ["fonogramas"] })
+          .post("/tracks/fonogramaTracks", { idFong: this.fonograma.id })
           .then((response) => {
-            this.tracks_list = [];
-            let pertenece = false;
-            response.data.forEach((track) => {
-              track.fonogramas.forEach((fonograma) => {
-                if (fonograma.id === this.fonograma.id) {
-                  pertenece = true;
-                }
-              });
-              if (pertenece) {
-                this.tracks_list.push(track);
-              }
-              pertenece = false;
-            });
+            this.tracks_list = response.data;
             this.change_spin();
           });
         axios.post("/tracks/listar").then((response) => {
@@ -696,7 +688,6 @@ export default {
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.tracks_list = null;
       this.load_tracks();
     },
     /*

@@ -190,9 +190,9 @@ class FonogramaController extends Controller
     public function crearDirectorios($productos, $codigFong)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Fonograma
     {
         for ($i = 0; $i < count($productos); $i++) {
-					$producto = Producto::withTrashed()->findOrFail($productos[$i]);
-					$proyecto = Proyecto::withTrashed()->findOrFail($producto->proyecto_id);
-					Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $codigFong);
+            $producto = Producto::withTrashed()->findOrFail($productos[$i]);
+            $proyecto = Proyecto::withTrashed()->findOrFail($producto->proyecto_id);
+            Storage::disk('local')->makeDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $codigFong);
         }
     }
     public function eliminarDirectorios($productos, $codigFong)
@@ -205,18 +205,18 @@ class FonogramaController extends Controller
     }
     public function fonogramaTracks(Request $request)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Fonograma
     {
-			$fonograma = Fonograma::withTrashed()->findOrFail($request->idFong);
-			for ($i = count($fonograma->tracks()->withTrashed()->get()) - 1; $i >= 0; $i--) {
-					$fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
-			}
+        $fonograma = Fonograma::withTrashed()->findOrFail($request->idFong);
+        for ($i = count($fonograma->tracks()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+            $fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
+        }
         for ($i = 0; $i < count($request->tracks); $i++) {
             Fonograma_Track::create([
                 "track_id" => $request->tracks[$i][0],
                 "ordenTrk" => $request->tracks[$i][1],
                 "fonograma_id" => $request->idFong
             ]);
-				}
-				return response()->json($fonograma);
+        }
+        return response()->json($fonograma);
     }
     public function eliminarRelacionTrk(Request $request)
     {

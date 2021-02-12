@@ -575,7 +575,7 @@
                         :value="variosInterpretesProd"
                         @change="cambiar_varios_interpretes"
                       >
-                        ¿El producto tiene varios intérpretes?
+                        ¿El Producto tiene varios intérpretes?
                       </a-checkbox>
                     </a-form-model-item>
                     <a-form-model-item
@@ -770,7 +770,7 @@
                           />
                         </a-form-model-item>
                         <a-form-model-item
-                          label="Descripción en inglés del producto"
+                          label="Descripción en inglés del Producto"
                           v-else
                         >
                           <div id="ing">
@@ -905,7 +905,8 @@
                 v-if="current === 0"
                 :detalles_prop="detalles"
                 @reload="reload_parent"
-                :producto="product_modal"
+                :entity="product_modal"
+                entity_relation="productos"
                 :vista_editar="vista_editar"
                 @close_modal="show = $event"
               />
@@ -1288,6 +1289,7 @@ export default {
       let list_roles = [];
       let list_roles_help = [];
       if (this.product_modal.interpretesProd !== null) {
+        console.log(this.product_modal.interpretesProd);
         list_help = this.product_modal.interpretesProd.split(".");
         this.product_modal.interpretesProd = list_help[0];
         list_roles = list_help[1];
@@ -1631,7 +1633,6 @@ export default {
     },
     compareInterpRoles(old_array, new_array) {
       let igual_cont = 0;
-      console.log("as");
       for (let i = 0; i < old_array.length; i++) {
         if (new_array[i].role.length === old_array[i].role.length) {
           for (let j = 0; j < new_array[i].role.length; j++) {
@@ -1882,7 +1883,7 @@ export default {
             this.text_button = "Editar";
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha modificado el producto correctamente",
+              "Se ha modificado el Producto correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -2032,7 +2033,7 @@ export default {
             this.text_button = "Crear";
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha creado el producto correctamente",
+              "Se ha creado el Producto correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -2061,6 +2062,7 @@ export default {
     },
     handle_cancel(e) {
       if (e === "cancelar") {
+        this.$emit("actualizar");
         if (this.$refs.formularioGenerales !== undefined) {
           this.$refs.formularioGenerales.resetFields();
         }

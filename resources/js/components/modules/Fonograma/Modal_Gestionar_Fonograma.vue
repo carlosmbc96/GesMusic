@@ -1023,7 +1023,6 @@ export default {
             },
           })
           .then((response) => {
-						console.log(response.data.id);
             axios
               .post("/fonogramas/tracks", {
                 tracks: this.getTracksID(),

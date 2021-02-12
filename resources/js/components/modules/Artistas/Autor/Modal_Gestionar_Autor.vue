@@ -263,7 +263,7 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Reseña biográfica del autor"
+                        label="Reseña biográfica del Autor"
                         prop="biogAutr"
                         id="resenha"
                       >
@@ -276,7 +276,7 @@
                       </a-form-model-item>
                       <a-form-model-item
                         v-else
-                        label="Reseña biográfica del autor"
+                        label="Reseña biográfica del Autor"
                       >
                         <div class="description">
                           <a-mentions
@@ -572,7 +572,7 @@ export default {
             this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha modificado el autor correctamente",
+              "Se ha modificado el Autor correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -600,7 +600,7 @@ export default {
             this.handle_cancel();
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha creado el autor correctamente",
+              "Se ha creado el Autor correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );

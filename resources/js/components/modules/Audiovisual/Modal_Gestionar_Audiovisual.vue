@@ -202,7 +202,6 @@
                               has-feedback
                               label="Género Audiovisual"
                               prop="generoAud"
-                              @change="edit_code"
                             >
                               <a-select
                                 :getPopupContainer="
@@ -236,11 +235,9 @@
                             <a-form-model-item
                               v-if="
                                 action_modal === 'crear' &&
-                                  (audiovisual_modal.generoAud ===
-                                    'Entrevista' ||
-                                    audiovisual_modal.generoAud ===
-                                      'Making of' ||
-                                    audiovisual_modal.generoAud === 'Trailers')
+                                (audiovisual_modal.generoAud === 'Entrevista' ||
+                                  audiovisual_modal.generoAud === 'Making of' ||
+                                  audiovisual_modal.generoAud === 'Trailers')
                               "
                               :validate-status="show_error"
                               prop="codigAud"
@@ -414,10 +411,10 @@
                         <a-row
                           v-if="
                             action_modal === 'editar' &&
-                              (audiovisual_modal.generoAud === 'Concierto' ||
-                                audiovisual_modal.generoAud === 'Video Clip' ||
-                                audiovisual_modal.generoAud === 'Documental') &&
-                              audiovisual_modal.generoAud !== genero_pivot
+                            (audiovisual_modal.generoAud === 'Concierto' ||
+                              audiovisual_modal.generoAud === 'Video Clip' ||
+                              audiovisual_modal.generoAud === 'Documental') &&
+                            audiovisual_modal.generoAud !== genero_pivot
                           "
                         >
                           <a-col span="24">
@@ -553,10 +550,10 @@
                         <a-form-model-item
                           v-if="
                             action_modal === 'editar' &&
-                              (audiovisual_modal.generoAud === 'Concierto' ||
-                                audiovisual_modal.generoAud === 'Video Clip' ||
-                                audiovisual_modal.generoAud === 'Documental') &&
-                              audiovisual_modal.generoAud === genero_pivot
+                            (audiovisual_modal.generoAud === 'Concierto' ||
+                              audiovisual_modal.generoAud === 'Video Clip' ||
+                              audiovisual_modal.generoAud === 'Documental') &&
+                            audiovisual_modal.generoAud === genero_pivot
                           "
                           label="ISRC"
                         >
@@ -1091,6 +1088,7 @@ export default {
       }
     };
     return {
+      relation: "",
       tab_2: true,
       tab_3: true,
       tabs_list: [],
@@ -1328,6 +1326,11 @@ export default {
     };
   },
   created() {
+    if (this.audiovisual.tabla) {
+      this.tabs_list.push("tab_1");
+      this.tab_visibility = false;
+      this.active_tab = "2";
+    }
     this.load_nomenclators();
     this.set_action();
     if (this.action_modal === "crear") {
@@ -1354,12 +1357,11 @@ export default {
   computed: {
     active() {
       if (this.action_modal === "editar") {
-        console.log("as");
-        return !this
-          .compare_object /* ||
+        return true; /* !this
+          .compare_object  ||
           (this.valid_image &&
             this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.audiovisual_modal.id) */;
+            this.file_list[0].uid !== this.audiovisual_modal.id);*/
       } else
         return (
           this.audiovisual_modal.tituloAud &&
@@ -1375,11 +1377,11 @@ export default {
      *Método que compara los campos editables del producto para saber si se ha modificado
      */
     compare_object() {
-      console.log("wds");
       this.audiovisual_modal.makingOfAud = this.makingOfAud === true ? 1 : 0;
-      console.log(this.audiovisual_modal.paisGrabAud === this.audiovisual.paisGrabAud);
       return (
-        this.audiovisual_modal.paisGrabAud === this.audiovisual.paisGrabAud/*  &&
+        this.audiovisual_modal.paisGrabAud ===
+        this.audiovisual
+          .paisGrabAud /*  &&
         this.audiovisual_modal.makingOfAud === this.audiovisual.makingOfAud &&
         this.audiovisual_modal.fenomRefAud === this.audiovisual.fenomRefAud &&
         this.audiovisual_modal.duracionAud === this.audiovisual.duracionAud &&
@@ -1536,7 +1538,7 @@ export default {
               this.handle_cancel();
               this.$emit("actualizar");
               this.$toast.success(
-                "Se ha modificado el audiovisual correctamente",
+                "Se ha modificado el Audiovisual correctamente",
                 "¡Éxito!",
                 { timeout: 2000 }
               );
@@ -1578,7 +1580,7 @@ export default {
               this.handle_cancel();
               this.$emit("actualizar");
               this.$toast.success(
-                "Se ha creado el audiovisual correctamente",
+                "Se ha creado el Audiovisual correctamente",
                 "¡Éxito!",
                 { timeout: 2000 }
               );
@@ -1698,7 +1700,6 @@ export default {
         this.audiovisual_modal.generoAud !== this.genero_pivot
       ) {
         if (this.is_isrc()) {
-          console.log(this.audiovisual_modal.codigPais);
           this.audiovisual_modal.isrcAud =
             "" +
             this.audiovisual_modal.codigPais.toUpperCase() +
@@ -1743,7 +1744,36 @@ export default {
       form_data.append("descripEspAud", this.audiovisual_modal.descripEspAud);
       form_data.append("descripIngAud", this.audiovisual_modal.descripIngAud);
       form_data.append("paisGrabAud", this.audiovisual_modal.paisGrabAud);
-      form_data.append("product_id", this.audiovisual_modal.productos_audvs);
+      if (this.audiovisual.productos_audvs) {
+        form_data.append("product_id", this.audiovisual_modal.productos_audvs);
+        this.relation = "productos";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.autores_audvs) {
+        form_data.append("autores_id", this.audiovisual_modal.autores_audvs);
+        this.relation = "autores";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.interpretes_audvs) {
+        form_data.append(
+          "interpretes_id",
+          this.audiovisual_modal.interpretes_audvs
+        );
+        this.relation = "interpretes";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.realizadores_audvs) {
+        form_data.append(
+          "realizadores_id",
+          this.audiovisual_modal.realizadores_audvs
+        );
+        this.relation = "realizadores";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.entrevistados_audvs) {
+        form_data.append(
+          "entrevistados_id",
+          this.audiovisual_modal.entrevistados_audvs
+        );
+        this.relation = "entrevistados";
+        form_data.append("type_relation", this.relation);
+      }
       if (this.file_list.length !== 0) {
         if (this.file_list[0].uid !== this.audiovisual_modal.id) {
           if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
@@ -1755,6 +1785,22 @@ export default {
     },
     set_action() {
       if (this.audiovisual.productos_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.autores_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.interpretes_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.realizadores_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.entrevistados_audvs) {
         this.tab_visibility = false;
         this.active_tab = "2";
         this.tabs_list.push("tab_1");
@@ -1781,9 +1827,11 @@ export default {
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
         this.audiovisual.codigAud = this.audiovisual.codigAud;
-        this.audiovisual.productos.forEach((element) => {
-          this.audiovisual.productos_audvs.push(element.id);
-        });
+        if (this.audiovisual.productos) {
+          this.audiovisual.productos.forEach((element) => {
+            this.audiovisual.productos_audvs.push(element.id);
+          });
+        }
         this.audiovisual_modal = { ...this.audiovisual };
         if (!this.is_isrc()) {
           this.audiovisual_modal.codigAud = this.audiovisual.codigAud.substr(5);
@@ -1867,9 +1915,11 @@ export default {
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
         this.audiovisual.codigAud = this.audiovisual.codigAud;
-        this.audiovisual.productos.forEach((element) => {
-          this.audiovisual.productos_audvs.push(element.id);
-        });
+        if (this.audiovisual.productos) {
+          this.audiovisual.productos.forEach((element) => {
+            this.audiovisual.productos_audvs.push(element.id);
+          });
+        }
         this.audiovisual_modal = { ...this.audiovisual };
         if (this.audiovisual_modal.portadillaAud !== null) {
           if (
@@ -1929,7 +1979,7 @@ export default {
       if (!isJpgOrPng) {
         this.valid_image = false;
         this.$message.error(
-          "Sólo puedes subir imágenes como portadilla del audiovisual"
+          "Sólo puedes subir imágenes como portadilla del Audiovisual"
         );
       } else this.$message.success("Portadilla cargada correctamente");
       return false;

@@ -18,8 +18,6 @@ class Entrevistado extends Model
 		'nombreApellidosEntrv',  // Nombre y Apellidos del Entrevistado
 		'sexoEntrv',  // Sexo del Entrevistado
 		'descripEspEntrv',  // Descripción en Español del Entrevistado
-
-		'audiovisual_id',  // Identificador Único de la tabla Audiovisuales  / Relación One to Many
 	];
 	//SECCIÓN DE FILLABLE
 
@@ -31,7 +29,7 @@ class Entrevistado extends Model
 	//Relación de Many to One Entrevistados - Audiovisuales
 	public function audiovisuales()
 	{
-		return $this->hasMany(Audiovisual::class); // Un Entrevistado pertenece a un Audiovisual
+		return $this->belongsToMany(Audiovisual::class,'audiovisual_entrevistado');
 	}
 	//SECCIÓN DE RELACIONES
 

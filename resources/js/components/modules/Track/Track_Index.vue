@@ -688,32 +688,8 @@ export default {
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
-                                    console.log(this.data);
-                                    let durationFong;
-                                    let fonogamas = this.data.fonogramas;
-                                    let durationTrk = moment(
-                                      this.data.durationTrk,
-                                      "HH:mm:ss"
-                                    );
-                                    for (
-                                      let i = 0;
-                                      i < fonogramas.length;
-                                      i++
-                                    ) {
-                                      durationFong = moment(
-                                        this.fonograma[i].durationFong,
-                                        "HH:mm:ss"
-                                      );
-                                      duracionFong
-                                        .subtract(
-                                          moment.duration(
-                                            durationTrk
-                                          )
-                                        )
-                                        .format("HH:mm:ss");
-                                    }
                                     this.$parent.$parent.$parent.change_spin();
-                                    /* axios
+                                    axios
                                       .delete(`tracks/eliminar/${this.data.id}`)
                                       .then((ress) => {
                                         this.$parent.$parent.$parent.refresh_table();
@@ -733,7 +709,7 @@ export default {
                                             timeout: 2000,
                                           }
                                         );
-                                      }); */
+                                      });
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,

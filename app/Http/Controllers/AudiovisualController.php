@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Audiovisual;
+use App\Audiovisual_Autor;
+use App\Audiovisual_Entrevistado;
+use App\Audiovisual_Interprete;
+use App\Audiovisual_Realizador;
+use App\Autor;
 use App\Entrevistado;
+use App\Interprete;
 use App\Producto_Audiovisual;
 use App\Vocabulario;
 use App\Producto;
@@ -63,7 +69,6 @@ class AudiovisualController extends Controller
 		$idiomSubt = Vocabulario::findorFail(19)->terminos;  // Nomenclador: Idiomas de Subtitulos
 		//$derechosAud = Vocabulario::findorFail(11)->terminos;  // Nomenclador: Etiquetas
 		$nacionalid = Vocabulario::findorFail(22)->terminos;  // Nomenclador: Nacionalidades
-		//$estdContract= Vocabulario::findorFail(8)->terminos;  // Nomenclador: Estados Contractuales
 		return response()->json([[$clasfAudiov], [$genAudiov], [$anos], [$paises], [$idiom], [$idiomSubt], [$nacionalid]]);  // Se envian las variables
 	}
 
@@ -90,15 +95,49 @@ class AudiovisualController extends Controller
 			"nacioDueñoDerchAud" => $request->nacioDueñoDerchAud,
 			"fenomRefAud" => $request->fenomRefAud
 		]);
-		if ($request->product_id !== "undefined") {
-			$productos = explode(",", $request->product_id);
-			foreach ($productos as $producto) {
-				Producto_Audiovisual::create([
-					"producto_id" => $producto,
+		if ($request->type_relation === "productos") {
+			if ($request->product_id !== "undefined") {
+				$productos = explode(",", $request->product_id);
+				foreach ($productos as $producto) {
+					Producto_Audiovisual::create([
+						"producto_id" => $producto,
+						"audiovisual_id" => $audiovisual->id
+					]);
+				}
+				$this->crearDirectorios($productos, $request->codigAud);
+			}
+		} else if ($request->type_relation === "autores") {
+			$autores = explode(",", $request->autores_id);
+			foreach ($autores as $autor) {
+				Audiovisual_Autor::create([
+					"autor_id" => $autor,
 					"audiovisual_id" => $audiovisual->id
 				]);
 			}
-			$this->crearDirectorios($productos, $request->codigAud);
+		} else if ($request->type_relation === "interpretes") {
+			$interpretes = explode(",", $request->interpretes_id);
+			foreach ($interpretes as $interprete) {
+				Audiovisual_Interprete::create([
+					"interpretes_id" => $interprete,
+					"audiovisual_id" => $audiovisual->id
+				]);
+			}
+		} else if ($request->type_relation === "realizadores") {
+			$realizadores = explode(",", $request->realizadores_id);
+			foreach ($realizadores as $realizador) {
+				Audiovisual_Realizador::create([
+					"realizador_id" => $realizador,
+					"audiovisual_id" => $audiovisual->id
+				]);
+			}
+		} else if ($request->type_relation === "entrevistados") {
+			$entrevistados = explode(",", $request->entrevistados_id);
+			foreach ($entrevistados as $entrevistado) {
+				Audiovisual_Entrevistado::create([
+					"entrevistado_id" => $entrevistado,
+					"audiovisual_id" => $audiovisual->id
+				]);
+			}
 		}
 		if ($request->portadillaAud !== null) {
 			$audiovisual->setPortadillaAudAttribute($request->portadillaAud, $request->codigAud);
@@ -184,11 +223,21 @@ class AudiovisualController extends Controller
 		$productos = [];
 		$audiovisual = Audiovisual::withTrashed()->findOrFail($id);
 		if (count($audiovisual->productos()->withTrashed()->get()) !== 0) {
-			for ($i = count($audiovisual->productos()->withTrashed()->get()) - 1; $i >= 0; $i++) {
+			for ($i = count($audiovisual->productos()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 				array_push($productos, $audiovisual->productos()->withTrashed()->get()[$i]->pivot->producto_id);
 				$audiovisual->productos()->withTrashed()->get()[$i]->pivot->delete();
 			}
 			$this->eliminarDirectorios($productos, $audiovisual->codigAud);
+		}
+		if (count($audiovisual->realizadores()->withTrashed()->get()) !== 0) {
+			for ($i = count($audiovisual->realizadores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$audiovisual->realizadores()->withTrashed()->get()[$i]->pivot->delete();
+			}
+		}
+		if (count($audiovisual->entrevistados()->withTrashed()->get()) !== 0) {
+			for ($i = count($audiovisual->entrevistados()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$audiovisual->entrevistados()->withTrashed()->get()[$i]->pivot->delete();
+			}
 		}
 		if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
 			Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
@@ -228,46 +277,68 @@ class AudiovisualController extends Controller
 			Storage::disk('local')->deleteDirectory('/Proyectos/' . $proyecto->codigProy . "/" . $producto->codigProd . "/" . $codigAud);
 		}
 	}
-	public function audiovisualRealizadores(Request $request)
+	public function actualizarRelacionesAud(Request $request)
 	{
-		$realizadores = Realizador::withTrashed()->get();
-		$j = 0;
-		$encontrado = false;
-		for ($k = 0; $k < count($realizadores); $k++) {
-			$realizadores[$k]->audiovisual_id = null;
-			$realizadores[$k]->save();
-		}
-		for ($i = 0; $i < count($request->realizadores); $i++) {
-			while ((!$encontrado) && ($j < count($realizadores))) {
-				if ($realizadores[$j]->id === $request->realizadores[$i]) {
-					$realizadores[$j]->audiovisual_id = $request->idAud;
-					$realizadores[$j]->save();
-					$encontrado = true;
-				} else $j++;
+		if ($request->relation === "productos") {
+			$producto = Producto::withTrashed()->findOrFail($request->id);
+			for ($i = count($producto->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$producto->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
 			}
-			$encontrado = false;
-			$j = 0;
-		}
-	}
-	public function audiovisualEntrevistados(Request $request)
-	{
-		$entrevistados = Entrevistado::withTrashed()->get();
-		$j = 0;
-		$encontrado = false;
-		for ($k = 0; $k < count($entrevistados); $k++) {
-			$entrevistados[$k]->audiovisual_id = null;
-			$entrevistados[$k]->save();
-		}
-		for ($i = 0; $i < count($request->entrevistados); $i++) {
-			while ((!$encontrado) && ($j < count($entrevistados))) {
-				if ($entrevistados[$j]->id === $request->entrevistados[$i]) {
-					$entrevistados[$j]->audiovisual_id = $request->idAud;
-					$entrevistados[$j]->save();
-					$encontrado = true;
-				} else $j++;
+			foreach ($request->audiovisuales as $audiovisual) {
+				Producto_Audiovisual::create([
+					"producto_id" => $request->id,
+					"audiovisual_id" => $audiovisual
+				]);
 			}
-			$encontrado = false;
-			$j = 0;
+			return response()->json($producto);
+		} else if ($request->relation === "autores") {
+			$autor = Autor::withTrashed()->findOrFail($request->id);
+			for ($i = count($autor->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$autor->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			foreach ($request->audiovisuales as $audiovisual) {
+				Audiovisual_Autor::create([
+					"autor_id" => $request->id,
+					"audiovisual_id" => $audiovisual
+				]);
+			}
+			return response()->json($autor);
+		} else if ($request->relation === "interpretes") {
+			$interprete = Interprete::withTrashed()->findOrFail($request->id);
+			for ($i = count($interprete->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$interprete->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			foreach ($request->audiovisuales as $audiovisual) {
+				Audiovisual_Interprete::create([
+					"interprete_id" => $request->id,
+					"audiovisual_id" => $audiovisual
+				]);
+			}
+			return response()->json($interprete);
+		} else if ($request->relation === "realizadores") {
+			$realizador = Realizador::withTrashed()->findOrFail($request->id);
+			for ($i = count($realizador->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$realizador->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			foreach ($request->audiovisuales as $audiovisual) {
+				Audiovisual_Realizador::create([
+					"realizador_id" => $request->id,
+					"audiovisual_id" => $audiovisual
+				]);
+			}
+			return response()->json($realizador);
+		} else if ($request->relation === "entrevistados") {
+			$entrevistado = Entrevistado::withTrashed()->findOrFail($request->id);
+			for ($i = count($entrevistado->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$entrevistado->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			foreach ($request->audiovisuales as $audiovisual) {
+				Audiovisual_Entrevistado::create([
+					"entrevistado_id" => $request->id,
+					"audiovisual_id" => $audiovisual
+				]);
+			}
+			return response()->json($entrevistado);
 		}
 	}
 }

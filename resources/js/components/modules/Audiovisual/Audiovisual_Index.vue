@@ -1,185 +1,196 @@
 <template>
-  <div id="audiovisual_index">
-    <h1 style="color: white !important">Audiovisuales</h1>
-    <hr style="border-color: white !important" />
-
-    <!-- Inicio Sección de Analítica | Gráficas -->
-    <ejs-chart
-      style="display: block; margin: 20px"
-      :theme="theme"
-      align="center"
-      id="chartcontainer"
-      ref="chartObj"
-      :background="background_chart"
-      :primaryXAxis="primary_x_axis"
-      :primaryYAxis="primary_y_axis"
-      :chartArea="chart_area"
-      width="50%"
-      height="60%"
-      :tooltip="tooltip"
-      :load="load"
-      :legendSettings="{ visible: false }"
-      v-if="audiovisuals_list.length !== 0"
+  <div class="col-md-12">
+    <div
+      class="portlet light"
+      style="background-color: rgba(255, 255, 255, 0.4)"
     >
-      <e-series-collection>
-        <e-series
-          :dataSource="series_data"
-          type="Column"
-          xName="years"
-          yName="audiovisuals"
-          name="Año"
-          :marker="marker"
-          :animation="animation_series"
-        />
-      </e-series-collection>
-    </ejs-chart>
-    <!-- Fin Sección de Analítica | Gráficas -->
+      <div style="min-height: 600px">
+        <div id="audiovisual_index">
+          <h1 style="color: white !important">Audiovisuales</h1>
+          <hr style="border-color: white !important" />
 
-    <!-- Inicio Sección de Tabla de datos -->
-    <!-- Seccion Panel de exportaciones -->
-    <div id="exportPanelContainer">
-      <div id="arrowDropUpExports">
-        <a-tooltip :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
-          ><span
-            class="e-icons export-icons"
-            :class="export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'"
-            @click="
-              () => {
-                export_view = !export_view;
-              }
-            "
-          ></span
-        ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export"/></span>
-      </div>
-      <transition
-        enter-active-class="animate__animated animate__slideInUp"
-        leave-active-class="animate__animated animate__slideOutDown"
-      >
-        <div id="dropUpExports" v-if="export_view">
-          <a-tooltip title="Imprimir"
-            ><span
-              @click="panel_export_click('print')"
-              class="e-icons export-icons e-print-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a PDF"
-            ><span
-              @click="panel_export_click('pdf')"
-              class="e-icons export-icons e-pdf-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a Excel"
-            ><span
-              @click="panel_export_click('excel')"
-              class="e-icons export-icons e-excel-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a CSV"
-            ><span
-              @click="panel_export_click('csv')"
-              class="e-icons export-icons e-csv-export"
-            ></span
-          ></a-tooltip>
+          <!-- Inicio Sección de Analítica | Gráficas -->
+          <ejs-chart
+            style="display: block; margin: 20px"
+            :theme="theme"
+            align="center"
+            id="chartcontainer"
+            ref="chartObj"
+            :background="background_chart"
+            :primaryXAxis="primary_x_axis"
+            :primaryYAxis="primary_y_axis"
+            :chartArea="chart_area"
+            width="50%"
+            height="60%"
+            :tooltip="tooltip"
+            :load="load"
+            :legendSettings="{ visible: false }"
+          >
+            <e-series-collection>
+              <e-series
+                :dataSource="series_data"
+                type="Column"
+                xName="years"
+                yName="audiovisuals"
+                name="Año"
+                :marker="marker"
+                :animation="animation_series"
+              />
+            </e-series-collection>
+          </ejs-chart>
+          <!-- Fin Sección de Analítica | Gráficas -->
+
+          <!-- Inicio Sección de Tabla de datos -->
+          <!-- Seccion Panel de exportaciones -->
+          <div id="exportPanelContainer">
+            <div id="arrowDropUpExports">
+              <a-tooltip
+                :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
+                ><span
+                  class="e-icons export-icons"
+                  :class="
+                    export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'
+                  "
+                  @click="
+                    () => {
+                      export_view = !export_view;
+                    }
+                  "
+                ></span
+              ></a-tooltip>
+              <span><a-icon class="e-icon-export" type="export" /></span>
+            </div>
+            <transition
+              enter-active-class="animate__animated animate__slideInUp"
+              leave-active-class="animate__animated animate__slideOutDown"
+            >
+              <div id="dropUpExports" v-if="export_view">
+                <a-tooltip title="Imprimir"
+                  ><span
+                    @click="panel_export_click('print')"
+                    class="e-icons export-icons e-print-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a PDF"
+                  ><span
+                    @click="panel_export_click('pdf')"
+                    class="e-icons export-icons e-pdf-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a Excel"
+                  ><span
+                    @click="panel_export_click('excel')"
+                    class="e-icons export-icons e-excel-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a CSV"
+                  ><span
+                    @click="panel_export_click('csv')"
+                    class="e-icons export-icons e-csv-export"
+                  ></span
+                ></a-tooltip>
+              </div>
+            </transition>
+          </div>
+          <div class="clearfix"></div>
+          <!-- Tabla -->
+          <a-spin :spinning="spinning">
+            <ejs-grid
+              id="datatable"
+              ref="gridObj"
+              locale="es-ES"
+              :dataSource="audiovisuals_list"
+              :toolbar="toolbar"
+              :toolbarClick="click_toolbar"
+              :allowPaging="true"
+              :pageSettings="page_settings"
+              :allowFiltering="true"
+              :filterSettings="filter_settings"
+              :allowTextWrap="true"
+              :allowSorting="true"
+              :pdfExportComplete="pdf_export_complete"
+              :excelExportComplete="excel_export_complete"
+              :queryCellInfo="customise_cell"
+              :pdfQueryCellInfo="pdf_customise_cell"
+              :excelQueryCellInfo="excel_customise_cell"
+              :allowExcelExport="true"
+              :allowPdfExport="true"
+            >
+              <e-columns>
+                <e-column
+                  field="codigAud"
+                  headerText="Código"
+                  width="110"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="isrcAud"
+                  headerText="ISRC"
+                  width="105"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="tituloAud"
+                  headerText="Título"
+                  width="110"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="añoFinAud"
+                  headerText="Año"
+                  width="90"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="clasifAud"
+                  headerText="Clasificación"
+                  width="150"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="paisGrabAud"
+                  headerText="País"
+                  width="100"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="idiomaAud"
+                  headerText="Idioma"
+                  width="110"
+                  textAlign="Left"
+                />
+                <e-column
+                  headerText="Estado"
+                  width="118"
+                  :template="status_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+                <e-column
+                  headerText="Acciones"
+                  width="160"
+                  :template="actions_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+              </e-columns>
+            </ejs-grid>
+          </a-spin>
+          <!-- Fin Sección de Tabla de datos -->
+
+          <!-- Inicio Sección de Modals -->
+          <modal_management
+            v-if="visible_management"
+            :action="action_management"
+            @actualizar="refresh_table"
+            :audiovisual="row_selected"
+            @close_modal="visible_management = $event"
+            :audiovisuals_list="audiovisuals_list"
+          />
+          <!-- Fin Sección de Modals -->
         </div>
-      </transition>
+      </div>
     </div>
-    <div class="clearfix"></div>
-    <!-- Tabla -->
-    <a-spin :spinning="spinning">
-      <ejs-grid
-        id="datatable"
-        ref="gridObj"
-        locale="es-ES"
-        :dataSource="audiovisuals_list"
-        :toolbar="toolbar"
-        :toolbarClick="click_toolbar"
-        :allowPaging="true"
-        :pageSettings="page_settings"
-        :allowFiltering="true"
-        :filterSettings="filter_settings"
-        :allowTextWrap="true"
-        :allowSorting="true"
-        :pdfExportComplete="pdf_export_complete"
-        :excelExportComplete="excel_export_complete"
-        :queryCellInfo="customise_cell"
-        :pdfQueryCellInfo="pdf_customise_cell"
-        :excelQueryCellInfo="excel_customise_cell"
-        :allowExcelExport="true"
-        :allowPdfExport="true"
-      >
-        <e-columns>
-          <e-column
-            field="codigAud"
-            headerText="Código"
-            width="110"
-            textAlign="Left"
-          />
-          <e-column
-            field="isrcAud"
-            headerText="ISRC"
-            width="105"
-            textAlign="Left"
-          />
-          <e-column
-            field="tituloAud"
-            headerText="Título"
-            width="110"
-            textAlign="Left"
-          />
-          <e-column
-            field="añoFinAud"
-            headerText="Año"
-            width="90"
-            textAlign="Left"
-          />
-          <e-column
-            field="clasifAud"
-            headerText="Clasificación"
-            width="150"
-            textAlign="Left"
-          />
-          <e-column
-            field="paisGrabAud"
-            headerText="País"
-            width="100"
-            textAlign="Left"
-          />
-          <e-column
-            field="idiomaAud"
-            headerText="Idioma"
-            width="110"
-            textAlign="Left"
-          />
-          <e-column
-            headerText="Estado"
-            width="118"
-            :template="status_template"
-            :visible="true"
-            textAlign="Center"
-          />
-          <e-column
-            headerText="Acciones"
-            width="160"
-            :template="actions_template"
-            :visible="true"
-            textAlign="Center"
-          />
-        </e-columns>
-      </ejs-grid>
-    </a-spin>
-    <!-- Fin Sección de Tabla de datos -->
-
-    <!-- Inicio Sección de Modals -->
-    <modal_management
-      v-if="visible_management"
-      :action="action_management"
-      @actualizar="refresh_table"
-      :audiovisual="row_selected"
-      @close_modal="visible_management = $event"
-      :audiovisuals_list="audiovisuals_list"
-    />
-    <!-- Fin Sección de Modals -->
   </div>
 </template>
 
@@ -383,7 +394,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 action: "",
                 position: "",
@@ -467,7 +478,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -488,7 +499,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -554,7 +565,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -575,7 +586,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -635,7 +646,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
               };
@@ -731,7 +742,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function(instance, toast) {
+                                  function (instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -752,7 +763,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function(instance, toast) {
+                        function (instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -837,7 +848,9 @@ export default {
         this.change_spin();
       }
       axios
-        .post("/audiovisuales/listar", { relations: ["productos", "realizadores", "entrevistados"] })
+        .post("/audiovisuales/listar", {
+          relations: ["productos", "realizadores", "entrevistados"],
+        })
         .then((response) => {
           this.audiovisuals_list = response.data;
           this.series_data = [];

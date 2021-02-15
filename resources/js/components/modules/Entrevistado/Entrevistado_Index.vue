@@ -1,162 +1,173 @@
 <template>
-  <div id="entrevistado_index">
-    <h1 style="color: white !important">Entrevistados</h1>
-    <hr style="border-color: white !important" />
-
-    <!-- Inicio Sección de Analítica | Gráficas -->
-    <ejs-chart
-      style="display: block; margin: 20px"
-      :theme="theme"
-      align="center"
-      id="chartcontainer"
-      ref="chartObj"
-      :background="background_chart"
-      :primaryXAxis="primary_x_axis"
-      :primaryYAxis="primary_y_axis"
-      :chartArea="chart_area"
-      width="50%"
-      height="60%"
-      :tooltip="tooltip"
-      :load="load"
-      :legendSettings="{ visible: false }"
-      v-if="entrevistados_list.length !== 0"
+  <div class="col-md-12">
+    <div
+      class="portlet light"
+      style="background-color: rgba(255, 255, 255, 0.4)"
     >
-      <e-series-collection>
-        <e-series
-          :dataSource="series_data"
-          type="Column"
-          xName="status"
-          yName="entrevistados"
-          name="Estado"
-          :marker="marker"
-          :animation="animation_series"
-        />
-      </e-series-collection>
-    </ejs-chart>
-    <!-- Fin Sección de Analítica | Gráficas -->
+      <div style="min-height: 600px">
+        <div id="entrevistado_index">
+          <h1 style="color: white !important">Entrevistados</h1>
+          <hr style="border-color: white !important" />
 
-    <!-- Inicio Sección de Tabla de datos -->
-    <!-- Seccion Panel de exportaciones -->
-    <div id="exportPanelContainer">
-      <div id="arrowDropUpExports">
-        <a-tooltip :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
-          ><span
-            class="e-icons export-icons"
-            :class="export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'"
-            @click="
-              () => {
-                export_view = !export_view;
-              }
-            "
-          ></span
-        ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
-      </div>
-      <transition
-        enter-active-class="animate__animated animate__slideInUp"
-        leave-active-class="animate__animated animate__slideOutDown"
-      >
-        <div id="dropUpExports" v-if="export_view">
-          <a-tooltip title="Imprimir"
-            ><span
-              @click="panel_export_click('print')"
-              class="e-icons export-icons e-print-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a PDF"
-            ><span
-              @click="panel_export_click('pdf')"
-              class="e-icons export-icons e-pdf-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a Excel"
-            ><span
-              @click="panel_export_click('excel')"
-              class="e-icons export-icons e-excel-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a CSV"
-            ><span
-              @click="panel_export_click('csv')"
-              class="e-icons export-icons e-csv-export"
-            ></span
-          ></a-tooltip>
+          <!-- Inicio Sección de Analítica | Gráficas -->
+          <ejs-chart
+            style="display: block; margin: 20px"
+            :theme="theme"
+            align="center"
+            id="chartcontainer"
+            ref="chartObj"
+            :background="background_chart"
+            :primaryXAxis="primary_x_axis"
+            :primaryYAxis="primary_y_axis"
+            :chartArea="chart_area"
+            width="50%"
+            height="60%"
+            :tooltip="tooltip"
+            :load="load"
+            :legendSettings="{ visible: false }"
+          >
+            <e-series-collection>
+              <e-series
+                :dataSource="series_data"
+                type="Column"
+                xName="status"
+                yName="entrevistados"
+                name="Estado"
+                :marker="marker"
+                :animation="animation_series"
+              />
+            </e-series-collection>
+          </ejs-chart>
+          <!-- Fin Sección de Analítica | Gráficas -->
+
+          <!-- Inicio Sección de Tabla de datos -->
+          <!-- Seccion Panel de exportaciones -->
+          <div id="exportPanelContainer">
+            <div id="arrowDropUpExports">
+              <a-tooltip
+                :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
+                ><span
+                  class="e-icons export-icons"
+                  :class="
+                    export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'
+                  "
+                  @click="
+                    () => {
+                      export_view = !export_view;
+                    }
+                  "
+                ></span
+              ></a-tooltip>
+              <span><a-icon class="e-icon-export" type="export" /></span>
+            </div>
+            <transition
+              enter-active-class="animate__animated animate__slideInUp"
+              leave-active-class="animate__animated animate__slideOutDown"
+            >
+              <div id="dropUpExports" v-if="export_view">
+                <a-tooltip title="Imprimir"
+                  ><span
+                    @click="panel_export_click('print')"
+                    class="e-icons export-icons e-print-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a PDF"
+                  ><span
+                    @click="panel_export_click('pdf')"
+                    class="e-icons export-icons e-pdf-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a Excel"
+                  ><span
+                    @click="panel_export_click('excel')"
+                    class="e-icons export-icons e-excel-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a CSV"
+                  ><span
+                    @click="panel_export_click('csv')"
+                    class="e-icons export-icons e-csv-export"
+                  ></span
+                ></a-tooltip>
+              </div>
+            </transition>
+          </div>
+          <div class="clearfix"></div>
+          <!-- Tabla -->
+          <a-spin :spinning="spinning">
+            <ejs-grid
+              id="datatable"
+              ref="gridObj"
+              locale="es-ES"
+              :dataSource="entrevistados_list"
+              :toolbar="toolbar"
+              :toolbarClick="click_toolbar"
+              :allowPaging="true"
+              :pageSettings="page_settings"
+              :allowFiltering="true"
+              :filterSettings="filter_settings"
+              :allowTextWrap="true"
+              :allowSorting="true"
+              :pdfExportComplete="pdf_export_complete"
+              :excelExportComplete="excel_export_complete"
+              :queryCellInfo="customise_cell"
+              :pdfQueryCellInfo="pdf_customise_cell"
+              :excelQueryCellInfo="excel_customise_cell"
+              :allowExcelExport="true"
+              :allowPdfExport="true"
+            >
+              <e-columns>
+                <e-column
+                  field="codigEntrv"
+                  headerText="Código"
+                  width="110"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="nombreApellidosEntrv"
+                  headerText="Nombre Completo"
+                  width="105"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="sexoEntrv"
+                  headerText="Sexo"
+                  width="110"
+                  textAlign="Left"
+                />
+                <e-column
+                  headerText="Estado"
+                  width="118"
+                  :template="status_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+                <e-column
+                  headerText="Acciones"
+                  width="160"
+                  :template="actions_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+              </e-columns>
+            </ejs-grid>
+          </a-spin>
+          <!-- Fin Sección de Tabla de datos -->
+
+          <!-- Inicio Sección de Modals -->
+          <modal_management
+            v-if="visible_management"
+            :action="action_management"
+            @actualizar="refresh_table"
+            :entrevistado="row_selected"
+            @close_modal="visible_management = $event"
+            :entrevistados_list="entrevistados_list"
+          />
+          <help v-if="show_help" :content="content" :type="type"></help>
+          <!-- Fin Sección de Modals -->
         </div>
-      </transition>
+      </div>
     </div>
-    <div class="clearfix"></div>
-    <!-- Tabla -->
-    <a-spin :spinning="spinning">
-      <ejs-grid
-        id="datatable"
-        ref="gridObj"
-        locale="es-ES"
-        :dataSource="entrevistados_list"
-        :toolbar="toolbar"
-        :toolbarClick="click_toolbar"
-        :allowPaging="true"
-        :pageSettings="page_settings"
-        :allowFiltering="true"
-        :filterSettings="filter_settings"
-        :allowTextWrap="true"
-        :allowSorting="true"
-        :pdfExportComplete="pdf_export_complete"
-        :excelExportComplete="excel_export_complete"
-        :queryCellInfo="customise_cell"
-        :pdfQueryCellInfo="pdf_customise_cell"
-        :excelQueryCellInfo="excel_customise_cell"
-        :allowExcelExport="true"
-        :allowPdfExport="true"
-      >
-        <e-columns>
-          <e-column
-            field="codigEntrv"
-            headerText="Código"
-            width="110"
-            textAlign="Left"
-          />
-          <e-column
-            field="nombreApellidosEntrv"
-            headerText="Nombre Completo"
-            width="105"
-            textAlign="Left"
-          />
-          <e-column
-            field="sexoEntrv"
-            headerText="Sexo"
-            width="110"
-            textAlign="Left"
-          />
-          <e-column
-            headerText="Estado"
-            width="118"
-            :template="status_template"
-            :visible="true"
-            textAlign="Center"
-          />
-          <e-column
-            headerText="Acciones"
-            width="160"
-            :template="actions_template"
-            :visible="true"
-            textAlign="Center"
-          />
-        </e-columns>
-      </ejs-grid>
-    </a-spin>
-    <!-- Fin Sección de Tabla de datos -->
-
-    <!-- Inicio Sección de Modals -->
-    <modal_management
-      v-if="visible_management"
-      :action="action_management"
-      @actualizar="refresh_table"
-      :entrevistado="row_selected"
-      @close_modal="visible_management = $event"
-      :entrevistados_list="entrevistados_list"
-    />
-    <help v-if="show_help" :content="content" :type="type"></help>
-    <!-- Fin Sección de Modals -->
   </div>
 </template>
 
@@ -814,14 +825,6 @@ export default {
       if (this.action_management !== "detalles") {
         this.change_spin();
       }
-      axios.post("/audiovisuales/listar").then((response) => {
-        if (response.data.length === 0) {
-          this.content =
-            "No se pueden gestionar Entrevistados sin Audiovisuales existentes, vaya al módulo de Audiovisuales y cree al menos un Audiovisual!";
-          this.type = "info";
-          this.show_help = true;
-        }
-      });
       axios.post("/entrevistados/listar").then((response) => {
         this.entrevistados_list = response.data;
         this.series_data = [];

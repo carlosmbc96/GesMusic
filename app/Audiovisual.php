@@ -72,12 +72,12 @@ class Audiovisual extends Model
     //Relación de One to Many Audiovisuales - Entrevistados
     public function entrevistados()
     {
-        return $this->hasMany(Entrevistado::class); // Un Audiovisual tiene muchos Entrevistados
+        return $this->belongsToMany(Entrevistado::class,'audiovisual_entrevistado'); // Un Audiovisual tiene muchos Entrevistados
     }
     //Relación de One to Many Audiovisuales - Realizadores
     public function realizadores()
     {
-        return $this->hasMany(Realizador::class); // Un Audiovisual tiene muchos Realizadores
+        return $this->belongsToMany(Realizador::class,'audiovisual_realizador'); // Un Audiovisual tiene muchos Realizadores
     }
     //SECCIÓN DE RELACIONES
 

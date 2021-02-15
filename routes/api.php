@@ -50,7 +50,6 @@ Route::delete('/productos/eliminar/{id}', 'ProductoController@destroyFis'); // R
 Route::post('/productos/nomencladores', 'ProductoController@nomenclators');
 Route::get('/productos/fonogramas/{id}', 'ProductoController@fonogramasRelation');
 Route::post('/productos/actualizarRelacionesFong', 'ProductoController@actualizarRelacionesFong');
-Route::post('/productos/actualizarRelacionesAud', 'ProductoController@actualizarRelacionesAud');
 
 
 // RUTAS DEL RECURSO: FONOGRAMA
@@ -73,8 +72,7 @@ Route::post('/audiovisuales/editar', 'AudiovisualController@update');
 Route::delete('/audiovisuales/desactivar/{id}', 'AudiovisualController@destroyLog');
 Route::delete('/audiovisuales/eliminar/{id}', 'AudiovisualController@destroyFis');
 Route::post('/audiovisuales/nomencladores', 'AudiovisualController@nomenclators');
-Route::post('/audiovisuales/realizadores', 'AudiovisualController@audiovisualRealizadores');
-Route::post('/audiovisuales/entrevistados', 'AudiovisualController@audiovisualEntrevistados');
+Route::post('/audiovisuales/actualizarRelacionesAud', 'AudiovisualController@actualizarRelacionesAud');
 
 // RUTAS DEL RECURSO: ENTREVISTADO
 //Route::resource('entrevistados','EntrevistadoController'); // Ruta que Lista todos los Recursos de la Clase Entrevistados
@@ -100,10 +98,11 @@ Route::post('/realizadores/nomencladores', 'RealizadorController@nomenclators');
 Route::post('/tracks/listar', 'TrackController@index')->name('tracks.listar'); // Ruta que Lista todos los Registros del Modelo Track
 Route::post('/tracks', 'TrackController@store')->name('tracks.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Track
 Route::delete('/tracks/desactivar/{id}', 'TrackController@destroyLog')->name('tracks.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Track
-Route::post('/tracks/nomencladores','TrackController@nomenclators');
-Route::delete('/tracks/eliminar/{id}','TrackController@destroyFis');
-Route::post('/tracks/editar','TrackController@update');
+Route::post('/tracks/nomencladores', 'TrackController@nomenclators');
+Route::delete('/tracks/eliminar/{id}', 'TrackController@destroyFis');
+Route::post('/tracks/editar', 'TrackController@update');
 Route::get('/tracks/restaurar/{id}', 'TrackController@restoreLog');
+Route::post('/tracks/fonogramaTracks', 'TrackController@tracksRelacionados');
 
 // RUTAS DEL RECURSO: AUTOR
 Route::get('/autores/restaurar/{id}', 'AutorController@restoreLog');

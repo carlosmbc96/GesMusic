@@ -198,18 +198,4 @@ class ProductoController extends Controller
         }
         return response()->json($producto);
     }
-    public function actualizarRelacionesAud(Request $request)
-    {
-        $producto = Producto::withTrashed()->findOrFail($request->id);
-        for ($i = count($producto->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
-            $producto->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
-        }
-        foreach ($request->audiovisuales as $audiovisual) {
-            Producto_Audiovisual::create([
-                "producto_id" => $request->id,
-                "audiovisual_id" => $audiovisual
-            ]);
-        }
-        return response()->json($producto);
-    }
 }

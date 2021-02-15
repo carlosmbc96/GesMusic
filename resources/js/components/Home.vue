@@ -12,14 +12,9 @@
             class="profile-content"
             style="background-color: rgba(255, 255, 255, 0)"
           >
-            <div class="col-md-12">
-              <div
-                class="portlet light"
-                style="background-color: rgba(255, 255, 255, 0.4)"
-              >
-                  <router-view />
-              </div>
-            </div>
+            <transition appear name="slide-fade" mode="out-in">
+              <router-view :key="$route.fullPath" />
+            </transition>
           </div>
           <footertemplate />
         </div>
@@ -112,6 +107,17 @@ export default {
 </script>
 
 <style>
+.slide-fade-enter-active {
+  transition: all 0.5s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateY(800px);
+  opacity: 0;
+}
 .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
 .e-badge.e-badge-success[href]:not(.e-badge-ghost) {
   background-color: rgb(76, 196, 177) !important;

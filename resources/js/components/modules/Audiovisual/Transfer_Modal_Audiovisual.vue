@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :closable="false" width="50%" :visible="show" id="transfer_modal">
+    <a-modal :closable="false" width="60%" :visible="show" id="transfer_modal">
       <template slot="footer">
         <a-popconfirm
           :getPopupContainer="(trigger) => trigger.parentNode"
@@ -103,29 +103,8 @@
 import difference from "lodash/difference";
 import axios from "axios";
 
-const leftTableColumns = [
-  {
-    dataIndex: "codig",
-    title: "Código",
-  },
-  {
-    dataIndex: "title",
-    title: "Título",
-  },
-];
-const rightTableColumns = [
-  {
-    dataIndex: "codig",
-    title: "Código",
-  },
-  {
-    dataIndex: "title",
-    title: "Título",
-  },
-];
-
 export default {
-  props: ["entity_id"],
+  props: ["entity_id", "entity_relation"],
   data() {
     return {
       config: {
@@ -140,25 +119,52 @@ export default {
       new_relations: [],
       disabled: false,
       spinning: false,
-      leftColumns: leftTableColumns,
-      rightColumns: rightTableColumns,
+      leftColumns: [],
+      rightColumns: [],
       show: true,
     };
   },
   created() {
     this.change_spin();
     axios
-      .post("/audiovisuales/listar", { relations: ["productos"] })
+      .post("/audiovisuales/listar", { relations: [this.entity_relation] })
       .then((response) => {
         for (let i = 0; i < response.data.length; i++) {
           this.mockData.push({
             key: response.data[i].id.toString(),
             codig: response.data[i].codigAud,
+            isrc: response.data[i].isrcAud,
             title: response.data[i].tituloAud,
           });
-          for (let j = 0; j < response.data[i].productos.length; j++) {
-            if (response.data[i].productos[j].id === this.entity_id) {
-              this.old_relations.push(response.data[i].id.toString());
+          if (this.entity_relation === "productos") {
+            for (let j = 0; j < response.data[i].productos.length; j++) {
+              if (response.data[i].productos[j].id === this.entity_id) {
+                this.old_relations.push(response.data[i].id.toString());
+              }
+            }
+          } else if (this.entity_relation === "autores") {
+            for (let j = 0; j < response.data[i].autores.length; j++) {
+              if (response.data[i].autores[j].id === this.entity_id) {
+                this.old_relations.push(response.data[i].id.toString());
+              }
+            }
+          } else if (this.entity_relation === "interpretes") {
+            for (let j = 0; j < response.data[i].interpretes.length; j++) {
+              if (response.data[i].interpretes[j].id === this.entity_id) {
+                this.old_relations.push(response.data[i].id.toString());
+              }
+            }
+          } else if (this.entity_relation === "realizadores") {
+            for (let j = 0; j < response.data[i].realizadores.length; j++) {
+              if (response.data[i].realizadores[j].id === this.entity_id) {
+                this.old_relations.push(response.data[i].id.toString());
+              }
+            }
+          } else if (this.entity_relation === "entrevistados") {
+            for (let j = 0; j < response.data[i].entrevistados.length; j++) {
+              if (response.data[i].entrevistados[j].id === this.entity_id) {
+                this.old_relations.push(response.data[i].id.toString());
+              }
             }
           }
         }
@@ -166,6 +172,34 @@ export default {
         this.new_relations_copy = this.new_relations;
         this.change_spin();
       });
+    this.leftColumns = [
+      {
+        dataIndex: "codig",
+        title: "Código",
+      },
+      {
+        dataIndex: "isrc",
+        title: "ISRC",
+      },
+      {
+        dataIndex: "title",
+        title: "Título",
+      },
+    ];
+    this.rightColumns = [
+      {
+        dataIndex: "codig",
+        title: "Código",
+      },
+      {
+        dataIndex: "isrc",
+        title: "ISRC",
+      },
+      {
+        dataIndex: "title",
+        title: "Título",
+      },
+    ];
   },
   computed: {
     visible_btn() {
@@ -189,7 +223,8 @@ export default {
     submit() {
       this.change_spin();
       axios
-        .post("productos/actualizarRelacionesAud", {
+        .post("audiovisuales/actualizarRelacionesAud", {
+          relation: this.entity_relation,
           id: this.entity_id,
           audiovisuales: this.new_relations,
         })

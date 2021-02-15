@@ -18,8 +18,6 @@ class Realizador extends Model
 		'nombreApellidosRealiz',  // Nombre y Apellidos del Realizador
 		'sexoRealiz',  // Sexo Realizador *nom
 		'descripEspRealiz',  // Descripción en Español del Realizador
-
-		'audiovisual_id',  // Identificador Único de la tabla Audiovisuales  / Relación One to Many
 	];
 	//SECCIÓN DE FILLABLE
 
@@ -31,7 +29,7 @@ class Realizador extends Model
 	//Relación de Many to One Realizadores - Audiovisuales
 	public function audiovisuales()
 	{
-		return $this->hasMany(Audiovisual::class); // Un Realizador pertenece a un Audiovisual
+		return $this->belongsToMany(Audiovisual::class,'audiovisual_realizador');
 	}
 	//SECCIÓN DE RELACIONES
 

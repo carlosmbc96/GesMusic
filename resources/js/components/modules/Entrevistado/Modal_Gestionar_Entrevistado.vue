@@ -142,33 +142,6 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Descripción del Entrevistado"
-                    prop="descripEspEntrv"
-                  >
-                    <a-input
-                      :disabled="disabled"
-                      style="width: 100%; height: 150px"
-                      v-model="entrevistados_modal.descripEspEntrv"
-                      type="textarea"
-                    />
-                  </a-form-model-item>
-                  <a-form-model-item
-                    label="Descripción del Entrevistado"
-                    v-if="action_modal === 'detalles'"
-                  >
-                    <div class="description">
-                      <a-mentions
-                        readonly
-                        :placeholder="entrevistados_modal.descripEspEntrv"
-                      >
-                      </a-mentions>
-                    </div>
-                  </a-form-model-item>
-                </a-col>
-                <a-col span="11" style="float: right">
-                  <a-form-model-item
-                    v-if="action_modal !== 'detalles'"
-                    has-feedback
                     label="Sexo"
                     prop="sexoEntrv"
                   >
@@ -196,9 +169,58 @@
                     </a-mentions>
                   </a-form-model-item>
                 </a-col>
+                <a-col span="11" style="float: right">
+                  <a-form-model-item
+                    v-if="action_modal !== 'detalles'"
+                    has-feedback
+                    label="Descripción del Entrevistado"
+                    prop="descripEspEntrv"
+                  >
+                    <a-input
+                      :disabled="disabled"
+                      style="width: 100%; height: 150px"
+                      v-model="entrevistados_modal.descripEspEntrv"
+                      type="textarea"
+                    />
+                  </a-form-model-item>
+                  <a-form-model-item
+                    label="Descripción del Entrevistado"
+                    v-if="action_modal === 'detalles'"
+                  >
+                    <div class="description">
+                      <a-mentions
+                        readonly
+                        :placeholder="entrevistados_modal.descripEspEntrv"
+                      >
+                      </a-mentions>
+                    </div>
+                  </a-form-model-item>
+                </a-col>
               </a-row>
             </a-form-model>
           </a-spin>
+        </a-tab-pane>
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+          <span slot="tab"> Audiovisuales </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Audiovisuales</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <br />
+          <div>
+            <tabla_audiovisuales
+              :detalles_prop="detalles"
+              @reload="reload_parent"
+              :entity="entrevistados_modal"
+              entity_relation="entrevistados"
+              :vista_editar="vista_editar"
+              @close_modal="show = $event"
+            />
+            <br />
+          </div>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -206,6 +228,7 @@
 </template>
 
 <script>
+import tabla_audiovisuales from "../Audiovisual/Tabla_Audiovisuales";
 export default {
   props: ["action", "entrevistado", "entrevistados_list"],
   data() {
@@ -223,7 +246,8 @@ export default {
       } else callback();
     };
     return {
-      audiovisuals: [],
+      detalles: false,
+      vista_editar: true,
       action_cancel_title: "",
       action_title: "",
       show: true,
@@ -325,6 +349,9 @@ export default {
     },
   },
   methods: {
+    reload_parent() {
+      this.$emit("refresh");
+    },
     /*
      *Métodoo usado para filtrar la búsqueda del select de los años
      */
@@ -365,20 +392,6 @@ export default {
       }
     },
     set_action() {
-      axios
-        .post("/audiovisuales/listar")
-        .then((response) => {
-          let i = 0;
-          const length = response.data.length;
-          for (i; i < length; i++) {
-            this.audiovisuals.push(response.data[i]);
-          }
-        })
-        .catch((error) => {
-          this.$toast.error("Ha ocurrido un error", "¡Error!", {
-            timeout: 2000,
-          });
-        });
       if (this.action_modal === "editar") {
         if (this.entrevistado.deleted_at !== null) {
           this.disabled = true;
@@ -400,6 +413,7 @@ export default {
           5
         );
       } else if (this.action_modal === "detalles") {
+        this.detalles = true;
         if (this.entrevistado.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
@@ -615,13 +629,6 @@ export default {
       }
     },
     //Fin de metodos para generar el codigo
-    get_audiovisual(id) {
-      for (let index = 0; index < this.audiovisuals.length; index++) {
-        if (this.audiovisuals[index].id === id)
-          return this.audiovisuals[index].tituloAud;
-      }
-      return -1;
-    },
     load_nomenclators() {
       axios
         .post("/entrevistados/nomencladores")
@@ -638,6 +645,9 @@ export default {
           });
         });
     },
+  },
+  components: {
+    tabla_audiovisuales,
   },
 };
 </script>

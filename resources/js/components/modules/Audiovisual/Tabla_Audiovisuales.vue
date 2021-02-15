@@ -29,7 +29,7 @@
           <e-column
             field="isrcAud"
             headerText="ISRC"
-            width="105"
+            width="120"
             textAlign="Left"
           />
           <e-column
@@ -41,7 +41,7 @@
           <e-column
             field="añoFinAud"
             headerText="Año"
-            width="90"
+            width="85"
             textAlign="Left"
           />
           <e-column
@@ -53,7 +53,7 @@
           <e-column
             field="paisGrabAud"
             headerText="País"
-            width="100"
+            width="90"
             textAlign="Left"
           />
           <e-column
@@ -71,7 +71,7 @@
           />
           <e-column
             headerText="Acciones"
-            width="160"
+            width="110"
             :template="actions_template"
             :visible="true"
             textAlign="Center"
@@ -94,7 +94,8 @@
     <transfer_modal
       v-if="visible_transfer"
       @actualizar="refresh_table"
-      :entity_id="producto.id"
+      :entity_id="entity.id"
+      :entity_relation="entity_relation"
       @close_modal="visible_transfer = $event"
     ></transfer_modal>
   </div>
@@ -201,7 +202,7 @@ L10n.load({
 setCulture("es-ES");
 export default {
   name: "Tabla_Audiovisuales",
-  props: ["producto", "vista_editar", "detalles_prop"],
+  props: ["entity", "vista_editar", "detalles_prop", "entity_relation"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -218,14 +219,14 @@ export default {
               text: "Añadir Audiovisual",
               tooltipText: "Añadir Audiovisual",
               prefixIcon: "e-add-icon",
-              id: "add",
+              id: `add-${this.entity_relation}`,
             },
             "Search",
             {
               text: "Gestionar Relaciones",
               tooltipText: "Gestionar Relaciones",
               prefixIcon: "e-transfer-icon",
-              id: "vinc_desvinc",
+              id: `vinc_desvinc`,
             },
           ],
       status_child_template: () => {
@@ -560,6 +561,7 @@ export default {
     };
   },
   created() {
+    console.log(this.detalles_prop);
     this.status = this.detalles_prop
       ? this.status_child_template
       : this.status_template;
@@ -588,16 +590,42 @@ export default {
       this.change_spin();
       if (this.vista_editar) {
         axios
-          .post("/audiovisuales/listar", { relations: ["productos"] })
+          .post("/audiovisuales/listar", { relations: [this.entity_relation] })
           .then((response) => {
             this.audiovisuals_list = [];
             let pertenece = false;
             response.data.forEach((audiovisual) => {
-              audiovisual.productos.forEach((producto) => {
-                if (producto.id === this.producto.id) {
-                  pertenece = true;
-                }
-              });
+              if (this.entity_relation === "productos") {
+                audiovisual.productos.forEach((producto) => {
+                  if (producto.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              } else if (this.entity_relation === "realizadores") {
+                audiovisual.realizadores.forEach((realizador) => {
+                  if (realizador.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              } else if (this.entity_relation === "entrevistados") {
+                audiovisual.entrevistados.forEach((entrevistado) => {
+                  if (entrevistado.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              } else if (this.entity_relation === "autores") {
+                audiovisual.autores.forEach((autor) => {
+                  if (autor.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              } else {
+                audiovisual.interpretes.forEach((interprete) => {
+                  if (interprete.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              }
               if (pertenece) {
                 this.audiovisuals_list.push(audiovisual);
               }
@@ -621,15 +649,57 @@ export default {
      * Método con la lógica de los botones del toolbar de la tabla
      */
     click_toolbar(args) {
-      if (args.item.id === "add") {
-        this.action_management = "crear";
-        this.visible_management = true;
-        this.row_selected = {
-          modal_detalles: true,
-          productos_audvs: this.producto.id,
-        };
-      } else if (args.item.id === "vinc_desvinc") {
-        this.visible_transfer = true;
+      switch (args.item.id) {
+        case "add-productos": {
+          this.action_management = "crear";
+          this.visible_management = true;
+          this.row_selected = {
+            modal_detalles: true,
+            productos_audvs: this.entity.id,
+          };
+          break;
+        }
+        case "add-autores": {
+          this.action_management = "crear";
+          this.visible_management = true;
+          this.row_selected = {
+            modal_detalles: true,
+            autores_audvs: this.entity.id,
+          };
+          break;
+        }
+        case "add-interpretes": {
+          this.action_management = "crear";
+          this.visible_management = true;
+          this.row_selected = {
+            modal_detalles: true,
+            interpretes_audvs: this.entity.id,
+          };
+          break;
+        }
+        case "add-realizadores": {
+          this.action_management = "crear";
+          this.visible_management = true;
+          this.row_selected = {
+            modal_detalles: true,
+            realizadores_audvs: this.entity.id,
+          };
+          break;
+        }
+        case "add-entrevistados": {
+          this.action_management = "crear";
+          this.visible_management = true;
+          this.row_selected = {
+            modal_detalles: true,
+            entrevistados_audvs: this.entity.id,
+          };
+          break;
+        }
+        case "vinc_desvinc": {
+          this.visible_transfer = true;
+        }
+        default:
+          break;
       }
     },
   },

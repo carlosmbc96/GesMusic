@@ -18,9 +18,6 @@ class CreateEntrevistadosTable extends Migration
 
 			$table->softDeletes();  // Eliminación lógica del Registro
 			$table->timestamps();  // Fecha de Creación y Actualización del Registro
-
-			// Relaciones
-			$table->foreignId('audiovisual_id')->nullable()->references('id')->on('audiovisuales');
 		});
 	}
 

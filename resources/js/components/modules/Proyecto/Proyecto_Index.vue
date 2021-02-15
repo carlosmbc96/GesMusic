@@ -1,166 +1,171 @@
 <template>
-    <div id="proyecto_index">
-      <h1 style="color: white !important">Proyectos</h1>
-      <hr style="border-color: white !important" />
+  <div class="col-md-12">
+    <div
+      class="portlet light"
+      style="background-color: rgba(255, 255, 255, 0.4)"
+    >
+      <div style="min-height: 600px">
+        <div id="proyecto_index">
+          <h1 style="color: white !important">Proyectos</h1>
+          <hr style="border-color: white !important" />
 
-      <!-- Inicio Sección de Analítica | Gráficas -->
-      <ejs-chart
-        style="display: block; margin: 20px"
-        :theme="theme"
-        align="center"
-        id="chartcontainer"
-        ref="chartObj"
-        :background="background_chart"
-        :primaryXAxis="primary_x_axis"
-        :primaryYAxis="primary_y_axis"
-        :chartArea="chart_area"
-        width="50%"
-        height="60%"
-        :tooltip="tooltip"
-        :load="load"
-        :legendSettings="{ visible: false }"
-        v-if="projects_list.length !== 0"
-      >
-        <e-series-collection>
-          <e-series
-            :dataSource="series_data"
-            type="Column"
-            xName="years"
-            yName="proyects"
-            name="Año"
-            :marker="marker"
-            :animation="animation_series"
-          />
-        </e-series-collection>
-      </ejs-chart>
-      <!-- Fin Sección de Analítica | Gráficas -->
-
-      <!-- Inicio Sección de Tabla de datos -->
-      <!-- Seccion Panel de exportaciones -->
-      <div id="exportPanelContainer">
-        <div id="arrowDropUpExports">
-          <a-tooltip :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
-            ><span
-              class="e-icons export-icons"
-              :class="export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'"
-              @click="
-                () => {
-                  export_view = !export_view;
-                }
-              "
-          /></a-tooltip>
-          <span><a-icon class="e-icon-export" type="export" /></span>
-        </div>
-        <transition
-          enter-active-class="animate__animated animate__slideInUp"
-          leave-active-class="animate__animated animate__slideOutDown"
-        >
-          <div id="dropUpExports" v-if="export_view">
-            <a-tooltip title="Imprimir"
-              ><span
-                @click="panel_export_click('print')"
-                class="e-icons export-icons e-print-export"
-              ></span
-            ></a-tooltip>
-            <a-tooltip title="Exportar a PDF"
-              ><span
-                @click="panel_export_click('pdf')"
-                class="e-icons export-icons e-pdf-export"
-              ></span
-            ></a-tooltip>
-            <a-tooltip title="Exportar a Excel"
-              ><span
-                @click="panel_export_click('excel')"
-                class="e-icons export-icons e-excel-export"
-              ></span
-            ></a-tooltip>
-            <a-tooltip title="Exportar a CSV"
-              ><span
-                @click="panel_export_click('csv')"
-                class="e-icons export-icons e-csv-export"
-              ></span
-            ></a-tooltip>
-          </div>
-        </transition>
-      </div>
-      <div class="clearfix"></div>
-      <!-- Tabla -->
-      <a-spin :spinning="spinning">
-        <transition
-          mode="out-in"
-          enter-active-class="animate__bounceIn"
-          leave-active-class="animate__bounceOut"
-        >
-          <ejs-grid
-            id="datatable"
-            ref="gridObj"
-            locale="es-ES"
-            :childGrid="products_childs"
-            :dataSource="projects_list"
-            :toolbar="toolbar"
-            :toolbarClick="click_toolbar"
-            :allowPaging="true"
-            :pageSettings="page_settings"
-            :allowFiltering="true"
-            :filterSettings="filter_settings"
-            :allowTextWrap="true"
-            :allowSorting="true"
-            :pdfExportComplete="pdf_export_complete"
-            :excelExportComplete="excel_export_complete"
-            :queryCellInfo="customise_cell"
-            :pdfQueryCellInfo="pdf_customise_cell"
-            :excelQueryCellInfo="excel_customise_cell"
-            :allowExcelExport="true"
-            :allowPdfExport="true"
+          <!-- Inicio Sección de Analítica | Gráficas -->
+          <ejs-chart
+            style="display: block; margin: 20px"
+            :theme="theme"
+            align="center"
+            id="chartcontainer"
+            ref="chartObj"
+            :background="background_chart"
+            :primaryXAxis="primary_x_axis"
+            :primaryYAxis="primary_y_axis"
+            :chartArea="chart_area"
+            width="50%"
+            height="60%"
+            :tooltip="tooltip"
+            :load="load"
+            :legendSettings="{ visible: false }"
           >
-            <e-columns>
-              <e-column
-                field="codigProy"
-                headerText="Código"
-                width="110"
-                textAlign="Left"
+            <e-series-collection>
+              <e-series
+                :dataSource="series_data"
+                type="Column"
+                xName="years"
+                yName="proyects"
+                name="Año"
+                :marker="marker"
+                :animation="animation_series"
               />
-              <e-column
-                field="nombreProy"
-                headerText="Nombre"
-                width="150"
-                textAlign="Left"
-              />
-              <e-column
-                field="añoProy"
-                headerText="Año"
-                width="90"
-                textAlign="Left"
-              />
-              <e-column
-                headerText="Estado"
-                width="115"
-                :template="status_template"
-                :visible="true"
-                textAlign="Center"
-              />
-              <e-column
-                headerText="Acciones"
-                width="140"
-                :template="actions_template"
-                :visible="true"
-                textAlign="Center"
-              />
-            </e-columns>
-          </ejs-grid>
-        </transition>
-      </a-spin>
-      <!-- Fin Sección de Tabla de datos -->
-      <modal_management
-        v-if="visible_management"
-        :action="action_management"
-        @actualizar="refresh_table"
-        :project="row_selected"
-        @close_modal="visible_management = $event"
-        :projects_list="projects_list"
-      />
-      <!-- Fin Sección de Modals -->
+            </e-series-collection>
+          </ejs-chart>
+          <!-- Fin Sección de Analítica | Gráficas -->
+
+          <!-- Inicio Sección de Tabla de datos -->
+          <!-- Seccion Panel de exportaciones -->
+          <div id="exportPanelContainer">
+            <div id="arrowDropUpExports">
+              <a-tooltip
+                :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
+                ><span
+                  class="e-icons export-icons"
+                  :class="
+                    export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'
+                  "
+                  @click="
+                    () => {
+                      export_view = !export_view;
+                    }
+                  "
+              /></a-tooltip>
+              <span><a-icon class="e-icon-export" type="export" /></span>
+            </div>
+            <transition
+              enter-active-class="animate__animated animate__slideInUp"
+              leave-active-class="animate__animated animate__slideOutDown"
+            >
+              <div id="dropUpExports" v-if="export_view">
+                <a-tooltip title="Imprimir"
+                  ><span
+                    @click="panel_export_click('print')"
+                    class="e-icons export-icons e-print-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a PDF"
+                  ><span
+                    @click="panel_export_click('pdf')"
+                    class="e-icons export-icons e-pdf-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a Excel"
+                  ><span
+                    @click="panel_export_click('excel')"
+                    class="e-icons export-icons e-excel-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a CSV"
+                  ><span
+                    @click="panel_export_click('csv')"
+                    class="e-icons export-icons e-csv-export"
+                  ></span
+                ></a-tooltip>
+              </div>
+            </transition>
+          </div>
+          <div class="clearfix"></div>
+          <!-- Tabla -->
+          <a-spin :spinning="spinning">
+            <ejs-grid
+              id="datatable"
+              ref="gridObj"
+              locale="es-ES"
+              :childGrid="products_childs"
+              :dataSource="projects_list"
+              :toolbar="toolbar"
+              :toolbarClick="click_toolbar"
+              :allowPaging="true"
+              :pageSettings="page_settings"
+              :allowFiltering="true"
+              :filterSettings="filter_settings"
+              :allowTextWrap="true"
+              :allowSorting="true"
+              :pdfExportComplete="pdf_export_complete"
+              :excelExportComplete="excel_export_complete"
+              :queryCellInfo="customise_cell"
+              :pdfQueryCellInfo="pdf_customise_cell"
+              :excelQueryCellInfo="excel_customise_cell"
+              :allowExcelExport="true"
+              :allowPdfExport="true"
+            >
+              <e-columns>
+                <e-column
+                  field="codigProy"
+                  headerText="Código"
+                  width="110"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="nombreProy"
+                  headerText="Nombre"
+                  width="150"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="añoProy"
+                  headerText="Año"
+                  width="90"
+                  textAlign="Left"
+                />
+                <e-column
+                  headerText="Estado"
+                  width="115"
+                  :template="status_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+                <e-column
+                  headerText="Acciones"
+                  width="140"
+                  :template="actions_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+              </e-columns>
+            </ejs-grid>
+          </a-spin>
+          <!-- Fin Sección de Tabla de datos -->
+          <modal_management
+            v-if="visible_management"
+            :action="action_management"
+            @actualizar="refresh_table"
+            :project="row_selected"
+            @close_modal="visible_management = $event"
+            :projects_list="projects_list"
+          />
+          <!-- Fin Sección de Modals -->
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>

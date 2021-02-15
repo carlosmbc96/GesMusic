@@ -149,6 +149,18 @@ export default {
   created() {
     this.change_spin();
     axios
+      .post("/tracks/fonogramaTracks", { idFong: this.entity_id })
+      .then((response) => {
+        for (let i = 0; i < response.data.length; i++) {
+          this.old_relations.push(response.data[i].id.toString());
+        }
+      })
+      .catch((error) => {
+        this.$toast.error("Ha ocurrido un error", "¡Error!", {
+          timeout: 2000,
+        });
+      });
+    axios
       .post("/tracks/listar", { relations: ["fonogramas"] })
       .then((response) => {
         for (let i = 0; i < response.data.length; i++) {
@@ -157,15 +169,15 @@ export default {
             duracion: response.data[i].duracionTrk,
             title: response.data[i].tituloTrk,
           });
-          for (let j = 0; j < response.data[i].fonogramas.length; j++) {
-            if (response.data[i].fonogramas[j].id === this.entity_id) {
-              this.old_relations.push(response.data[i].id.toString());
-            }
-          }
         }
         this.new_relations = this.old_relations;
         this.new_relations_copy = this.new_relations;
         this.change_spin();
+      })
+      .catch((error) => {
+        this.$toast.error("Ha ocurrido un error", "¡Error!", {
+          timeout: 2000,
+        });
       });
   },
   computed: {
@@ -223,8 +235,19 @@ export default {
       this.show = false;
       this.$emit("close_modal", this.show);
     },
-    onChange(nextTargetKeys) {
-      this.new_relations = nextTargetKeys;
+    onChange(nextTargetKeys, directions, moveKeys) {
+      if (directions === "right") {
+        if (moveKeys.length > 1) {
+          for (let i = 0; i < moveKeys.length; i++) {
+            nextTargetKeys.push(moveKeys[i]);
+            nextTargetKeys.shift();
+          }
+          this.new_relations = nextTargetKeys;
+        } else {
+          nextTargetKeys.push(nextTargetKeys.shift());
+          this.new_relations = nextTargetKeys;
+        }
+      } else this.new_relations = nextTargetKeys;
     },
 
     triggerDisable(disabled) {

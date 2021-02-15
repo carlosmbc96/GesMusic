@@ -1379,6 +1379,7 @@ export default {
     return {
       action_management_entrevistados: "crear_entrevistado",
       action_management_realizadores: "crear_realizador",
+      relation: "",
       tab_2: true,
       tab_3: true,
       tabs_list: [],
@@ -1624,6 +1625,11 @@ export default {
     };
   },
   created() {
+    if (this.audiovisual.tabla) {
+      this.tabs_list.push("tab_1");
+      this.tab_visibility = false;
+      this.active_tab = "2";
+    }
     this.load_nomenclators();
 		this.set_action();
     if (this.action_modal === "crear") {
@@ -1650,11 +1656,11 @@ export default {
   computed: {
     active() {
       if (this.action_modal === "editar") {
-        return !this
-          .compare_object /* ||
+        return true; /* !this
+          .compare_object  ||
           (this.valid_image &&
             this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.audiovisual_modal.id) */;
+            this.file_list[0].uid !== this.audiovisual_modal.id);*/
       } else
         return (
           this.audiovisual_modal.tituloAud &&
@@ -1918,7 +1924,7 @@ export default {
               this.handle_cancel();
               this.$emit("actualizar");
               this.$toast.success(
-                "Se ha modificado el audiovisual correctamente",
+                "Se ha modificado el Audiovisual correctamente",
                 "¡Éxito!",
                 { timeout: 2000 }
               );
@@ -1992,7 +1998,7 @@ export default {
               this.handle_cancel();
               this.$emit("actualizar");
               this.$toast.success(
-                "Se ha creado el audiovisual correctamente",
+                "Se ha creado el Audiovisual correctamente",
                 "¡Éxito!",
                 { timeout: 2000 }
               );
@@ -2156,7 +2162,36 @@ export default {
       form_data.append("descripEspAud", this.audiovisual_modal.descripEspAud);
       form_data.append("descripIngAud", this.audiovisual_modal.descripIngAud);
       form_data.append("paisGrabAud", this.audiovisual_modal.paisGrabAud);
-      form_data.append("product_id", this.audiovisual_modal.productos_audvs);
+      if (this.audiovisual.productos_audvs) {
+        form_data.append("product_id", this.audiovisual_modal.productos_audvs);
+        this.relation = "productos";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.autores_audvs) {
+        form_data.append("autores_id", this.audiovisual_modal.autores_audvs);
+        this.relation = "autores";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.interpretes_audvs) {
+        form_data.append(
+          "interpretes_id",
+          this.audiovisual_modal.interpretes_audvs
+        );
+        this.relation = "interpretes";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.realizadores_audvs) {
+        form_data.append(
+          "realizadores_id",
+          this.audiovisual_modal.realizadores_audvs
+        );
+        this.relation = "realizadores";
+        form_data.append("type_relation", this.relation);
+      } else if (this.audiovisual.entrevistados_audvs) {
+        form_data.append(
+          "entrevistados_id",
+          this.audiovisual_modal.entrevistados_audvs
+        );
+        this.relation = "entrevistados";
+        form_data.append("type_relation", this.relation);
+      }
       if (this.file_list.length !== 0) {
         if (this.file_list[0].uid !== this.audiovisual_modal.id) {
           if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
@@ -2168,6 +2203,22 @@ export default {
     },
     set_action() {
       if (this.audiovisual.productos_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.autores_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.interpretes_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.realizadores_audvs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      } else if (this.audiovisual.entrevistados_audvs) {
         this.tab_visibility = false;
         this.active_tab = "2";
         this.tabs_list.push("tab_1");
@@ -2194,9 +2245,11 @@ export default {
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
         this.audiovisual.codigAud = this.audiovisual.codigAud;
-        this.audiovisual.productos.forEach((element) => {
-          this.audiovisual.productos_audvs.push(element.id);
-        });
+        if (this.audiovisual.productos) {
+          this.audiovisual.productos.forEach((element) => {
+            this.audiovisual.productos_audvs.push(element.id);
+          });
+        }
         this.audiovisual_modal = { ...this.audiovisual };
         if (!this.is_isrc()) {
           this.audiovisual_modal.codigAud = this.audiovisual.codigAud.substr(5);
@@ -2280,9 +2333,11 @@ export default {
             : this.audiovisual.descripIngAud;
         this.audiovisual.productos_audvs = [];
         this.audiovisual.codigAud = this.audiovisual.codigAud;
-        this.audiovisual.productos.forEach((element) => {
-          this.audiovisual.productos_audvs.push(element.id);
-        });
+        if (this.audiovisual.productos) {
+          this.audiovisual.productos.forEach((element) => {
+            this.audiovisual.productos_audvs.push(element.id);
+          });
+        }
         this.audiovisual_modal = { ...this.audiovisual };
         if (this.audiovisual_modal.portadillaAud !== null) {
           if (
@@ -2342,7 +2397,7 @@ export default {
       if (!isJpgOrPng) {
         this.valid_image = false;
         this.$message.error(
-          "Sólo puedes subir imágenes como portadilla del audiovisual"
+          "Sólo puedes subir imágenes como portadilla del Audiovisual"
         );
       } else this.$message.success("Portadilla cargada correctamente");
       return false;

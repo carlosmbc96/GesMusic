@@ -147,7 +147,7 @@ class TrackController extends Controller
     public function destroyFis($id)
     {
         $track = Track::withTrashed()->findOrFail($id);
-        for ($i = count($track->fonogramas()->withTrashed()->get())-1; $i >= 0; $i--) {
+        for ($i = count($track->fonogramas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
             $track->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
         }
         return response()->json($track->forceDelete());
@@ -184,5 +184,19 @@ class TrackController extends Controller
                 "fonograma_id" => $fonograma
             ]);
         }
+    }
+    public function tracksRelacionados(Request $request)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Fonograma
+    {
+        $tracks = [];
+        $fonogramas_tracks = Fonograma_Track::all();
+        for ($i = 0; $i < count($fonogramas_tracks); $i++) {
+            if ($fonogramas_tracks[$i]->fonograma_id === $request->idFong) {
+                array_push($tracks, Track::withTrashed()->findOrFail($fonogramas_tracks[$i]->track_id));
+            }
+        }
+        foreach ($tracks as $track) {
+            $track->fonogramas;
+        }
+        return response()->json($tracks);
     }
 }

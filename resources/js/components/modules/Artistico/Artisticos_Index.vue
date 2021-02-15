@@ -1,137 +1,149 @@
 <template>
-  <div id="artisticos_index">
-    <h1 style="color: white !important">Nombres Artísticos</h1>
-    <hr style="border-color: white !important" />
-    <!-- Inicio Sección de Tabla de datos -->
-    <!-- Seccion Panel de exportaciones -->
-    <div id="exportPanelContainer">
-      <div id="arrowDropUpExports">
-        <a-tooltip :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
-          ><span
-            class="e-icons export-icons"
-            :class="export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'"
-            @click="
-              () => {
-                export_view = !export_view;
-              }
-            "
-          ></span
-        ></a-tooltip>
-        <span><a-icon class="e-icon-export" type="export" /></span>
-      </div>
-      <transition
-        enter-active-class="animate__animated animate__slideInUp"
-        leave-active-class="animate__animated animate__slideOutDown"
-      >
-        <div id="dropUpExports" v-if="export_view">
-          <a-tooltip title="Imprimir"
-            ><span
-              @click="panel_export_click('print')"
-              class="e-icons export-icons e-print-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a PDF"
-            ><span
-              @click="panel_export_click('pdf')"
-              class="e-icons export-icons e-pdf-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a Excel"
-            ><span
-              @click="panel_export_click('excel')"
-              class="e-icons export-icons e-excel-export"
-            ></span
-          ></a-tooltip>
-          <a-tooltip title="Exportar a CSV"
-            ><span
-              @click="panel_export_click('csv')"
-              class="e-icons export-icons e-csv-export"
-            ></span
-          ></a-tooltip>
-        </div>
-      </transition>
-    </div>
-    <div class="clearfix"></div>
-    <!-- Tabla -->
-    <a-spin :spinning="spinning">
-      <ejs-grid
-        id="datatable"
-        ref="gridObj"
-        locale="es-ES"
-        :dataSource="artisticos_list"
-        :toolbar="toolbar"
-        :toolbarClick="click_toolbar"
-        :allowPaging="true"
-        :pageSettings="page_settings"
-        :allowFiltering="true"
-        :filterSettings="filter_settings"
-        :allowTextWrap="true"
-        :allowSorting="true"
-        :pdfExportComplete="pdf_export_complete"
-        :excelExportComplete="excel_export_complete"
-        :queryCellInfo="customise_cell"
-        :pdfQueryCellInfo="pdf_customise_cell"
-        :excelQueryCellInfo="excel_customise_cell"
-        :allowExcelExport="true"
-        :allowPdfExport="true"
-      >
-        <e-columns>
-          <e-column
-            field="codigArts"
-            headerText="Código"
-            width="115"
-            textAlign="Left"
-          />
-          <e-column
-            field="NombreArts"
-            headerText="Nombre Artístico"
-            width="150"
-            textAlign="Left"
-          />
-          <e-column
-            field="descripNombreArts"
-            headerText="Descripción"
-            width="150"
-            textAlign="Left"
-          />
-          <e-column
-            :displayAsCheckBox="true"
-            field="actualNombreArts"
-            headerText="Nombre Artístico Actual"
-            width="200"
-            textAlign="Center"
-            type="boolean"
-          />
-          <e-column
-            headerText="Estado"
-            width="115"
-            :template="status_template"
-            :visible="true"
-            textAlign="Center"
-          />
-          <e-column
-            headerText="Acciones"
-            width="155"
-            :template="actions_template"
-            :visible="true"
-            textAlign="Center"
-          />
-        </e-columns>
-      </ejs-grid>
-    </a-spin>
-    <!-- Fin Sección de Tabla de datos -->
+  <div class="col-md-12">
+    <div
+      class="portlet light"
+      style="background-color: rgba(255, 255, 255, 0.4)"
+    >
+      <div style="min-height: 600px">
+        <div id="artisticos_index">
+          <h1 style="color: white !important">Nombres Artísticos</h1>
+          <hr style="border-color: white !important" />
+          <!-- Inicio Sección de Tabla de datos -->
+          <!-- Seccion Panel de exportaciones -->
+          <div id="exportPanelContainer">
+            <div id="arrowDropUpExports">
+              <a-tooltip
+                :title="export_view ? 'Ocultar panel' : 'Mostrar Panel'"
+                ><span
+                  class="e-icons export-icons"
+                  :class="
+                    export_view ? 'e-down-arrow-export' : 'e-up-arrow-export'
+                  "
+                  @click="
+                    () => {
+                      export_view = !export_view;
+                    }
+                  "
+                ></span
+              ></a-tooltip>
+              <span><a-icon class="e-icon-export" type="export" /></span>
+            </div>
+            <transition
+              enter-active-class="animate__animated animate__slideInUp"
+              leave-active-class="animate__animated animate__slideOutDown"
+            >
+              <div id="dropUpExports" v-if="export_view">
+                <a-tooltip title="Imprimir"
+                  ><span
+                    @click="panel_export_click('print')"
+                    class="e-icons export-icons e-print-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a PDF"
+                  ><span
+                    @click="panel_export_click('pdf')"
+                    class="e-icons export-icons e-pdf-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a Excel"
+                  ><span
+                    @click="panel_export_click('excel')"
+                    class="e-icons export-icons e-excel-export"
+                  ></span
+                ></a-tooltip>
+                <a-tooltip title="Exportar a CSV"
+                  ><span
+                    @click="panel_export_click('csv')"
+                    class="e-icons export-icons e-csv-export"
+                  ></span
+                ></a-tooltip>
+              </div>
+            </transition>
+          </div>
+          <div class="clearfix"></div>
+          <!-- Tabla -->
+          <a-spin :spinning="spinning">
+            <ejs-grid
+              id="datatable"
+              ref="gridObj"
+              locale="es-ES"
+              :dataSource="artisticos_list"
+              :toolbar="toolbar"
+              :toolbarClick="click_toolbar"
+              :allowPaging="true"
+              :pageSettings="page_settings"
+              :allowFiltering="true"
+              :filterSettings="filter_settings"
+              :allowTextWrap="true"
+              :allowSorting="true"
+              :pdfExportComplete="pdf_export_complete"
+              :excelExportComplete="excel_export_complete"
+              :queryCellInfo="customise_cell"
+              :pdfQueryCellInfo="pdf_customise_cell"
+              :excelQueryCellInfo="excel_customise_cell"
+              :allowExcelExport="true"
+              :allowPdfExport="true"
+            >
+              <e-columns>
+                <e-column
+                  field="codigArts"
+                  headerText="Código"
+                  width="115"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="NombreArts"
+                  headerText="Nombre Artístico"
+                  width="150"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="descripNombreArts"
+                  headerText="Descripción"
+                  width="150"
+                  textAlign="Left"
+                />
+                <e-column
+                  :displayAsCheckBox="true"
+                  field="actualNombreArts"
+                  headerText="Nombre Artístico Actual"
+                  width="200"
+                  textAlign="Center"
+                  type="boolean"
+                />
+                <e-column
+                  headerText="Estado"
+                  width="115"
+                  :template="status_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+                <e-column
+                  headerText="Acciones"
+                  width="155"
+                  :template="actions_template"
+                  :visible="true"
+                  textAlign="Center"
+                />
+              </e-columns>
+            </ejs-grid>
+          </a-spin>
+          <!-- Fin Sección de Tabla de datos -->
 
-    <!-- Inicio Sección de Modals -->
-    <modal_management
-      v-if="visible_management"
-      :action="action_management"
-      @actualizar="refresh_table"
-      :artistico="row_selected"
-      @close_modal="visible_management = $event"
-      :artisticos_list="artisticos_list"
-    />
-    <help v-if="show_help" :content="content" :type="type"></help>
-    <!-- Fin Sección de Modals -->
+          <!-- Inicio Sección de Modals -->
+          <modal_management
+            v-if="visible_management"
+            :action="action_management"
+            @actualizar="refresh_table"
+            :artistico="row_selected"
+            @close_modal="visible_management = $event"
+            :artisticos_list="artisticos_list"
+          />
+          <help v-if="show_help" :content="content" :type="type"></help>
+          <!-- Fin Sección de Modals -->
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

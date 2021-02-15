@@ -112,7 +112,7 @@
           <e-column
             field="isrcTrk"
             headerText="ISRC"
-            width="105"
+            width="115"
             textAlign="Left"
           />
           <e-column
@@ -124,7 +124,7 @@
           <e-column
             field="duracionTrk"
             headerText="Duración"
-            width="120"
+            width="100"
             textAlign="Left"
           />
           <e-column
@@ -143,7 +143,7 @@
             :displayAsCheckBox="true"
             field="bonusTrk"
             headerText="Bonus"
-            width="100"
+            width="95"
             textAlign="Center"
             type="boolean"
           />

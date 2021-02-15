@@ -481,211 +481,210 @@
           />
           <br />
           <a-row v-if="action_modal === 'crear'">
-            <a-col span="1"></a-col>
-            <a-col span="20">
-              <div class="section-title">
-                <h4>Tracks</h4>
-              </div>
-              <a-row>
-                <a-col span="2">
-                  <h5>Orden</h5>
-                </a-col>
-                <a-col span="1"></a-col>
-                <a-col span="7">
-                  <h5>Título</h5>
-                  <a-mentions
-                    readonly
-                    v-if="$store.getters.getTracksFormGetters.length === 0"
-                  >
-                  </a-mentions>
-                </a-col>
-                <a-col span="1"></a-col>
-                <a-col span="5">
-                  <h5>Duración</h5>
-                  <a-mentions
-                    readonly
-                    v-if="$store.getters.getTracksFormGetters.length === 0"
-                  >
-                  </a-mentions>
-                </a-col>
-                <a-col span="1"></a-col>
-                <a-col span="5">
-                  <h5>Género</h5>
-                  <a-mentions
-                    readonly
-                    v-if="$store.getters.getTracksFormGetters.length === 0"
-                  >
-                  </a-mentions>
-                </a-col>
-                <a-col span="1"></a-col>
-              </a-row>
-              <a-form-model-item
-                v-for="(track, index) in $store.getters.getTracksFormGetters"
-                :key="track.key"
-                v-bind="index === 0 ? formItemLayout : {}"
-              >
+            <div id="tracks">
+              <a-col span="1"></a-col>
+              <a-col span="20">
+                <div class="section-title">
+                  <h4>Tracks</h4>
+                </div>
                 <a-row>
-                  <a-col span="2">
-                    <a-row>
-                      <a-col span="8">
-                        <label style="margin-top: 18px">
-                          <h5>{{ index + 1 }}</h5>
-                        </label>
-                      </a-col>
-                      <a-col span="16" style="margin-top: -5px">
-                        <a-row style="height: 20px">
-                          <a-button
-                            @click="order_up(index)"
-                            style="color: black; height: 12px"
-                            type="link"
-                            v-if="index !== 0"
-                          >
-                            <a-icon style="font-size: 15px" type="caret-up" />
-                          </a-button>
-                        </a-row>
-                        <a-row style="heigth: 20px">
-                          <a-button
-                            @click="order_down(index)"
-                            style="color: black; height: 12px"
-                            type="link"
-                            v-if="
-                              index !==
-                              $store.getters.getTracksFormGetters.length - 1
-                            "
-                          >
-                            <a-icon style="font-size: 15px" type="caret-down" />
-                          </a-button>
-                        </a-row>
-                      </a-col>
-                    </a-row>
+                  <a-col span="2" style="margin-top: 0px !important">
+                    <h5>Orden</h5>
                   </a-col>
                   <a-col span="1"></a-col>
                   <a-col span="7">
-                    <a-mentions readonly :placeholder="track.tituloTrk">
-                    </a-mentions>
+                    <h5>Título</h5>
                   </a-col>
                   <a-col span="1"></a-col>
                   <a-col span="5">
-                    <a-mentions readonly :placeholder="track.duracionTrk">
-                    </a-mentions>
+                    <h5>Duración</h5>
                   </a-col>
                   <a-col span="1"></a-col>
                   <a-col span="5">
-                    <a-mentions readonly :placeholder="track.generoTrk">
-                    </a-mentions>
+                    <h5>Género</h5>
                   </a-col>
                   <a-col span="1"></a-col>
-                  <a-col span="1">
-                    <a-button
-                      style="margin-top: 4px"
-                      class="dynamic-delete-button"
-                      @click="remove_track(track)"
+                </a-row>
+
+                <div style="min-height: 150px">
+                  <transition-group name="list-tracks">
+                    <a-form-model-item
+                      v-for="(track, index) in $store.getters
+                        .getTracksFormGetters"
+                      :key="track.id"
+                      v-bind="index === 0 ? formItemLayout : {}"
+                      class="list-tracks-item"
                     >
-                      <small>
-                        <b style="vertical-align: top"> x </b>
-                      </small>
-                    </a-button>
+                      <a-row>
+                        <a-col span="2">
+                          <a-row style="display: block">
+                            <div style="margin-left: 14px">
+                                <a
+                                  v-if="index !== 0"
+                                  @click="order_up(index)"
+                                  ><a-icon
+                                    type="caret-up"
+                                    style="
+                                      color: rgb(76, 196, 177);
+                                      display: flex;
+                                      margin-bottom: -10px;
+                                      font-size: 25px;
+                                    "
+                                /></a>
+                              <span style="margin-left: 9px">
+                                {{ index + 1 }}
+                              </span>
+                                <a
+                                  @click="order_down(index)"
+                                  v-if="
+                                    index !==
+                                      $store.getters.getTracksFormGetters
+                                        .length -
+                                        1
+                                  "
+                                  ><a-icon
+                                    type="caret-down"
+                                    style="
+                                      color: rgb(76, 196, 177);
+                                      display: flex;
+                                      margin-top: -10px;
+                                      font-size: 25px;
+                                    "
+                                /></a>
+                            </div>
+                          </a-row>
+                        </a-col>
+                        <a-col span="1"></a-col>
+                        <a-col span="7">
+                          <a-mentions readonly :placeholder="track.tituloTrk">
+                          </a-mentions>
+                        </a-col>
+                        <a-col span="1"></a-col>
+                        <a-col span="5">
+                          <a-mentions readonly :placeholder="track.duracionTrk">
+                          </a-mentions>
+                        </a-col>
+                        <a-col span="1"></a-col>
+                        <a-col span="5">
+                          <a-mentions readonly :placeholder="track.generoTrk">
+                          </a-mentions>
+                        </a-col>
+                        <a-col span="1"></a-col>
+                        <a-col span="1">
+                          <a-button
+                            style="margin-top: 4px"
+                            class="dynamic-delete-button"
+                            @click="remove_track(track)"
+                          >
+                            <small>
+                              <b style="vertical-align: top"> x </b>
+                            </small>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </a-form-model-item>
+                  </transition-group>
+                </div>
+
+                <a-row style="margin-top: 40px">
+                  <a-col span="12">
+                    <div class="section-title">
+                      <h4>Selector de Tracks</h4>
+                    </div>
+                    <a-form-model
+                      ref="formularioAgregarTrack"
+                      :layout="'horizontal'"
+                      :model="fonogram_modal"
+                    >
+                      <a-form-model-item has-feedback>
+                        <a-select
+                          placeholder="ISRC"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          v-model="fonogram_modal.tracks"
+                          :disabled="disabled"
+                        >
+                          <a-select-option
+                            v-for="track in $store.getters
+                              .getAllTracksFormGetters"
+                            :key="track.isrcTrk"
+                            :value="track.id"
+                          >
+                            {{ track.isrcTrk }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item>
+                        <a-select
+                          placeholder="Título"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          v-model="fonogram_modal.tracks"
+                          :disabled="disabled"
+                        >
+                          <a-select-option
+                            v-for="track in $store.getters
+                              .getAllTracksFormGetters"
+                            :key="track.tituloTrk"
+                            :value="track.id"
+                          >
+                            {{ track.tituloTrk }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-row>
+                        <a-col span="12">
+                          <a-form-model-item v-bind="formItemLayout">
+                            <a-button
+                              :disabled="disabled"
+                              style="
+                                color: white;
+                                background-color: rgb(45, 171, 229) !important;
+                              "
+                              @click="add_track"
+                            >
+                              <a-icon type="plus" />
+                              Agregar Track
+                            </a-button>
+                          </a-form-model-item>
+                        </a-col>
+                        <a-col span="12">
+                          <a-form-model-item
+                            v-bind="formItemLayout"
+                            style="float: right"
+                          >
+                            <a-button
+                              :disabled="disabled"
+                              style="
+                                color: white;
+                                background-color: rgb(45, 171, 229) !important;
+                              "
+                              @click="new_track"
+                            >
+                              <a-icon type="plus" />
+                              Crear Track
+                            </a-button>
+                          </a-form-model-item>
+                        </a-col>
+                      </a-row>
+                    </a-form-model>
+                  </a-col>
+                  <a-col span="10" style="float: right">
+                    <div class="section-title">
+                      <h4>Duración total</h4>
+                    </div>
+                    <a-mentions
+                      readonly
+                      :placeholder="$store.getters.getDurationFormGetters"
+                    >
+                    </a-mentions>
                   </a-col>
                 </a-row>
-              </a-form-model-item>
-              <a-row style="margin-top: 40px">
-                <a-col span="12">
-                  <div class="section-title">
-                    <h4>Selector de Tracks</h4>
-                  </div>
-                  <a-form-model
-                    ref="formularioAgregarTrack"
-                    :layout="'horizontal'"
-                    :model="fonogram_modal"
-                  >
-                    <a-form-model-item has-feedback>
-                      <a-select
-                        placeholder="ISRC"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
-                        v-model="fonogram_modal.tracks"
-                        :disabled="disabled"
-                      >
-                        <a-select-option
-                          v-for="track in $store.getters
-                            .getAllTracksFormGetters"
-                          :key="track.isrcTrk"
-                          :value="track.id"
-                        >
-                          {{ track.isrcTrk }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-model-item>
-                    <a-form-model-item>
-                      <a-select
-                        placeholder="Título"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
-                        v-model="fonogram_modal.tracks"
-                        :disabled="disabled"
-                      >
-                        <a-select-option
-                          v-for="track in $store.getters
-                            .getAllTracksFormGetters"
-                          :key="track.tituloTrk"
-                          :value="track.id"
-                        >
-                          {{ track.tituloTrk }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-model-item>
-                    <a-row>
-                      <a-col span="12">
-                        <a-form-model-item v-bind="formItemLayout">
-                          <a-button
-                            :disabled="disabled"
-                            style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
-                            @click="add_track"
-                          >
-                            <a-icon type="plus" />
-                            Agregar Track
-                          </a-button>
-                        </a-form-model-item>
-                      </a-col>
-                      <a-col span="12">
-                        <a-form-model-item
-                          v-bind="formItemLayout"
-                          style="float: right"
-                        >
-                          <a-button
-                            :disabled="disabled"
-                            style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
-                            @click="new_track"
-                          >
-                            <a-icon type="plus" />
-                            Crear Track
-                          </a-button>
-                        </a-form-model-item>
-                      </a-col>
-                    </a-row>
-                  </a-form-model>
-                </a-col>
-                <a-col span="10" style="float: right">
-                  <div class="section-title">
-                    <h4>Duración total</h4>
-                  </div>
-                  <a-mentions
-                    readonly
-                    :placeholder="$store.getters.getDurationFormGetters"
-                  >
-                  </a-mentions>
-                </a-col>
-              </a-row>
-            </a-col>
-            <a-col span="1"></a-col>
+              </a-col>
+              <a-col span="1"></a-col>
+            </div>
           </a-row>
           <a-col span="24">
             <a-button
@@ -756,6 +755,7 @@ export default {
       } else callback();
     };
     return {
+      origin: true,
       detalles: false,
       vista_editar: true,
       tab_2: true,
@@ -1522,6 +1522,21 @@ export default {
 </script>
 
 <style>
+.list-tracks-item {
+  transition: all 0.3s;
+}
+.list-tracks-leave-active {
+  position: absolute !important;
+  width: -webkit-fill-available !important;
+}
+.list-tracks-enter,
+.list-tracks-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+#tracks .ant-col-2 {
+  margin-top: -6px !important;
+}
 #modal_gestionar_fonogramas .ant-col-6 {
   width: 50% !important;
 }

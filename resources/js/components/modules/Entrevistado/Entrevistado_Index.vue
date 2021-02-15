@@ -814,14 +814,6 @@ export default {
       if (this.action_management !== "detalles") {
         this.change_spin();
       }
-      axios.post("/audiovisuales/listar").then((response) => {
-        if (response.data.length === 0) {
-          this.content =
-            "No se pueden gestionar Entrevistados sin Audiovisuales existentes, vaya al módulo de Audiovisuales y cree al menos un Audiovisual!";
-          this.type = "info";
-          this.show_help = true;
-        }
-      });
       axios.post("/entrevistados/listar").then((response) => {
         this.entrevistados_list = response.data;
         this.series_data = [];

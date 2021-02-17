@@ -33,12 +33,27 @@ class Autor extends Model
     protected $table = "autores";
     //SECCIÓN DE PROTECT TABLE
 
+    //SECCIÓN DE RELACIONES
+    //Relación de One to Many Audiovisuales - Realizadores
+    public function audiovisuales()
+    {
+        return $this->belongsToMany(Audiovisual::class, 'audiovisual_autor'); // Un Audiovisual tiene muchos Realizadores
+    }
+    public function tracks()
+    {
+        return $this->belongsToMany(Track::class, 'track_autor'); // Un Audiovisual tiene muchos Realizadores
+    }
+    public function temas()
+    {
+        return $this->belongsToMany(Tema::class, 'tema_autor'); // Un Audiovisual tiene muchos Realizadores
+    }
+    //SECCIÓN DE RELACIONES
     //SECCIÓN DE IMÁGENES
     public function setFotoAutrAttribute($fotoAutr, $codigAutr)
     {
         $this->attributes['fotoAutr'] = '/BisMusic/Imagenes/Artistas/Autores/' . $codigAutr . $fotoAutr->getClientOriginalName();
         $name = $codigAutr . $fotoAutr->getClientOriginalName();
-        Storage::disk('local')->put('Imagenes/Artistas/Autores/'.$name, File::get($fotoAutr));
+        Storage::disk('local')->put('Imagenes/Artistas/Autores/' . $name, File::get($fotoAutr));
     }
 
     public function setFotoAutrAttributeDefault()

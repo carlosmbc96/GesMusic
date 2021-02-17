@@ -79,6 +79,16 @@ class Audiovisual extends Model
     {
         return $this->belongsToMany(Realizador::class,'audiovisual_realizador'); // Un Audiovisual tiene muchos Realizadores
     }
+    //Relación de One to Many Audiovisuales - Realizadores
+    public function autores()
+    {
+        return $this->belongsToMany(Autor::class,'audiovisual_autor'); // Un Audiovisual tiene muchos Realizadores
+    }
+    //Relación de One to Many Audiovisuales - Realizadores
+    public function interpretes()
+    {
+        return $this->belongsToMany(Interprete::class,'audiovisual_interprete'); // Un Audiovisual tiene muchos Realizadores
+    }
     //SECCIÓN DE RELACIONES
 
 

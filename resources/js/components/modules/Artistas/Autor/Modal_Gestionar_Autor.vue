@@ -334,13 +334,35 @@
             </a-spin>
           </div>
         </a-tab-pane>
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+          <span slot="tab"> Audiovisuales </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Audiovisuales</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <br />
+          <div>
+            <tabla_audiovisuales
+              :detalles_prop="detalles"
+              @reload="reload_parent"
+              :entity="author_modal"
+              entity_relation="autores"
+              :vista_editar="vista_editar"
+              @close_modal="show = $event"
+            />
+            <br />
+          </div>
+        </a-tab-pane>
       </a-tabs>
     </a-modal>
   </div>
 </template>
 
 <script>
-import axios from "../../../../config/axios/axios";
+import tabla_audiovisuales from "../../Audiovisual/Tabla_Audiovisuales";
 export default {
   props: ["action", "author", "autors_list"],
   data() {
@@ -366,6 +388,8 @@ export default {
       } else callback();
     };
     return {
+      detalles: true,
+      vista_editar: true,
       action_cancel_title: "",
       action_title: "",
       show: true,
@@ -524,6 +548,9 @@ export default {
     },
   },
   methods: {
+    reload_parent() {
+      this.$emit("refresh");
+    },
     handle_cancel(e) {
       if (e === "cancelar") {
         this.$refs.general_form.resetFields();
@@ -826,6 +853,9 @@ export default {
       }
     },
     //Fin de metodos para generar el codigo
+  },
+  components: {
+    tabla_audiovisuales,
   },
 };
 </script>

@@ -67,7 +67,13 @@ class EntrevistadoController extends Controller
 
 	public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Interprete
 	{
-		return response()->json(Entrevistado::withTrashed()->findOrFail($id)->forceDelete());
+		$entrevistado = Entrevistado::withTrashed()->findOrFail($id);
+		if (count($entrevistado->audiovisuales()->withTrashed()->get()) !== 0) {
+			for ($i = count($entrevistado->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$entrevistado->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+			}
+		return response()->json($entrevistado->forceDelete());
+		}
 	}
 
 	public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Interprete

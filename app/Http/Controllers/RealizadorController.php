@@ -67,7 +67,13 @@ class RealizadorController extends Controller
 
 	public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Interprete
 	{
-		return response()->json(Realizador::withTrashed()->findOrFail($id)->forceDelete());
+		$realizador = Realizador::withTrashed()->findOrFail($id);
+		if (count($realizador->audiovisuales()->withTrashed()->get()) !== 0) {
+			for ($i = count($realizador->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$realizador->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+			}
+		}
+		return response()->json($realizador->forceDelete());
 	}
 
 	public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Interprete

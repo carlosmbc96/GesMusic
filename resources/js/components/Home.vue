@@ -107,11 +107,43 @@ export default {
 </script>
 
 <style>
+.hover:hover{
+  filter: drop-shadow(5px 5px 5px black) !important;
+}
+.hover-switch:hover{
+  filter: drop-shadow(5px 5px 5px grey) !important;
+}
+#ad:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+#ad-productos:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+#ad-realizadores:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+#ad-entrevistados:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+#ad-autores:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+#ad-interpretes:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+#vinc_desvinc:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+.icon-up:hover,
+.icon-down:hover {
+  color: rgb(76, 196, 177) !important;
+  transition: color 0.3s ease;
+}
 .slide-fade-enter-active {
   transition: all 0.5s ease;
 }
 .slide-fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
 }
 .slide-fade-enter,
 .slide-fade-leave-to {

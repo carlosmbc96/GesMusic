@@ -13,28 +13,27 @@ class AutorController extends Controller
     {
         $valorbuscado = $request->valorbuscado;
         $atributo = $request->atributo;
-        if ( ($atributo) && ($valorbuscado) ) {
-            $autores=Autor::withTrashed()->BusqSelect($atributo, $valorbuscado)->get();
-        } else if($valorbuscado){
-            $autores=Autor::withTrashed()->BusqGeneral($valorbuscado)->get();
+        if (($atributo) && ($valorbuscado)) {
+            $autores = Autor::withTrashed()->BusqSelect($atributo, $valorbuscado)->get();
+        } else if ($valorbuscado) {
+            $autores = Autor::withTrashed()->BusqGeneral($valorbuscado)->get();
         } else {
-            $autores=Autor::withTrashed()->get();
+            $autores = Autor::withTrashed()->get();
         }
         $relaciones = $request->relations; //  Aqui se accede al objeto relations que viene por parámetros
         //  En este bloque If se verifica que exista un objeto relaciones, en caso de que exista se accede a la primera posición del arreglo, si es all lo que contiene entonces se devuelven todas las relaciones para el modelo en cuestión.
         if ($relaciones) {
             if ($relaciones[0] === 'all') {
-                $i=0;
+                $i = 0;
                 $length = count($autores);
-                for ($i ; $i < $length; $i++) {
+                for ($i; $i < $length; $i++) {
                 }
-            }
-            else {
-                $i=0;;
+            } else {
+                $i = 0;;
                 $lengthAutores = count($autores);
                 $lengthRelaciones = count($relaciones);
                 for ($i; $i < $lengthAutores; $i++) {
-                    for ($j=0; $j < $lengthRelaciones; $j++) {
+                    for ($j = 0; $j < $lengthRelaciones; $j++) {
                         $relacionesMetodo = (string)$relaciones[$j];
                         $autores[$i]->$relacionesMetodo;
                     }
@@ -47,7 +46,7 @@ class AutorController extends Controller
     public function nomenclators()  // Nomenclators | Método que carga los Nomencladores en el Modelo:Autor
     {
         // Sección de Carga de Nomencladores a emplear en las vista
-        $sexos= Vocabulario::findorFail(28)->terminos;  // Nomenclador: Sexos
+        $sexos = Vocabulario::findorFail(28)->terminos;  // Nomenclador: Sexos
         return response()->json($sexos);  // Se envian las variables
     }
 
@@ -76,11 +75,11 @@ class AutorController extends Controller
         $autor = Autor::findOrFail($request->id);
         if ($request->fotoAutr !== null) {
             if (substr($autor->fotoAutr, 36) !== "Logo ver vertical_Ltr Negras.png") {
-                Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
+                Storage::disk('local')->delete('/Imagenes/Artistas/Autores/' . substr($autor->fotoAutr, 36));
             }
             $autor->setFotoAutrAttribute($request->fotoAutr, $request->codigAutr);
         } else if ($request->img_default) {
-            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
+            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/' . substr($autor->fotoAutr, 36));
             $autor->setFotoAutrAttributeDefault();
         }
         $autor->update([
@@ -104,8 +103,23 @@ class AutorController extends Controller
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Autor
     {
         $autor = Autor::withTrashed()->findOrFail($id);
+        if (count($autor->audiovisuales()->withTrashed()->get()) !== 0) {
+            for ($i = count($autor->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+                $autor->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
+        if (count($autor->tracks()->withTrashed()->get()) !== 0) {
+            for ($i = count($autor->tracks()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+                $autor->tracks()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
+        if (count($autor->temas()->withTrashed()->get()) !== 0) {
+            for ($i = count($autor->temas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+                $autor->temas()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
         if (substr($autor->fotoAutr, 36) !== "Logo ver vertical_Ltr Negras.png") {
-            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/'.substr($autor->fotoAutr, 36));
+            Storage::disk('local')->delete('/Imagenes/Artistas/Autores/' . substr($autor->fotoAutr, 36));
         }
         return response()->json($autor->forceDelete());
     }

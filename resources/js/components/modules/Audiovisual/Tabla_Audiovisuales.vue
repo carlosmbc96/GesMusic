@@ -64,7 +64,7 @@
           />
           <e-column
             headerText="Estado"
-            width="90"
+            width="95"
             :template="status"
             :visible="true"
             textAlign="Center"
@@ -106,7 +106,6 @@
  *Importaciones
  */
 import Vue from "vue";
-import axios from "../../../config/axios/axios";
 import modal_management from "./Modal_Gestionar_Audiovisual";
 import transfer_modal from "./Transfer_Modal_Audiovisual";
 import {
@@ -219,7 +218,7 @@ export default {
               text: "Añadir Audiovisual",
               tooltipText: "Añadir Audiovisual",
               prefixIcon: "e-add-icon",
-              id: `add-${this.entity_relation}`,
+              id: `ad-${this.entity_relation}`,
             },
             "Search",
             {
@@ -271,7 +270,7 @@ export default {
                       <p>¿Desea {{ action }} el Audiovisual?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch class="hover-switch" :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -511,10 +510,10 @@ export default {
             template: `
                 <div>
                 <a-tooltip title="Detalles" placement="bottom">
-							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+							  <a-button class="hover" size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-button>
                 </a-tooltip>
                 <a-tooltip title="Editar" placement="bottom">
-                <a-button v-if="!$parent.$parent.$parent.detalles"size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                <a-button class="hover" v-if="!$parent.$parent.$parent.detalles"size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-button>
                 </a-tooltip>
                 </div>`,
             data: function (axios) {
@@ -561,7 +560,6 @@ export default {
     };
   },
   created() {
-    console.log(this.detalles_prop);
     this.status = this.detalles_prop
       ? this.status_child_template
       : this.status_template;
@@ -650,7 +648,7 @@ export default {
      */
     click_toolbar(args) {
       switch (args.item.id) {
-        case "add-productos": {
+        case "ad-productos": {
           this.action_management = "crear";
           this.visible_management = true;
           this.row_selected = {
@@ -659,7 +657,7 @@ export default {
           };
           break;
         }
-        case "add-autores": {
+        case "ad-autores": {
           this.action_management = "crear";
           this.visible_management = true;
           this.row_selected = {
@@ -668,7 +666,7 @@ export default {
           };
           break;
         }
-        case "add-interpretes": {
+        case "ad-interpretes": {
           this.action_management = "crear";
           this.visible_management = true;
           this.row_selected = {
@@ -677,7 +675,7 @@ export default {
           };
           break;
         }
-        case "add-realizadores": {
+        case "ad-realizadores": {
           this.action_management = "crear";
           this.visible_management = true;
           this.row_selected = {
@@ -686,7 +684,7 @@ export default {
           };
           break;
         }
-        case "add-entrevistados": {
+        case "ad-entrevistados": {
           this.action_management = "crear";
           this.visible_management = true;
           this.row_selected = {

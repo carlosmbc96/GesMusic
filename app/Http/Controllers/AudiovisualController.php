@@ -41,10 +41,12 @@ class AudiovisualController extends Controller
 				for ($i; $i < $length; $i++) {
 					$audiovisuales[$i]->entrevistados;
 					$audiovisuales[$i]->realizadores;
+					$audiovisuales[$i]->autores;
+					$audiovisuales[$i]->interpretes;
 					$audiovisuales[$i]->elementos;
 				}
 			} else {
-				$i = 0;;
+				$i = 0;
 				$lengthAudiovisuales = count($audiovisuales);
 				$lengthRelaciones = count($relaciones);
 				for ($i; $i < $lengthAudiovisuales; $i++) {
@@ -118,7 +120,7 @@ class AudiovisualController extends Controller
 			$interpretes = explode(",", $request->interpretes_id);
 			foreach ($interpretes as $interprete) {
 				Audiovisual_Interprete::create([
-					"interpretes_id" => $interprete,
+					"interprete_id" => $interprete,
 					"audiovisual_id" => $audiovisual->id
 				]);
 			}

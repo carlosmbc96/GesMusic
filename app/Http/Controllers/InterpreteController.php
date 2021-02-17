@@ -60,6 +60,17 @@ class InterpreteController extends Controller
 
     public function destroyFis($id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Interprete
     {
+        $interprete = Interprete::withTrashed()->findOrFail($id);
+        if (count($interprete->tracks()->withTrashed()->get()) !== 0) {
+            for ($i = count($interprete->tracks()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+                $interprete->tracks()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
+        if (count($interprete->audiovisuales()->withTrashed()->get()) !== 0) {
+            for ($i = count($interprete->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+                $interprete->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
         return response()->json(Interprete::withTrashed()->findOrFail($id)->forceDelete());
     }
 

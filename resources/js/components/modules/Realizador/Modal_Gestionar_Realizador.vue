@@ -242,7 +242,7 @@ export default {
     };
     return {
       vista_editar: true,
-      detalles: false,
+      detalles: true,
       action_cancel_title: "",
       action_title: "",
       show: true,
@@ -407,7 +407,6 @@ export default {
           5
         );
       } else if (this.action_modal === "detalles") {
-        this.detalles = true;
         if (this.realizador.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;

@@ -494,19 +494,49 @@
                   <a-col span="1"></a-col>
                   <a-col span="7">
                     <h5>Título</h5>
+                    <transition
+                      enter-active-class="animate__animated animate__fadeIn"
+                      leave-active-class="animate__animated animate__fadeOut"
+                    >
+                      <a-mentions
+                        v-if="$store.getters.getTracksFormGetters.length === 0"
+                        readonly
+                      >
+                      </a-mentions>
+                    </transition>
                   </a-col>
                   <a-col span="1"></a-col>
                   <a-col span="5">
                     <h5>Duración</h5>
+                    <transition
+                      enter-active-class="animate__animated animate__fadeIn"
+                      leave-active-class="animate__animated animate__fadeOut"
+                    >
+                      <a-mentions
+                        v-if="$store.getters.getTracksFormGetters.length === 0"
+                        readonly
+                      >
+                      </a-mentions>
+                    </transition>
                   </a-col>
                   <a-col span="1"></a-col>
                   <a-col span="5">
                     <h5>Género</h5>
+                    <transition
+                      enter-active-class="animate__animated animate__fadeIn"
+                      leave-active-class="animate__animated animate__fadeOut"
+                    >
+                      <a-mentions
+                        v-if="$store.getters.getTracksFormGetters.length === 0"
+                        readonly
+                      >
+                      </a-mentions>
+                    </transition>
                   </a-col>
                   <a-col span="1"></a-col>
                 </a-row>
 
-                <div style="min-height: 150px">
+                <div style="min-height: 70px">
                   <transition-group name="list-tracks">
                     <a-form-model-item
                       v-for="(track, index) in $store.getters
@@ -515,44 +545,40 @@
                       v-bind="index === 0 ? formItemLayout : {}"
                       class="list-tracks-item"
                     >
-                      <a-row>
+                      <a-row align="middle">
                         <a-col span="2">
-                          <a-row style="display: block">
-                            <div style="margin-left: 14px">
-                                <a
-                                  v-if="index !== 0"
-                                  @click="order_up(index)"
-                                  ><a-icon
-                                    type="caret-up"
-                                    style="
-                                      color: rgb(76, 196, 177);
-                                      display: flex;
-                                      margin-bottom: -10px;
-                                      font-size: 25px;
-                                    "
-                                /></a>
-                              <span style="margin-left: 9px">
-                                {{ index + 1 }}
-                              </span>
-                                <a
-                                  @click="order_down(index)"
-                                  v-if="
-                                    index !==
-                                      $store.getters.getTracksFormGetters
-                                        .length -
-                                        1
-                                  "
-                                  ><a-icon
-                                    type="caret-down"
-                                    style="
-                                      color: rgb(76, 196, 177);
-                                      display: flex;
-                                      margin-top: -10px;
-                                      font-size: 25px;
-                                    "
-                                /></a>
-                            </div>
-                          </a-row>
+                          <div style="margin-left: 14px">
+                            <a v-if="index !== 0" @click="order_up(index)"
+                              ><a-icon
+                                class="icon-up"
+                                type="caret-up"
+                                style="
+                                  color: rgb(76, 196, 177, 0.5);
+                                  display: flex;
+                                  margin-bottom: -10px;
+                                  font-size: 25px;
+                                "
+                            /></a>
+                            <span style="margin-left: 9px">
+                              {{ index + 1 }}
+                            </span>
+                            <a
+                              @click="order_down(index)"
+                              v-if="
+                                index !==
+                                $store.getters.getTracksFormGetters.length - 1
+                              "
+                              ><a-icon
+                                class="icon-down"
+                                type="caret-down"
+                                style="
+                                  color: rgb(76, 196, 177, 0.6);
+                                  display: flex;
+                                  margin-top: -10px;
+                                  font-size: 25px;
+                                "
+                            /></a>
+                          </div>
                         </a-col>
                         <a-col span="1"></a-col>
                         <a-col span="7">
@@ -1533,9 +1559,6 @@ export default {
 .list-tracks-leave-to {
   opacity: 0;
   transform: translateY(30px);
-}
-#tracks .ant-col-2 {
-  margin-top: -6px !important;
 }
 #modal_gestionar_fonogramas .ant-col-6 {
   width: 50% !important;

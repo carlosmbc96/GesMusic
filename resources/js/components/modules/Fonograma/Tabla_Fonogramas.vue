@@ -200,7 +200,7 @@ export default {
               text: "Añadir Fonograma",
               tooltipText: "Añadir Fonograma",
               prefixIcon: "e-add-icon",
-              id: "add",
+              id: "ad",
             },
             "Search",
             {
@@ -228,7 +228,7 @@ export default {
                       <p>¿Desea {{ action }} el Fonograma?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
+                      <a-switch class="hover-switch" :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -467,10 +467,10 @@ export default {
             template: `
                 <div>
                 <a-tooltip title="Detalles" placement="bottom">
-							  <a-button size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+							  <a-button class="hover" size="small" :disabled="data.deleted_at !== null" @click="detail_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="eye" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-button>
                 </a-tooltip>
                 <a-tooltip title="Editar" placement="bottom">
-                <a-button  v-if="!$parent.$parent.$parent.detalles" size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-icon></a-button>
+                <a-button class="hover"  v-if="!$parent.$parent.$parent.detalles" size="small" :disabled="data.deleted_at !== null" @click ="edit_btn_click" style="--antd-wave-shadow-color:  transparent ;box-shadow: none; background: bottom; border-radius: 100px"><a-icon type="edit" theme="filled" style="color: rgb(115, 25, 84); font-size: 20px;" /></a-button>
                 </a-tooltip>
                 </div>`,
             data: function (axios) {
@@ -599,7 +599,7 @@ export default {
      * Método con la lógica de crear o desvincular y vincular
      */
     click_toolbar(args) {
-      if (args.item.id === "add") {
+      if (args.item.id === "ad") {
         this.action_management = "crear";
         this.visible_management = true;
         this.row_selected = {

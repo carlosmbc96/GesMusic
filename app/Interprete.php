@@ -30,6 +30,15 @@ class Interprete extends Model
     {
         return $this->hasMany(Artistico::class); // Un Interprete tiene muchos Nombres Artisticos
     }
+    //Relación de One to Many Audiovisuales - Realizadores
+    public function audiovisuales()
+    {
+        return $this->belongsToMany(Audiovisual::class, 'audiovisual_interprete'); // Un Audiovisual tiene muchos Realizadores
+    }
+    public function tracks()
+    {
+        return $this->belongsToMany(Track::class, 'track_interprete'); // Un Audiovisual tiene muchos Realizadores
+    }
     //SECCIÓN DE RELACIONES
 
 

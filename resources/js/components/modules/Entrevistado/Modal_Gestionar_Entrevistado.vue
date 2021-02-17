@@ -243,7 +243,7 @@ export default {
       } else callback();
     };
     return {
-      detalles: false,
+      detalles: true,
       vista_editar: true,
       action_cancel_title: "",
       action_title: "",
@@ -410,7 +410,6 @@ export default {
           5
         );
       } else if (this.action_modal === "detalles") {
-        this.detalles = true;
         if (this.entrevistado.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;

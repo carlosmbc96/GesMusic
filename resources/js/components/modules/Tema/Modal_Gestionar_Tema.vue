@@ -7,7 +7,7 @@
       cancelText="Cancelar"
       cancelType="danger"
       :visible="show"
-      id="modal_gestionar_realizadores"
+      id="modal_gestionar_temas"
     >
       <template slot="footer">
         <a-button
@@ -62,7 +62,7 @@
       </template>
       <!-- Aqui comienzan los tabs -->
       <a-tabs>
-        <div slot="tabBarExtraContent">{{ text_header_button }} Realizador</div>
+        <div slot="tabBarExtraContent">{{ text_header_button }} Tema</div>
         <a-tab-pane key="1">
           <span slot="tab">Generales</span>
           <a-row>
@@ -76,24 +76,24 @@
             <a-form-model
               ref="general_form"
               layout="horizontal"
-              :model="realizadores_modal"
+              :model="tema_modal"
               :rules="rules"
             >
               <a-row>
                 <a-col span="11">
                   <a-form-model-item
-                    v-if="action_modal === 'crear' || action_modal === 'crear_realizador'"
+                    v-if="action_modal === 'crear'"
                     :validate-status="show_error"
-                    prop="codigRealiz"
+                    prop="codigTema"
                     has-feedback
                     label="Código"
                     :help="show_used_error"
                   >
                     <a-input
-                      addon-before="REAL-"
+                      addon-before="TEMA-"
                       :default-value="codigo"
                       :disabled="action_modal === 'editar'"
-                      v-model="realizadores_modal.codigRealiz"
+                      v-model="tema_modal.codigTema"
                     />
                   </a-form-model-item>
                   <a-form-model-item
@@ -101,51 +101,45 @@
                     label="Código"
                   >
                     <a-input
-                      addon-before="REAL-"
+                      addon-before="TEMA-"
                       :disabled="action_modal === 'editar'"
-                      v-model="realizadores_modal.codigRealiz"
+                      v-model="tema_modal.codigTema"
                     />
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal === 'detalles'"
                     label="Código"
                   >
-                    <a-mentions
-                      readonly
-                      :placeholder="realizadores_modal.codigRealiz"
-                    >
+                    <a-mentions readonly :placeholder="tema_modal.codigTema">
                     </a-mentions>
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Nombre Completo"
-                    prop="nombreApellidosRealiz"
+                    label="Título"
+                    prop="tituloTem"
                   >
                     <a-input
                       :disabled="disabled"
-                      v-model="realizadores_modal.nombreApellidosRealiz"
+                      v-model="tema_modal.tituloTem"
                     />
                   </a-form-model-item>
-                  <a-form-model-item v-else label="Nombre Completo">
-                    <a-mentions
-                      readonly
-                      :placeholder="realizadores_modal.nombreApellidosRealiz"
-                    >
+                  <a-form-model-item v-else label="Título">
+                    <a-mentions readonly :placeholder="tema_modal.tituloTem">
                     </a-mentions>
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Sexo"
-                    prop="sexoRealiz"
+                    label="Sociedad de Gestión"
+                    prop="sociedadGestionTem"
                   >
                     <a-select
                       :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       show-search
                       :disabled="disabled"
-                      v-model="realizadores_modal.sexoRealiz"
+                      v-model="tema_modal.sociedadGestionTem"
                     >
                       <a-select-option
                         v-for="nomenclator in list_nomenclators"
@@ -156,36 +150,54 @@
                       </a-select-option>
                     </a-select>
                   </a-form-model-item>
-                  <a-form-model-item v-else label="Sexo">
+                  <a-form-model-item v-else label="Sociedad de Gestión">
                     <a-mentions
                       readonly
-                      :placeholder="realizadores_modal.sexoRealiz"
+                      :placeholder="tema_modal.sociedadGestionTem"
                     >
                     </a-mentions>
+                  </a-form-model-item>
+                  <a-form-model-item v-if="action_modal !== 'detalles'">
+                    <a-checkbox
+                      :disabled="disabled"
+                      v-model="catalDigitalTem"
+                      :value="catalDigitalTem"
+                      style="margin-top: 20px"
+                    >
+                      ¿Estará Tema en el Catálogo Digital?
+                    </a-checkbox>
+                  </a-form-model-item>
+                  <a-form-model-item style="margin-top: 20px" v-else>
+                    <i
+                      class="fa fa-check-square-o hidden-xs"
+                      v-if="tema.catalDigitalTem === 1"
+                    />
+                    <i class="fa fa-square-o" v-else />
+                    ¿Estará Tema en el Catálogo Digital?
                   </a-form-model-item>
                 </a-col>
                 <a-col span="11" style="float: right">
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Descripción del Realizador"
-                    prop="descripEspRealiz"
+                    label="Descripción del Tema"
+                    prop="descripTem"
                   >
                     <a-input
                       :disabled="disabled"
                       style="width: 100%; height: 150px"
-                      v-model="realizadores_modal.descripEspRealiz"
+                      v-model="tema_modal.descripTem"
                       type="textarea"
                     />
                   </a-form-model-item>
                   <a-form-model-item
-                    label="Descripción del Realizador"
+                    label="Descripción del Tema"
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
                       <a-mentions
                         readonly
-                        :placeholder="realizadores_modal.descripEspRealiz"
+                        :placeholder="tema_modal.descripTem"
                       >
                       </a-mentions>
                     </div>
@@ -195,28 +207,6 @@
             </a-form-model>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
-          <span slot="tab"> Audiovisuales </span>
-          <a-row>
-            <a-col span="12">
-              <div class="section-title">
-                <h4>Audiovisuales</h4>
-              </div>
-            </a-col>
-          </a-row>
-          <br />
-          <div>
-            <tabla_audiovisuales
-              :detalles_prop="detalles"
-              @reload="reload_parent"
-              :entity="realizadores_modal"
-              entity_relation="realizadores"
-              :vista_editar="vista_editar"
-              @close_modal="show = $event"
-            />
-            <br />
-          </div>
-        </a-tab-pane>
       </a-tabs>
     </a-modal>
   </div>
@@ -224,12 +214,11 @@
 
 <script>
 export default {
-	name: "modal_management_realizadores",
-  props: ["action", "realizador", "realizadores_list"],
+  props: ["action", "tema", "temas_list"],
   data() {
     let validate_codig_unique = (rule, value, callback) => {
-      this.realizadores_list.forEach((element) => {
-        if (element.codigRealiz.substr(5) === value.replace(/ /g, "")) {
+      this.temas_list.forEach((element) => {
+        if (element.codigTema.substr(5) === value.replace(/ /g, "")) {
           callback(new Error("Código usado"));
         }
       });
@@ -252,7 +241,7 @@ export default {
       spinning: false,
       text_button: "",
       text_header_button: "",
-      realizadores_modal: {},
+      tema_modal: {},
       disabled: false,
       activated: true,
       show_error: "",
@@ -260,8 +249,9 @@ export default {
       action_modal: this.action,
       codigo: "",
       list_nomenclators: [],
+			catalDigitalTem: false,
       rules: {
-        codigRealiz: [
+        codigTema: [
           {
             validator: code_required,
             trigger: "change",
@@ -286,7 +276,7 @@ export default {
             trigger: "change",
           },
         ],
-        nombreApellidosRealiz: [
+        tituloTem: [
           {
             required: true,
             message: "Campo requerido",
@@ -303,14 +293,7 @@ export default {
             trigger: "change",
           },
         ],
-        sexoRealiz: [
-          {
-            required: true,
-            message: "Campo requerido",
-            trigger: "change",
-          },
-        ],
-        descripEspRealiz: [
+        descripTem: [
           {
             whitespace: true,
             message: "Espacio no válido",
@@ -328,19 +311,15 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear" || this.action_modal === "crear_realizador") {
-      this.codigo = this.generar_codigo(this.realizadores_list);
+    if (this.action_modal === "crear") {
+      this.codigo = this.generar_codigo(this.temas_list);
     }
   },
   computed: {
     active() {
       if (this.text_button === "Editar") {
         return !this.compare_object;
-      } else
-        return (
-          this.realizadores_modal.nombreApellidosRealiz &&
-          this.realizadores_modal.sexoRealiz
-        );
+      } else return this.tema_modal.tituloTem;
     },
   },
   methods: {
@@ -375,8 +354,8 @@ export default {
       }
     },
     validate() {
-      if (this.realizadores_modal.codigRealiz === undefined) {
-        this.realizadores_modal.codigRealiz = this.codigo;
+      if (this.tema_modal.codigTema === undefined) {
+        this.tema_modal.codigTema = this.codigo;
       }
       if (!this.used) {
         this.$refs.general_form.validate((valid) => {
@@ -388,44 +367,37 @@ export default {
     },
     set_action() {
       if (this.action_modal === "editar") {
-        if (this.realizador.deleted_at !== null) {
+        if (this.tema.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
         }
         this.text_header_button = "Editar";
         this.text_button = "Editar";
-        this.realizador.descripEspRealiz =
-          this.realizador.descripEspRealiz === null
-            ? ""
-            : this.realizador.descripEspRealiz;
-        this.action_cancel_title = "¿Desea cancelar la edición del Realizador?";
-        this.action_title = "¿Desea guardar los cambios en el Realizador?";
-        this.action_close =
-          "La edición del Realizador se canceló correctamente";
-        this.realizadores_modal = { ...this.realizador };
-        this.realizadores_modal.codigRealiz = this.realizador.codigRealiz.substr(
-          5
-        );
+        this.tema.descripTem =
+          this.tema.descripTem === null ? "" : this.tema.descripTem;
+        this.action_cancel_title = "¿Desea cancelar la edición del Tema?";
+        this.action_title = "¿Desea guardar los cambios en el Tema?";
+        this.action_close = "La edición del Tema se canceló correctamente";
+        this.tema_modal = { ...this.tema };
+				this.catalDigitalTem =
+          this.tema.catalDigitalTem === 0 ? false : true;
+        this.tema_modal.codigTema = this.tema.codigTema.substr(5);
       } else if (this.action_modal === "detalles") {
-        if (this.realizador.deleted_at !== null) {
+        if (this.tema.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
         }
         this.text_header_button = "Detalles";
         this.text_button = "Detalles";
-        this.realizador.descripEspRealiz =
-          this.realizador.descripEspRealiz === null
-            ? ""
-            : this.realizador.descripEspRealiz;
-        this.realizadores_modal = { ...this.realizador };
+        this.tema.descripTem =
+          this.tema.descripTem === null ? "" : this.tema.descripTem;
+        this.tema_modal = { ...this.tema };
       } else {
         this.text_button = "Crear";
         this.text_header_button = "Crear";
-        this.action_cancel_title =
-          "¿Desea cancelar la creación del Realizador?";
-        this.action_title = "¿Desea crear el Realizador?";
-        this.action_close =
-          "La creación del Realizador se canceló correctamente";
+        this.action_cancel_title = "¿Desea cancelar la creación del Tema?";
+        this.action_title = "¿Desea crear el Tema?";
+        this.action_close = "La creación del tema se canceló correctamente";
       }
     },
     confirm() {
@@ -434,7 +406,7 @@ export default {
       let form_data = this.prepare_create();
       if (this.action_modal === "editar") {
         axios
-          .post(`/realizadores/editar`, form_data, {
+          .post(`/temas/editar`, form_data, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -446,7 +418,7 @@ export default {
             this.waiting = false;
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha modificado el Realizador correctamente",
+              "Se ha modificado el Tema correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -462,7 +434,7 @@ export default {
           });
       } else {
         axios
-          .post("/realizadores", form_data, {
+          .post("/temas", form_data, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -471,34 +443,9 @@ export default {
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
-						if (this.action_modal === "crear_realizador") {
-              let realizadores = [];
-              axios
-                .post("/realizadores/listar")
-                .then((response) => {
-                  let prod = response.data;
-                  prod.forEach((element) => {
-                    if (!element.deleted_at) {
-                      realizadores.push(element);
-                    }
-                  });
-                  this.$store.state["realizadores"].push(
-                    realizadores[realizadores.length - 1]
-                  );
-                  this.$store.state["created_realizadores"].push(
-                    realizadores[realizadores.length - 1]
-                  );
-                  this.$store.state["all_realizadores_statics"].push(
-                    realizadores[realizadores.length - 1]
-                  );
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            }
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha creado el Realizador correctamente",
+              "Se ha creado el Tema correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -515,30 +462,29 @@ export default {
       }
     },
     prepare_create() {
-      if (this.realizadores_modal.descripEspRealiz === undefined) {
-        this.realizadores_modal.descripEspRealiz = "";
-      } else if (this.realizadores_modal.descripEspRealiz === null) {
-        this.realizadores_modal.descripEspRealiz = "";
+			console.log(this.tema_modal);
+			this.tema_modal.catalDigitalTem = this.catalDigitalTem === false ? 0 : 1;
+      if (this.tema_modal.descripTem === undefined) {
+        this.tema_modal.descripTem = "";
+      } else if (this.tema_modal.descripTem === null) {
+        this.tema_modal.descripTem = "";
       }
       let form_data = new FormData();
       if (this.action_modal === "editar" || this.action_modal === "detalles") {
-        form_data.append("id", this.realizadores_modal.id);
+        form_data.append("id", this.tema_modal.id);
       }
-      if (this.realizadores_modal.codigRealiz === undefined) {
-        this.realizadores_modal.codigRealiz = this.codigo;
+      if (this.tema_modal.codigTema === undefined) {
+        this.tema_modal.codigTema = this.codigo;
       }
-      this.realizadores_modal.codigRealiz =
-        "REAL-" + this.realizadores_modal.codigRealiz;
-      form_data.append("codigRealiz", this.realizadores_modal.codigRealiz);
+      this.tema_modal.codigTema = "TEMA-" + this.tema_modal.codigTema;
+      form_data.append("codigTema", this.tema_modal.codigTema);
+      form_data.append("tituloTem", this.tema_modal.tituloTem);
+			form_data.append("catalDigitalTem", this.tema_modal.catalDigitalTem);
+      form_data.append("descripTem", this.tema_modal.descripTem);
       form_data.append(
-        "nombreApellidosRealiz",
-        this.realizadores_modal.nombreApellidosRealiz
+        "sociedadGestionTem",
+        this.tema_modal.sociedadGestionTem
       );
-      form_data.append(
-        "descripEspRealiz",
-        this.realizadores_modal.descripEspRealiz
-      );
-      form_data.append("sexoRealiz", this.realizadores_modal.sexoRealiz);
       this.text_button = "Creando...";
       return form_data;
     },
@@ -547,7 +493,7 @@ export default {
     crear_arr_codig(arr) {
       let answer = [];
       for (let i = 0; i < arr.length; i++) {
-        answer.push(parseInt(arr[i].codigRealiz.substr(5, 8)));
+        answer.push(parseInt(arr[i].codigTema.substr(5, 8)));
       }
       return answer;
     },
@@ -598,7 +544,7 @@ export default {
     },
     load_nomenclators() {
       axios
-        .post("/realizadores/nomencladores")
+        .post("/temas/nomencladores")
         .then((response) => {
           let i = 0;
           const length = response.data.length;
@@ -613,17 +559,14 @@ export default {
         });
     },
   },
-  components: {
-    tabla_audiovisuales: () => import('../Audiovisual/Tabla_Audiovisuales')
-  },
 };
 </script>
 
 <style>
-#modal_gestionar_realizadores .ant-mentions textarea {
+#modal_gestionar_temas .ant-mentions textarea {
   height: 32px !important;
 }
-#modal_gestionar_realizadores .description textarea {
+#modal_gestionar_temas .description textarea {
   height: 150px !important;
 }
 </style>

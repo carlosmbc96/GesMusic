@@ -219,8 +219,8 @@
                 <span class="arrow" />
               </a>
               <ul class="sub-menu">
-                <li class="nav-item">
-                  <a href="table_static_basic.html" class="nav-link">
+                <li class="nav-item" @click="change_route('/tema_index')">
+                  <a class="nav-link">
                     <i class="icon-note font-white" />
                     <span class="title font-white"> Gestión temas </span>
                   </a>

@@ -411,7 +411,7 @@ export default {
             },
           })
           .then((res) => {
-						if (this.action_modal = "crear_interprete") {
+						if (this.action_modal === "crear_interprete") {
 							let interpretes = [];
               axios
                 .post("/interpretes/listar")

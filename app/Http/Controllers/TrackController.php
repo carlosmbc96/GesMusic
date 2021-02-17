@@ -7,6 +7,8 @@ use App\Fonograma_Track;
 use App\Producto;
 use App\Proyecto;
 use App\Track;
+use App\Track_Autor;
+use App\Track_Interprete;
 use App\Vocabulario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -59,7 +61,8 @@ class TrackController extends Controller
         $mood = Vocabulario::findorFail(20)->terminos;  // Nomenclador: Mood
         $gesTrack = Vocabulario::findorFail(17)->terminos;  // Nomenclador: Gestión de Track
         $paises = Vocabulario::findorFail(23)->terminos;  // Nomenclador: Países
-        return response()->json([[$genMusic], [$SubgMusic], [$mood], [$gesTrack], [$paises]]);  // Se envian las variables
+				$rolesInterp = Vocabulario::findorFail(26)->terminos;  // Nomenclador: Roles de Intérpretes
+        return response()->json([[$genMusic], [$SubgMusic], [$mood], [$gesTrack], [$paises], [$rolesInterp]]);  // Se envian las variables
     }
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Track
@@ -199,4 +202,34 @@ class TrackController extends Controller
         }
         return response()->json($tracks);
     }
+
+		public function autores(Request $request) {
+			$track = Track::withTrashed()->findOrFail($request->id);
+			for ($i = count($track->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$track->autores()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			foreach ($request->autores as $autor) {
+				Track_Autor::create([
+					"autor_id" => $autor,
+					"track_id" => $request->id,
+				]);
+			}
+			return response()->json($track);
+		}
+
+		public function interpretes(Request $request) {
+			$track = Track::withTrashed()->findOrFail($request->id);
+			for ($i = count($track->interpretes()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$track->interpretes()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			for ($i = 0; $i < count($request->interpretes); $i++) {
+				var_dump($request->interpretes[$i][1]);
+				Track_Interprete::create([
+						"interprete_id" => $request->interpretes[$i][0],
+						"rolInterp" => $request->interpretes[$i][1],
+						"track_id" => $request->id
+				]);
+		}
+			return response()->json($track);
+		}
 }

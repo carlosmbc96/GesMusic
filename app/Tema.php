@@ -14,6 +14,7 @@ class Tema extends Model
     //SECCIÓN DE FILLABLE
     // Atributos del Modelo Tema
     protected $fillable = [
+				'codigTema',
         'tituloTem',  // Título Tema
         'catalDigitalTem',  // ¿Estará Tema en el Catálogo Digital?
         'sociedadGestionTem',  // Sociedad de Gestión Tema *nom

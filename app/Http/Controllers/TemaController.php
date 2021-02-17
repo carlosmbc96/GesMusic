@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Tema;
+use App\Vocabulario;
 use Illuminate\Http\Request;
 
 class TemaController extends Controller
@@ -48,9 +49,9 @@ class TemaController extends Controller
         return response()->json(Tema::create($request->all()));
     }
 
-    public function update(Request $request,Tema $tema, $id)  // Update | Método que Actualiza un Registro Específico del Modelo:Tema
+    public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Tema
     {
-        return response()->json(Tema::findOrFail($id)->update($request->all()));
+        return response()->json(Tema::findOrFail($request->id)->update($request->all()));
     }
 
     public function destroyLog(Tema $tema, $id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Tema
@@ -66,5 +67,12 @@ class TemaController extends Controller
     public function restoreLog(Tema $tema, $id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Tema
     {
         return response()->json(Tema::findOrFail($id)->restore());
+    }
+
+		public function nomenclators()  // Nomenclators | Método que carga los Nomencladores en el Modelo:Track
+    {
+        // Sección de Carga de Nomencladores a emplear en las vista
+        $sociedadGestionTem = Vocabulario::findorFail(29)->terminos;
+        return response()->json($sociedadGestionTem);  // Se envian las variables
     }
 }

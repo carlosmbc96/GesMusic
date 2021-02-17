@@ -541,6 +541,256 @@
               </div>
             </a-spin>
           </a-row>
+          <a-row style="margin-top: 20px">
+            <a-col span="11">
+              <a-row>
+                <a-col span="24">
+                  <div class="section-title">
+                    <h4>Autores</h4>
+                  </div>
+                </a-col>
+              </a-row>
+              <a-row v-if="action_modal === 'crear'">
+                <a-col span="24">
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getAutoresFormGetters.length === 0"
+                  ></a-mentions>
+                  <a-form-model-item
+                    v-for="(autor, index) in $store.getters
+                      .getAutoresFormGetters"
+                    :key="autor.id"
+                    v-bind="index === 0 ? formItemLayout : {}"
+                  >
+                    <a-row>
+                      <a-col span="22">
+                        <a-mentions
+                          style="margin-top: 3px"
+                          readonly
+                          :placeholder="
+                            autor.nombresAutr + ' ' + autor.apellidosAutr
+                          "
+                        ></a-mentions>
+                      </a-col>
+                      <a-col span="2" style="float: right; margin-top: 2px">
+                        <a-button
+                          class="dynamic-delete-button"
+                          @click="remove_autor(autor)"
+                        >
+                          <small>
+                            <b style="vertical-align: top"> x </b>
+                          </small>
+                        </a-button>
+                      </a-col>
+                    </a-row>
+                  </a-form-model-item>
+                  <a-row style="margin-top: 20px">
+                    <a-col span="24">
+                      <div class="section-title">
+                        <h5>Selector de Autores</h5>
+                      </div>
+                      <a-form-model
+                        ref="formularioAgregarAutor"
+                        :layout="'horizontal'"
+                        :model="track_modal"
+                      >
+                        <a-form-model-item>
+                          <a-select
+                            placeholder="Nombre completo"
+                            option-filter-prop="children"
+                            :filter-option="filter_option"
+                            show-search
+                            v-model="track_modal.autores"
+                            :disabled="disabled"
+                          >
+                            <a-select-option
+                              v-for="autor in $store.getters
+                                .getAllAutoresFormGetters"
+                              :key="autor.id"
+                              :value="autor.id"
+                            >
+                              {{
+                                autor.nombresAutr + " " + autor.apellidosAutr
+                              }}
+                            </a-select-option>
+                          </a-select>
+                        </a-form-model-item>
+                        <a-row>
+                          <a-col span="12">
+                            <a-form-model-item v-bind="formItemLayout">
+                              <a-button
+                                :disabled="disabled"
+                                style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                @click="add_autor"
+                              >
+                                <a-icon type="plus" />
+                                Agregar Autor
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                          <a-col span="12">
+                            <a-form-model-item
+                              v-bind="formItemLayout"
+                              style="float: right"
+                            >
+                              <a-button
+                                :disabled="disabled"
+                                style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                @click="new_autor"
+                              >
+                                <a-icon type="plus" />
+                                Crear Autor
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                        </a-row>
+                      </a-form-model>
+                    </a-col>
+                  </a-row>
+                </a-col>
+              </a-row>
+            </a-col>
+            <a-col span="11" style="float: right">
+              <a-row>
+                <a-col span="24">
+                  <div class="section-title">
+                    <h4>Interpretes</h4>
+                  </div>
+                </a-col>
+              </a-row>
+              <a-row v-if="action_modal !== 'detalles'">
+                <a-col span="24">
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getInterpretesFormGetters.length === 0"
+                  ></a-mentions>
+                  <a-form-model-item
+                    v-for="(interprete, index) in $store.getters
+                      .getInterpretesFormGetters"
+                    :key="interprete.id"
+                    v-bind="index === 0 ? formItemLayout : {}"
+                  >
+                    <a-row>
+                      <a-col span="11">
+                        <div class="ant-form-item-label">
+                          <label>Nombre</label>
+                        </div>
+                        <a-mentions
+                          readonly
+                          style="margin-top: 3px"
+                          :placeholder="interprete.nombreInterp"
+                        ></a-mentions>
+                      </a-col>
+                      <a-col span="10" style="margin-left: 10px">
+                        <div class="ant-form-item-label">
+                          <label>Roles</label>
+                        </div>
+                        <a-select
+												style="width: 100%"
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          :disabled="disabled"
+                          mode="multiple"
+                          v-model="interprete.role"
+                          class="interpretes-select"
+                        >
+                          <a-select-option
+                            v-for="rol in roles_interp"
+                            :key="rol.id"
+                            :value="rol.nombreTer"
+                          >
+                            {{ rol.nombreTer }}
+                          </a-select-option>
+                        </a-select>
+                      </a-col>
+                      <a-col span="2" style="float: right; margin-top: 40px">
+                        <a-button
+                          class="dynamic-delete-button"
+                          @click="remove_interprete(interprete)"
+                        >
+                          <small>
+                            <b style="vertical-align: top"> x </b>
+                          </small>
+                        </a-button>
+                      </a-col>
+                    </a-row>
+                  </a-form-model-item>
+                  <a-row style="margin-top: 20px">
+                    <a-col span="24">
+                      <div class="section-title">
+                        <h5>Selector de Interpretes</h5>
+                      </div>
+                      <a-form-model
+                        ref="formularioAgregarInterprete"
+                        :layout="'horizontal'"
+                        :model="track_modal"
+                      >
+                        <a-form-model-item has-feedback>
+                          <a-select
+                            placeholder="Nombre completo"
+                            option-filter-prop="children"
+                            :filter-option="filter_option"
+                            show-search
+                            v-model="track_modal.interpretes"
+                            :disabled="disabled"
+                          >
+                            <a-select-option
+                              v-for="interprete in $store.getters
+                                .getAllInterpretesFormGetters"
+                              :key="interprete.id"
+                              :value="interprete.id"
+                            >
+                              {{ interprete.nombreInterp }}
+                            </a-select-option>
+                          </a-select>
+                        </a-form-model-item>
+                        <a-row>
+                          <a-col span="12">
+                            <a-form-model-item v-bind="formItemLayout">
+                              <a-button
+                                :disabled="disabled"
+                                style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                @click="add_interprete"
+                              >
+                                <a-icon type="plus" />
+                                Agregar Interprete
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                          <a-col span="12">
+                            <a-form-model-item
+                              v-bind="formItemLayout"
+                              style="float: right"
+                            >
+                              <a-button
+                                :disabled="disabled"
+                                style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                @click="new_interprete"
+                              >
+                                <a-icon type="plus" />
+                                Crear Interprete
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                        </a-row>
+                      </a-form-model>
+                    </a-col>
+                  </a-row>
+                </a-col>
+              </a-row>
+            </a-col>
+          </a-row>
           <a-row>
             <a-button
               v-if="action_modal === 'crear' || action_modal === 'editar'"
@@ -556,12 +806,26 @@
         </a-tab-pane>
       </a-tabs>
     </a-modal>
+		<modal_management_autores
+      v-if="visible_management_autor"
+      :action="action_management_autores"
+      @close_modal="visible_management_autor = $event"
+      :autors_list="$store.getters.getAllAutoresStaticsFormGetters"
+    />
+    <modal_management_interpretes
+      v-if="visible_management_interprete"
+      :action="action_management_interpretes"
+      @close_modal="visible_management_interprete = $event"
+      :interp_list="$store.getters.getAllInterpretesStaticsFormGetters"
+    />
   </div>
 </template>
 
 <script>
 import axios from "../../../config/axios/axios";
 import moment from "../../../../../node_modules/moment";
+import modal_management_autores from "../Artistas/Autor/Modal_Gestionar_Autor";
+import modal_management_interpretes from "../Artistas/Interprete/Modal_Gestionar_Interprete";
 export default {
   props: ["action", "track", "tracks_list"],
   data() {
@@ -579,6 +843,8 @@ export default {
       } else callback();
     };
     return {
+      action_management_autores: "crear_autor",
+      action_management_interpretes: "crear_interprete",
       tab_2: true,
       tabs_list: [],
       active_tab: "1",
@@ -619,6 +885,15 @@ export default {
       identificador: "",
       codigo: "",
       oldDuration: "",
+      visible_management_autor: false,
+      visible_management_interprete: false,
+			roles_interp: [],
+			formItemLayout: {
+        wrapperCol: {
+          xs: { span: 24, offset: 0 },
+          sm: { span: 20, offset: 4 },
+        },
+      },
       rules: {
         codigPais: [
           {
@@ -784,6 +1059,50 @@ export default {
         if (this.tabs_list.indexOf("tab_1") !== -1) {
           this.$refs.formularioGenerales.resetFields();
         }
+				if (this.$store.getters.getCreatedAutoresFormGetters.length !== 0) {
+          for (
+            let index = 0;
+            index < this.$store.getters.getCreatedAutoresFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `autores/eliminar/${this.$store.getters.getCreatedAutoresFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        if (this.$store.getters.getCreatedInterpretesFormGetters.length !== 0) {
+          for (
+            let index = 0;
+            index < this.$store.getters.getCreatedInterpretesFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `interpretes/eliminar/${this.$store.getters.getCreatedInterpretesFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        this.$store.state["autores"] = [];
+        this.$store.state["created_autores"] = [];
+        this.$store.state["all_autores"] = [];
+        this.$store.state["interpretes"] = [];
+        this.$store.state["created_interpretes"] = [];
+        this.$store.state["all_interpretes"] = [];
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;
@@ -881,6 +1200,38 @@ export default {
               this.text_button = "Crear";
               this.spinning = false;
               this.waiting = false;
+							axios
+                .post("/tracks/autores", {
+                  autores: this.getAutoresID(),
+                  id: res.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["autores"] = [];
+                  this.$store.state["all_autores_statics"] = [];
+                  this.$store.state["all_autores"] = [];
+                  this.$store.state["created_autores"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
+              axios
+                .post("/tracks/interpretes", {
+                  interpretes: this.getInterpretesID(),
+                  id: res.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["interpretes"] = [];
+                  this.$store.state["all_interpretes_statics"] = [];
+                  this.$store.state["all_interpretes"] = [];
+                  this.$store.state["created_interpretes"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
               if (this.action_modal === "crear_track") {
                 let tracks = [];
                 axios
@@ -1100,6 +1451,38 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+			axios
+        .post("/autores/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              if (this.action_modal === "crear") {
+                this.$store.state["all_autores"].push(element);
+              }
+              this.$store.state["all_autores_statics"].push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
+        .post("/interpretes/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              if (this.action_modal === "crear") {
+                this.$store.state["all_interpretes"].push(element);
+              }
+              this.$store.state["all_interpretes_statics"].push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       axios
         .post("/tracks/nomencladores")
         .then((response) => {
@@ -1109,12 +1492,124 @@ export default {
           this.subgeneros = this.list_nomenclators[1][0];
           this.paises = this.list_nomenclators[4][0];
           this.gestiones = this.list_nomenclators[3][0];
+					this.roles_interp = this.list_nomenclators[5][0];
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
             timeout: 2000,
           });
         });
+    },
+
+    add_autor() {
+      if (this.track_modal.autores !== undefined) {
+        this.$store.state["autores"].push(
+          this.get_autor(this.track_modal.autores).autor
+        );
+        this.$store.state["all_autores"].splice(
+          this.get_autor(this.track_modal.autores).index,
+          1
+        );
+        this.track_modal.autores = undefined;
+      }
+    },
+
+    remove_autor(item) {
+      let index = this.$store.getters.getAutoresFormGetters.indexOf(item);
+      this.$store.state["autores"].splice(index, 1);
+      this.$store.state["all_autores"].push(item);
+    },
+
+    add_interprete() {
+      if (this.track_modal.interpretes !== undefined) {
+        this.$store.state["interpretes"].push(
+          this.get_interprete(this.track_modal.interpretes).interprete
+        );
+        this.$store.state["all_interpretes"].splice(
+          this.get_interprete(this.track_modal.interpretes).index,
+          1
+        );
+        this.track_modal.interpretes = undefined;
+      }
+    },
+
+    remove_interprete(item) {
+      let index = this.$store.getters.getInterpretesFormGetters.indexOf(item);
+      this.$store.state["interpretes"].splice(index, 1);
+      this.$store.state["all_interpretes"].push(item);
+    },
+
+    new_autor() {
+      this.visible_management_autor = true;
+    },
+
+    get_autor(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllAutoresFormGetters.length;
+        index++
+      ) {
+        if (this.$store.getters.getAllAutoresFormGetters[index].id === id) {
+          return {
+            autor: this.$store.getters.getAllAutoresFormGetters[index],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
+
+    new_interprete() {
+      this.visible_management_interprete = true;
+    },
+
+    get_interprete(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllInterpretesFormGetters.length;
+        index++
+      ) {
+        if (this.$store.getters.getAllInterpretesFormGetters[index].id === id) {
+          return {
+            interprete: this.$store.getters.getAllInterpretesFormGetters[index],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
+
+		getAutoresID() {
+      let answer = [];
+      let all_autores = this.$store.getters.getAutoresFormGetters;
+      for (let index = 0; index < all_autores.length; index++) {
+        answer.push(all_autores[index].id);
+      }
+      return answer;
+    },
+
+    getInterpretesID() {
+      let answer = [];
+      let all_interpretes = this.$store.getters.getInterpretesFormGetters;
+      for (let index = 0; index < all_interpretes.length; index++) {
+        answer.push([
+          all_interpretes[index].id,
+          this.create_roles_string(all_interpretes[index].role),
+        ]);
+      }
+      return answer;
+    },
+
+		create_roles_string(array) {
+      let answer = "";
+      for (let index = 0; index < array.length; index++) {
+        if (index === 0) {
+          answer += array[index];
+        } else {
+          answer += "." + array[index];
+        }
+      }
+      return answer;
     },
 
     //Metodos para generar el codigo
@@ -1215,6 +1710,10 @@ export default {
       }
     },
   },
+	components: {
+		modal_management_interpretes,
+		modal_management_autores,
+	}
 };
 </script>
 
@@ -1260,5 +1759,25 @@ export default {
 }
 #modal_gestionar_tracks .duplicated-isrc-error {
   border-color: rgb(243, 107, 100) !important;
+}
+#modal_gestionar_tracks .ant-col-sm-offset-4 {
+  margin-left: 0px !important;
+}
+#modal_gestionar_tracks .dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  margin-left: 4px;
+  padding: 0 8px;
+  top: 2px;
+  font-size: 18px;
+  color: white;
+  background-color: rgb(243, 107, 100);
+  transition: all 0.3s;
+}
+.ant-select-selection--multiple {
+	min-height: 35px !important;
+}
+#modal_gestionar_tracks .ant-col-sm-20 {
+  width: 100%;
 }
 </style>

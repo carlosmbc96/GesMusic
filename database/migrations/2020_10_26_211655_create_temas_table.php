@@ -10,6 +10,7 @@ class CreateTemasTable extends Migration
     {
         Schema::create('temas', function (Blueprint $table) {
             $table->id()->index();  // Identificador Único de la Tabla: Temas
+						$table->string('codigTema', 9)->unique();
             $table->string('tituloTem');  // Título Tema
             $table->boolean('catalDigitalTem')->nullable();  // ¿Estará Tema en el Catálogo Digital?
             $table->string('sociedadGestionTem')->nullable();  // Sociedad de Gestión Tema *nom

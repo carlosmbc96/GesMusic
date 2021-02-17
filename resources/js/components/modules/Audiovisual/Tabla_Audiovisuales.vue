@@ -200,7 +200,7 @@ L10n.load({
 });
 setCulture("es-ES");
 export default {
-  name: "Tabla_Audiovisuales",
+  name: "tabla_audiovisuales",
   props: ["entity", "vista_editar", "detalles_prop", "entity_relation"],
   data() {
     return {

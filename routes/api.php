@@ -107,6 +107,8 @@ Route::delete('/tracks/eliminar/{id}', 'TrackController@destroyFis');
 Route::post('/tracks/editar', 'TrackController@update');
 Route::get('/tracks/restaurar/{id}', 'TrackController@restoreLog');
 Route::post('/tracks/fonogramaTracks', 'TrackController@tracksRelacionados');
+Route::post('/tracks/autores', 'TrackController@autores');
+Route::post('/tracks/interpretes', 'TrackController@interpretes');
 
 // RUTAS DEL RECURSO: AUTOR
 Route::get('/autores/restaurar/{id}', 'AutorController@restoreLog');
@@ -131,17 +133,17 @@ Route::post('/artisticos', 'ArtisticoController@store'); // Ruta que Guarda el N
 Route::post('/artisticos/editar', 'ArtisticoController@update'); // Ruta que Guarda un Registro Específico del Modelo Artistico
 Route::delete('/artisticos/desactivar/{id}', 'ArtisticoController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/artisticos/eliminar/{id}', 'ArtisticoController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
-/*
+
 // RUTAS DEL RECURSO: TEMA
 //Route::resource('temas','TemaController'); // Ruta que Lista todos los Recursos de la Clase Temas
-Route::get('/temas','TemaController@index')->name('temas.listar'); // Ruta que Lista todos los Registros del Modelo Tema
-Route::get('/temas/create','TemaController@create')->name('temas.crear'); // Ruta que Muestra un Formulario para Crear un Registro del Modelo Tema
-Route::post('/temas','TemaController@store')->name('temas.guardar'); // Ruta que Guarda el Nuevo Registro del Modelo Tema
-Route::get('/temas/{id}','TemaController@show')->name('temas.mostrar'); // Ruta que Muestra un Registro Específico del Modelo Tema
-Route::get('/temas/{id}/edit','TemaController@edit')->name('temas.editar'); // Ruta que Edita un Registro Específico del Modelo Tema
-Route::put('/temas/{id}','TemaController@update')->name('temas.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Tema
-Route::delete('/temas/{id}','TemaController@destroyLog')->name('temas.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Tema
-
+Route::get('/temas/restaurar/{id}', 'TemaController@restoreLog');
+Route::post('/temas/listar', 'TemaController@index');
+Route::post('/temas', 'TemaController@store');
+Route::post('/temas/editar', 'TemaController@update');
+Route::delete('/temas/desactivar/{id}', 'TemaController@destroyLog');
+Route::delete('/temas/eliminar/{id}', 'TemaController@destroyFis');
+Route::post('/temas/nomencladores', 'TemaController@nomenclators');
+/*
 // RUTAS DEL RECURSO: ELEMENTO
 //Route::resource('elementos','ElementoController'); // Ruta que Lista todos los Recursos de la Clase Elementos
 Route::get('/elementos','ElementoController@index')->name('elementos.listar'); // Ruta que Lista todos los Registros del Modelo Elemento

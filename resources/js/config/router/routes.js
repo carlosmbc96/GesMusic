@@ -8,6 +8,7 @@ import audiovisual_index from "../../components/modules/Audiovisual/Audiovisual_
 import artisticos_index from "../../components/modules/Artistico/Artisticos_Index.vue";
 import realizador_index from "../../components/modules/Realizador/Realizador_Index.vue";
 import entrevistado_index from "../../components/modules/Entrevistado/Entrevistado_Index.vue";
+import tema_index from "../../components/modules/Tema/Tema_Index.vue";
 
 export const routes = [
   { path: "/proyecto_index", component: proyecto_index },
@@ -20,4 +21,5 @@ export const routes = [
   { path: "/artisticos_index", component: artisticos_index },
   { path: "/realizador_index", component: realizador_index },
   { path: "/entrevistado_index", component: entrevistado_index },
+  { path: "/tema_index", component: tema_index },
 ];

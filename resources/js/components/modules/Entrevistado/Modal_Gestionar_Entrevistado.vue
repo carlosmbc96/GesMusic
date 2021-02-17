@@ -228,7 +228,6 @@
 </template>
 
 <script>
-import tabla_audiovisuales from "../Audiovisual/Tabla_Audiovisuales";
 export default {
   props: ["action", "entrevistado", "entrevistados_list"],
   data() {
@@ -646,7 +645,7 @@ export default {
     },
   },
   components: {
-    tabla_audiovisuales,
+    tabla_audiovisuales: () => import('../Audiovisual/Tabla_Audiovisuales')
   },
 };
 </script>

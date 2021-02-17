@@ -621,7 +621,7 @@ export default {
             },
           })
           .then((res) => {
-						if (this.action_modal = "crear_autor") {
+						if (this.action_modal === "crear_autor") {
 							let autores = [];
               axios
                 .post("/autores/listar")

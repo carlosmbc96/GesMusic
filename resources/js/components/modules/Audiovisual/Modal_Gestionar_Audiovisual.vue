@@ -147,860 +147,1424 @@
                   :model="audiovisual_modal"
                   :rules="rules"
                 >
-                  <a-col span="11">
-                    <div class="section-title">
-                      <h4>Datos Generales</h4>
-                    </div>
-                    <a-row>
-                      <a-col span="4" id="small">
-                        <a-upload
-                          v-if="action_modal !== 'detalles'"
-                          :disabled="disabled"
-                          :remove="remove_image"
-                          @preview="handle_preview"
-                          :file-list="file_list"
-                          list-type="picture-card"
-                          :before-upload="before_upload"
-                          @change="handle_change"
-                          style="margin-top: 3px"
-                        >
-                          <div v-if="file_list.length < 1">
-                            <img v-if="preview_image" />
-                            <div v-else>
-                              <a-icon type="upload" />
-                              <div class="ant-upload-text">
-                                Cargar identificador
-                              </div>
-                            </div>
-                          </div>
-                        </a-upload>
-                        <div v-else class="detalles-img">
+                  <a-row>
+                    <a-col span="11">
+                      <div class="section-title">
+                        <h4>Datos Generales</h4>
+                      </div>
+                      <a-row>
+                        <a-col span="4" id="small">
                           <a-upload
+                            v-if="action_modal !== 'detalles'"
+                            :disabled="disabled"
+                            :remove="remove_image"
                             @preview="handle_preview"
                             :file-list="file_list"
                             list-type="picture-card"
+                            :before-upload="before_upload"
+                            @change="handle_change"
+                            style="margin-top: 3px"
                           >
                             <div v-if="file_list.length < 1">
-                              <img />
+                              <img v-if="preview_image" />
+                              <div v-else>
+                                <a-icon type="upload" />
+                                <div class="ant-upload-text">
+                                  Cargar identificador
+                                </div>
+                              </div>
                             </div>
                           </a-upload>
-                        </div>
-                        <br />
-                        <a-modal
-                          :visible="preview_visible"
-                          :footer="null"
-                          @cancel="preview_cancel"
-                        >
-                          <img style="width: 100%" :src="preview_image" />
-                        </a-modal>
-                      </a-col>
-                      <a-col span="14" style="float: right">
-                        <a-row>
-                          <a-col span="24">
-                            <a-form-model-item
-                              v-if="action_modal !== 'detalles'"
-                              has-feedback
-                              label="Género Audiovisual"
-                              prop="generoAud"
+                          <div v-else class="detalles-img">
+                            <a-upload
+                              @preview="handle_preview"
+                              :file-list="file_list"
+                              list-type="picture-card"
                             >
-                              <a-select
-                                :getPopupContainer="
-                                  (trigger) => trigger.parentNode
-                                "
-                                option-filter-prop="children"
-                                :filter-option="filter_option"
-                                show-search
-                                :disabled="disabled"
-                                v-model="audiovisual_modal.generoAud"
+                              <div v-if="file_list.length < 1">
+                                <img />
+                              </div>
+                            </a-upload>
+                          </div>
+                          <br />
+                          <a-modal
+                            :visible="preview_visible"
+                            :footer="null"
+                            @cancel="preview_cancel"
+                          >
+                            <img style="width: 100%" :src="preview_image" />
+                          </a-modal>
+                        </a-col>
+                        <a-col span="14" style="float: right">
+                          <a-row>
+                            <a-col span="24">
+                              <a-form-model-item
+                                v-if="action_modal !== 'detalles'"
+                                has-feedback
+                                label="Género Audiovisual"
+                                prop="generoAud"
                               >
-                                <a-select-option
-                                  v-for="nomenclator in generos"
-                                  :key="nomenclator.id"
-                                  :value="nomenclator.nombreTer"
+                                <a-select
+                                  :getPopupContainer="
+                                    (trigger) => trigger.parentNode
+                                  "
+                                  option-filter-prop="children"
+                                  :filter-option="filter_option"
+                                  show-search
+                                  :disabled="disabled"
+                                  v-model="audiovisual_modal.generoAud"
                                 >
-                                  {{ nomenclator.nombreTer }}
-                                </a-select-option>
-                              </a-select>
-                            </a-form-model-item>
-                            <a-form-model-item
-                              label="Género Audiovisual"
-                              v-if="action_modal === 'detalles'"
-                            >
-                              <a-mentions
-                                readonly
-                                :placeholder="audiovisual_modal.generoAud"
+                                  <a-select-option
+                                    v-for="nomenclator in generos"
+                                    :key="nomenclator.id"
+                                    :value="nomenclator.nombreTer"
+                                  >
+                                    {{ nomenclator.nombreTer }}
+                                  </a-select-option>
+                                </a-select>
+                              </a-form-model-item>
+                              <a-form-model-item
+                                label="Género Audiovisual"
+                                v-if="action_modal === 'detalles'"
                               >
-                              </a-mentions>
-                            </a-form-model-item>
-                            <a-form-model-item
-                              v-if="
-                                action_modal === 'crear' &&
-                                (audiovisual_modal.generoAud === 'Entrevista' ||
-                                  audiovisual_modal.generoAud === 'Making of' ||
-                                  audiovisual_modal.generoAud === 'Trailers')
-                              "
-                              :validate-status="show_error"
-                              prop="codigAud"
-                              has-feedback
-                              label="Código"
-                              :help="show_used_error"
-                            >
-                              <a-input
-                                addon-before="AUDV-"
-                                :default-value="codigo"
-                                :disabled="action_modal === 'editar'"
-                                v-model="audiovisual_modal.codigAud"
-                              />
-                            </a-form-model-item>
-                            <a-form-model-item
-                              v-if="
-                                action_modal === 'editar' &&
-                                (audiovisual_modal.generoAud === 'Entrevista' ||
-                                  audiovisual_modal.generoAud === 'Making of' ||
-                                  audiovisual_modal.generoAud === 'Trailers')
-                              "
-                              label="Código"
-                              prop="codigAud"
-                            >
-                              <a-input
+                                <a-mentions
+                                  readonly
+                                  :placeholder="audiovisual_modal.generoAud"
+                                >
+                                </a-mentions>
+                              </a-form-model-item>
+                              <a-form-model-item
                                 v-if="
-                                  audiovisual_modal.generoAud === genero_pivot
+                                  action_modal === 'crear' &&
+                                    (audiovisual_modal.generoAud ===
+                                      'Entrevista' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Making of' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Trailers')
                                 "
-                                addon-before="AUDV-"
-                                :disabled="true"
-                                v-model="codig_pivot"
-                              />
-                              <a-input
-                                v-else
-                                addon-before="AUDV-"
-                                :dafault-value="codig_pivot"
-                                :disabled="false"
-                                v-model="audiovisual_modal.codigAud"
-                              />
-                            </a-form-model-item>
-                            <a-form-model-item
-                              label="Código"
-                              v-if="
-                                action_modal === 'detalles' &&
-                                (audiovisual_modal.generoAud === 'Entrevista' ||
-                                  audiovisual_modal.generoAud === 'Making of' ||
-                                  audiovisual_modal.generoAud === 'Trailers')
-                              "
-                            >
-                              <a-mentions
-                                readonly
-                                :placeholder="audiovisual_modal.codigAud"
+                                :validate-status="show_error"
+                                prop="codigAud"
+                                has-feedback
+                                label="Código"
+                                :help="show_used_error"
                               >
-                              </a-mentions>
-                            </a-form-model-item>
-                          </a-col>
-                        </a-row>
-                        <a-row
-                          v-if="
-                            action_modal === 'crear' &&
-                            (audiovisual_modal.generoAud === 'Concierto' ||
-                              audiovisual_modal.generoAud === 'Video Clip' ||
-                              audiovisual_modal.generoAud === 'Documental')
-                          "
-                        >
-                          <a-col span="24">
-                            <a-row>
-                              <a-col span="4">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Código de dos letras que representan el país Ej: BR (Brazil)"
-                                >
-                                  <a-form-model-item
-                                    :validate-status="show_error"
-                                    prop="codigPais"
-                                    has-feedback
-                                    label="ISRC"
-                                    :help="show_used_error"
-                                    class="isrc"
-                                  >
-                                    <a-input
-                                      default-value="CU"
-                                      :disabled="action_modal === 'editar'"
-                                      v-model="audiovisual_modal.codigPais"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                              <a-col
-                                span="1"
-                                style="margin-top: 34px; text-align: center"
+                                <a-input
+                                  addon-before="AUDV-"
+                                  :default-value="codigo"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="audiovisual_modal.codigAud"
+                                />
+                              </a-form-model-item>
+                              <a-form-model-item
+                                v-if="
+                                  action_modal === 'editar' &&
+                                    (audiovisual_modal.generoAud ===
+                                      'Entrevista' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Making of' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Trailers')
+                                "
+                                label="Código"
+                                prop="codigAud"
                               >
-                              </a-col>
-                              <a-col span="6">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
-                                >
-                                  <a-form-model-item
-                                    :validate-status="show_error"
-                                    prop="codigRegistro"
-                                    has-feedback
-                                    class="isrc"
-                                  >
-                                    <a-input
-                                      style="margin-top: 33.2px"
-                                      placeholder="XXX"
-                                      :disabled="action_modal === 'editar'"
-                                      v-model="audiovisual_modal.codigRegistro"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                              <a-col
-                                span="1"
-                                style="margin-top: 34px; text-align: center"
+                                <a-input
+                                  v-if="
+                                    audiovisual_modal.generoAud === genero_pivot
+                                  "
+                                  addon-before="AUDV-"
+                                  :disabled="true"
+                                  v-model="codig_pivot"
+                                />
+                                <a-input
+                                  v-else
+                                  addon-before="AUDV-"
+                                  :dafault-value="codig_pivot"
+                                  :disabled="false"
+                                  v-model="audiovisual_modal.codigAud"
+                                />
+                              </a-form-model-item>
+                              <a-form-model-item
+                                label="Código"
+                                v-if="
+                                  action_modal === 'detalles' &&
+                                    (audiovisual_modal.generoAud ===
+                                      'Entrevista' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Making of' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Trailers')
+                                "
                               >
-                              </a-col>
-                              <a-col span="4">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
+                                <a-mentions
+                                  readonly
+                                  :placeholder="audiovisual_modal.codigAud"
                                 >
-                                  <a-form-model-item
-                                    :validate-status="show_error"
-                                    prop="anhoRegistro"
-                                    has-feedback
-                                    class="isrc"
+                                </a-mentions>
+                              </a-form-model-item>
+                            </a-col>
+                          </a-row>
+                          <a-row
+                            v-if="
+                              action_modal === 'crear' &&
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud === 'Documental')
+                            "
+                          >
+                            <a-col span="24">
+                              <a-row>
+                                <a-col span="4">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Código de dos letras que representan el país Ej: BR (Brazil)"
                                   >
-                                    <a-input
-                                      style="margin-top: 33.2px"
-                                      placeholder="00"
-                                      :disabled="action_modal === 'editar'"
-                                      v-model="audiovisual_modal.anhoRegistro"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                              <a-col
-                                span="1"
-                                style="margin-top: 34px; text-align: center"
-                              >
-                              </a-col>
-                              <a-col span="7">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Código identificador de cinco dígitos Ej: 00001"
+                                    <a-form-model-item
+                                      :validate-status="show_error"
+                                      prop="codigPais"
+                                      has-feedback
+                                      label="ISRC"
+                                      :help="show_used_error"
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        default-value="CU"
+                                        :disabled="action_modal === 'editar'"
+                                        v-model="audiovisual_modal.codigPais"
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                                <a-col
+                                  span="1"
+                                  style="margin-top: 34px; text-align: center"
                                 >
-                                  <a-form-model-item
-                                    :validate-status="show_error"
-                                    prop="identificador"
-                                    has-feedback
-                                    class="isrc"
+                                </a-col>
+                                <a-col span="6">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
                                   >
-                                    <a-input
-                                      style="margin-top: 33.2px"
-                                      :default-value="codigoIsrc"
-                                      :disabled="action_modal === 'editar'"
-                                      v-model="audiovisual_modal.identificador"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                            </a-row>
-                          </a-col>
-                        </a-row>
-                        <a-row
-                          v-if="
-                            action_modal === 'editar' &&
-                            (audiovisual_modal.generoAud === 'Concierto' ||
-                              audiovisual_modal.generoAud === 'Video Clip' ||
-                              audiovisual_modal.generoAud === 'Documental') &&
-                            audiovisual_modal.generoAud !== genero_pivot
-                          "
-                        >
-                          <a-col span="24">
-                            <a-row>
-                              <a-col span="4">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Código de dos letras que representan el país Ej: BR (Brazil)"
+                                    <a-form-model-item
+                                      :validate-status="show_error"
+                                      prop="codigRegistro"
+                                      has-feedback
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        style="margin-top: 33.2px"
+                                        placeholder="XXX"
+                                        :disabled="action_modal === 'editar'"
+                                        v-model="
+                                          audiovisual_modal.codigRegistro
+                                        "
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                                <a-col
+                                  span="1"
+                                  style="margin-top: 34px; text-align: center"
                                 >
-                                  <a-form-model-item
-                                    :validate-status="show_error"
-                                    prop="codigPais"
-                                    has-feedback
-                                    label="ISRC"
-                                    :help="show_used_error"
-                                    class="isrc"
+                                </a-col>
+                                <a-col span="4">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
                                   >
-                                    <a-input
-                                      :default-value="codigPais"
-                                      :disabled="false"
-                                      v-model="audiovisual_modal.codigPais"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                              <a-col
-                                span="1"
-                                style="margin-top: 34px; text-align: center"
-                              >
-                              </a-col>
-                              <a-col span="6">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
+                                    <a-form-model-item
+                                      :validate-status="show_error"
+                                      prop="anhoRegistro"
+                                      has-feedback
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        style="margin-top: 33.2px"
+                                        placeholder="00"
+                                        :disabled="action_modal === 'editar'"
+                                        v-model="audiovisual_modal.anhoRegistro"
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                                <a-col
+                                  span="1"
+                                  style="margin-top: 34px; text-align: center"
                                 >
-                                  <a-form-model-item
-                                    v-if="codig_to_isrc"
-                                    :validate-status="show_error"
-                                    prop="codigRegistro"
-                                    has-feedback
-                                    class="isrc"
+                                </a-col>
+                                <a-col span="7">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Código identificador de cinco dígitos Ej: 00001"
                                   >
-                                    <a-input
-                                      style="margin-top: 33.2px"
-                                      placeholder="XXX"
-                                      :disabled="false"
-                                      v-model="audiovisual_modal.codigRegistro"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                  <a-form-model-item
-                                    v-else
-                                    :validate-status="show_error"
-                                    prop="codigRegistro"
-                                    has-feedback
-                                    class="isrc"
+                                    <a-form-model-item
+                                      :validate-status="show_error"
+                                      prop="identificador"
+                                      has-feedback
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        style="margin-top: 33.2px"
+                                        :default-value="codigoIsrc"
+                                        :disabled="action_modal === 'editar'"
+                                        v-model="
+                                          audiovisual_modal.identificador
+                                        "
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                              </a-row>
+                            </a-col>
+                          </a-row>
+                          <a-row
+                            v-if="
+                              action_modal === 'editar' &&
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Documental') &&
+                                audiovisual_modal.generoAud !== genero_pivot
+                            "
+                          >
+                            <a-col span="24">
+                              <a-row>
+                                <a-col span="4">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Código de dos letras que representan el país Ej: BR (Brazil)"
                                   >
-                                    <a-input
-                                      style="margin-top: 33.2px"
-                                      :default-value="codigRegistro"
-                                      :disabled="false"
-                                      v-model="audiovisual_modal.codigRegistro"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                              <a-col
-                                span="1"
-                                style="margin-top: 34px; text-align: center"
-                              >
-                              </a-col>
-                              <a-col span="4">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
+                                    <a-form-model-item
+                                      :validate-status="show_error"
+                                      prop="codigPais"
+                                      has-feedback
+                                      label="ISRC"
+                                      :help="show_used_error"
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        :default-value="codigPais"
+                                        :disabled="false"
+                                        v-model="audiovisual_modal.codigPais"
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                                <a-col
+                                  span="1"
+                                  style="margin-top: 34px; text-align: center"
                                 >
-                                  <a-form-model-item
-                                    :validate-status="show_error"
-                                    prop="anhoRegistro"
-                                    has-feedback
-                                    class="isrc"
+                                </a-col>
+                                <a-col span="6">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
                                   >
-                                    <a-input
+                                    <a-form-model-item
                                       v-if="codig_to_isrc"
-                                      style="margin-top: 33.2px"
-                                      placeholder="00"
-                                      :disabled="false"
-                                      v-model="audiovisual_modal.anhoRegistro"
-                                      :class="isrc_validation"
-                                    />
-                                    <a-input
+                                      :validate-status="show_error"
+                                      prop="codigRegistro"
+                                      has-feedback
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        style="margin-top: 33.2px"
+                                        placeholder="XXX"
+                                        :disabled="false"
+                                        v-model="
+                                          audiovisual_modal.codigRegistro
+                                        "
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                    <a-form-model-item
                                       v-else
-                                      style="margin-top: 33.2px"
-                                      :default-value="anhoRegistro"
-                                      :disabled="false"
-                                      v-model="audiovisual_modal.anhoRegistro"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                              <a-col
-                                span="1"
-                                style="margin-top: 34px; text-align: center"
-                              >
-                              </a-col>
-                              <a-col span="7">
-                                <a-tooltip
-                                  placement="bottom"
-                                  title="Código identificador de cinco dígitos Ej: 00001"
+                                      :validate-status="show_error"
+                                      prop="codigRegistro"
+                                      has-feedback
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        style="margin-top: 33.2px"
+                                        :default-value="codigRegistro"
+                                        :disabled="false"
+                                        v-model="
+                                          audiovisual_modal.codigRegistro
+                                        "
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                                <a-col
+                                  span="1"
+                                  style="margin-top: 34px; text-align: center"
                                 >
-                                  <a-form-model-item
-                                    :validate-status="show_error"
-                                    prop="identificador"
-                                    has-feedback
-                                    class="isrc"
+                                </a-col>
+                                <a-col span="4">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
                                   >
-                                    <a-input
-                                      style="margin-top: 33.2px"
-                                      :default-value="identificador"
-                                      :disabled="false"
-                                      v-model="audiovisual_modal.identificador"
-                                      :class="isrc_validation"
-                                    />
-                                  </a-form-model-item>
-                                </a-tooltip>
-                              </a-col>
-                            </a-row>
-                          </a-col>
-                        </a-row>
-                        <a-form-model-item
-                          v-if="
-                            action_modal === 'editar' &&
-                            (audiovisual_modal.generoAud === 'Concierto' ||
-                              audiovisual_modal.generoAud === 'Video Clip' ||
-                              audiovisual_modal.generoAud === 'Documental') &&
-                            audiovisual_modal.generoAud === genero_pivot
-                          "
-                          label="ISRC"
-                        >
-                          <a-input :disabled="true" v-model="isrc_pivot" />
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="ISRC"
-                          v-if="
-                            action_modal === 'detalles' &&
-                            (audiovisual_modal.generoAud === 'Concierto' ||
-                              audiovisual_modal.generoAud === 'Video Clip' ||
-                              audiovisual_modal.generoAud === 'Documental')
-                          "
-                        >
-                          <a-mentions
-                            readonly
-                            :placeholder="audiovisual_modal.isrcAud"
+                                    <a-form-model-item
+                                      :validate-status="show_error"
+                                      prop="anhoRegistro"
+                                      has-feedback
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        v-if="codig_to_isrc"
+                                        style="margin-top: 33.2px"
+                                        placeholder="00"
+                                        :disabled="false"
+                                        v-model="audiovisual_modal.anhoRegistro"
+                                        :class="isrc_validation"
+                                      />
+                                      <a-input
+                                        v-else
+                                        style="margin-top: 33.2px"
+                                        :default-value="anhoRegistro"
+                                        :disabled="false"
+                                        v-model="audiovisual_modal.anhoRegistro"
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                                <a-col
+                                  span="1"
+                                  style="margin-top: 34px; text-align: center"
+                                >
+                                </a-col>
+                                <a-col span="7">
+                                  <a-tooltip
+                                    placement="bottom"
+                                    title="Código identificador de cinco dígitos Ej: 00001"
+                                  >
+                                    <a-form-model-item
+                                      :validate-status="show_error"
+                                      prop="identificador"
+                                      has-feedback
+                                      class="isrc"
+                                    >
+                                      <a-input
+                                        style="margin-top: 33.2px"
+                                        :default-value="identificador"
+                                        :disabled="false"
+                                        v-model="
+                                          audiovisual_modal.identificador
+                                        "
+                                        :class="isrc_validation"
+                                      />
+                                    </a-form-model-item>
+                                  </a-tooltip>
+                                </a-col>
+                              </a-row>
+                            </a-col>
+                          </a-row>
+                          <a-form-model-item
+                            v-if="
+                              action_modal === 'editar' &&
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Documental') &&
+                                audiovisual_modal.generoAud === genero_pivot
+                            "
+                            label="ISRC"
                           >
-                          </a-mentions>
-                        </a-form-model-item>
-                      </a-col>
-                    </a-row>
-                    <a-row>
-                      <a-col span="11">
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Clasificación"
-                          prop="clasifAud"
-                        >
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            option-filter-prop="children"
-                            :filter-option="filter_option"
-                            show-search
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.clasifAud"
+                            <a-input :disabled="true" v-model="isrc_pivot" />
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="ISRC"
+                            v-if="
+                              action_modal === 'detalles' &&
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud === 'Documental')
+                            "
                           >
-                            <a-select-option
-                              v-for="nomenclator in clasificaciones"
-                              :key="nomenclator.id"
-                              :value="nomenclator.nombreTer"
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.isrcAud"
                             >
-                              {{ nomenclator.nombreTer }}
-                            </a-select-option>
-                          </a-select>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Clasificación"
-                          v-if="action_modal === 'detalles'"
-                        >
-                          <a-mentions
-                            readonly
-                            :placeholder="audiovisual_modal.clasifAud"
-                          >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="País de Grabación"
-                          prop="paisGrabAud"
-                        >
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            option-filter-prop="children"
-                            :filter-option="filter_option"
-                            show-search
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.paisGrabAud"
-                          >
-                            <a-select-option
-                              v-for="nomenclator in paises"
-                              :key="nomenclator.id"
-                              :value="nomenclator.nombreTer"
-                            >
-                              {{ nomenclator.nombreTer }}
-                            </a-select-option>
-                          </a-select>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="País de Grabación"
-                          v-if="action_modal === 'detalles'"
-                        >
-                          <a-mentions
-                            readonly
-                            :placeholder="audiovisual_modal.paisGrabAud"
-                          >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Idiomas"
-                          prop="idiomaAud"
-                        >
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            mode="multiple"
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.idiomaAud"
-                          >
-                            <a-select-option
-                              v-for="nomenclator in idiomas"
-                              :key="nomenclator.id"
-                              :value="nomenclator.nombreTer"
-                            >
-                              {{ nomenclator.nombreTer }}
-                            </a-select-option>
-                          </a-select>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Idiomas"
-                          v-if="action_modal === 'detalles'"
-                        >
-                          <a-mentions
-                            readonly
-                            :placeholder="audiovisual_modal.idiomaAud"
-                          >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          prop="fenomRefAud"
-                          has-feedback
-                          label="Fenómeno de Referencia"
-                        >
-                          <a-input
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.fenomRefAud"
-                          />
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Fenómeno de Referencia"
-                          v-if="action_modal === 'detalles'"
-                        >
-                          <a-mentions
-                            readonly
-                            :placeholder="audiovisual_modal.fenomRefAud"
-                          >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <div id="etiqueta">
+                            </a-mentions>
+                          </a-form-model-item>
+                        </a-col>
+                      </a-row>
+                      <a-row>
+                        <a-col span="11">
                           <a-form-model-item
                             v-if="action_modal !== 'detalles'"
                             has-feedback
-                            label="Etiquetas"
-                            prop="etiquetasAud"
+                            label="Clasificación"
+                            prop="clasifAud"
                           >
                             <a-select
                               :getPopupContainer="
                                 (trigger) => trigger.parentNode
                               "
-                              mode="tags"
+                              option-filter-prop="children"
+                              :filter-option="filter_option"
+                              show-search
                               :disabled="disabled"
-                              v-model="audiovisual_modal.etiquetasAud"
+                              v-model="audiovisual_modal.clasifAud"
                             >
+                              <a-select-option
+                                v-for="nomenclator in clasificaciones"
+                                :key="nomenclator.id"
+                                :value="nomenclator.nombreTer"
+                              >
+                                {{ nomenclator.nombreTer }}
+                              </a-select-option>
                             </a-select>
                           </a-form-model-item>
+                          <a-form-model-item
+                            label="Clasificación"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.clasifAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            has-feedback
+                            label="País de Grabación"
+                            prop="paisGrabAud"
+                          >
+                            <a-select
+                              :getPopupContainer="
+                                (trigger) => trigger.parentNode
+                              "
+                              option-filter-prop="children"
+                              :filter-option="filter_option"
+                              show-search
+                              :disabled="disabled"
+                              v-model="audiovisual_modal.paisGrabAud"
+                            >
+                              <a-select-option
+                                v-for="nomenclator in paises"
+                                :key="nomenclator.id"
+                                :value="nomenclator.nombreTer"
+                              >
+                                {{ nomenclator.nombreTer }}
+                              </a-select-option>
+                            </a-select>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="País de Grabación"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.paisGrabAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            has-feedback
+                            label="Idiomas"
+                            prop="idiomaAud"
+                          >
+                            <a-select
+                              :getPopupContainer="
+                                (trigger) => trigger.parentNode
+                              "
+                              mode="multiple"
+                              :disabled="disabled"
+                              v-model="audiovisual_modal.idiomaAud"
+                            >
+                              <a-select-option
+                                v-for="nomenclator in idiomas"
+                                :key="nomenclator.id"
+                                :value="nomenclator.nombreTer"
+                              >
+                                {{ nomenclator.nombreTer }}
+                              </a-select-option>
+                            </a-select>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="Idiomas"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.idiomaAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            prop="fenomRefAud"
+                            has-feedback
+                            label="Fenómeno de Referencia"
+                          >
+                            <a-input
+                              :disabled="disabled"
+                              v-model="audiovisual_modal.fenomRefAud"
+                            />
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="Fenómeno de Referencia"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.fenomRefAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <div id="etiqueta">
+                            <a-form-model-item
+                              v-if="action_modal !== 'detalles'"
+                              has-feedback
+                              label="Etiquetas"
+                              prop="etiquetasAud"
+                            >
+                              <a-select
+                                :getPopupContainer="
+                                  (trigger) => trigger.parentNode
+                                "
+                                mode="tags"
+                                :disabled="disabled"
+                                v-model="audiovisual_modal.etiquetasAud"
+                              >
+                              </a-select>
+                            </a-form-model-item>
+                          </div>
+                          <a-form-model-item
+                            label="Etiquetas"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.etiquetasAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                        </a-col>
+                        <a-col span="11" style="float: right">
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            prop="tituloAud"
+                            has-feedback
+                            label="Título"
+                          >
+                            <a-input
+                              :disabled="disabled"
+                              v-model="audiovisual_modal.tituloAud"
+                            />
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="Título"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.tituloAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            prop="duracionAud"
+                            has-feedback
+                            label="Duración"
+                          >
+                            <a-time-picker
+                              :default-open-value="
+                                moment('00:00:00', 'HH:mm:ss')
+                              "
+                              :disabled="disabled"
+                              :valueFormat="'HH:mm:ss'"
+                              placeholder="00:00"
+                              v-model="audiovisual_modal.duracionAud"
+                            />
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="Duración"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.duracionAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            has-feedback
+                            label="Año de finalización"
+                            prop="añoFinAud"
+                          >
+                            <a-select
+                              :getPopupContainer="
+                                (trigger) => trigger.parentNode
+                              "
+                              option-filter-prop="children"
+                              :filter-option="filter_option"
+                              show-search
+                              :disabled="disabled"
+                              v-model="audiovisual_modal.añoFinAud"
+                            >
+                              <a-select-option
+                                v-for="nomenclator in anhos"
+                                :key="nomenclator.id"
+                                :value="nomenclator.nombreTer"
+                              >
+                                {{ nomenclator.nombreTer }}
+                              </a-select-option>
+                            </a-select>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="Año de finalización"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.añoFinAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            v-if="action_modal !== 'detalles'"
+                            has-feedback
+                            label="Subtítulos"
+                            prop="subtitulosAud"
+                          >
+                            <a-select
+                              :getPopupContainer="
+                                (trigger) => trigger.parentNode
+                              "
+                              mode="multiple"
+                              :disabled="disabled"
+                              v-model="audiovisual_modal.subtitulosAud"
+                            >
+                              <a-select-option
+                                v-for="nomenclator in subtitulos"
+                                :key="nomenclator.id"
+                                :value="nomenclator.nombreTer"
+                              >
+                                {{ nomenclator.nombreTer }}
+                              </a-select-option>
+                            </a-select>
+                          </a-form-model-item>
+                          <a-form-model-item
+                            label="Subtítulos"
+                            v-if="action_modal === 'detalles'"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="audiovisual_modal.subtitulosAud"
+                            >
+                            </a-mentions>
+                          </a-form-model-item>
+                          <a-form-model-item v-if="action_modal !== 'detalles'">
+                            <a-checkbox
+                              :disabled="disabled"
+                              v-model="makingOfAud"
+                              :value="makingOfAud"
+                              style="margin-top: 20px"
+                            >
+                              ¿Tiene Making-Of?
+                            </a-checkbox>
+                          </a-form-model-item>
+                          <a-form-model-item style="margin-top: 20px" v-else>
+                            <i
+                              class="fa fa-check-square-o hidden-xs"
+                              v-if="audiovisual.makingOfAud === 1"
+                            />
+                            <i class="fa fa-square-o" v-else />
+                            ¿Activo en el Catálogo de Bismusic?
+                          </a-form-model-item>
+                        </a-col>
+                      </a-row>
+                    </a-col>
+                    <a-col span="11" style="float: right">
+                      <div class="section-title">
+                        <h4>Datos del Autor</h4>
+                      </div>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        prop="dueñoDerchAud"
+                        has-feedback
+                        label="Nombre y Apellidos"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          v-model="audiovisual_modal.dueñoDerchAud"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Nombre y Apellidos"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="audiovisual_modal.dueñoDerchAud"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        prop="nacioDueñoDerchAud"
+                        has-feedback
+                        label="Nacionalidad del Dueño de los Derechos del Audiovisual"
+                      >
+                        <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          :disabled="disabled"
+                          v-model="audiovisual_modal.nacioDueñoDerchAud"
+                        >
+                          <a-select-option
+                            v-for="nomenclator in nacionalidades"
+                            :key="nomenclator.id"
+                            :value="nomenclator.nombreTer"
+                          >
+                            {{ nomenclator.nombreTer }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Nacionalidad del dueño de los derechos de audiovisual"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="audiovisual_modal.nacioDueñoDerchAud"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Derechos sobre el Audiovisual"
+                        prop="derechosAud"
+                      >
+                        <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          :disabled="disabled"
+                          v-model="audiovisual_modal.derechosAud"
+                        >
+                          <a-select-option
+                            v-for="nomenclator in nacionalidades"
+                            :key="nomenclator.id"
+                            :value="nomenclator.nombreTer"
+                          >
+                            {{ nomenclator.nombreTer }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Derechos sobre el Audiovisual"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="audiovisual_modal.derechosAud"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <div class="section-title">
+                        <h4>Datos Descripciones</h4>
+                      </div>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Descripción en español del Audiovisual"
+                        prop="descripEspAud"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 120px"
+                          v-model="audiovisual_modal.descripEspAud"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en español del Audiovisual"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <div class="description">
+                          <a-mentions
+                            readonly
+                            :placeholder="audiovisual_modal.descripEspAud"
+                          >
+                          </a-mentions>
                         </div>
-                        <a-form-model-item
-                          label="Etiquetas"
-                          v-if="action_modal === 'detalles'"
-                        >
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Descripción en inglés del Audiovisual"
+                        prop="descripIngAud"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 120px"
+                          v-model="audiovisual_modal.descripIngAud"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en inglés del Audiovisual"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <div class="description">
                           <a-mentions
                             readonly
-                            :placeholder="audiovisual_modal.etiquetasAud"
+                            :placeholder="audiovisual_modal.descripIngAud"
                           >
                           </a-mentions>
-                        </a-form-model-item>
-                      </a-col>
-                      <a-col span="11" style="float: right">
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          prop="tituloAud"
-                          has-feedback
-                          label="Título"
-                        >
-                          <a-input
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.tituloAud"
-                          />
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Título"
-                          v-if="action_modal === 'detalles'"
-                        >
+                        </div>
+                      </a-form-model-item>
+                    </a-col>
+                  </a-row>
+                  <a-row style="margin-top: 20px">
+                    <a-col span="11">
+                      <a-row>
+                        <a-col span="24">
+                          <div class="section-title">
+                            <h4>Realizadores</h4>
+                          </div>
+                        </a-col>
+                      </a-row>
+                      <a-row v-if="action_modal !== 'detalles'">
+                        <a-col span="24">
                           <a-mentions
                             readonly
-                            :placeholder="audiovisual_modal.tituloAud"
+                            v-if="
+                              $store.getters.getRealizadoresFormGetters
+                                .length === 0
+                            "
+                          ></a-mentions>
+                          <a-form-model-item
+                            v-for="(realizador, index) in $store.getters
+                              .getRealizadoresFormGetters"
+                            :key="realizador.id"
+                            v-bind="index === 0 ? formItemLayout : {}"
                           >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          prop="duracionAud"
-                          has-feedback
-                          label="Duración"
-                        >
-                          <a-time-picker
-                            :default-open-value="moment('00:00:00', 'HH:mm:ss')"
-                            :disabled="disabled"
-                            :valueFormat="'HH:mm:ss'"
-                            placeholder="00:00"
-                            v-model="audiovisual_modal.duracionAud"
-                          />
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Duración"
-                          v-if="action_modal === 'detalles'"
-                        >
+                            <a-row>
+                              <a-col span="22">
+                                <a-mentions
+                                  style="margin-top: 3px"
+                                  readonly
+                                  :placeholder="
+                                    realizador.nombreApellidosRealiz
+                                  "
+                                ></a-mentions>
+                              </a-col>
+                              <a-col span="2" style="float: right">
+                                <a-button
+                                  class="dynamic-delete-button"
+                                  @click="remove_realizador(realizador)"
+                                >
+                                  <small>
+                                    <b style="vertical-align: top"> x </b>
+                                  </small>
+                                </a-button>
+                              </a-col>
+                            </a-row>
+                          </a-form-model-item>
+                          <a-row style="margin-top: 20px">
+                            <a-col span="24">
+                              <div class="section-title">
+                                <h5>Selector de Realizadores</h5>
+                              </div>
+                              <a-form-model
+                                ref="formularioAgregarRealizador"
+                                :layout="'horizontal'"
+                                :model="audiovisual_modal"
+                              >
+                                <a-form-model-item>
+                                  <a-select
+                                    placeholder="Nombre completo"
+                                    option-filter-prop="children"
+                                    :filter-option="filter_option"
+                                    show-search
+                                    v-model="audiovisual_modal.realizadores"
+                                    :disabled="disabled"
+                                  >
+                                    <a-select-option
+                                      v-for="realizador in $store.getters
+                                        .getAllRealizadoresFormGetters"
+                                      :key="realizador.id"
+                                      :value="realizador.id"
+                                    >
+                                      {{ realizador.nombreApellidosRealiz }}
+                                    </a-select-option>
+                                  </a-select>
+                                </a-form-model-item>
+                                <a-row>
+                                  <a-col span="12">
+                                    <a-form-model-item v-bind="formItemLayout">
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="add_realizador"
+                                      >
+                                        <a-icon type="plus" />
+                                        Agregar Realizador
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                  <a-col span="12">
+                                    <a-form-model-item
+                                      v-bind="formItemLayout"
+                                      style="float: right"
+                                    >
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="new_realizador"
+                                      >
+                                        <a-icon type="plus" />
+                                        Crear Realizador
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                </a-row>
+                              </a-form-model>
+                            </a-col>
+                          </a-row>
+                        </a-col>
+                      </a-row>
+                      <a-row v-else>
+                        <a-col span="24">
+                          <a-form-model-item
+                            v-for="(realizador, index) in $store.getters
+                              .getRealizadoresFormGetters"
+                            :key="realizador.id"
+                            v-bind="index === 0 ? formItemLayout : {}"
+                          >
+                            <a-mentions
+                              readonly
+                              :placeholder="realizador.nombreApellidosRealiz"
+                            ></a-mentions>
+                          </a-form-model-item>
+                        </a-col>
+                      </a-row>
+                    </a-col>
+                    <a-col span="11" style="float: right">
+                      <a-row>
+                        <a-col span="24">
+                          <div class="section-title">
+                            <h4>Entrevistados</h4>
+                          </div>
+                        </a-col>
+                      </a-row>
+                      <a-row v-if="action_modal !== 'detalles'">
+                        <a-col span="24">
                           <a-mentions
                             readonly
-                            :placeholder="audiovisual_modal.duracionAud"
+                            v-if="
+                              $store.getters.getEntrevistadosFormGetters
+                                .length === 0
+                            "
+                          ></a-mentions>
+                          <a-form-model-item
+                            v-for="(entrevistado, index) in $store.getters
+                              .getEntrevistadosFormGetters"
+                            :key="entrevistado.id"
+                            v-bind="index === 0 ? formItemLayout : {}"
                           >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Año de finalización"
-                          prop="añoFinAud"
-                        >
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            option-filter-prop="children"
-                            :filter-option="filter_option"
-                            show-search
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.añoFinAud"
+                            <a-row>
+                              <a-col span="22">
+                                <a-mentions
+                                  readonly
+                                  style="margin-top: 3px"
+                                  :placeholder="
+                                    entrevistado.nombreApellidosEntrv
+                                  "
+                                ></a-mentions>
+                              </a-col>
+                              <a-col span="2" style="float: right">
+                                <a-button
+                                  class="dynamic-delete-button"
+                                  @click="remove_entrevistado(entrevistado)"
+                                >
+                                  <small>
+                                    <b style="vertical-align: top"> x </b>
+                                  </small>
+                                </a-button>
+                              </a-col>
+                            </a-row>
+                          </a-form-model-item>
+                          <a-row style="margin-top: 20px">
+                            <a-col span="24">
+                              <div class="section-title">
+                                <h5>Selector de Entrevistados</h5>
+                              </div>
+                              <a-form-model
+                                ref="formularioAgregarEntrevistado"
+                                :layout="'horizontal'"
+                                :model="audiovisual_modal"
+                              >
+                                <a-form-model-item has-feedback>
+                                  <a-select
+                                    placeholder="Nombre completo"
+                                    option-filter-prop="children"
+                                    :filter-option="filter_option"
+                                    show-search
+                                    v-model="audiovisual_modal.entrevistados"
+                                    :disabled="disabled"
+                                  >
+                                    <a-select-option
+                                      v-for="entrevistado in $store.getters
+                                        .getAllEntrevistadosFormGetters"
+                                      :key="entrevistado.id"
+                                      :value="entrevistado.id"
+                                    >
+                                      {{ entrevistado.nombreApellidosEntrv }}
+                                    </a-select-option>
+                                  </a-select>
+                                </a-form-model-item>
+                                <a-row>
+                                  <a-col span="12">
+                                    <a-form-model-item v-bind="formItemLayout">
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="add_entrevistado"
+                                      >
+                                        <a-icon type="plus" />
+                                        Agregar Entrevistado
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                  <a-col span="12">
+                                    <a-form-model-item
+                                      v-bind="formItemLayout"
+                                      style="float: right"
+                                    >
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="new_entrevistado"
+                                      >
+                                        <a-icon type="plus" />
+                                        Crear Entrevistado
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                </a-row>
+                              </a-form-model>
+                            </a-col>
+                          </a-row>
+                        </a-col>
+                      </a-row>
+                      <a-row v-else>
+                        <a-col span="24">
+                          <a-form-model-item
+                            v-for="(entrevistado, index) in $store.getters
+                              .getEntrevistadosFormGetters"
+                            :key="entrevistado.id"
+                            v-bind="index === 0 ? formItemLayout : {}"
                           >
-                            <a-select-option
-                              v-for="nomenclator in anhos"
-                              :key="nomenclator.id"
-                              :value="nomenclator.nombreTer"
-                            >
-                              {{ nomenclator.nombreTer }}
-                            </a-select-option>
-                          </a-select>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Año de finalización"
-                          v-if="action_modal === 'detalles'"
-                        >
+                            <a-mentions
+                              readonly
+                              :placeholder="entrevistado.nombreApellidosEntrv"
+                            ></a-mentions>
+                          </a-form-model-item>
+                        </a-col>
+                      </a-row>
+                    </a-col>
+                  </a-row>
+                  <a-row style="margin-top: 20px">
+                    <a-col span="11">
+                      <a-row>
+                        <a-col span="24">
+                          <div class="section-title">
+                            <h4>Autores</h4>
+                          </div>
+                        </a-col>
+                      </a-row>
+                      <a-row v-if="action_modal === 'crear'">
+                        <a-col span="24">
                           <a-mentions
                             readonly
-                            :placeholder="audiovisual_modal.añoFinAud"
+                            v-if="
+                              $store.getters.getAutoresFormGetters.length === 0
+                            "
+                          ></a-mentions>
+                          <a-form-model-item
+                            v-for="(autor, index) in $store.getters
+                              .getAutoresFormGetters"
+                            :key="autor.id"
+                            v-bind="index === 0 ? formItemLayout : {}"
                           >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          v-if="action_modal !== 'detalles'"
-                          has-feedback
-                          label="Subtítulos"
-                          prop="subtitulosAud"
-                        >
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            mode="multiple"
-                            :disabled="disabled"
-                            v-model="audiovisual_modal.subtitulosAud"
-                          >
-                            <a-select-option
-                              v-for="nomenclator in subtitulos"
-                              :key="nomenclator.id"
-                              :value="nomenclator.nombreTer"
-                            >
-                              {{ nomenclator.nombreTer }}
-                            </a-select-option>
-                          </a-select>
-                        </a-form-model-item>
-                        <a-form-model-item
-                          label="Subtítulos"
-                          v-if="action_modal === 'detalles'"
-                        >
+                            <a-row>
+                              <a-col span="22">
+                                <a-mentions
+                                  style="margin-top: 3px"
+                                  readonly
+                                  :placeholder="
+                                    autor.nombresAutr +
+                                      ' ' +
+                                      autor.apellidosAutr
+                                  "
+                                ></a-mentions>
+                              </a-col>
+                              <a-col span="2" style="float: right">
+                                <a-button
+                                  class="dynamic-delete-button"
+                                  @click="remove_autor(autor)"
+                                >
+                                  <small>
+                                    <b style="vertical-align: top"> x </b>
+                                  </small>
+                                </a-button>
+                              </a-col>
+                            </a-row>
+                          </a-form-model-item>
+                          <a-row style="margin-top: 20px">
+                            <a-col span="24">
+                              <div class="section-title">
+                                <h5>Selector de Autores</h5>
+                              </div>
+                              <a-form-model
+                                ref="formularioAgregarAutor"
+                                :layout="'horizontal'"
+                                :model="audiovisual_modal"
+                              >
+                                <a-form-model-item>
+                                  <a-select
+                                    placeholder="Nombre completo"
+                                    option-filter-prop="children"
+                                    :filter-option="filter_option"
+                                    show-search
+                                    v-model="audiovisual_modal.autores"
+                                    :disabled="disabled"
+                                  >
+                                    <a-select-option
+                                      v-for="autor in $store.getters
+                                        .getAllAutoresFormGetters"
+                                      :key="autor.id"
+                                      :value="autor.id"
+                                    >
+                                      {{
+                                        autor.nombresAutr +
+                                          " " +
+                                          autor.apellidosAutr
+                                      }}
+                                    </a-select-option>
+                                  </a-select>
+                                </a-form-model-item>
+                                <a-row>
+                                  <a-col span="12">
+                                    <a-form-model-item v-bind="formItemLayout">
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="add_autor"
+                                      >
+                                        <a-icon type="plus" />
+                                        Agregar Autor
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                  <a-col span="12">
+                                    <a-form-model-item
+                                      v-bind="formItemLayout"
+                                      style="float: right"
+                                    >
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="new_autor"
+                                      >
+                                        <a-icon type="plus" />
+                                        Crear Autor
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                </a-row>
+                              </a-form-model>
+                            </a-col>
+                          </a-row>
+                        </a-col>
+                      </a-row>
+                    </a-col>
+                    <a-col span="11" style="float: right">
+                      <a-row>
+                        <a-col span="24">
+                          <div class="section-title">
+                            <h4>Interpretes</h4>
+                          </div>
+                        </a-col>
+                      </a-row>
+                      <a-row v-if="action_modal !== 'detalles'">
+                        <a-col span="24">
                           <a-mentions
                             readonly
-                            :placeholder="audiovisual_modal.subtitulosAud"
+                            v-if="
+                              $store.getters.getInterpretesFormGetters
+                                .length === 0
+                            "
+                          ></a-mentions>
+                          <a-form-model-item
+                            v-for="(interprete, index) in $store.getters
+                              .getInterpretesFormGetters"
+                            :key="interprete.id"
+                            v-bind="index === 0 ? formItemLayout : {}"
                           >
-                          </a-mentions>
-                        </a-form-model-item>
-                        <a-form-model-item v-if="action_modal !== 'detalles'">
-                          <a-checkbox
-                            :disabled="disabled"
-                            v-model="makingOfAud"
-                            :value="makingOfAud"
-                            style="margin-top: 20px"
-                          >
-                            ¿Tiene Making-Of?
-                          </a-checkbox>
-                        </a-form-model-item>
-                        <a-form-model-item style="margin-top: 20px" v-else>
-                          <i
-                            class="fa fa-check-square-o hidden-xs"
-                            v-if="audiovisual.makingOfAud === 1"
-                          />
-                          <i class="fa fa-square-o" v-else />
-                          ¿Activo en el Catálogo de Bismusic?
-                        </a-form-model-item>
-                      </a-col>
-                    </a-row>
-                  </a-col>
-                  <a-col span="11" style="float: right">
-                    <div class="section-title">
-                      <h4>Datos del Autor</h4>
-                    </div>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      prop="dueñoDerchAud"
-                      has-feedback
-                      label="Nombre y Apellidos"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        v-model="audiovisual_modal.dueñoDerchAud"
-                      />
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Nombre y Apellidos"
-                      v-if="action_modal === 'detalles'"
-                    >
-                      <a-mentions
-                        readonly
-                        :placeholder="audiovisual_modal.dueñoDerchAud"
-                      >
-                      </a-mentions>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      prop="nacioDueñoDerchAud"
-                      has-feedback
-                      label="Nacionalidad del Dueño de los Derechos del Audiovisual"
-                    >
-                      <a-select
-                        :getPopupContainer="(trigger) => trigger.parentNode"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
-                        :disabled="disabled"
-                        v-model="audiovisual_modal.nacioDueñoDerchAud"
-                      >
-                        <a-select-option
-                          v-for="nomenclator in nacionalidades"
-                          :key="nomenclator.id"
-                          :value="nomenclator.nombreTer"
-                        >
-                          {{ nomenclator.nombreTer }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Nacionalidad del dueño de los derechos de audiovisual"
-                      v-if="action_modal === 'detalles'"
-                    >
-                      <a-mentions
-                        readonly
-                        :placeholder="audiovisual_modal.nacioDueñoDerchAud"
-                      >
-                      </a-mentions>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      has-feedback
-                      label="Derechos sobre el Audiovisual"
-                      prop="derechosAud"
-                    >
-                      <a-select
-                        :getPopupContainer="(trigger) => trigger.parentNode"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
-                        :disabled="disabled"
-                        v-model="audiovisual_modal.derechosAud"
-                      >
-                        <a-select-option
-                          v-for="nomenclator in nacionalidades"
-                          :key="nomenclator.id"
-                          :value="nomenclator.nombreTer"
-                        >
-                          {{ nomenclator.nombreTer }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Derechos sobre el Audiovisual"
-                      v-if="action_modal === 'detalles'"
-                    >
-                      <a-mentions
-                        readonly
-                        :placeholder="audiovisual_modal.derechosAud"
-                      >
-                      </a-mentions>
-                    </a-form-model-item>
-                    <div class="section-title">
-                      <h4>Datos Descripciones</h4>
-                    </div>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      has-feedback
-                      label="Descripción en español del Audiovisual"
-                      prop="descripEspAud"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        style="width: 100%; height: 150px"
-                        v-model="audiovisual_modal.descripEspAud"
-                        type="textarea"
-                      />
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Descripción en español del Audiovisual"
-                      v-if="action_modal === 'detalles'"
-                    >
-                      <div class="description">
-                        <a-mentions
-                          readonly
-                          :placeholder="audiovisual_modal.descripEspAud"
-                        >
-                        </a-mentions>
-                      </div>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      has-feedback
-                      label="Descripción en inglés del Audiovisual"
-                      prop="descripIngAud"
-                    >
-                      <a-input
-                        :disabled="disabled"
-                        style="width: 100%; height: 150px"
-                        v-model="audiovisual_modal.descripIngAud"
-                        type="textarea"
-                      />
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Descripción en inglés del Audiovisual"
-                      v-if="action_modal === 'detalles'"
-                    >
-                      <div class="description">
-                        <a-mentions
-                          readonly
-                          :placeholder="audiovisual_modal.descripIngAud"
-                        >
-                        </a-mentions>
-                      </div>
-                    </a-form-model-item>
-                  </a-col>
+                            <a-row>
+                              <a-col span="11">
+                                <div class="ant-form-item-label">
+                                  <label>Nombre</label>
+                                </div>
+                                <a-mentions
+                                  readonly
+                                  style="margin-top: 3px"
+                                  :placeholder="interprete.nombreInterp"
+                                ></a-mentions>
+                              </a-col>
+                              <a-col span="10" style="margin-left: 10px">
+                                <div class="ant-form-item-label">
+                                  <label>Roles</label>
+                                </div>
+                                <a-select
+                                  :getPopupContainer="
+                                    (trigger) => trigger.parentNode
+                                  "
+                                  :disabled="disabled"
+                                  mode="multiple"
+                                  v-model="interprete.role"
+                                  class="interpretes-select"
+                                >
+                                  <a-select-option
+                                    v-for="rol in roles_interp"
+                                    :key="rol.id"
+                                    :value="rol.nombreTer"
+                                  >
+                                    {{ rol.nombreTer }}
+                                  </a-select-option>
+                                </a-select>
+                              </a-col>
+                              <a-col
+                                span="2"
+                                style="float: right; margin-top: 40px"
+                              >
+                                <a-button
+                                  class="dynamic-delete-button"
+                                  @click="remove_interprete(interprete)"
+                                >
+                                  <small>
+                                    <b style="vertical-align: top"> x </b>
+                                  </small>
+                                </a-button>
+                              </a-col>
+                            </a-row>
+                          </a-form-model-item>
+                          <a-row style="margin-top: 20px">
+                            <a-col span="24">
+                              <div class="section-title">
+                                <h5>Selector de Interpretes</h5>
+                              </div>
+                              <a-form-model
+                                ref="formularioAgregarInterprete"
+                                :layout="'horizontal'"
+                                :model="audiovisual_modal"
+                              >
+                                <a-form-model-item has-feedback>
+                                  <a-select
+                                    placeholder="Nombre completo"
+                                    option-filter-prop="children"
+                                    :filter-option="filter_option"
+                                    show-search
+                                    v-model="audiovisual_modal.interpretes"
+                                    :disabled="disabled"
+                                  >
+                                    <a-select-option
+                                      v-for="interprete in $store.getters
+                                        .getAllInterpretesFormGetters"
+                                      :key="interprete.id"
+                                      :value="interprete.id"
+                                    >
+                                      {{ interprete.nombreInterp }}
+                                    </a-select-option>
+                                  </a-select>
+                                </a-form-model-item>
+                                <a-row>
+                                  <a-col span="12">
+                                    <a-form-model-item v-bind="formItemLayout">
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="add_interprete"
+                                      >
+                                        <a-icon type="plus" />
+                                        Agregar Interprete
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                  <a-col span="12">
+                                    <a-form-model-item
+                                      v-bind="formItemLayout"
+                                      style="float: right"
+                                    >
+                                      <a-button
+                                        :disabled="disabled"
+                                        style="
+                              color: white;
+                              background-color: rgb(45, 171, 229) !important;
+                            "
+                                        @click="new_interprete"
+                                      >
+                                        <a-icon type="plus" />
+                                        Crear Interprete
+                                      </a-button>
+                                    </a-form-model-item>
+                                  </a-col>
+                                </a-row>
+                              </a-form-model>
+                            </a-col>
+                          </a-row>
+                        </a-col>
+                      </a-row>
+                    </a-col>
+                  </a-row>
                 </a-form-model>
               </div>
             </a-spin>
@@ -1042,12 +1606,40 @@
         </a-tab-pane>
       </a-tabs>
     </a-modal>
+    <modal_management_realizadores
+      v-if="visible_management_realizador"
+      :action="action_management_realizadores"
+      @close_modal="visible_management_realizador = $event"
+      :realizadores_list="$store.getters.getAllRealizadoresStaticsFormGetters"
+    />
+    <modal_management_entrevistados
+      v-if="visible_management_entrevistado"
+      :action="action_management_entrevistados"
+      @close_modal="visible_management_entrevistado = $event"
+      :entrevistados_list="$store.getters.getAllEntrevistadosStaticsFormGetters"
+    />
+    <modal_management_autores
+      v-if="visible_management_autor"
+      :action="action_management_autores"
+      @close_modal="visible_management_autor = $event"
+      :autors_list="$store.getters.getAllAutoresStaticsFormGetters"
+    />
+    <modal_management_interpretes
+      v-if="visible_management_interprete"
+      :action="action_management_interpretes"
+      @close_modal="visible_management_interprete = $event"
+      :interp_list="$store.getters.getAllInterpretesStaticsFormGetters"
+    />
   </div>
 </template>
 
 <script>
 import moment from "../../../../../node_modules/moment";
 import axios from "../../../config/axios/axios";
+import modal_management_realizadores from "../Realizador/Modal_Gestionar_Realizador";
+import modal_management_entrevistados from "../Entrevistado/Modal_Gestionar_Entrevistado";
+import modal_management_autores from "../Artistas/Autor/Modal_Gestionar_Autor";
+import modal_management_interpretes from "../Artistas/Interprete/Modal_Gestionar_Interprete";
 export default {
   props: ["action", "audiovisual", "audiovisuals_list"],
   data() {
@@ -1088,6 +1680,10 @@ export default {
       }
     };
     return {
+      action_management_entrevistados: "crear_entrevistado",
+      action_management_realizadores: "crear_realizador",
+      action_management_autores: "crear_autor",
+      action_management_interpretes: "crear_interprete",
       relation: "",
       tab_2: true,
       tab_3: true,
@@ -1136,6 +1732,17 @@ export default {
       anhoRegistro: "",
       identificador: "",
       codig_to_isrc: false,
+      visible_management_entrevistado: false,
+      visible_management_realizador: false,
+      visible_management_autor: false,
+      visible_management_interprete: false,
+      roles_interp: [],
+      formItemLayout: {
+        wrapperCol: {
+          xs: { span: 24, offset: 0 },
+          sm: { span: 20, offset: 4 },
+        },
+      },
       rules: {
         codigAud: [
           {
@@ -1443,6 +2050,100 @@ export default {
         if (this.$refs.general_form !== undefined) {
           this.$refs.general_form.resetFields();
         }
+        if (
+          this.$store.getters.getCreatedRealizadoresFormGetters.length !== 0
+        ) {
+          for (
+            let index = 0;
+            index <
+            this.$store.getters.getCreatedRealizadoresFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `realizadores/eliminar/${this.$store.getters.getCreatedRealizadoresFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        if (
+          this.$store.getters.getCreatedEntrevistadosFormGetters.length !== 0
+        ) {
+          for (
+            let index = 0;
+            index <
+            this.$store.getters.getCreatedEntrevistadosFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `entrevistados/eliminar/${this.$store.getters.getCreatedEntrevistadosFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        if (this.$store.getters.getCreatedAutoresFormGetters.length !== 0) {
+          for (
+            let index = 0;
+            index < this.$store.getters.getCreatedAutoresFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `autores/eliminar/${this.$store.getters.getCreatedAutoresFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        if (this.$store.getters.getCreatedInterpretesFormGetters.length !== 0) {
+          for (
+            let index = 0;
+            index < this.$store.getters.getCreatedInterpretesFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `interpretes/eliminar/${this.$store.getters.getCreatedInterpretesFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        this.$store.state["realizadores"] = [];
+        this.$store.state["created_realizadores"] = [];
+        this.$store.state["all_realizadores"] = [];
+        this.$store.state["entrevistados"] = [];
+        this.$store.state["created_entrevistados"] = [];
+        this.$store.state["all_entrevistados"] = [];
+        this.$store.state["autores"] = [];
+        this.$store.state["created_autores"] = [];
+        this.$store.state["all_autores"] = [];
+        this.$store.state["interpretes"] = [];
+        this.$store.state["created_interpretes"] = [];
+        this.$store.state["all_interpretes"] = [];
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;
@@ -1532,6 +2233,38 @@ export default {
               },
             })
             .then((response) => {
+              axios
+                .post("/audiovisuales/realizadores", {
+                  realizadores: this.getRealizadoresID(),
+                  id: response.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["realizadores"] = [];
+                  this.$store.state["all_realizadores_statics"] = [];
+                  this.$store.state["all_realizadores"] = [];
+                  this.$store.state["created_realizadores"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
+              axios
+                .post("/audiovisuales/entrevistados", {
+                  entrevistados: this.getEntrevistadosID(),
+                  id: response.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["entrevistados"] = [];
+                  this.$store.state["all_entrevistados_statics"] = [];
+                  this.$store.state["all_entrevistados"] = [];
+                  this.$store.state["created_entrevistados"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
               this.text_button = "Editar";
               this.spinning = false;
               this.waiting = false;
@@ -1574,6 +2307,70 @@ export default {
               },
             })
             .then((res) => {
+              axios
+                .post("/audiovisuales/realizadores", {
+                  realizadores: this.getRealizadoresID(),
+                  id: res.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["realizadores"] = [];
+                  this.$store.state["all_realizadores_statics"] = [];
+                  this.$store.state["all_realizadores"] = [];
+                  this.$store.state["created_realizadores"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
+              axios
+                .post("/audiovisuales/entrevistados", {
+                  entrevistados: this.getEntrevistadosID(),
+                  id: res.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["entrevistados"] = [];
+                  this.$store.state["all_entrevistados_statics"] = [];
+                  this.$store.state["all_entrevistados"] = [];
+                  this.$store.state["created_entrevistados"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
+              axios
+                .post("/audiovisuales/autores", {
+                  autores: this.getAutoresID(),
+                  id: res.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["autores"] = [];
+                  this.$store.state["all_autores_statics"] = [];
+                  this.$store.state["all_autores"] = [];
+                  this.$store.state["created_autores"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
+              axios
+                .post("/audiovisuales/interpretes", {
+                  interpretes: this.getInterpretesID(),
+                  id: res.data.id,
+                })
+                .then((res) => {
+                  this.$store.state["interpretes"] = [];
+                  this.$store.state["all_interpretes_statics"] = [];
+                  this.$store.state["all_interpretes"] = [];
+                  this.$store.state["created_interpretes"] = [];
+                })
+                .catch((error) => {
+                  this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                    timeout: 2000,
+                  });
+                });
               this.text_button = "Crear";
               this.spinning = false;
               this.waiting = false;
@@ -1901,6 +2698,12 @@ export default {
             });
         }
         this.genero_pivot = this.audiovisual_modal.generoAud;
+        this.$store.state["realizadores"] = this.audiovisual_modal.realizadores;
+        this.$store.state[
+          "entrevistados"
+        ] = this.audiovisual_modal.entrevistados;
+        this.audiovisual_modal.realizadores = undefined;
+        this.audiovisual_modal.entrevistados = undefined;
       } else if (this.action_modal === "detalles") {
         this.action_cancel_title = "¿Desea cerrar la vista de detalles?";
         this.action_title = "¿Desea guardar los cambios en el Audiovisual?";
@@ -1940,6 +2743,10 @@ export default {
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
         }
+        this.$store.state["realizadores"] = this.audiovisual_modal.realizadores;
+        this.$store.state[
+          "entrevistados"
+        ] = this.audiovisual_modal.entrevistados;
       } else {
         this.audiovisual_modal = { ...this.audiovisual };
         this.file_list.push({
@@ -2000,6 +2807,74 @@ export default {
           console.log(error);
         });
       axios
+        .post("/realizadores/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              this.$store.state["all_realizadores"].push(element);
+              this.$store.state["all_realizadores_statics"].push(element);
+            }
+          });
+          if (this.action_modal === "editar") {
+            this.load_all_free_realizadores();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
+        .post("/entrevistados/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              if (this.action_modal === "crear") {
+                this.$store.state["all_entrevistados"].push(element);
+              }
+              this.$store.state["all_entrevistados_statics"].push(element);
+            }
+          });
+          if (this.action_modal === "editar") {
+            this.load_all_free_entrevistados();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
+        .post("/autores/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              if (this.action_modal === "crear") {
+                this.$store.state["all_autores"].push(element);
+              }
+              this.$store.state["all_autores_statics"].push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
+        .post("/interpretes/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              if (this.action_modal === "crear") {
+                this.$store.state["all_interpretes"].push(element);
+              }
+              this.$store.state["all_interpretes_statics"].push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
         .post("/audiovisuales/nomencladores")
         .then((response) => {
           this.list_nomenclators = response.data;
@@ -2010,12 +2885,229 @@ export default {
           this.idiomas = this.list_nomenclators[4][0];
           this.subtitulos = this.list_nomenclators[5][0];
           this.nacionalidades = this.list_nomenclators[6][0];
+          this.roles_interp = this.list_nomenclators[7][0];
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
             timeout: 2000,
           });
         });
+    },
+
+    add_realizador() {
+      if (this.audiovisual_modal.realizadores !== undefined) {
+        this.$store.state["realizadores"].push(
+          this.get_realizador(this.audiovisual_modal.realizadores).realizador
+        );
+        this.$store.state["all_realizadores"].splice(
+          this.get_realizador(this.audiovisual_modal.realizadores).index,
+          1
+        );
+        this.audiovisual_modal.realizadores = undefined;
+      }
+    },
+
+    remove_realizador(item) {
+      let index = this.$store.getters.getRealizadoresFormGetters.indexOf(item);
+      this.$store.state["realizadores"].splice(index, 1);
+      this.$store.state["all_realizadores"].push(item);
+    },
+
+    add_entrevistado() {
+      if (this.audiovisual_modal.entrevistados !== undefined) {
+        this.$store.state["entrevistados"].push(
+          this.get_entrevistado(this.audiovisual_modal.entrevistados)
+            .entrevistado
+        );
+        this.$store.state["all_entrevistados"].splice(
+          this.get_entrevistado(this.audiovisual_modal.entrevistados).index,
+          1
+        );
+        this.audiovisual_modal.entrevistados = undefined;
+      }
+    },
+
+    remove_entrevistado(item) {
+      let index = this.$store.getters.getEntrevistadosFormGetters.indexOf(item);
+      this.$store.state["entrevistados"].splice(index, 1);
+      this.$store.state["all_entrevistados"].push(item);
+    },
+
+    add_autor() {
+      if (this.audiovisual_modal.autores !== undefined) {
+        this.$store.state["autores"].push(
+          this.get_autor(this.audiovisual_modal.autores).autor
+        );
+        this.$store.state["all_autores"].splice(
+          this.get_autor(this.audiovisual_modal.autores).index,
+          1
+        );
+        this.audiovisual_modal.autores = undefined;
+      }
+    },
+
+    remove_autor(item) {
+      let index = this.$store.getters.getAutoresFormGetters.indexOf(item);
+      this.$store.state["autores"].splice(index, 1);
+      this.$store.state["all_autores"].push(item);
+    },
+
+    add_interprete() {
+      if (this.audiovisual_modal.interpretes !== undefined) {
+        this.$store.state["interpretes"].push(
+          this.get_interprete(this.audiovisual_modal.interpretes).interprete
+        );
+        this.$store.state["all_interpretes"].splice(
+          this.get_interprete(this.audiovisual_modal.interpretes).index,
+          1
+        );
+        this.audiovisual_modal.interpretes = undefined;
+      }
+    },
+
+    remove_interprete(item) {
+      let index = this.$store.getters.getInterpretesFormGetters.indexOf(item);
+      this.$store.state["interpretes"].splice(index, 1);
+      this.$store.state["all_interpretes"].push(item);
+    },
+
+    new_realizador() {
+      this.visible_management_realizador = true;
+    },
+
+    get_realizador(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllRealizadoresFormGetters.length;
+        index++
+      ) {
+        if (
+          this.$store.getters.getAllRealizadoresFormGetters[index].id === id
+        ) {
+          return {
+            realizador: this.$store.getters.getAllRealizadoresFormGetters[
+              index
+            ],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
+
+    new_entrevistado() {
+      this.visible_management_entrevistado = true;
+    },
+
+    get_entrevistado(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllEntrevistadosFormGetters.length;
+        index++
+      ) {
+        if (
+          this.$store.getters.getAllEntrevistadosFormGetters[index].id === id
+        ) {
+          return {
+            entrevistado: this.$store.getters.getAllEntrevistadosFormGetters[
+              index
+            ],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
+
+    new_autor() {
+      this.visible_management_autor = true;
+    },
+
+    get_autor(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllAutoresFormGetters.length;
+        index++
+      ) {
+        if (this.$store.getters.getAllAutoresFormGetters[index].id === id) {
+          return {
+            autor: this.$store.getters.getAllAutoresFormGetters[index],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
+
+    new_interprete() {
+      this.visible_management_interprete = true;
+    },
+
+    get_interprete(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllInterpretesFormGetters.length;
+        index++
+      ) {
+        if (this.$store.getters.getAllInterpretesFormGetters[index].id === id) {
+          return {
+            interprete: this.$store.getters.getAllInterpretesFormGetters[index],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
+
+    getRealizadoresID() {
+      let answer = [];
+      let all_realizadores = this.$store.getters.getRealizadoresFormGetters;
+      for (let index = 0; index < all_realizadores.length; index++) {
+        answer.push(all_realizadores[index].id);
+      }
+      return answer;
+    },
+
+    getEntrevistadosID() {
+      let answer = [];
+      let all_entrevistados = this.$store.getters.getEntrevistadosFormGetters;
+      for (let index = 0; index < all_entrevistados.length; index++) {
+        answer.push(all_entrevistados[index].id);
+      }
+      return answer;
+    },
+
+    getAutoresID() {
+      let answer = [];
+      let all_autores = this.$store.getters.getAutoresFormGetters;
+      for (let index = 0; index < all_autores.length; index++) {
+        answer.push(all_autores[index].id);
+      }
+      return answer;
+    },
+
+    getInterpretesID() {
+      let answer = [];
+      let all_interpretes = this.$store.getters.getInterpretesFormGetters;
+      for (let index = 0; index < all_interpretes.length; index++) {
+        answer.push([
+          all_interpretes[index].id,
+          this.create_roles_string(all_interpretes[index].role),
+        ]);
+      }
+      return answer;
+    },
+
+    create_roles_string(array) {
+      let answer = "";
+      for (let index = 0; index < array.length; index++) {
+        if (index === 0) {
+          answer += array[index];
+        } else {
+          answer += "." + array[index];
+        }
+      }
+      return answer;
     },
 
     //Metodos para generar el codigo
@@ -2115,6 +3207,68 @@ export default {
       }
       return { isrc: isrc, code: code };
     },
+
+    load_all_free_realizadores() {
+      let all_realizadores = this.clone_arr(
+        this.$store.getters.getAllRealizadoresStaticsFormGetters
+      );
+      // let realizadores = [];
+      let temp = 0;
+      for (
+        let index = 0;
+        index < this.audiovisual.realizadores.length;
+        index++
+      ) {
+        temp = this.compare_arr_elements(
+          all_realizadores,
+          this.audiovisual.realizadores[index].id
+        );
+        all_realizadores.splice(temp, 1);
+      }
+      this.$store.state["all_realizadores"] = all_realizadores;
+    },
+
+    load_all_free_entrevistados() {
+      let all_entrevistados = this.clone_arr(
+        this.$store.getters.getAllEntrevistadosStaticsFormGetters
+      );
+      let temp = 0;
+      for (
+        let index = 0;
+        index < this.audiovisual.entrevistados.length;
+        index++
+      ) {
+        temp = this.compare_arr_elements(
+          all_entrevistados,
+          this.audiovisual.entrevistados[index].id
+        );
+        all_entrevistados.splice(temp, 1);
+      }
+      this.$store.state["all_entrevistados"] = all_entrevistados;
+    },
+
+    clone_arr(arr) {
+      let answer = [];
+      for (let index = 0; index < arr.length; index++) {
+        answer.push(arr[index]);
+      }
+      return answer;
+    },
+
+    compare_arr_elements(array, id) {
+      for (let index = 0; index < array.length; index++) {
+        if (array[index].id === id) {
+          return index;
+        }
+      }
+      return -1;
+    },
+  },
+  components: {
+    modal_management_realizadores,
+    modal_management_entrevistados,
+    modal_management_autores,
+    modal_management_interpretes,
   },
 };
 </script>
@@ -2140,7 +3294,7 @@ export default {
   height: 32px !important;
 }
 #modal_gestionar_audiovisuales .description textarea {
-  height: 150px !important;
+  height: 120px !important;
 }
 #small .ant-form-item-control {
   width: 70%;
@@ -2159,5 +3313,23 @@ export default {
 }
 #modal_gestionar_audiovisuales .duplicated-isrc-error {
   border-color: rgb(243, 107, 100) !important;
+}
+#modal_gestionar_audiovisuales .ant-col-sm-offset-4 {
+  margin-left: 0px !important;
+}
+#modal_gestionar_audiovisuales .dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  margin-left: 4px;
+  padding: 0 8px;
+  top: 2px;
+  font-size: 18px;
+  color: white;
+  background-color: rgb(243, 107, 100);
+  transition: all 0.3s;
+}
+
+#modal_gestionar_audiovisuales .ant-col-sm-20 {
+  width: 100%;
 }
 </style>

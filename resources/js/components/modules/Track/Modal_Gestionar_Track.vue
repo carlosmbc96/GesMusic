@@ -156,8 +156,8 @@
                     <a-row
                       v-if="
                         action_modal === 'crear' ||
-                        action_modal === 'crear_track' ||
-                        action_modal === 'crear_track_tabla_component'
+                          action_modal === 'crear_track' ||
+                          action_modal === 'crear_track_tabla_component'
                       "
                       style="margin-top: 31px"
                     >
@@ -618,6 +618,7 @@ export default {
       anhoRegistro: "",
       identificador: "",
       codigo: "",
+      oldDuration: "",
       rules: {
         codigPais: [
           {
@@ -835,6 +836,11 @@ export default {
       let form_data = this.prepare_create();
       if (this.action_modal === "editar") {
         this.text_button = "Editando...";
+        this.edit_duration_fong(
+          this.track_modal.fonogramas,
+          this.oldDuration,
+          this.track_modal.duracionTrk
+        );
         axios
           .post(`/tracks/editar`, form_data, {
             headers: {
@@ -1044,6 +1050,7 @@ export default {
           this.track.fonogramas_tracks.push(element.id);
         });
         this.track_modal = { ...this.track };
+        this.oldDuration = this.track_modal.duracionTrk;
         this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
         this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
         this.bonusTrk = this.track_modal.bonusTrk === 0 ? false : true;
@@ -1175,6 +1182,37 @@ export default {
         }
       }
       return true;
+    },
+
+    edit_duration_fong(fonogramas, oldDuration, currentDuration) {
+      if (oldDuration !== currentDuration) {
+        let durationFong;
+        let form_data = new FormData();
+        for (let i = 0; i < fonogramas.length; i++) {
+          durationFong = moment(fonogramas[i].duracionFong, "HH:mm:ss");
+          durationFong
+            .subtract(moment.duration(oldDuration))
+            .format("HH:mm:ss");
+          durationFong = moment(durationFong, "HH:mm:ss");
+          durationFong.add(moment.duration(currentDuration)).format("HH:mm:ss");
+          durationFong = moment(durationFong, "HH:mm:ss").format("HH:mm:ss");
+          form_data.append("id", fonogramas[i].id);
+          form_data.append("duracionFong", durationFong);
+          axios
+            .post(`/fonogramas/editarDuracion`, form_data, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((response) => {})
+            .catch((error) => {
+              this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                timeout: 2000,
+              });
+            });
+          form_data = new FormData();
+        }
+      }
     },
   },
 };

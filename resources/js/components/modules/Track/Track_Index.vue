@@ -390,7 +390,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 action: "",
                 position: "",
@@ -472,7 +472,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -493,7 +493,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -556,7 +556,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function (instance, toast) {
+                                    function(instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -577,7 +577,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function (instance, toast) {
+                          function(instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -637,7 +637,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function (axios) {
+            data: function(axios) {
               return {
                 data: {},
               };
@@ -699,6 +699,55 @@ export default {
                                 [
                                   "<button>Si</button>",
                                   (instance, toast) => {
+                                    let durationFong;
+                                    let fonogramas = this.data.fonogramas;
+                                    let form_data = new FormData();
+                                    for (
+                                      let i = 0;
+                                      i < fonogramas.length;
+                                      i++
+                                    ) {
+                                      durationFong = moment(
+                                        fonogramas[i].duracionFong,
+                                        "HH:mm:ss"
+                                      );
+                                      durationFong
+                                        .subtract(
+                                          moment.duration(this.data.duracionTrk)
+                                        )
+                                        .format("HH:mm:ss");
+                                      durationFong = moment(
+                                        durationFong,
+                                        "HH:mm:ss"
+																			).format("HH:mm:ss");
+                                      form_data.append("id", fonogramas[i].id);
+                                      form_data.append(
+                                        "duracionFong",
+                                        durationFong
+                                      );
+                                      axios
+                                        .post(
+                                          `/fonogramas/editarDuracion`,
+                                          form_data,
+                                          {
+                                            headers: {
+                                              "Content-Type":
+                                                "multipart/form-data",
+                                            },
+                                          }
+                                        )
+                                        .then((response) => {})
+                                        .catch((error) => {
+                                          this.$toast.error(
+                                            "Ha ocurrido un error",
+                                            "¡Error!",
+                                            {
+                                              timeout: 2000,
+                                            }
+                                          );
+																				});
+																				form_data = new FormData();
+                                    }
                                     this.$parent.$parent.$parent.change_spin();
                                     axios
                                       .delete(`tracks/eliminar/${this.data.id}`)
@@ -731,7 +780,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function (instance, toast) {
+                                  function(instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -752,7 +801,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function (instance, toast) {
+                        function(instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,

@@ -140,7 +140,7 @@ export default {
   transition: color 0.3s ease;
 }
 .slide-fade-enter-active {
-  transition: all 0.5s ease;
+  transition: all 1s ease;
 }
 .slide-fade-leave-active {
   transition: all 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);

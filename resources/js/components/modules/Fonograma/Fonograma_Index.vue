@@ -829,7 +829,7 @@ export default {
         this.change_spin();
       }
       axios
-        .post("/fonogramas/listar", { relations: ["productos"] })
+        .post("/fonogramas/listar", { relations: ["productos", "tracks"] })
         .then((response) => {
           this.fonograms_list = response.data;
           this.series_data = [];

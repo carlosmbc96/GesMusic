@@ -94,4 +94,9 @@ class Interprete extends Model
     }
     //SECCIÓN DE QUERY SCOPE
 
+		public function audiovisuales()
+    {
+        return $this->belongsToMany(Audiovisuales::class,'audiovisual_interprete'); // Un Audiovisual tiene muchos Realizadores
+    }
+
 }

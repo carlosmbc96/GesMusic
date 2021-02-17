@@ -62,6 +62,7 @@ Route::delete('/fonogramas/eliminar/{id}', 'FonogramaController@destroyFis'); //
 Route::post('/fonogramas/nomencladores', 'FonogramaController@nomenclators');
 Route::post('/fonogramas/tracks', 'FonogramaController@fonogramaTracks');
 Route::post('/fonogramas/actualizarRelacionesTrk', 'FonogramaController@actualizarRelacionesTrk');
+Route::post('/fonogramas/editarDuracion', 'FonogramaController@updateDuration');
 
 // RUTAS DEL RECURSO: AUDIOVISUAL
 Route::get('/audiovisuales/restaurar/{id}', 'AudiovisualController@restoreLog');
@@ -72,6 +73,10 @@ Route::delete('/audiovisuales/desactivar/{id}', 'AudiovisualController@destroyLo
 Route::delete('/audiovisuales/eliminar/{id}', 'AudiovisualController@destroyFis');
 Route::post('/audiovisuales/nomencladores', 'AudiovisualController@nomenclators');
 Route::post('/audiovisuales/actualizarRelacionesAud', 'AudiovisualController@actualizarRelacionesAud');
+Route::post('/audiovisuales/realizadores', 'AudiovisualController@realizadores');
+Route::post('/audiovisuales/entrevistados', 'AudiovisualController@entrevistados');
+Route::post('/audiovisuales/autores', 'AudiovisualController@autores');
+Route::post('/audiovisuales/interpretes', 'AudiovisualController@interpretes');
 
 // RUTAS DEL RECURSO: ENTREVISTADO
 //Route::resource('entrevistados','EntrevistadoController'); // Ruta que Lista todos los Recursos de la Clase Entrevistados

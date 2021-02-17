@@ -503,7 +503,7 @@ export default {
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
-            if (this.action_modal === "crear_entrevistad") {
+            if (this.action_modal === "crear_entrevistado") {
               let entrevistados = [];
               axios
                 .post("/entrevistados/listar")

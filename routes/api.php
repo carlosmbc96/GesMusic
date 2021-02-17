@@ -73,6 +73,10 @@ Route::delete('/audiovisuales/desactivar/{id}', 'AudiovisualController@destroyLo
 Route::delete('/audiovisuales/eliminar/{id}', 'AudiovisualController@destroyFis');
 Route::post('/audiovisuales/nomencladores', 'AudiovisualController@nomenclators');
 Route::post('/audiovisuales/actualizarRelacionesAud', 'AudiovisualController@actualizarRelacionesAud');
+Route::post('/audiovisuales/realizadores', 'AudiovisualController@realizadores');
+Route::post('/audiovisuales/entrevistados', 'AudiovisualController@entrevistados');
+Route::post('/audiovisuales/autores', 'AudiovisualController@autores');
+Route::post('/audiovisuales/interpretes', 'AudiovisualController@interpretes');
 
 // RUTAS DEL RECURSO: ENTREVISTADO
 //Route::resource('entrevistados','EntrevistadoController'); // Ruta que Lista todos los Recursos de la Clase Entrevistados

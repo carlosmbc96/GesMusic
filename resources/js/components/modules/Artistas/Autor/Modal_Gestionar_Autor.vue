@@ -122,7 +122,7 @@
                   </a-col>
                   <a-col span="6">
                     <a-form-model-item
-                      v-if="action_modal === 'crear'"
+                      v-if="action_modal === 'crear' || action_modal === 'crear_autor'"
                       :validate-status="show_error"
                       prop="codigAutr"
                       has-feedback
@@ -157,7 +157,7 @@
                       </a-mentions>
                     </a-form-model-item>
                     <a-form-model-item
-                      v-if="action_modal === 'crear'"
+                      v-if="action_modal === 'crear' || action_modal === 'crear_autor'"
                       :validate-status="show_error"
                       prop="ciAutr"
                       has-feedback
@@ -500,7 +500,7 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear") {
+    if (this.action_modal === "crear" || this.action_modal === "crear_autor") {
       this.codigo = this.generar_codigo(this.autors_list);
     }
   },
@@ -594,6 +594,31 @@ export default {
             },
           })
           .then((res) => {
+						if (this.action_modal = "crear_autor") {
+							let autores = [];
+              axios
+                .post("/autores/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      autores.push(element);
+                    }
+                  });
+                  this.$store.state["autores"].push(
+                    autores[autores.length - 1]
+                  );
+                  this.$store.state["created_autores"].push(
+                    autores[autores.length - 1]
+                  );
+                  this.$store.state["all_autores_statics"].push(
+                    autores[autores.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+						}
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;

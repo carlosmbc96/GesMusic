@@ -82,7 +82,7 @@
               <a-row>
                 <a-col span="12">
                   <a-form-model-item
-                    v-if="action_modal === 'crear'"
+                    v-if="action_modal === 'crear' || action_modal === 'crear_interprete'"
                     :validate-status="show_error"
                     prop="codigInterp"
                     has-feedback
@@ -266,7 +266,7 @@ export default {
   },
   created() {
     this.set_action();
-    if (this.action_modal === "crear") {
+    if (this.action_modal === "crear" || this.action_modal === 'crear_interprete') {
       this.codigo = this.generar_codigo(this.interp_list);
     }
   },
@@ -379,6 +379,31 @@ export default {
             },
           })
           .then((res) => {
+						if (this.action_modal = "crear_interprete") {
+							let interpretes = [];
+              axios
+                .post("/interpretes/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      interpretes.push(element);
+                    }
+                  });
+                  this.$store.state["interpretes"].push(
+                    interpretes[interpretes.length - 1]
+                  );
+                  this.$store.state["created_interpretes"].push(
+                    interpretes[interpretes.length - 1]
+                  );
+                  this.$store.state["all_interpretes_statics"].push(
+                    interpretes[interpretes.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+						}
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;

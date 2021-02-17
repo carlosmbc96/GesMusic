@@ -69,7 +69,8 @@ class AudiovisualController extends Controller
 		$idiomSubt = Vocabulario::findorFail(19)->terminos;  // Nomenclador: Idiomas de Subtitulos
 		//$derechosAud = Vocabulario::findorFail(11)->terminos;  // Nomenclador: Etiquetas
 		$nacionalid = Vocabulario::findorFail(22)->terminos;  // Nomenclador: Nacionalidades
-		return response()->json([[$clasfAudiov], [$genAudiov], [$anos], [$paises], [$idiom], [$idiomSubt], [$nacionalid]]);  // Se envian las variables
+		$rolesInterp = Vocabulario::findorFail(26)->terminos;  // Nomenclador: Roles de Intérpretes
+		return response()->json([[$clasfAudiov], [$genAudiov], [$anos], [$paises], [$idiom], [$idiomSubt], [$nacionalid], [$rolesInterp]]);  // Se envian las variables
 	}
 
 	public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Audiovisual
@@ -340,5 +341,63 @@ class AudiovisualController extends Controller
 			}
 			return response()->json($entrevistado);
 		}
+	}
+
+	public function realizadores(Request $request) {
+		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
+		for ($i = count($audiovisual->realizadores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+			$audiovisual->realizadores()->withTrashed()->get()[$i]->pivot->delete();
+		}
+		foreach ($request->realizadores as $realizador) {
+			Audiovisual_Realizador::create([
+				"realizador_id" => $realizador,
+				"audiovisual_id" => $request->id,
+			]);
+		}
+		return response()->json($audiovisual);
+	}
+
+	public function entrevistados(Request $request) {
+		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
+		for ($i = count($audiovisual->entrevistados()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+			$audiovisual->entrevistados()->withTrashed()->get()[$i]->pivot->delete();
+		}
+		foreach ($request->entrevistados as $entrevistado) {
+			Audiovisual_Entrevistado::create([
+				"entrevistado_id" => $entrevistado,
+				"audiovisual_id" => $request->id,
+			]);
+		}
+		return response()->json($audiovisual);
+	}
+
+	public function autores(Request $request) {
+		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
+		for ($i = count($audiovisual->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+			$audiovisual->autores()->withTrashed()->get()[$i]->pivot->delete();
+		}
+		foreach ($request->autores as $autor) {
+			Audiovisual_Autor::create([
+				"autor_id" => $autor,
+				"audiovisual_id" => $request->id,
+			]);
+		}
+		return response()->json($audiovisual);
+	}
+
+	public function interpretes(Request $request) {
+		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
+		for ($i = count($audiovisual->interpretes()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+			$audiovisual->interpretes()->withTrashed()->get()[$i]->pivot->delete();
+		}
+		for ($i = 0; $i < count($request->interpretes); $i++) {
+			var_dump($request->interpretes[$i][1]);
+			Audiovisual_Interprete::create([
+					"interprete_id" => $request->interpretes[$i][0],
+					"rolInterp" => $request->interpretes[$i][1],
+					"audiovisual_id" => $request->id
+			]);
+	}
+		return response()->json($audiovisual);
 	}
 }

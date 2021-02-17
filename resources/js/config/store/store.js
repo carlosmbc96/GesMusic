@@ -15,6 +15,14 @@ export default {
     all_entrevistados_statics: [],
     entrevistados: [],
 		created_entrevistados: [],
+		all_autores: [],
+    all_autores_statics: [],
+    autores: [],
+		created_autores: [],
+		all_interpretes: [],
+    all_interpretes_statics: [],
+    interpretes: [],
+		created_interpretes: [],
   },
   getters: {
     getTracksFormGetters(state) {
@@ -55,6 +63,30 @@ export default {
     },
     getAllEntrevistadosStaticsFormGetters(state) {
       return state.all_entrevistados_statics;
+    },
+		getAutoresFormGetters(state) {
+      return state.autores;
+    },
+    getCreatedAutoresFormGetters(state) {
+      return state.created_autores;
+    },
+    getAllAutoresFormGetters(state) {
+      return state.all_autores;
+    },
+    getAllAutoresStaticsFormGetters(state) {
+      return state.all_autores_statics;
+    },
+		getInterpretesFormGetters(state) {
+      return state.interpretes;
+    },
+    getCreatedInterpretesFormGetters(state) {
+      return state.created_interpretes;
+    },
+    getAllInterpretesFormGetters(state) {
+      return state.all_interpretes;
+    },
+    getAllInterpretesStaticsFormGetters(state) {
+      return state.all_interpretes_statics;
     },
   },
 };

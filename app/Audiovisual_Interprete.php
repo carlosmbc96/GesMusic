@@ -15,6 +15,7 @@ class Audiovisual_Interprete extends Model
     protected $fillable = [
         'audiovisual_id',
         'interprete_id',
+				'rolInterp',
     ];
     //SECCIÓN DE FILLABLE
 }

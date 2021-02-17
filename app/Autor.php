@@ -100,4 +100,9 @@ class Autor extends Model
     }
     //SECCIÓN DE QUERY SCOPE
 
+		public function audiovisuales()
+    {
+        return $this->belongsToMany(Audiovisuales::class,'audiovisual_autor'); // Un Audiovisual tiene muchos Realizadores
+    }
+
 }

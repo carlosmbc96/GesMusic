@@ -236,12 +236,11 @@
                               <a-form-model-item
                                 v-if="
                                   action_modal === 'crear' &&
-                                    (audiovisual_modal.generoAud ===
-                                      'Entrevista' ||
-                                      audiovisual_modal.generoAud ===
-                                        'Making of' ||
-                                      audiovisual_modal.generoAud ===
-                                        'Trailers')
+                                  (audiovisual_modal.generoAud ===
+                                    'Entrevista' ||
+                                    audiovisual_modal.generoAud ===
+                                      'Making of' ||
+                                    audiovisual_modal.generoAud === 'Trailers')
                                 "
                                 :validate-status="show_error"
                                 prop="codigAud"
@@ -259,12 +258,11 @@
                               <a-form-model-item
                                 v-if="
                                   action_modal === 'editar' &&
-                                    (audiovisual_modal.generoAud ===
-                                      'Entrevista' ||
-                                      audiovisual_modal.generoAud ===
-                                        'Making of' ||
-                                      audiovisual_modal.generoAud ===
-                                        'Trailers')
+                                  (audiovisual_modal.generoAud ===
+                                    'Entrevista' ||
+                                    audiovisual_modal.generoAud ===
+                                      'Making of' ||
+                                    audiovisual_modal.generoAud === 'Trailers')
                                 "
                                 label="Código"
                                 prop="codigAud"
@@ -289,12 +287,11 @@
                                 label="Código"
                                 v-if="
                                   action_modal === 'detalles' &&
-                                    (audiovisual_modal.generoAud ===
-                                      'Entrevista' ||
-                                      audiovisual_modal.generoAud ===
-                                        'Making of' ||
-                                      audiovisual_modal.generoAud ===
-                                        'Trailers')
+                                  (audiovisual_modal.generoAud ===
+                                    'Entrevista' ||
+                                    audiovisual_modal.generoAud ===
+                                      'Making of' ||
+                                    audiovisual_modal.generoAud === 'Trailers')
                                 "
                               >
                                 <a-mentions
@@ -308,10 +305,9 @@
                           <a-row
                             v-if="
                               action_modal === 'crear' &&
-                                (audiovisual_modal.generoAud === 'Concierto' ||
-                                  audiovisual_modal.generoAud ===
-                                    'Video Clip' ||
-                                  audiovisual_modal.generoAud === 'Documental')
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental')
                             "
                           >
                             <a-col span="24">
@@ -426,12 +422,10 @@
                           <a-row
                             v-if="
                               action_modal === 'editar' &&
-                                (audiovisual_modal.generoAud === 'Concierto' ||
-                                  audiovisual_modal.generoAud ===
-                                    'Video Clip' ||
-                                  audiovisual_modal.generoAud ===
-                                    'Documental') &&
-                                audiovisual_modal.generoAud !== genero_pivot
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental') &&
+                              audiovisual_modal.generoAud !== genero_pivot
                             "
                           >
                             <a-col span="24">
@@ -573,12 +567,10 @@
                           <a-form-model-item
                             v-if="
                               action_modal === 'editar' &&
-                                (audiovisual_modal.generoAud === 'Concierto' ||
-                                  audiovisual_modal.generoAud ===
-                                    'Video Clip' ||
-                                  audiovisual_modal.generoAud ===
-                                    'Documental') &&
-                                audiovisual_modal.generoAud === genero_pivot
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental') &&
+                              audiovisual_modal.generoAud === genero_pivot
                             "
                             label="ISRC"
                           >
@@ -588,10 +580,9 @@
                             label="ISRC"
                             v-if="
                               action_modal === 'detalles' &&
-                                (audiovisual_modal.generoAud === 'Concierto' ||
-                                  audiovisual_modal.generoAud ===
-                                    'Video Clip' ||
-                                  audiovisual_modal.generoAud === 'Documental')
+                              (audiovisual_modal.generoAud === 'Concierto' ||
+                                audiovisual_modal.generoAud === 'Video Clip' ||
+                                audiovisual_modal.generoAud === 'Documental')
                             "
                           >
                             <a-mentions
@@ -1121,9 +1112,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="add_realizador"
                                       >
                                         <a-icon type="plus" />
@@ -1139,9 +1134,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="new_realizador"
                                       >
                                         <a-icon type="plus" />
@@ -1251,9 +1250,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="add_entrevistado"
                                       >
                                         <a-icon type="plus" />
@@ -1269,9 +1272,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="new_entrevistado"
                                       >
                                         <a-icon type="plus" />
@@ -1332,8 +1339,8 @@
                                   readonly
                                   :placeholder="
                                     autor.nombresAutr +
-                                      ' ' +
-                                      autor.apellidosAutr
+                                    ' ' +
+                                    autor.apellidosAutr
                                   "
                                 ></a-mentions>
                               </a-col>
@@ -1376,8 +1383,8 @@
                                     >
                                       {{
                                         autor.nombresAutr +
-                                          " " +
-                                          autor.apellidosAutr
+                                        " " +
+                                        autor.apellidosAutr
                                       }}
                                     </a-select-option>
                                   </a-select>
@@ -1388,9 +1395,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="add_autor"
                                       >
                                         <a-icon type="plus" />
@@ -1406,9 +1417,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="new_autor"
                                       >
                                         <a-icon type="plus" />
@@ -1529,9 +1544,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="add_interprete"
                                       >
                                         <a-icon type="plus" />
@@ -1547,9 +1566,13 @@
                                       <a-button
                                         :disabled="disabled"
                                         style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                          color: white;
+                                          background-color: rgb(
+                                            45,
+                                            171,
+                                            229
+                                          ) !important;
+                                        "
                                         @click="new_interprete"
                                       >
                                         <a-icon type="plus" />
@@ -1591,14 +1614,75 @@
             </a-button>
           </a-row>
         </a-tab-pane>
-        <a-tab-pane key="3" :disabled="tab_3">
+        <a-tab-pane key="3" :disabled="tab_3" v-if="action_modal !== 'crear'">
+          <span slot="tab"> Autores/Intérptetes </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Autores/Intérptetes</h4>
+              </div>
+            </a-col>
+          </a-row>
+
+          <div>
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_autores
+                v-if="current === 0"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="audiovisual_modal"
+                entity_relation="audiovisuales"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_interpretes
+                v-else
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="audiovisual_modal"
+                entity_relation="audiovisuales"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
+            <br />
+          </div>
+
+          <a-button
+            :disabled="disabled"
+            style="float: right"
+            type="default"
+            @click="siguiente('tab_3', '4')"
+          >
+            Siguiente
+            <a-icon type="right" />
+          </a-button>
+          <a-button
+            :disabled="disabled"
+            style="float: left"
+            type="default"
+            @click="atras('2')"
+          >
+            <a-icon type="left" />
+            Atrás
+          </a-button>
+        </a-tab-pane>
+        <a-tab-pane key="4" :disabled="tab_3">
           <span slot="tab"> Elementos </span>
           <h4>Elementos</h4>
           <a-button
             :disabled="disabled"
             style="float: left"
             type="default"
-            @click="atras('2')"
+            @click="atras('3')"
           >
             <a-icon type="left" />
             Atrás
@@ -1635,7 +1719,8 @@
 
 <script>
 import moment from "../../../../../node_modules/moment";
-import axios from "../../../config/axios/axios";
+import tabla_autores from "../Artistas/Autor/Tabla_Autores";
+import tabla_interpretes from "../Artistas/Interprete/Tabla_Interpretes";
 import modal_management_realizadores from "../Realizador/Modal_Gestionar_Realizador";
 import modal_management_entrevistados from "../Entrevistado/Modal_Gestionar_Entrevistado";
 import modal_management_autores from "../Artistas/Autor/Modal_Gestionar_Autor";
@@ -1680,6 +1765,17 @@ export default {
       }
     };
     return {
+      steps: [
+        {
+          title: "Autores",
+        },
+        {
+          title: "Intérpretes",
+        },
+      ],
+      vista_editar: true,
+      current: 0,
+      detalles: false,
       action_management_entrevistados: "crear_entrevistado",
       action_management_realizadores: "crear_realizador",
       action_management_autores: "crear_autor",
@@ -1950,6 +2046,7 @@ export default {
         "isrc"
       );
     } else if (this.action_modal === "detalles") {
+      this.detalles = true;
       this.active_tab = "2";
     }
     if (this.action_modal === "editar" && !this.is_isrc()) {
@@ -2020,6 +2117,9 @@ export default {
       );
     },
     moment,
+    onChange(current) {
+      this.current = current;
+    },
     siguiente(tab, siguienteTab) {
       if (tab === "tab_1") {
         this.$refs.formularioProduct.validate((valid) => {
@@ -2045,8 +2145,12 @@ export default {
         }
       }
     },
+    reload_parent() {
+      this.$emit("refresh");
+    },
     handle_cancel(e) {
       if (e === "cancelar") {
+        this.$emit("actualizar");
         if (this.$refs.general_form !== undefined) {
           this.$refs.general_form.resetFields();
         }
@@ -2654,6 +2758,7 @@ export default {
         }
         this.makingOfAud =
           this.audiovisual_modal.makingOfAud === 0 ? false : true;
+        console.log(this.audiovisual.etiquetasAud);
         if (this.audiovisual.etiquetasAud !== null) {
           this.audiovisual.etiquetasAud = this.audiovisual.etiquetasAud.split(
             " "
@@ -3273,6 +3378,8 @@ export default {
     modal_management_entrevistados,
     modal_management_autores,
     modal_management_interpretes,
+    tabla_autores,
+    tabla_interpretes,
   },
 };
 </script>

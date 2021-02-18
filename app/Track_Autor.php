@@ -14,7 +14,7 @@ class Track_Autor extends Model
     // Atributos del Modelo Producto
     protected $fillable = [
         'track_id',
-        'autor_id',
+        'autor_id'
     ];
     //SECCIÓN DE FILLABLE
 }

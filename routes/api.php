@@ -89,7 +89,6 @@ Route::delete('/entrevistados/eliminar/{id}', 'EntrevistadoController@destroyFis
 Route::post('/entrevistados/nomencladores', 'EntrevistadoController@nomenclators');
 
 // RUTAS DEL RECURSO: REALIZADOR
-//Route::resource('realizadores','RealizadorController'); // Ruta que Lista todos los Recursos de la Clase Realizadores
 Route::get('/realizadores/restaurar/{id}', 'RealizadorController@restoreLog');
 Route::post('/realizadores/listar', 'RealizadorController@index');
 Route::post('/realizadores', 'RealizadorController@store');
@@ -118,6 +117,8 @@ Route::post('/autores/editar', 'AutorController@update'); // Ruta que Guarda un 
 Route::delete('/autores/desactivar/{id}', 'AutorController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/autores/eliminar/{id}', 'AutorController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::post('/autores/nomencladores', 'AutorController@nomenclators');
+Route::post('/autores/actualizarRelacionesAut', 'AutorController@actualizarRelacionesAut');
+
 // RUTAS DEL RECURSO: INTERPRETE
 Route::get('/interpretes/restaurar/{id}', 'InterpreteController@restoreLog');
 Route::post('/interpretes/listar', 'InterpreteController@index'); // Ruta que Lista todos los Registros del Modelo Producto
@@ -125,6 +126,9 @@ Route::post('/interpretes', 'InterpreteController@store'); // Ruta que Guarda el
 Route::post('/interpretes/editar', 'InterpreteController@update'); // Ruta que Guarda un Registro Específico del Modelo Producto
 Route::delete('/interpretes/desactivar/{id}', 'InterpreteController@destroyLog'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::delete('/interpretes/eliminar/{id}', 'InterpreteController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
+Route::post('/interpretes/actualizarRelacionesInterp', 'InterpreteController@actualizarRelacionesInterp');
+Route::post('/interpretes/nomencladores', 'InterpreteController@nomenclators');
+Route::post('/interpretes/intrepretesRelations', 'InterpreteController@interpretesRelacionados');
 
 // RUTAS DEL RECURSO: ARTISTICO
 Route::get('/artisticos/restaurar/{id}', 'ArtisticoController@restoreLog');

@@ -122,7 +122,10 @@
                   </a-col>
                   <a-col span="6">
                     <a-form-model-item
-                      v-if="action_modal === 'crear' || action_modal === 'crear_autor'"
+                      v-if="
+                        action_modal === 'crear' ||
+                        action_modal === 'crear_autor'
+                      "
                       :validate-status="show_error"
                       prop="codigAutr"
                       has-feedback
@@ -157,7 +160,10 @@
                       </a-mentions>
                     </a-form-model-item>
                     <a-form-model-item
-                      v-if="action_modal === 'crear' || action_modal === 'crear_autor'"
+                      v-if="
+                        action_modal === 'crear' ||
+                        action_modal === 'crear_autor'
+                      "
                       :validate-status="show_error"
                       prop="ciAutr"
                       has-feedback
@@ -645,7 +651,7 @@ export default {
                 .catch((error) => {
                   console.log(error);
                 });
-						}
+            }
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
@@ -682,6 +688,7 @@ export default {
       if (this.author_modal.codigAutr === undefined) {
         this.author_modal.codigAutr = this.codigo;
       }
+      console.log(this.author_modal.audiovisuales_autrs);
       this.author_modal.codigAutr = "AUTR-" + this.author_modal.codigAutr;
       form_data.append("codigAutr", this.author_modal.codigAutr);
       form_data.append("ciAutr", this.author_modal.ciAutr);
@@ -691,6 +698,29 @@ export default {
       form_data.append("reseñaBiogAutr", this.author_modal.biogAutr);
       form_data.append("fallecidoAutr", this.author_modal.fallecidoAutr);
       form_data.append("obrasCatEditAutr", this.author_modal.obrasCatEditAutr);
+      if (this.author_modal.audiovisuales_autrs) {
+        this.relation = "audiovisuales";
+        form_data.append("type_relation", this.relation);
+        form_data.append(
+          "audiovisual_id",
+          this.author_modal.audiovisuales_autrs
+        );
+      } else if (this.author_modal.tracks_autrs) {
+        this.relation = "tracks";
+        form_data.append("type_relation", this.relation);
+        form_data.append(
+          "track_id",
+          this.author_modal.tracks_autrs
+        );
+      } else if (this.author_modal.temas_autrs) {
+        this.relation = "temas";
+        form_data.append("type_relation", this.relation);
+        form_data.append(
+          "tema_id",
+          this.author_modal.temas_autrs
+        );
+      }
+
       if (this.file_list.length !== 0) {
         if (this.file_list[0].uid !== this.author_modal.id) {
           if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
@@ -769,6 +799,7 @@ export default {
             });
         }
       } else {
+        this.author_modal = { ...this.author };
         this.file_list.push({
           uid: 1,
           name: "Logo ver vertical_Ltr Negras.png",

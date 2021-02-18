@@ -4,18 +4,17 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Track_Interprete extends Model
+class Tema_Autor extends Model
 {
     //SECCIÓN DE PROTECT TABLE
-    protected $table = "track_interprete";
+    protected $table = "tema_autor";
     //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE FILLABLE
     // Atributos del Modelo Producto
     protected $fillable = [
-        'track_id',
-        'interprete_id',
-        'rolInterp'
+        'tema_id',
+        'autor_id'
     ];
     //SECCIÓN DE FILLABLE
 }

@@ -82,7 +82,10 @@
               <a-row>
                 <a-col span="12">
                   <a-form-model-item
-                    v-if="action_modal === 'crear' || action_modal === 'crear_interprete'"
+                    v-if="
+                      action_modal === 'crear' ||
+                      action_modal === 'crear_interprete'
+                    "
                     :validate-status="show_error"
                     prop="codigInterp"
                     has-feedback
@@ -132,6 +135,32 @@
                       readonly
                       :placeholder="interp_modal.nombreInterp"
                     >
+                    </a-mentions>
+                  </a-form-model-item>
+                  <a-form-model-item
+                    v-if="action_modal !== 'detalles' && interp_modal.tabla"
+                    label="Roles"
+                  >
+                    <a-select
+                      :getPopupContainer="(trigger) => trigger.parentNode"
+                      mode="multiple"
+                      :disabled="disabled"
+                      v-model="interp_modal.rollInterp"
+                    >
+                      <a-select-option
+                        v-for="nomenclator in roles"
+                        :key="nomenclator.id"
+                        :value="nomenclator.nombreTer"
+                      >
+                        {{ nomenclator.nombreTer }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                  <a-form-model-item
+                    label="Roles"
+                    v-if="action_modal === 'detalles' && interp_modal.tabla"
+                  >
+                    <a-mentions readonly :placeholder="interp_modal.rollInterp">
                     </a-mentions>
                   </a-form-model-item>
                 </a-col>
@@ -212,6 +241,7 @@ export default {
       } else callback();
     };
     return {
+      roles: [],
       detalles: true,
       vista_editar: true,
       action_cancel_title: "",
@@ -290,8 +320,14 @@ export default {
     };
   },
   created() {
+    if (this.interp.tabla) {
+      this.load_nomenclators();
+    }
     this.set_action();
-    if (this.action_modal === "crear" || this.action_modal === 'crear_interprete') {
+    if (
+      this.action_modal === "crear" ||
+      this.action_modal === "crear_interprete"
+    ) {
       this.codigo = this.generar_codigo(this.interp_list);
     }
   },
@@ -303,6 +339,19 @@ export default {
     },
   },
   methods: {
+    load_nomenclators() {
+      axios
+        .post("/interpretes/nomencladores")
+        .then((response) => {
+          this.list_nomenclators = response.data;
+          this.roles = this.list_nomenclators;
+        })
+        .catch((error) => {
+          this.$toast.error("Ha ocurrido un error", "¡Error!", {
+            timeout: 2000,
+          });
+        });
+    },
     reload_parent() {
       this.$emit("refresh");
     },
@@ -362,6 +411,7 @@ export default {
         this.text_button = "Detalles";
         this.interp_modal = { ...this.interp };
       } else {
+        this.interp_modal = { ...this.interp };
         this.text_button = "Crear";
         this.text_header_button = "Crear";
         this.action_cancel_title =
@@ -435,7 +485,7 @@ export default {
                 .catch((error) => {
                   console.log(error);
                 });
-						}
+            }
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
@@ -474,6 +524,19 @@ export default {
       form_data.append("codigInterp", this.interp_modal.codigInterp);
       form_data.append("nombreInterp", this.interp_modal.nombreInterp);
       form_data.append("reseñaBiogInterp", this.interp_modal.reseñaBiogInterp);
+      if (this.interp_modal.audiovisuales_interps) {
+        this.relation = "audiovisuales";
+        form_data.append("type_relation", this.relation);
+        form_data.append(
+          "audiovisual_id",
+          this.interp_modal.audiovisuales_interps
+        );
+      } else if (this.interp_modal.tracks_interps) {
+        this.relation = "tracks";
+        form_data.append("type_relation", this.relation);
+        form_data.append("track_id", this.interp_modal.tracks_interps);
+      }
+
       this.text_button = "Creando...";
       return form_data;
     },

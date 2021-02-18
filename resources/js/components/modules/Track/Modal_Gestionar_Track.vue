@@ -156,8 +156,8 @@
                     <a-row
                       v-if="
                         action_modal === 'crear' ||
-                          action_modal === 'crear_track' ||
-                          action_modal === 'crear_track_tabla_component'
+                        action_modal === 'crear_track' ||
+                        action_modal === 'crear_track_tabla_component'
                       "
                       style="margin-top: 31px"
                     >
@@ -793,6 +793,15 @@
           </a-row>
           <a-row>
             <a-button
+              :disabled="disabled"
+              style="float: right"
+              type="default"
+              @click="siguiente('tab_2', '3')"
+            >
+              Siguiente
+              <a-icon type="right" />
+            </a-button>
+            <a-button
               v-if="action_modal === 'crear' || action_modal === 'editar'"
               :disabled="disabled"
               style="float: left"
@@ -803,6 +812,58 @@
               Atrás
             </a-button>
           </a-row>
+        </a-tab-pane>
+        <a-tab-pane key="3" :disabled="tab_2" v-if="action_modal !== 'crear'">
+          <span slot="tab"> Autores/Intérptetes </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Autores/Intérptetes</h4>
+              </div>
+            </a-col>
+          </a-row>
+
+          <div>
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_autores
+                v-if="current === 0"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="track_modal"
+                entity_relation="tracks"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_interpretes
+                v-else
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="track_modal"
+                entity_relation="tracks"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
+            <br />
+          </div>
+
+          <a-button
+            :disabled="disabled"
+            style="float: left"
+            type="default"
+            @click="atras('2')"
+          >
+            <a-icon type="left" />
+            Atrás
+          </a-button>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -826,6 +887,8 @@ import axios from "../../../config/axios/axios";
 import moment from "../../../../../node_modules/moment";
 import modal_management_autores from "../Artistas/Autor/Modal_Gestionar_Autor";
 import modal_management_interpretes from "../Artistas/Interprete/Modal_Gestionar_Interprete";
+import tabla_autores from "../Artistas/Autor/Tabla_Autores";
+import tabla_interpretes from "../Artistas/Interprete/Tabla_Interpretes";
 export default {
   props: ["action", "track", "tracks_list"],
   data() {
@@ -845,6 +908,17 @@ export default {
     return {
       action_management_autores: "crear_autor",
       action_management_interpretes: "crear_interprete",
+      steps: [
+        {
+          title: "Autores",
+        },
+        {
+          title: "Intérpretes",
+        },
+      ],
+      vista_editar: true,
+      current: 0,
+      detalles: false,
       tab_2: true,
       tabs_list: [],
       active_tab: "1",
@@ -1029,6 +1103,9 @@ export default {
   },
   methods: {
     moment,
+    onChange(current) {
+      this.current = current;
+    },
     siguiente(tab, siguienteTab) {
       if (tab === "tab_1") {
         this.$refs.formularioFonograma.validate((valid) => {
@@ -1053,6 +1130,9 @@ export default {
           });
         }
       }
+    },
+    reload_parent() {
+      this.$emit("refresh");
     },
     handle_cancel(e) {
       if (e === "cancelar") {
@@ -1409,6 +1489,7 @@ export default {
           this.track_modal.moodTrk = this.track_modal.moodTrk.split(" ");
         } else delete this.track_modal.moodTrk;
       } else if (this.action_modal === "detalles") {
+        this.detalles = true;
         if (this.track.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
@@ -1713,7 +1794,9 @@ export default {
 	components: {
 		modal_management_interpretes,
 		modal_management_autores,
-	}
+    tabla_autores,
+    tabla_interpretes,
+  },
 };
 </script>
 

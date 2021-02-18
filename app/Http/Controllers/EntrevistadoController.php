@@ -72,8 +72,8 @@ class EntrevistadoController extends Controller
 			for ($i = count($entrevistado->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 				$entrevistado->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
 			}
-		return response()->json($entrevistado->forceDelete());
 		}
+		return response()->json($entrevistado->forceDelete());
 	}
 
 	public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Interprete

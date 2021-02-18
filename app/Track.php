@@ -46,6 +46,14 @@ class Track extends Model
     {
         return $this->belongsToMany(Fonograma::class,'fonograma_track'); // Un Fonograma tiene muchos Tracks
     }
+    public function autores()
+    {
+        return $this->belongsToMany(Autor::class,'track_autor'); // Un Fonograma tiene muchos Tracks
+    }
+    public function interpretes()
+    {
+        return $this->belongsToMany(Interprete::class,'track_interprete'); // Un Fonograma tiene muchos Tracks
+    }
     //SECCIÓN DE RELACIONES
 
 

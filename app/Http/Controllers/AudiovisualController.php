@@ -242,6 +242,16 @@ class AudiovisualController extends Controller
 				$audiovisual->entrevistados()->withTrashed()->get()[$i]->pivot->delete();
 			}
 		}
+		if (count($audiovisual->autores()->withTrashed()->get()) !== 0) {
+			for ($i = count($audiovisual->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$audiovisual->autores()->withTrashed()->get()[$i]->pivot->delete();
+			}
+		}
+		if (count($audiovisual->interpretes()->withTrashed()->get()) !== 0) {
+			for ($i = count($audiovisual->interpretes()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$audiovisual->interpretes()->withTrashed()->get()[$i]->pivot->delete();
+			}
+		}
 		if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
 			Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
 		}

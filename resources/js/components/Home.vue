@@ -119,6 +119,12 @@ export default {
 #ad-productos:hover{
   filter: drop-shadow(1px 1px 5px grey) !important
 }
+#ad-tracks:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
+#ad-audiovisuales:hover{
+  filter: drop-shadow(1px 1px 5px grey) !important
+}
 #ad-realizadores:hover{
   filter: drop-shadow(1px 1px 5px grey) !important
 }

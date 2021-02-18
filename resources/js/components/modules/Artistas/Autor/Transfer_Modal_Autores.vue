@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :closable="false" width="60%" :visible="show" id="transfer_modal_audiovisuales">
+    <a-modal :closable="false" width="60%" :visible="show" id="transfer_modal_autores">
       <template slot="footer">
         <a-popconfirm
           :getPopupContainer="(trigger) => trigger.parentNode"
@@ -24,7 +24,7 @@
           @confirm="submit()"
           ok-text="Si"
           cancel-text="No"
-          title="Desea guardar estos cambios"
+          title="Desea guardar estos cambios?"
         >
           <a-icon
             slot="icon"
@@ -107,8 +107,8 @@ export default {
   data() {
     return {
       config: {
-        itemUnit: "audiovisual",
-        itemsUnit: "audiovisuales",
+        itemUnit: "autores",
+        itemsUnit: "autores",
         notFoundContent: "La lista está vacía",
         searchPlaceholder: "Buscar",
       },
@@ -126,42 +126,29 @@ export default {
   created() {
     this.change_spin();
     axios
-      .post("/audiovisuales/listar", { relations: [this.entity_relation] })
+      .post("/autores/listar", { relations: [this.entity_relation] })
       .then((response) => {
         for (let i = 0; i < response.data.length; i++) {
           this.mockData.push({
             key: response.data[i].id.toString(),
-            codig: response.data[i].codigAud,
-            isrc: response.data[i].isrcAud,
-            title: response.data[i].tituloAud,
+            codig: response.data[i].codigAutr,
+            title: response.data[i].nombresAutr,
           });
-          if (this.entity_relation === "productos") {
-            for (let j = 0; j < response.data[i].productos.length; j++) {
-              if (response.data[i].productos[j].id === this.entity_id) {
+          if (this.entity_relation === "audiovisuales") {
+            for (let j = 0; j < response.data[i].audiovisuales.length; j++) {
+              if (response.data[i].audiovisuales[j].id === this.entity_id) {
                 this.old_relations.push(response.data[i].id.toString());
               }
             }
-          } else if (this.entity_relation === "autores") {
-            for (let j = 0; j < response.data[i].autores.length; j++) {
-              if (response.data[i].autores[j].id === this.entity_id) {
+          } else if (this.entity_relation === "temas") {
+            for (let j = 0; j < response.data[i].temas.length; j++) {
+              if (response.data[i].temas[j].id === this.entity_id) {
                 this.old_relations.push(response.data[i].id.toString());
               }
             }
-          } else if (this.entity_relation === "interpretes") {
-            for (let j = 0; j < response.data[i].interpretes.length; j++) {
-              if (response.data[i].interpretes[j].id === this.entity_id) {
-                this.old_relations.push(response.data[i].id.toString());
-              }
-            }
-          } else if (this.entity_relation === "realizadores") {
-            for (let j = 0; j < response.data[i].realizadores.length; j++) {
-              if (response.data[i].realizadores[j].id === this.entity_id) {
-                this.old_relations.push(response.data[i].id.toString());
-              }
-            }
-          } else if (this.entity_relation === "entrevistados") {
-            for (let j = 0; j < response.data[i].entrevistados.length; j++) {
-              if (response.data[i].entrevistados[j].id === this.entity_id) {
+          } else if (this.entity_relation === "tracks") {
+            for (let j = 0; j < response.data[i].tracks.length; j++) {
+              if (response.data[i].tracks[j].id === this.entity_id) {
                 this.old_relations.push(response.data[i].id.toString());
               }
             }
@@ -177,12 +164,8 @@ export default {
         title: "Código",
       },
       {
-        dataIndex: "isrc",
-        title: "ISRC",
-      },
-      {
         dataIndex: "title",
-        title: "Título",
+        title: "Nombre",
       },
     ];
     this.rightColumns = [
@@ -191,12 +174,8 @@ export default {
         title: "Código",
       },
       {
-        dataIndex: "isrc",
-        title: "ISRC",
-      },
-      {
         dataIndex: "title",
-        title: "Título",
+        title: "Nombre",
       },
     ];
   },
@@ -222,10 +201,10 @@ export default {
     submit() {
       this.change_spin();
       axios
-        .post("audiovisuales/actualizarRelacionesAud", {
+        .post("autores/actualizarRelacionesAut", {
           relation: this.entity_relation,
           id: this.entity_id,
-          audiovisuales: this.new_relations,
+          autores: this.new_relations,
         })
         .then((response) => {
           this.$emit("actualizar");
@@ -287,14 +266,14 @@ export default {
 </script>
 
 <style>
-#transfer_modal_audiovisuales .ant-modal {
+#transfer_modal_autores .ant-modal {
   margin-left: auto !important;
   margin-top: -31px !important;
 }
-#transfer_modal_audiovisuales .ant-modal-content {
+#transfer_modal_autores .ant-modal-content {
   background-color: rgba(255, 255, 255, 0.95) !important;
 }
-#transfer_modal_audiovisuales .ant-btn-primary-disabled,
+#transfer_modal_autores .ant-btn-primary-disabled,
 .ant-btn-primary.disabled,
 .ant-btn-primary[disabled],
 .ant-btn-primary-disabled:hover,

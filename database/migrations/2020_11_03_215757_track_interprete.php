@@ -10,7 +10,7 @@ class TrackInterprete extends Migration
     {
         Schema::create('track_interprete', function (Blueprint $table) {
             $table->id()->index();  // Identificador Único de la Tabla: Parámetros
-            $table->string('rolInterp');  // Rol del Interprete
+            $table->string('rolInterp')->nullable();  // Rol del Interprete
 
             $table->softDeletes();  // Eliminación lógica del Registro
             $table->timestamps();  // Fecha de Creación y Actualización del Registro

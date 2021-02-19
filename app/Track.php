@@ -115,13 +115,4 @@ class Track extends Model
     }
     //SECCIÓN DE QUERY SCOPE
 
-		public function autores()
-    {
-        return $this->belongsToMany(Autor::class,'track_autor'); // Un Audiovisual tiene muchos Realizadores
-    }
-    //Relación de One to Many Audiovisuales - Realizadores
-    public function interpretes()
-    {
-        return $this->belongsToMany(Interprete::class,'track_interprete'); // Un Audiovisual tiene muchos Realizadores
-    }
 }

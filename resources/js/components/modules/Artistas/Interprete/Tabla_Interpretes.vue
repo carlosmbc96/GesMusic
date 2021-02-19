@@ -35,7 +35,7 @@
           <e-column
             field="rolInterp"
             headerText="Roles"
-            width="110"
+            width="190"
             textAlign="Left"
           />
           <e-column
@@ -513,6 +513,11 @@ export default {
               edit_btn_click(args) {
                 this.$parent.$parent.$parent.row_selected = this.data;
                 this.$parent.$parent.$parent.row_selected.tabla = true;
+                if (this.$parent.$parent.$parent.entity_relation === "audiovisuales") {
+                  this.$parent.$parent.$parent.row_selected.audiovisuales_interps = this.$parent.$parent.$parent.entity.id;
+                } else if (this.$parent.$parent.$parent.entity_relation === "tracks") {
+                  this.$parent.$parent.$parent.row_selected.tracks_interps = this.$parent.$parent.$parent.entity.id;
+                }
                 if (this.data.deleted_at === null) {
                   this.$parent.$parent.$parent.action_management = "editar";
                   this.$parent.$parent.$parent.visible_management = true;
@@ -563,32 +568,6 @@ export default {
       this.$emit("reload");
       this.change_spin();
       if (this.vista_editar) {
-        /* axios
-          .post("/interpretes/listar", { relations: [this.entity_relation] })
-          .then((response) => {
-            this.interpretes_list = [];
-            let pertenece = false;
-            response.data.forEach((interprete) => {
-              if (this.entity_relation === "audiovisuales") {
-                interprete.audiovisuales.forEach((audiovisual) => {
-                  if (audiovisual.id === this.entity.id) {
-                    pertenece = true;
-                  }
-                });
-              } else if (this.entity_relation === "tracks") {
-                interprete.tracks.forEach((track) => {
-                  if (track.id === this.entity.id) {
-                    pertenece = true;
-                  }
-                });
-              }
-              if (pertenece) {
-                this.interpretes_list.push(interprete);
-              }
-              pertenece = false;
-            });
-            this.change_spin();
-          }); */
         axios
           .post("/interpretes/intrepretesRelations", {
             id_relation: this.entity.id,
@@ -596,6 +575,14 @@ export default {
           })
           .then((response) => {
             for (let i = 0; i < response.data[0].length; i++) {
+              if (response.data[1][i]) {
+                response.data[1][i] = response.data[1][i].split(",");
+                if (
+                  response.data[1][i][response.data[1][i].length - 1] === ""
+                ) {
+                  response.data[1][i].pop();
+                }
+              }
               response.data[0][i].rolInterp = response.data[1][i];
             }
             this.interpretes_list = response.data[0];

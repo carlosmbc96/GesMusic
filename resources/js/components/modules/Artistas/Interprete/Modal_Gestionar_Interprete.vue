@@ -145,7 +145,7 @@
                       :getPopupContainer="(trigger) => trigger.parentNode"
                       mode="multiple"
                       :disabled="disabled"
-                      v-model="interp_modal.rollInterp"
+                      v-model="roles_interp_modal"
                     >
                       <a-select-option
                         v-for="nomenclator in roles"
@@ -160,7 +160,7 @@
                     label="Roles"
                     v-if="action_modal === 'detalles' && interp_modal.tabla"
                   >
-                    <a-mentions readonly :placeholder="interp_modal.rollInterp">
+                    <a-mentions readonly :placeholder="interp_modal.rolInterp">
                     </a-mentions>
                   </a-form-model-item>
                 </a-col>
@@ -241,6 +241,7 @@ export default {
       } else callback();
     };
     return {
+      roles_interp_modal: [],
       roles: [],
       detalles: true,
       vista_editar: true,
@@ -320,8 +321,10 @@ export default {
     };
   },
   created() {
-    if (this.interp.tabla) {
-      this.load_nomenclators();
+    if (this.action !== "crear_interprete") {
+      if (this.interp.tabla) {
+        this.load_nomenclators();
+      }
     }
     this.set_action();
     if (
@@ -386,6 +389,11 @@ export default {
     },
     set_action() {
       if (this.action_modal === "editar") {
+        if (this.interp.tabla) {
+          if (this.interp.rolInterp) {
+            this.roles_interp_modal = this.interp.rolInterp;
+          }
+        }
         if (this.interp.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
@@ -461,8 +469,8 @@ export default {
             },
           })
           .then((res) => {
-						if (this.action_modal === "crear_interprete") {
-							let interpretes = [];
+            if (this.action_modal === "crear_interprete") {
+              let interpretes = [];
               axios
                 .post("/interpretes/listar")
                 .then((response) => {
@@ -520,6 +528,14 @@ export default {
       if (this.interp_modal.codigInterp === undefined) {
         this.interp_modal.codigInterp = this.codigo;
       }
+      if (this.action_modal !== "detalles") {
+        let roles_interp = "";
+        this.roles_interp_modal.forEach((element) => {
+          roles_interp += element + ",";
+        });
+
+        this.interp_modal.rolInterp = roles_interp;
+      }
       this.interp_modal.codigInterp = "INTR-" + this.interp_modal.codigInterp;
       form_data.append("codigInterp", this.interp_modal.codigInterp);
       form_data.append("nombreInterp", this.interp_modal.nombreInterp);
@@ -527,12 +543,14 @@ export default {
       if (this.interp_modal.audiovisuales_interps) {
         this.relation = "audiovisuales";
         form_data.append("type_relation", this.relation);
+        form_data.append("roles", this.interp_modal.rolInterp);
         form_data.append(
           "audiovisual_id",
           this.interp_modal.audiovisuales_interps
         );
       } else if (this.interp_modal.tracks_interps) {
         this.relation = "tracks";
+        form_data.append("roles", this.interp_modal.rolInterp);
         form_data.append("type_relation", this.relation);
         form_data.append("track_id", this.interp_modal.tracks_interps);
       }

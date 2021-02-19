@@ -2758,7 +2758,6 @@ export default {
         }
         this.makingOfAud =
           this.audiovisual_modal.makingOfAud === 0 ? false : true;
-        console.log(this.audiovisual.etiquetasAud);
         if (this.audiovisual.etiquetasAud !== null) {
           this.audiovisual.etiquetasAud = this.audiovisual.etiquetasAud.split(
             " "
@@ -3213,7 +3212,7 @@ export default {
         if (index === 0) {
           answer += array[index];
         } else {
-          answer += "." + array[index];
+          answer += "," + array[index];
         }
       }
       return answer;

@@ -31,6 +31,8 @@ class InterpreteController extends Controller
                 $length = count($interpretes);
                 for ($i; $i < $length; $i++) {
                     $interpretes[$i]->artisticos;
+                    $interpretes[$i]->audiovisuales;
+                    $interpretes[$i]->tracks;
                 }
             } else {
                 $i = 0;;
@@ -65,6 +67,7 @@ class InterpreteController extends Controller
                 foreach ($audiovisuales as $audiovisual) {
                     Audiovisual_Interprete::create([
                         "interprete_id" => $interprete->id,
+                        "rolInterp" => $request->roles,
                         "audiovisual_id" => $audiovisual
                     ]);
                 }
@@ -75,6 +78,7 @@ class InterpreteController extends Controller
                 foreach ($tracks as $track) {
                     Track_Interprete::create([
                         "interprete_id" => $interprete->id,
+                        "rolInterp" => $request->roles,
                         "track_id" => $track
                     ]);
                 }
@@ -85,7 +89,46 @@ class InterpreteController extends Controller
 
     public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Interprete
     {
-        return response()->json(Interprete::findOrFail($request->id)->update($request->all()));
+        $interprete = Interprete::withTrashed()->findOrFail($request->id);
+        $interprete->update([
+            "codigInterp" => $request->codigInterp,
+            "nombreInterp" => $request->nombreInterp,
+            "reseñaBiogInterp" => $request->reseñaBiogInterp
+        ]);
+        if ($request->type_relation === "audiovisuales") {
+            if ($request->audiovisual_id !== "undefined") {
+                $audiovisuales = explode(",", $request->audiovisual_id);
+                $aud_interp = [];
+                $audiovisuales_interpretes = Audiovisual_Interprete::all();
+                for ($i = 0; $i < count($audiovisuales_interpretes); $i++) {
+                    if (($audiovisuales_interpretes[$i]->audiovisual_id === intval($audiovisuales[0])) && ($audiovisuales_interpretes[$i]->interprete_id === $interprete->id)) {
+                        array_push($aud_interp, $audiovisuales_interpretes[$i]);
+                    }
+                }
+                $aud_interp[0]->update([
+                    "interprete_id" => $interprete->id,
+                    "rolInterp" => $request->roles,
+                    "audiovisual_id" => $audiovisuales[0]
+                ]);
+            }
+        } else if ($request->type_relation === "tracks") {
+            if ($request->track_id !== "undefined") {
+                $tracks = explode(",", $request->track_id);
+                $trk_interp = [];
+                $tracks_interpretes = Track_Interprete::all();
+                for ($i = 0; $i < count($tracks_interpretes); $i++) {
+                    if (($tracks_interpretes[$i]->track_id === intval($tracks[0])) && ($tracks_interpretes[$i]->interprete_id === $interprete->id)) {
+                        array_push($trk_interp, $tracks_interpretes[$i]);
+                    }
+                }
+                $trk_interp[0]->update([
+                    "interprete_id" => $interprete->id,
+                    "rolInterp" => $request->roles,
+                    "track_id" => $tracks[0]
+                ]);
+            }
+        }
+        return response()->json($interprete);
     }
 
     public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Interprete
@@ -115,26 +158,71 @@ class InterpreteController extends Controller
     }
     public function actualizarRelacionesInterp(Request $request)
     {
+        $old_relations = [];
+        $new_relations = [];
+        $founded = false;
+        $interpretes = $request->interpretes;
         if ($request->relation === "audiovisuales") {
             $audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
-            for ($i = count($audiovisual->interpretes()->withTrashed()->get()) - 1; $i >= 0; $i--) {
-                $audiovisual->interpretes()->withTrashed()->get()[$i]->pivot->delete();
+            $all_realtions = Audiovisual_Interprete::all();
+            for ($i = 0; $i < count($interpretes); $i++) {
+                for ($j = 0; $j < count($all_realtions); $j++) {
+                    if (($all_realtions[$j]->audiovisual_id === $audiovisual->id) && ($all_realtions[$j]->interprete_id === intval($interpretes[$i]))) {
+                        array_push($old_relations, $all_realtions[$j]);
+                        $founded = true;
+                        break;
+                    }
+                }
+                if (!$founded) {
+                    array_push($new_relations, $interpretes[$i]);
+                } else $founded = false;
             }
-            foreach ($request->interpretes as $interprete) {
+            for ($k = count($audiovisual->interpretes()->withTrashed()->get()) - 1; $k >= 0; $k--) {
+                $audiovisual->interpretes()->withTrashed()->get()[$k]->pivot->delete();
+            }
+            var_dump($old_relations);
+            foreach ($old_relations as $old_interprete) {
                 Audiovisual_Interprete::create([
-                    "audiovisual_id" => $request->id,
+                    "audiovisual_id" => $old_interprete->audiovisual_id,
+                    "rolInterp" => $old_interprete->rolInterp,
+                    "interprete_id" => $old_interprete->interprete_id
+                ]);
+            }
+            foreach ($new_relations as $interprete) {
+                Audiovisual_Interprete::create([
+                    "audiovisual_id" => $audiovisual->id,
                     "interprete_id" => $interprete
                 ]);
             }
             return response()->json($audiovisual);
         } else if ($request->relation === "tracks") {
             $track = Track::withTrashed()->findOrFail($request->id);
-            for ($i = count($track->interpretes()->withTrashed()->get()) - 1; $i >= 0; $i--) {
-                $track->interpretes()->withTrashed()->get()[$i]->pivot->delete();
+            $all_realtions = Track_Interprete::all();
+            for ($i = 0; $i < count($interpretes); $i++) {
+                for ($j = 0; $j < count($all_realtions); $j++) {
+                    if (($all_realtions[$j]->track_id === $track->id) && ($all_realtions[$j]->interprete_id === intval($interpretes[$i]))) {
+                        array_push($old_relations, $all_realtions[$j]);
+                        $founded = true;
+                        break;
+                    }
+                }
+                if (!$founded) {
+                    array_push($new_relations, $interpretes[$i]);
+                } else $founded = false;
             }
-            foreach ($request->interpretes as $interprete) {
+            for ($k = count($track->interpretes()->withTrashed()->get()) - 1; $k >= 0; $k--) {
+                $track->interpretes()->withTrashed()->get()[$k]->pivot->delete();
+            }
+            foreach ($old_relations as $old_interprete) {
                 Track_Interprete::create([
-                    "track_id" => $request->id,
+                    "track_id" => $old_interprete->track_id,
+                    "rolInterp" => $old_interprete->rolInterp,
+                    "interprete_id" => $old_interprete->interprete_id
+                ]);
+            }
+            foreach ($new_relations as $interprete) {
+                Track_Interprete::create([
+                    "track_id" => $track->id,
                     "interprete_id" => $interprete
                 ]);
             }
@@ -150,6 +238,7 @@ class InterpreteController extends Controller
             for ($i = 0; $i < count($audiovisuales_interpretes); $i++) {
                 if ($audiovisuales_interpretes[$i]->audiovisual_id === $request->id_relation) {
                     array_push($interpretes, Interprete::withTrashed()->findOrFail($audiovisuales_interpretes[$i]->interprete_id));
+                    array_push($roles, $audiovisuales_interpretes[$i]->rolInterp);
                 }
             }
             foreach ($interpretes as $interprete) {

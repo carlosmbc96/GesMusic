@@ -1687,7 +1687,7 @@ export default {
         if (index === 0) {
           answer += array[index];
         } else {
-          answer += "." + array[index];
+          answer += "," + array[index];
         }
       }
       return answer;

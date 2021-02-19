@@ -153,6 +153,12 @@ class TrackController extends Controller
         for ($i = count($track->fonogramas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
             $track->fonogramas()->withTrashed()->get()[$i]->pivot->delete();
         }
+        for ($i = count($track->interpretes()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+            $track->interpretes()->withTrashed()->get()[$i]->pivot->delete();
+        }
+        for ($i = count($track->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+            $track->autores()->withTrashed()->get()[$i]->pivot->delete();
+        }
         return response()->json($track->forceDelete());
     }
 

@@ -609,26 +609,6 @@
                               {{ _interprete.nombreInterp }}
                             </a-select-option>
                           </a-select>
-                        </a-col>
-                        <a-col span="12">
-                          <div class="ant-form-item-label">
-                            <label>Roles</label>
-                          </div>
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            :disabled="disabled"
-                            mode="multiple"
-                            v-model="interprete.role"
-                            class="interpretes-select"
-                          >
-                            <a-select-option
-                              v-for="rol in roles_interp"
-                              :key="rol.id"
-                              :value="rol.nombreTer"
-                            >
-                              {{ rol.nombreTer }}
-                            </a-select-option>
-                          </a-select>
                           <a-button
                             v-if="interpretesProd.length > 1"
                             class="dynamic-delete-button"
@@ -996,7 +976,6 @@ export default {
       action_cancel_title: "",
       action_title: "",
       tab_visibility: true,
-      roles_interp: [],
       disabled_option: false,
       list_compare_autores: "",
       list_compare_interpretes: "",
@@ -1230,7 +1209,6 @@ export default {
         this.status = this.list_nomenclators[3][0];
         this.destinos = this.list_nomenclators[4][0];
         this.sellos = this.list_nomenclators[5][0];
-        this.roles_interp = this.list_nomenclators[6][0];
       })
       .catch((error) => {});
     if (this.action_modal === "editar") {
@@ -1285,47 +1263,21 @@ export default {
       this.action_cancel_title = "¿Desea cancelar la edición del Producto?";
       this.action_title = "¿Desea guardar los cambios en el Producto?";
       this.action_close = "La edición del Producto se canceló correctamente";
-      let list_help = [];
-      let list_roles = [];
-      let list_roles_help = [];
       if (this.product_modal.interpretesProd !== null) {
-        console.log(this.product_modal.interpretesProd);
-        list_help = this.product_modal.interpretesProd.split(".");
-        this.product_modal.interpretesProd = list_help[0];
-        list_roles = list_help[1];
-        if (list_roles !== undefined) {
-          list_roles = list_roles.split("|");
-          list_roles.forEach((element) => {
-            list_roles_help.push(element.split(","));
-          });
-        }
         this.product_modal.interpretesProd = this.product_modal.interpretesProd.split(
           "-"
         );
-        if (list_roles !== undefined) {
-          this.product_modal.interpretesProd.pop();
-        }
+        this.product_modal.interpretesProd.pop();
         this.product.interpretesProd = [];
-        let roles = [];
         for (let i = 0; i < this.product_modal.interpretesProd.length; i++) {
-          if (list_roles_help.length !== 0) {
-            list_roles_help[i].forEach((element) => {
-              if (element === "") {
-                roles = [];
-              } else roles = list_roles_help[i];
-              return roles;
-            });
-          }
           this.interpretesProd.push({
             id: this.product_modal.interpretesProd[i].id,
             key: i + 1,
-            role: roles,
             value: this.product_modal.interpretesProd[i],
           });
           this.product.interpretesProd.push({
             id: this.product_modal.interpretesProd[i].id,
             key: i + 1,
-            role: roles,
             value: this.product_modal.interpretesProd[i],
           });
         }
@@ -1335,14 +1287,12 @@ export default {
         this.interpretesProd = [
           {
             value: "",
-            role: [],
             key: 2,
           },
         ];
         this.product.interpretesProd = [
           {
             value: "",
-            role: [],
             key: 2,
           },
         ];
@@ -1399,8 +1349,6 @@ export default {
       this.detalles = true;
       this.producto = { ...this.product };
       if (this.producto.interpretesProd !== null) {
-        let list_help = this.producto.interpretesProd.split(".");
-        this.producto.interpretesProd = list_help[0];
         this.producto.interpretesProd = this.producto.interpretesProd.split(
           "-"
         );
@@ -1492,7 +1440,6 @@ export default {
         {
           id: -1,
           value: "",
-          role: [],
           key: 2,
         },
       ];
@@ -1554,11 +1501,7 @@ export default {
         this.compareInterpAndAtr(
           this.interpretesProd,
           this.product.interpretesProd
-        ) &&
-        this.compareInterpRoles(
-          this.interpretesProd,
-          this.product.interpretesProd
-        ) */
+        )*/
       );
     },
   },
@@ -1630,21 +1573,6 @@ export default {
           return false;
         } else return true;
       } else return false;
-    },
-    compareInterpRoles(old_array, new_array) {
-      let igual_cont = 0;
-      for (let i = 0; i < old_array.length; i++) {
-        if (new_array[i].role.length === old_array[i].role.length) {
-          for (let j = 0; j < new_array[i].role.length; j++) {
-            if (new_array[i].role[j] === old_array[i].role[j]) {
-              igual_cont++;
-            }
-          }
-          if (igual_cont !== new_array[i].role.length) {
-            return false;
-          } else return true;
-        } else return false;
-      }
     },
     reload_parent() {
       this.$emit("refresh");
@@ -1757,9 +1685,6 @@ export default {
       let destinos = "";
       let interpretes = "";
       let autores = "";
-      let roles_interp = [];
-      let roles = "";
-      let interpretes_roles = "";
       if (this.action_modal === "editar" || this.action_modal === "detalles") {
         this.text_button = "Editando...";
         if (this.product_modal.descripIngPro === undefined) {
@@ -1798,23 +1723,12 @@ export default {
         this.interpretesProd.forEach((item) => {
           if (item.value !== "") {
             this.product_modal.interpretesProd.push(item.value);
-            if (item.role.length !== 0) {
-              roles_interp.push(item.role);
-            } else roles_interp.push("");
           }
         });
-        if (roles_interp.length !== 0) {
-          roles_interp.forEach((item) => {
-            roles += item + "|";
-          });
-        }
         this.product_modal.interpretesProd.forEach((item) => {
           interpretes += item + "-";
         });
-        interpretes_roles =
-          interpretes && roles
-            ? (interpretes_roles = interpretes + "." + roles)
-            : interpretes + roles;
+        this.product_modal.interpretesProd = interpretes;
         if (this.product_modal.destinosComerPro !== "") {
           this.product_modal.destinosComerPro.forEach((item) => {
             destinos += item + "-";
@@ -1839,7 +1753,7 @@ export default {
         form_data.append("catalDigitalPro", this.product_modal.catalDigitalPro);
         form_data.append("destinosComerPro", destinos);
         form_data.append("autoresProd", autores);
-        form_data.append("interpretesProd", interpretes_roles);
+        form_data.append("interpretesProd", interpretes);
         form_data.append(
           "variosInterpretesProd",
           this.product_modal.variosInterpretesProd
@@ -1930,13 +1844,7 @@ export default {
         this.interpretesProd.forEach((item) => {
           if (item.value !== "") {
             this.product_modal.interpretesProd.push(item.value);
-            if (item.role !== undefined) {
-              roles_interp.push(item.role);
-            } else roles_interp.push("");
           }
-        });
-        roles_interp.forEach((item) => {
-          roles += item + "|";
         });
         this.product_modal.interpretesProd.forEach((item) => {
           interpretes += item + "-";
@@ -1953,16 +1861,8 @@ export default {
           autores = "";
         }
         if (interpretes === "-") {
-          roles = "";
           interpretes = "";
-        } else if (roles === "|") {
-          roles = "";
-          interpretes_roles = interpretes;
-        } else
-          interpretes_roles =
-            interpretes && roles
-              ? (interpretes_roles = interpretes + "." + roles)
-              : interpretes + roles;
+        }
         if (this.product.proyecto_id) {
           this.product_modal.proyecto_id = this.product.proyecto_id;
           this.tab_visibility = false;
@@ -1989,7 +1889,7 @@ export default {
         form_data.append("catalDigitalPro", this.product_modal.catalDigitalPro);
         form_data.append("destinosComerPro", destinos);
         form_data.append("autoresProd", autores);
-        form_data.append("interpretesProd", interpretes_roles);
+        form_data.append("interpretesProd", interpretes);
         form_data.append(
           "variosInterpretesProd",
           this.product_modal.variosInterpretesProd
@@ -2127,7 +2027,6 @@ export default {
         this.interpretesProd.push({
           id: -1,
           value: "",
-          role: [],
           key: Date.now(),
         });
       }

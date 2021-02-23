@@ -23,6 +23,10 @@ export default {
     all_interpretes_statics: [],
     interpretes: [],
 		created_interpretes: [],
+		all_temas: [],
+    all_temas_statics: [],
+    temas: [],
+		created_temas: [],
   },
   getters: {
     getTracksFormGetters(state) {
@@ -87,6 +91,18 @@ export default {
     },
     getAllInterpretesStaticsFormGetters(state) {
       return state.all_interpretes_statics;
+    },
+		getTemasFormGetters(state) {
+      return state.temas;
+    },
+    getCreatedTemasFormGetters(state) {
+      return state.created_temas;
+    },
+    getAllTemasFormGetters(state) {
+      return state.all_temas;
+    },
+    getAllTemasStaticsFormGetters(state) {
+      return state.all_temas_statics;
     },
   },
 };

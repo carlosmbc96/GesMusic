@@ -541,7 +541,7 @@
               </div>
             </a-spin>
           </a-row>
-          <a-row style="margin-top: 20px">
+          <a-row style="margin-top: 20px" v-if="action_modal === 'crear'">
             <a-col span="11">
               <a-row>
                 <a-col span="24">
@@ -550,7 +550,7 @@
                   </div>
                 </a-col>
               </a-row>
-              <a-row v-if="action_modal === 'crear'">
+              <a-row>
                 <a-col span="24">
                   <a-mentions
                     readonly

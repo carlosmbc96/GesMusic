@@ -118,6 +118,7 @@ Route::delete('/autores/desactivar/{id}', 'AutorController@destroyLog'); // Ruta
 Route::delete('/autores/eliminar/{id}', 'AutorController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Producto
 Route::post('/autores/nomencladores', 'AutorController@nomenclators');
 Route::post('/autores/actualizarRelacionesAut', 'AutorController@actualizarRelacionesAut');
+Route::post('/autores/temas', 'AutorController@temas');
 
 // RUTAS DEL RECURSO: INTERPRETE
 Route::get('/interpretes/restaurar/{id}', 'InterpreteController@restoreLog');

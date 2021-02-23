@@ -124,7 +124,7 @@
                     <a-form-model-item
                       v-if="
                         action_modal === 'crear' ||
-                        action_modal === 'crear_autor'
+                          action_modal === 'crear_autor'
                       "
                       :validate-status="show_error"
                       prop="codigAutr"
@@ -162,7 +162,7 @@
                     <a-form-model-item
                       v-if="
                         action_modal === 'crear' ||
-                        action_modal === 'crear_autor'
+                          action_modal === 'crear_autor'
                       "
                       :validate-status="show_error"
                       prop="ciAutr"
@@ -292,48 +292,166 @@
                           </a-mentions>
                         </div>
                       </a-form-model-item>
-                    </div>
-                  </a-col>
-                  <a-col span="1"></a-col>
-                  <a-col span="11">
-                    <div id="checkbox" style="margin-top: 30px">
+                      <div id="checkbox">
+                        <a-form-model-item v-if="action_modal !== 'detalles'">
+                          <a-checkbox
+                            :disabled="disabled"
+                            v-model="fallecidoAutr"
+                            :value="fallecidoAutr"
+                            style="margin-top: 20px"
+                          >
+                            ¿El Autor es Fallecido?
+                          </a-checkbox>
+                        </a-form-model-item>
+                        <a-form-model-item v-else>
+                          <i
+                            class="fa fa-check-square-o hidden-xs"
+                            v-if="author.fallecidoAutr === 1"
+                          />
+                          <i class="fa fa-square-o" v-else />
+                          ¿El Autor es Fallecido?
+                        </a-form-model-item>
+                      </div>
                       <a-form-model-item v-if="action_modal !== 'detalles'">
                         <a-checkbox
                           :disabled="disabled"
-                          v-model="fallecidoAutr"
-                          :value="fallecidoAutr"
-                          style="margin-top: 20px"
+                          v-model="obrasCatEditAutr"
+                          :value="obrasCatEditAutr"
                         >
-                          ¿El Autor es Fallecido?
+                          ¿El Autor tiene Obras en el Catalgo Editorial de
+                          Bismusic?
                         </a-checkbox>
                       </a-form-model-item>
                       <a-form-model-item v-else>
                         <i
                           class="fa fa-check-square-o hidden-xs"
-                          v-if="author.fallecidoAutr === 1"
+                          v-if="author.obrasCatEditAutr === 1"
                         />
                         <i class="fa fa-square-o" v-else />
-                        ¿El Autor es Fallecido?
+                        ¿El Autor tiene Obras en el Catálgo Editorial de
+                        Bismusic?
                       </a-form-model-item>
                     </div>
-                    <a-form-model-item v-if="action_modal !== 'detalles'">
-                      <a-checkbox
-                        :disabled="disabled"
-                        v-model="obrasCatEditAutr"
-                        :value="obrasCatEditAutr"
-                      >
-                        ¿El Autor tiene Obras en el Catalgo Editorial de
-                        Bismusic?
-                      </a-checkbox>
-                    </a-form-model-item>
-                    <a-form-model-item v-else>
-                      <i
-                        class="fa fa-check-square-o hidden-xs"
-                        v-if="author.obrasCatEditAutr === 1"
-                      />
-                      <i class="fa fa-square-o" v-else />
-                      ¿El Autor tiene Obras en el Catálgo Editorial de Bismusic?
-                    </a-form-model-item>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="11">
+                    <a-row
+                      style="margin-top: 20px"
+                      v-if="action_modal === 'crear'"
+                    >
+                      <a-col span="24">
+                        <a-row>
+                          <a-col span="24">
+                            <div class="section-title">
+                              <h4>Temas</h4>
+                            </div>
+                          </a-col>
+                        </a-row>
+                        <a-row>
+                          <a-col span="24">
+                            <a-mentions
+                              readonly
+                              v-if="
+                                $store.getters.getTemasFormGetters.length === 0
+                              "
+                            ></a-mentions>
+														<div class="custom-form-item">
+															<a-form-model-item
+                              v-for="(tema, index) in $store.getters
+                                .getTemasFormGetters"
+                              :key="tema.id"
+                              v-bind="index === 0 ? formItemLayout : {}"
+                            >
+                              <a-row>
+                                <a-col span="22">
+                                  <a-mentions
+                                    style="margin-top: 3px"
+                                    readonly
+                                    :placeholder="tema.tituloTem"
+                                  ></a-mentions>
+                                </a-col>
+                                <a-col span="2" style="float: right">
+                                  <a-button
+                                    class="dynamic-delete-button"
+                                    @click="remove_tema(tema)"
+                                  >
+                                    <small>
+                                      <b style="vertical-align: top"> x </b>
+                                    </small>
+                                  </a-button>
+                                </a-col>
+                              </a-row>
+                            </a-form-model-item>
+														</div>
+                            <a-row style="margin-top: 20px">
+                              <a-col span="24">
+                                <div class="section-title">
+                                  <h5>Selector de Temas</h5>
+                                </div>
+																<div class="custom-form-item">
+                                <a-form-model
+                                  ref="formularioAgregarTema"
+                                  :layout="'horizontal'"
+                                  :model="author_modal"
+                                >
+                                  <a-form-model-item>
+                                    <a-select
+                                      placeholder="Titulo"
+                                      option-filter-prop="children"
+                                      :filter-option="filter_option"
+                                      show-search
+                                      v-model="author_modal.temas"
+                                      :disabled="disabled"
+                                    >
+                                      <a-select-option
+                                        v-for="tema in $store.getters
+                                          .getAllTemasFormGetters"
+                                        :key="tema.id"
+                                        :value="tema.id"
+                                      >
+                                        {{ tema.tituloTem }}
+                                      </a-select-option>
+                                    </a-select>
+                                  </a-form-model-item>
+                                  <a-row>
+                                    <a-col span="12">
+                                      <a-form-model-item
+                                        v-bind="formItemLayout"
+                                      >
+                                        <a-button
+                                          :disabled="disabled"
+                                          type="primary"
+                                          @click="add_tema"
+                                        >
+                                          <a-icon type="plus" />
+                                          Agregar Tema
+                                        </a-button>
+                                      </a-form-model-item>
+                                    </a-col>
+                                    <a-col span="12">
+                                      <a-form-model-item
+                                        v-bind="formItemLayout"
+                                        style="float: right"
+                                      >
+                                        <a-button
+                                          :disabled="disabled"
+                                          type="primary"
+                                          @click="new_tema"
+                                        >
+                                          <a-icon type="plus" />
+                                          Crear Tema
+                                        </a-button>
+                                      </a-form-model-item>
+                                    </a-col>
+                                  </a-row>
+                                </a-form-model>
+																</div>
+                              </a-col>
+                            </a-row>
+                          </a-col>
+                        </a-row>
+                      </a-col>
+                    </a-row>
                   </a-col>
                 </a-row>
               </a-form-model>
@@ -364,11 +482,18 @@
         </a-tab-pane>
       </a-tabs>
     </a-modal>
+    <modal_management_temas
+      v-if="visible_management_tema"
+      :action="action_management_temas"
+      @close_modal="visible_management_tema = $event"
+      :temas_list="$store.getters.getAllTemasStaticsFormGetters"
+    />
   </div>
 </template>
 
 <script>
 import tabla_audiovisuales from "../../Audiovisual/Tabla_Audiovisuales";
+import modal_management_temas from "../../Tema/Modal_Gestionar_Tema";
 export default {
   props: ["action", "author", "autors_list"],
   data() {
@@ -418,7 +543,15 @@ export default {
       fallecidoAutr: false,
       obrasCatEditAutr: false,
       list_nomenclators: [],
+      action_management_temas: "crear_tema",
+      visible_management_tema: false,
       codigo: "",
+      formItemLayout: {
+        wrapperCol: {
+          xs: { span: 24, offset: 0 },
+          sm: { span: 20, offset: 4 },
+        },
+      },
       rules: {
         codigAutr: [
           {
@@ -554,6 +687,13 @@ export default {
     },
   },
   methods: {
+    filter_option(input, option) {
+      return (
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      );
+    },
     reload_parent() {
       this.$emit("refresh");
     },
@@ -561,6 +701,29 @@ export default {
       if (e === "cancelar") {
         this.$refs.general_form.resetFields();
         this.show = false;
+        if (this.$store.getters.getCreatedTemasFormGetters.length !== 0) {
+          for (
+            let index = 0;
+            index < this.$store.getters.getCreatedTemasFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `temas/eliminar/${this.$store.getters.getCreatedTemasFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        this.$store.state["temas"] = [];
+        this.$store.state["created_temas"] = [];
+        this.$store.state["all_temas"] = [];
+        this.$store.state["all_temas_statics"] = [];
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
@@ -627,8 +790,24 @@ export default {
             },
           })
           .then((res) => {
-						if (this.action_modal === "crear_autor") {
-							let autores = [];
+            axios
+              .post("/autores/temas", {
+                temas: this.getTemasID(),
+                id: res.data.id,
+              })
+              .then((res) => {
+                this.$store.state["temas"] = [];
+                this.$store.state["all_temas_statics"] = [];
+                this.$store.state["all_temas"] = [];
+                this.$store.state["created_temas"] = [];
+              })
+              .catch((error) => {
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+            if (this.action_modal === "crear_autor") {
+              let autores = [];
               axios
                 .post("/autores/listar")
                 .then((response) => {
@@ -708,17 +887,11 @@ export default {
       } else if (this.author_modal.tracks_autrs) {
         this.relation = "tracks";
         form_data.append("type_relation", this.relation);
-        form_data.append(
-          "track_id",
-          this.author_modal.tracks_autrs
-        );
+        form_data.append("track_id", this.author_modal.tracks_autrs);
       } else if (this.author_modal.temas_autrs) {
         this.relation = "temas";
         form_data.append("type_relation", this.relation);
-        form_data.append(
-          "tema_id",
-          this.author_modal.temas_autrs
-        );
+        form_data.append("tema_id", this.author_modal.temas_autrs);
       }
 
       if (this.file_list.length !== 0) {
@@ -732,6 +905,11 @@ export default {
       return form_data;
     },
     set_action() {
+      if (this.author.temas_autrs) {
+        this.tab_visibility = false;
+        this.active_tab = "2";
+        this.tabs_list.push("tab_1");
+      }
       if (this.action_modal === "editar") {
         if (this.author.deleted_at !== null) {
           this.disabled = true;
@@ -853,6 +1031,22 @@ export default {
             timeout: 2000,
           });
         });
+      axios
+        .post("/temas/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              if (this.action_modal === "crear") {
+                this.$store.state["all_temas"].push(element);
+              }
+              this.$store.state["all_temas_statics"].push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     //Metodos para generar el codigo
     //Este es el único método que varia de un módulo a otro
@@ -909,8 +1103,58 @@ export default {
       }
     },
     //Fin de metodos para generar el codigo
+
+    add_tema() {
+      if (this.author_modal.temas !== undefined) {
+        this.$store.state["temas"].push(
+          this.get_tema(this.author_modal.temas).tema
+        );
+        this.$store.state["all_temas"].splice(
+          this.get_tema(this.author_modal.temas).index,
+          1
+        );
+        this.author_modal.temas = undefined;
+      }
+      console.log(this.$store.getters.getTemasFormGetters);
+    },
+
+    remove_tema(item) {
+      let index = this.$store.getters.getTemasFormGetters.indexOf(item);
+      this.$store.state["temas"].splice(index, 1);
+      this.$store.state["all_temas"].push(item);
+    },
+
+    new_tema() {
+      this.visible_management_tema = true;
+    },
+
+    get_tema(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllTemasFormGetters.length;
+        index++
+      ) {
+        if (this.$store.getters.getAllTemasFormGetters[index].id === id) {
+          return {
+            tema: this.$store.getters.getAllTemasFormGetters[index],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
+
+    getTemasID() {
+      let answer = [];
+      let all_temas = this.$store.getters.getTemasFormGetters;
+      for (let index = 0; index < all_temas.length; index++) {
+        answer.push(all_temas[index].id);
+      }
+      return answer;
+    },
   },
   components: {
+    modal_management_temas,
     tabla_audiovisuales,
   },
 };
@@ -936,6 +1180,9 @@ export default {
 #modal_gestionar_autores .ant-form-item-control {
   width: 85%;
 }
+#modal_gestionar_autores .custom-form-item .ant-form-item-control {
+  width: 100% !important;
+}
 #modal_gestionar_autores #resenha .ant-form-item-control {
   width: 100% !important;
 }
@@ -944,5 +1191,22 @@ export default {
 }
 #modal_gestionar_autores .description textarea {
   height: 150px !important;
+}
+#modal_gestionar_autores .ant-col-sm-offset-4 {
+  margin-left: 0px !important;
+}
+#modal_gestionar_autores .dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  margin-left: 4px;
+  padding: 0 8px;
+  top: 2px;
+  font-size: 18px;
+  color: white;
+  background-color: rgb(243, 107, 100);
+  transition: all 0.3s;
+}
+#modal_gestionar_autores .ant-col-sm-20 {
+  width: 100%;
 }
 </style>

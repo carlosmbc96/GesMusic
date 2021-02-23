@@ -1031,13 +1031,23 @@
                       </a-form-model-item>
                     </a-col>
                   </a-row>
-                  <a-row style="margin-top: 20px">
+                  <a-row style="margin-top: 20px; margin-bottom: 20px">
                     <a-col span="11">
                       <a-row>
                         <a-col span="24">
                           <div class="section-title">
                             <h4>Realizadores</h4>
                           </div>
+													<a-alert
+														v-if="
+															action_modal === 'detalles' &&
+																$store.getters.getRealizadoresFormGetters
+																	.length === 0
+														"
+														message="El audiovisual no posee realizadores"
+														type="info"
+														show-icon
+													/>
                         </a-col>
                       </a-row>
                       <a-row v-if="action_modal !== 'detalles'">
@@ -1111,14 +1121,7 @@
                                     <a-form-model-item v-bind="formItemLayout">
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="add_realizador"
                                       >
                                         <a-icon type="plus" />
@@ -1133,14 +1136,7 @@
                                     >
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="new_realizador"
                                       >
                                         <a-icon type="plus" />
@@ -1176,6 +1172,16 @@
                           <div class="section-title">
                             <h4>Entrevistados</h4>
                           </div>
+													<a-alert
+														v-if="
+															action_modal === 'detalles' &&
+																$store.getters.getEntrevistadosFormGetters
+																	.length === 0
+														"
+														message="El audiovisual no posee entrevistados"
+														type="info"
+														show-icon
+													/>
                         </a-col>
                       </a-row>
                       <a-row v-if="action_modal !== 'detalles'">
@@ -1249,14 +1255,7 @@
                                     <a-form-model-item v-bind="formItemLayout">
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="add_entrevistado"
                                       >
                                         <a-icon type="plus" />
@@ -1271,14 +1270,7 @@
                                     >
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="new_entrevistado"
                                       >
                                         <a-icon type="plus" />
@@ -1309,7 +1301,7 @@
                       </a-row>
                     </a-col>
                   </a-row>
-                  <a-row style="margin-top: 20px">
+                  <a-row style="margin-top: 20px" v-if="action_modal === 'crear'">
                     <a-col span="11">
                       <a-row>
                         <a-col span="24">
@@ -1318,7 +1310,7 @@
                           </div>
                         </a-col>
                       </a-row>
-                      <a-row v-if="action_modal === 'crear'">
+                      <a-row>
                         <a-col span="24">
                           <a-mentions
                             readonly
@@ -1394,14 +1386,7 @@
                                     <a-form-model-item v-bind="formItemLayout">
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="add_autor"
                                       >
                                         <a-icon type="plus" />
@@ -1416,14 +1401,7 @@
                                     >
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="new_autor"
                                       >
                                         <a-icon type="plus" />
@@ -1543,14 +1521,7 @@
                                     <a-form-model-item v-bind="formItemLayout">
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="add_interprete"
                                       >
                                         <a-icon type="plus" />
@@ -1565,14 +1536,7 @@
                                     >
                                       <a-button
                                         :disabled="disabled"
-                                        style="
-                                          color: white;
-                                          background-color: rgb(
-                                            45,
-                                            171,
-                                            229
-                                          ) !important;
-                                        "
+                                        type="primary"
                                         @click="new_interprete"
                                       >
                                         <a-icon type="plus" />

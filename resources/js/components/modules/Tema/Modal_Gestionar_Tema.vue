@@ -61,9 +61,85 @@
         </a-popconfirm>
       </template>
       <!-- Aqui comienzan los tabs -->
-      <a-tabs>
+      <a-tabs :activeKey="active_tab">
         <div slot="tabBarExtraContent">{{ text_header_button }} Tema</div>
-        <a-tab-pane key="1">
+        <!-- Tab 1 -->
+        <a-tab-pane
+          key="1"
+          v-if="tab_visibility && action_modal !== 'detalles'"
+        >
+          <span slot="tab"> Track </span>
+          <div>
+            <a-spin :spinning="spinning">
+              <a-form-model
+                ref="formulariotrack"
+                :model="tema_modal"
+                :rules="rules"
+              >
+                <a-row>
+                  <a-col span="12">
+                    <div class="section-title">
+                      <h4>Selector de Tracks</h4>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-col span="12">
+                  <a-form-model-item
+                    label="Código"
+                    prop="track_id"
+                    has-feedback
+                  >
+                    <a-select
+                      option-filter-prop="children"
+                      :filter-option="filter_option"
+                      show-search
+                      v-model="tema_modal.track_id"
+                      style="width: 50% !important"
+                      :disabled="disabled"
+                    >
+                      <a-select-option
+                        v-for="track in tracks"
+                        :key="track.id"
+                        :value="track.id"
+                      >
+                        {{ track.isrcTrk }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                  <a-form-model-item label="Nombre">
+                    <a-select
+                      option-filter-prop="children"
+                      :filter-option="filter_option"
+                      show-search
+                      v-model="tema_modal.track_id"
+                      :disabled="disabled"
+                    >
+                      <a-select-option
+                        v-for="track in tracks"
+                        :key="track.id"
+                        :value="track.id"
+                      >
+                        {{ track.tituloTrk }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-col>
+                <a-col span="24">
+                  <a-button
+                    :disabled="disabled"
+                    style="float: right"
+                    type="default"
+                    @click="siguiente('tab_1', '2')"
+                  >
+                    Siguiente
+                    <a-icon type="right" />
+                  </a-button>
+                </a-col>
+              </a-form-model>
+            </a-spin>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="2" :disabled="tab_2">
           <span slot="tab">Generales</span>
           <a-row>
             <a-col span="12">
@@ -82,7 +158,10 @@
               <a-row>
                 <a-col span="11">
                   <a-form-model-item
-                    v-if="action_modal === 'crear'"
+                    v-if="
+                      action_modal === 'crear' ||
+                        action_modal === 'crear_tema'
+                    "
                     :validate-status="show_error"
                     prop="codigTema"
                     has-feedback
@@ -195,12 +274,19 @@
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
-                      <a-mentions
-                        readonly
-                        :placeholder="tema_modal.descripTem"
-                      >
+                      <a-mentions readonly :placeholder="tema_modal.descripTem">
                       </a-mentions>
                     </div>
+                    <a-button
+                      v-if="tab_visibility && action_modal !== 'detalles'"
+                      :disabled="disabled"
+                      style="float: left"
+                      type="default"
+                      @click="atras('1')"
+                    >
+                      <a-icon type="left" />
+                      Atrás
+                    </a-button>
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -239,6 +325,7 @@ export default {
       disabled: false,
       waiting: false,
       spinning: false,
+      tracks: [],
       text_button: "",
       text_header_button: "",
       tema_modal: {},
@@ -249,8 +336,19 @@ export default {
       action_modal: this.action,
       codigo: "",
       list_nomenclators: [],
-			catalDigitalTem: false,
+      catalDigitalTem: false,
+      tab_2: true,
+      tabs_list: [],
+      active_tab: "1",
+      tab_visibility: true,
       rules: {
+        track_id: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+        ],
         codigTema: [
           {
             validator: code_required,
@@ -311,8 +409,13 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear") {
+    if (this.action_modal === "crear" || this.action_modal === "crear_tema") {
       this.codigo = this.generar_codigo(this.temas_list);
+    }
+    if (this.action_modal === "detalles") {
+      this.tabs_list.push("tab_1");
+      this.tab_visibility = false;
+      this.active_tab = "2";
     }
   },
   computed: {
@@ -336,10 +439,30 @@ export default {
           .indexOf(input.toLowerCase()) >= 0
       );
     },
+    siguiente(tab, siguienteTab) {
+      if (tab == "tab_1") {
+        this.$refs.formulariotrack.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            if (this.tabs_list.indexOf(tab) == -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          }
+        });
+      }
+    },
+    atras(tabAnterior) {
+      this.active_tab = tabAnterior;
+    },
     handle_cancel(e) {
       if (e === "cancelar") {
-        this.$refs.general_form.resetFields();
+				if (this.$refs.general_form !== undefined) {
+        	this.$refs.general_form.resetFields();
+				}
         this.show = false;
+        this.tab_visibility = true;
+        this.tabs_list = [];
         this.$emit("close_modal", this.show);
         if (this.action_modal !== "detalles") {
           this.$toast.success(this.action_close, "¡Éxito!", {
@@ -350,6 +473,8 @@ export default {
       } else {
         this.$refs.general_form.resetFields();
         this.show = false;
+        this.show = false;
+        this.tabs_list = [];
         this.$emit("close_modal", this.show);
       }
     },
@@ -379,8 +504,7 @@ export default {
         this.action_title = "¿Desea guardar los cambios en el Tema?";
         this.action_close = "La edición del Tema se canceló correctamente";
         this.tema_modal = { ...this.tema };
-				this.catalDigitalTem =
-          this.tema.catalDigitalTem === 0 ? false : true;
+        this.catalDigitalTem = this.tema.catalDigitalTem === 0 ? false : true;
         this.tema_modal.codigTema = this.tema.codigTema.substr(5);
       } else if (this.action_modal === "detalles") {
         if (this.tema.deleted_at !== null) {
@@ -440,6 +564,31 @@ export default {
             },
           })
           .then((res) => {
+						if (this.action_modal === "crear_tema") {
+              let temas = [];
+              axios
+                .post("/temas/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      temas.push(element);
+                    }
+                  });
+                  this.$store.state["temas"].push(
+                    temas[temas.length - 1]
+                  );
+                  this.$store.state["created_temas"].push(
+                    temas[temas.length - 1]
+                  );
+                  this.$store.state["all_temas_statics"].push(
+                    temas[temas.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
@@ -462,8 +611,7 @@ export default {
       }
     },
     prepare_create() {
-			console.log(this.tema_modal);
-			this.tema_modal.catalDigitalTem = this.catalDigitalTem === false ? 0 : 1;
+      this.tema_modal.catalDigitalTem = this.catalDigitalTem === false ? 0 : 1;
       if (this.tema_modal.descripTem === undefined) {
         this.tema_modal.descripTem = "";
       } else if (this.tema_modal.descripTem === null) {
@@ -476,16 +624,26 @@ export default {
       if (this.tema_modal.codigTema === undefined) {
         this.tema_modal.codigTema = this.codigo;
       }
+      if (this.tema_modal.track_id) {
+        this.tab_visibility = false;
+        this.tab_2 = false;
+        this.active_tab = "2";
+      }
+			console.log("ok");
       this.tema_modal.codigTema = "TEMA-" + this.tema_modal.codigTema;
+			console.log("ok");
       form_data.append("codigTema", this.tema_modal.codigTema);
+      form_data.append("track_id", this.tema_modal.track_id);
       form_data.append("tituloTem", this.tema_modal.tituloTem);
-			form_data.append("catalDigitalTem", this.tema_modal.catalDigitalTem);
+      form_data.append("catalDigitalTem", this.tema_modal.catalDigitalTem);
       form_data.append("descripTem", this.tema_modal.descripTem);
       form_data.append(
         "sociedadGestionTem",
         this.tema_modal.sociedadGestionTem
       );
+			console.log("ok");
       this.text_button = "Creando...";
+			console.log("ok");
       return form_data;
     },
     //Metodos para generar el codigo
@@ -543,6 +701,17 @@ export default {
       }
     },
     load_nomenclators() {
+      axios
+        .post("/tracks/listar")
+        .then((response) => {
+          let proy = response.data;
+          proy.forEach((element) => {
+            if (!element.deleted_at) {
+              this.tracks.push(element);
+            }
+          });
+        })
+        .catch((error) => {});
       axios
         .post("/temas/nomencladores")
         .then((response) => {

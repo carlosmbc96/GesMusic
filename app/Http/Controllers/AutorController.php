@@ -192,4 +192,18 @@ class AutorController extends Controller
             return response()->json($track);
         }
     }
+
+		public function temas(Request $request) {
+			$autor = Autor::withTrashed()->findOrFail($request->id);
+			for ($i = count($autor->temas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+				$autor->temas()->withTrashed()->get()[$i]->pivot->delete();
+			}
+			foreach ($request->temas as $tema) {
+				Tema_Autor::create([
+					"autor_id" => $request->id,
+					"tema_id" => $tema,
+				]);
+			}
+			return response()->json($autor);
+		}
 }

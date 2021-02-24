@@ -198,4 +198,36 @@ class ProductoController extends Controller
         }
         return response()->json($producto);
     }
+    public function autores(Request $request)
+    {
+        $producto = Producto::withTrashed()->findOrFail($request->id);
+        $audiovisuales = $producto->audiovisuales()->withTrashed()->get();
+        $autores = [];
+        $autores_id = [];
+        for ($i = 0; $i < count($audiovisuales); $i++) {
+            for ($j = 0; $j < count($audiovisuales[$i]->autores()->withTrashed()->get()); $j++) {
+                if (!in_array($audiovisuales[$i]->autores()->withTrashed()->get()[$j]->id, $autores_id)) {
+                    array_push($autores_id, $audiovisuales[$i]->autores()->withTrashed()->get()[$j]->id);
+                    array_push($autores, $audiovisuales[$i]->autores()->withTrashed()->get()[$j]);
+                }
+            }
+        }
+        return response()->json($autores);
+    }
+    public function interpretes(Request $request)
+    {
+        $producto = Producto::withTrashed()->findOrFail($request->id);
+        $audiovisuales = $producto->audiovisuales()->withTrashed()->get();
+        $interpretes = [];
+        $interpretes_id = [];
+        for ($i = 0; $i < count($audiovisuales); $i++) {
+            for ($j = 0; $j < count($audiovisuales[$i]->interpretes()->withTrashed()->get()); $j++) {
+                if (!in_array($audiovisuales[$i]->interpretes()->withTrashed()->get()[$j]->id, $interpretes_id)) {
+                    array_push($interpretes_id, $audiovisuales[$i]->interpretes()->withTrashed()->get()[$j]->id);
+                    array_push($interpretes, $audiovisuales[$i]->interpretes()->withTrashed()->get()[$j]);
+                }
+            }
+        }
+        return response()->json($interpretes);
+    }
 }

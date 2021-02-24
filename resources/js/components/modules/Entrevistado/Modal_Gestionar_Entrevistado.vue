@@ -86,7 +86,7 @@
                   <a-form-model-item
                     v-if="
                       action_modal === 'crear' ||
-                        action_modal === 'crear_entrevistado'
+                      action_modal === 'crear_entrevistado'
                     "
                     :validate-status="show_error"
                     prop="codigEntrv"
@@ -332,7 +332,10 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear" || this.action_modal === "crear_entrevistado") {
+    if (
+      this.action_modal === "crear" ||
+      this.action_modal === "crear_entrevistado"
+    ) {
       this.codigo = this.generar_codigo(this.entrevistados_list);
     }
   },
@@ -345,6 +348,16 @@ export default {
           this.entrevistados_modal.nombreApellidosEntrv &&
           this.entrevistados_modal.sexoEntrv
         );
+    },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      return (
+        this.entrevistados_modal.nombreApellidosEntrv === this.entrevistado.nombreApellidosEntrv &&
+        this.entrevistados_modal.sexoEntrv === this.entrevistado.sexoEntrv &&
+        this.entrevistados_modal.descripEspEntrv === this.entrevistado.descripEspEntrv
+      );
     },
   },
   methods: {
@@ -645,7 +658,7 @@ export default {
     },
   },
   components: {
-    tabla_audiovisuales: () => import('../Audiovisual/Tabla_Audiovisuales')
+    tabla_audiovisuales: () => import("../Audiovisual/Tabla_Audiovisuales"),
   },
 };
 </script>

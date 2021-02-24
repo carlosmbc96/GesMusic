@@ -343,6 +343,20 @@ export default {
         return !this.compare_object;
       } else return this.artisticos_modal.NombreArts;
     },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      this.artisticos_modal.actualNombreArts =
+        this.actualNombreArts === true ? 1 : 0;
+      return (
+        this.artisticos_modal.NombreArts === this.artistico.NombreArts &&
+        this.artisticos_modal.descripNombreArts === this.artistico.descripNombreArts &&
+        this.artisticos_modal.interprete_id === this.artistico.interprete_id &&
+        this.artisticos_modal.actualNombreArts ===
+          this.artistico.actualNombreArts
+      );
+    },
   },
   methods: {
     /*

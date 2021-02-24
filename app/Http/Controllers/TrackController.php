@@ -144,7 +144,13 @@ class TrackController extends Controller
 
     public function destroyLog($id)
     {
-        return response()->json(Track::findOrFail($id)->delete());
+        $track = Track::findOrFail($id);
+        $temas = $track->temas;
+        foreach ($temas as $tema) {
+            $tema->delete();
+        }
+        $track->delete();
+        return response()->json($track);
     }
 
     public function destroyFis($id)
@@ -164,7 +170,13 @@ class TrackController extends Controller
 
     public function restoreLog($id)
     {
-        return response()->json(Track::onlyTrashed()->findOrFail($id)->restore());
+        $track = Track::onlyTrashed()->findOrFail($id);
+        $temas = $track->temas()->withTrashed()->get();
+        foreach ($temas as $tema) {
+            $tema->restore();
+        }
+        $track->restore();
+        return response()->json($track);
     }
     public function crearDirectorios($fonogramas)
     {

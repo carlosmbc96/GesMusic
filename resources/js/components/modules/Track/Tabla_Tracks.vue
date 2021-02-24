@@ -22,7 +22,7 @@
         <e-columns>
           <e-column
             headerText="Orden"
-            width="100"
+            width="90"
             :template="order"
             :visible="true"
             textAlign="Center"
@@ -488,11 +488,11 @@ export default {
                   <a-col span="12">
                   <a-row class="icon-up">
                       <a-button
-                      class="icon-up"
+                        class="icon-up"
 												@click="order_up(parseInt(data.index))"
 												style="height: 12px"
 												type="link"
-												v-if="parseInt(data.index) !== 0"
+												v-if="parseInt(data.index) !== 0 && !this.$parent.$parent.$parent.detalles_prop"
 											>
 												<a-icon  class="icon-up" style="font-size: 25px; color: rgb(76, 196, 177)" type="caret-up" />
 											</a-button>
@@ -500,13 +500,13 @@ export default {
 									  <label>{{ parseInt(data.index) + 1 }}</label>
 										<a-row style="height: 20px" class="icon-down">
                       <a-button
-                      class="icon-down"
+                        class="icon-down"
 												@click="order_down(parseInt(data.index))"
 												style="height: 12px"
 												type="link"
 												v-if="
 													parseInt(data.index) !==
-														$parent.$parent.$parent.tracks_list.length - 1
+														$parent.$parent.$parent.tracks_list.length - 1 && !this.$parent.$parent.$parent.detalles_prop
 												"
 											>
 												<a-icon class="icon-down" style="font-size: 25px; color: rgb(76, 196, 177)" type="caret-down" />
@@ -520,10 +520,6 @@ export default {
                 data: {},
               };
             },
-            // created() {},
-            // computed: {
-            //   color_status() {},
-            // },
             methods: {
               order_up(id) {
                 let temp = this.$parent.$parent.$parent.tracks_list[

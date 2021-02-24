@@ -39,7 +39,6 @@ Route::post('/proyectos/editar', 'ProyectoController@update')->name('proyectos.a
 Route::delete('/proyectos/desactivar/{id}', 'ProyectoController@destroyLog')->name('proyectos.eliminar'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Proyecto
 Route::delete('/proyectos/eliminar/{id}', 'ProyectoController@destroyFis'); // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Proyecto
 
-
 // RUTAS DEL RECURSO: PRODUCTO
 Route::get('/productos/restaurar/{id}', 'ProductoController@restoreLog');
 Route::post('/productos/listar', 'ProductoController@index')->name('productos.listar'); // Ruta que Lista todos los Registros del Modelo Producto
@@ -50,7 +49,8 @@ Route::delete('/productos/eliminar/{id}', 'ProductoController@destroyFis'); // R
 Route::post('/productos/nomencladores', 'ProductoController@nomenclators');
 Route::get('/productos/fonogramas/{id}', 'ProductoController@fonogramasRelation');
 Route::post('/productos/actualizarRelacionesFong', 'ProductoController@actualizarRelacionesFong');
-
+Route::post('/productos/autores', 'ProductoController@autores');
+Route::post('/productos/interpretes', 'ProductoController@interpretes');
 
 // RUTAS DEL RECURSO: FONOGRAMA
 Route::get('/fonogramas/restaurar/{id}', 'FonogramaController@restoreLog');

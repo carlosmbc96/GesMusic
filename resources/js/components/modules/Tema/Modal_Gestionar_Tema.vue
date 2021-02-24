@@ -195,10 +195,7 @@
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
-                      <a-mentions
-                        readonly
-                        :placeholder="tema_modal.descripTem"
-                      >
+                      <a-mentions readonly :placeholder="tema_modal.descripTem">
                       </a-mentions>
                     </div>
                   </a-form-model-item>
@@ -206,6 +203,28 @@
               </a-row>
             </a-form-model>
           </a-spin>
+        </a-tab-pane>
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+          <span slot="tab"> Autores </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Autores</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <br />
+          <div>
+            <tabla_autores
+              :detalles_prop="detalles"
+              @reload="reload_parent"
+              :entity="tema_modal"
+              entity_relation="temas"
+              :vista_editar="vista_editar"
+              @close_modal="show = $event"
+            />
+            <br />
+          </div>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -249,7 +268,7 @@ export default {
       action_modal: this.action,
       codigo: "",
       list_nomenclators: [],
-			catalDigitalTem: false,
+      catalDigitalTem: false,
       rules: {
         codigTema: [
           {
@@ -321,6 +340,18 @@ export default {
         return !this.compare_object;
       } else return this.tema_modal.tituloTem;
     },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      this.tema_modal.catalDigitalTem = this.catalDigitalTem === true ? 1 : 0;
+      return (
+        this.tema_modal.tituloTem === this.tema.tituloTem &&
+        this.tema_modal.sociedadGestionTem === this.tema.sociedadGestionTem &&
+        this.tema_modal.catalDigitalTem === this.tema.catalDigitalTem &&
+        this.tema_modal.descripTem === this.tema.descripTem
+      );
+    },
   },
   methods: {
     reload_parent() {
@@ -379,8 +410,7 @@ export default {
         this.action_title = "¿Desea guardar los cambios en el Tema?";
         this.action_close = "La edición del Tema se canceló correctamente";
         this.tema_modal = { ...this.tema };
-				this.catalDigitalTem =
-          this.tema.catalDigitalTem === 0 ? false : true;
+        this.catalDigitalTem = this.tema.catalDigitalTem === 0 ? false : true;
         this.tema_modal.codigTema = this.tema.codigTema.substr(5);
       } else if (this.action_modal === "detalles") {
         if (this.tema.deleted_at !== null) {
@@ -397,7 +427,7 @@ export default {
         this.text_header_button = "Crear";
         this.action_cancel_title = "¿Desea cancelar la creación del Tema?";
         this.action_title = "¿Desea crear el Tema?";
-        this.action_close = "La creación del tema se canceló correctamente";
+        this.action_close = "La creación del Tema se canceló correctamente";
       }
     },
     confirm() {
@@ -462,8 +492,8 @@ export default {
       }
     },
     prepare_create() {
-			console.log(this.tema_modal);
-			this.tema_modal.catalDigitalTem = this.catalDigitalTem === false ? 0 : 1;
+      console.log(this.tema_modal);
+      this.tema_modal.catalDigitalTem = this.catalDigitalTem === false ? 0 : 1;
       if (this.tema_modal.descripTem === undefined) {
         this.tema_modal.descripTem = "";
       } else if (this.tema_modal.descripTem === null) {
@@ -479,7 +509,7 @@ export default {
       this.tema_modal.codigTema = "TEMA-" + this.tema_modal.codigTema;
       form_data.append("codigTema", this.tema_modal.codigTema);
       form_data.append("tituloTem", this.tema_modal.tituloTem);
-			form_data.append("catalDigitalTem", this.tema_modal.catalDigitalTem);
+      form_data.append("catalDigitalTem", this.tema_modal.catalDigitalTem);
       form_data.append("descripTem", this.tema_modal.descripTem);
       form_data.append(
         "sociedadGestionTem",
@@ -558,6 +588,9 @@ export default {
           });
         });
     },
+  },
+  components: {
+    tabla_autores: () => import("../Artistas/Autor/Tabla_Autores"),
   },
 };
 </script>

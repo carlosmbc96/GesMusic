@@ -102,6 +102,7 @@
               :dataSource="tracks_list"
               :toolbar="toolbar"
               :toolbarClick="click_toolbar"
+              :childGrid="temas_childs"
               :allowPaging="true"
               :pageSettings="page_settings"
               :allowFiltering="true"
@@ -138,13 +139,13 @@
                 <e-column
                   field="generoTrk"
                   headerText="Género"
-                  width="105"
+                  width="100"
                   textAlign="Left"
                 />
                 <e-column
                   field="subgeneroTrk"
                   headerText="Subgénero"
-                  width="120"
+                  width="110"
                   textAlign="Left"
                 />
                 <e-column
@@ -390,7 +391,7 @@ export default {
                     </a-tooltip>
                 </a-popconfirm>
               </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 action: "",
                 position: "",
@@ -417,12 +418,13 @@ export default {
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Track?",
+                    "¿Esta acción inactivará el Track y <br> los Temas asociados a este?",
                     "Confirmación",
                     {
                       timeout: 5000,
                       close: false,
                       overlay: true,
+                      id: "question",
                       displayMode: "once",
                       color: "#AB7598",
                       zindex: 999,
@@ -472,7 +474,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -493,7 +495,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -556,7 +558,7 @@ export default {
                                   ],
                                   [
                                     "<button>No</button>",
-                                    function(instance, toast) {
+                                    function (instance, toast) {
                                       instance.hide(
                                         { transitionOut: "fadeOut" },
                                         toast,
@@ -577,7 +579,7 @@ export default {
                         ],
                         [
                           "<button>No</button>",
-                          function(instance, toast) {
+                          function (instance, toast) {
                             instance.hide(
                               { transitionOut: "fadeOut" },
                               toast,
@@ -637,7 +639,7 @@ export default {
                 </a-tooltip>
                 </a-popconfirm>
                 </div>`,
-            data: function(axios) {
+            data: function (axios) {
               return {
                 data: {},
               };
@@ -719,7 +721,7 @@ export default {
                                       durationFong = moment(
                                         durationFong,
                                         "HH:mm:ss"
-																			).format("HH:mm:ss");
+                                      ).format("HH:mm:ss");
                                       form_data.append("id", fonogramas[i].id);
                                       form_data.append(
                                         "duracionFong",
@@ -745,8 +747,8 @@ export default {
                                               timeout: 2000,
                                             }
                                           );
-																				});
-																				form_data = new FormData();
+                                        });
+                                      form_data = new FormData();
                                     }
                                     this.$parent.$parent.$parent.change_spin();
                                     axios
@@ -780,7 +782,7 @@ export default {
                                 ],
                                 [
                                   "<button>No</button>",
-                                  function(instance, toast) {
+                                  function (instance, toast) {
                                     instance.hide(
                                       { transitionOut: "fadeOut" },
                                       toast,
@@ -801,7 +803,7 @@ export default {
                       ],
                       [
                         "<button>No</button>",
-                        function(instance, toast) {
+                        function (instance, toast) {
                           instance.hide(
                             { transitionOut: "fadeOut" },
                             toast,
@@ -817,11 +819,36 @@ export default {
           }),
         };
       },
+        status_child_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `<div>
+                <span style="font-size: 12px!important; border-radius: 20px!important;" class="e-badge" :class="class_badge">{{ status }}</span>
+                </div>`,
+            data: function () {
+              return {
+                data: {},
+              };
+            },
+            computed: {
+              status() {
+                return this.data.deleted_at == null ? "Activo" : "Inactivo";
+              },
+              class_badge() {
+                return this.data.deleted_at == null
+                  ? "e-badge-success"
+                  : "e-badge-warning";
+              },
+            },
+          }),
+        };
+      },
       spinning: false,
       export_view: false, //* Vista del panel de exportaciones
       tracks_list: [], //* Lista de Tracks que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | Track seleccionado
       tracks_list: [],
+      temas_childs: [],
       visible_details: false, //* variable para visualizar el modal de detalles del Track
       visible_management: false, //* variable para visualizar el modal de gestión del Track
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
@@ -913,6 +940,46 @@ export default {
           ) {
             this.primary_y_axis.interval = 5;
           }
+          axios.post("/temas/listar").then((res) => {
+            this.temas_childs = {
+              dataSource: res.data,
+              queryString: "track_id",
+              ref: "childGrid",
+              columns: [
+                {
+                  field: "codigTema",
+                  headerText: "Código",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  field: "tituloTem",
+                  headerText: "Título",
+                  width: "105",
+                  textAlign: "Left",
+                },
+                {
+                  field: "sociedadGestionTem",
+                  headerText: "Sociedad de Acciones",
+                  width: "110",
+                  textAlign: "Left",
+                },
+                {
+                  headerText: "Estado",
+                  template: this.status_child_template,
+                  width: "105",
+                  visible: true,
+                  textAlign: "Center",
+                },
+              ],
+              load: function () {
+                this.parentDetails.parentKeyFieldValue = this.parentDetails.parentRowData[
+                  "id"
+                ];
+              },
+            };
+            this.$refs.gridObj.refresh();
+          });
           if (this.action_management !== "detalles") {
             this.change_spin();
           }

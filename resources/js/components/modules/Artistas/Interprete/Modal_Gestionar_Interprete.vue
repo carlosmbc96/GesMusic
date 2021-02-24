@@ -223,7 +223,6 @@
 </template>
 
 <script>
-import tabla_audiovisuales from "../../Audiovisual/Tabla_Audiovisuales";
 export default {
   props: ["action", "interp", "interp_list"],
   data() {
@@ -340,8 +339,37 @@ export default {
         return !this.compare_object;
       } else return this.interp_modal.nombreInterp;
     },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      if (this.interp_modal.tabla) {
+        return (
+          this.interp_modal.nombreInterp === this.interp.nombreInterp &&
+          this.interp_modal.reseñaBiogInterp === this.interp.reseñaBiogInterp &&
+          this.compareArrays(this.interp.rolInterp, this.roles_interp_modal)
+        );
+      } else
+        return (
+          this.interp_modal.nombreInterp === this.interp.nombreInterp &&
+          this.interp_modal.reseñaBiogInterp === this.interp.reseñaBiogInterp
+        );
+    },
   },
   methods: {
+    compareArrays(old_array, new_array) {
+      let igual_cont = 0;
+      if (new_array.length === old_array.length) {
+        for (let i = 0; i < old_array.length; i++) {
+          if (old_array[i] === new_array[i]) {
+            igual_cont++;
+          }
+        }
+        if (igual_cont !== new_array.length) {
+          return false;
+        } else return true;
+      } else return false;
+    },
     load_nomenclators() {
       axios
         .post("/interpretes/nomencladores")
@@ -392,6 +420,8 @@ export default {
         if (this.interp.tabla) {
           if (this.interp.rolInterp) {
             this.roles_interp_modal = this.interp.rolInterp;
+          } else {
+            this.interp.rolInterp = [];
           }
         }
         if (this.interp.deleted_at !== null) {
@@ -615,7 +645,7 @@ export default {
     //Fin de metodos para generar el codigo
   },
   components: {
-    tabla_audiovisuales,
+    tabla_audiovisuales: () => import("../../Audiovisual/Tabla_Audiovisuales"),
   },
 };
 </script>

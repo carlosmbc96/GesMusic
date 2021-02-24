@@ -39,7 +39,7 @@ class Track extends Model
     //Relación de One to Many Tracks - Temas
     public function temas()
     {
-        return $this->hasMany(Entrevistado::class); // Un Track tiene muchos Temas
+        return $this->hasMany(Tema::class); // Un Track tiene muchos Temas
     }
     //Relación de Many to Many Fonogramas - Tracks
     public function fonogramas()

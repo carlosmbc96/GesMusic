@@ -840,6 +840,7 @@
                 </a-row>
               </div>
               <a-button
+                v-if="action_modal !== 'crear'"
                 :disabled="disabled"
                 style="float: right"
                 type="default"
@@ -903,6 +904,7 @@
           </div>
 
           <a-button
+            v-if="false"
             :disabled="disabled"
             style="float: right"
             type="default"
@@ -1182,22 +1184,24 @@ export default {
         });
       })
       .catch((error) => {});
-    //* Carga de autores
-    axios
-      .post("/autores/listar")
-      .then((response) => {
-        this.list_autores = response.data;
-        this.copia_autores = this.clone_arr(this.list_autores);
-      })
-      .catch((error) => {});
-    //* Carga de interpretes
-    axios
-      .post("/interpretes/listar")
-      .then((response) => {
-        this.list_interpretes = response.data;
-        this.copia_interpretes = this.clone_arr(this.list_interpretes);
-      })
-      .catch((error) => {});
+    if (this.action_modal !== "crear") {
+      //* Carga de autores
+      axios
+        .post("/productos/autores", { id: this.product.id })
+        .then((response) => {
+          this.list_autores = response.data;
+          this.copia_autores = this.clone_arr(this.list_autores);
+        })
+        .catch((error) => {});
+      //* Carga de interpretes
+      axios
+        .post("/productos/interpretes", { id: this.product.id })
+        .then((response) => {
+          this.list_interpretes = response.data;
+          this.copia_interpretes = this.clone_arr(this.list_interpretes);
+        })
+        .catch((error) => {});
+    }
     //* Carga de nomencladores
     axios
       .post("/productos/nomencladores")
@@ -1242,7 +1246,7 @@ export default {
           });
         } else
           this.file_list.push({
-            uid: 1,
+            uid: this.product_modal.id,
             name: "Logo ver vertical_Ltr Negras.png",
             url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
           });
@@ -1387,7 +1391,7 @@ export default {
           });
         } else
           this.file_list.push({
-            uid: 1,
+            uid: this.product_modal.id,
             name: "Logo ver vertical_Ltr Negras.png",
             url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
           });
@@ -1425,7 +1429,7 @@ export default {
       this.product_modal.autoresProd = [];
       this.product_modal.interpretesProd = [];
       this.file_list.push({
-        uid: 1,
+        uid: -1,
         name: "Logo ver vertical_Ltr Negras.png",
         url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
       });
@@ -1448,11 +1452,14 @@ export default {
   computed: {
     active() {
       if (this.text_button === "Editar") {
-        return !this
-          .compare_object /* ||
-          (this.valid_image &&
-            this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.product_modal.id) */;
+        let same_photo = false;
+        if (this.file_list[0]) {
+          same_photo = this.file_list[0].uid !== this.product_modal.id;
+        }
+        return (
+          (same_photo || this.file_list.length === 0 || !this.compare_object) &&
+          this.valid_image
+        );
       } else
         return (
           this.product_modal.añoProd &&
@@ -1494,14 +1501,12 @@ export default {
           this.product.activoCatalbisPro &&
         this.product_modal.catalDigitalPro === this.product.catalDigitalPro &&
         this.product_modal.primeraPantProd === this.product.primeraPantProd &&
-        this.product_modal.estadodigProd ===
-          this.product
-            .estadodigProd /* &&
+        this.product_modal.estadodigProd === this.product.estadodigProd &&
         this.compareInterpAndAtr(this.autoresProd, this.product.autoresProd) &&
         this.compareInterpAndAtr(
           this.interpretesProd,
           this.product.interpretesProd
-        )*/
+        )
       );
     },
   },
@@ -1523,29 +1528,29 @@ export default {
               form = "proyecto";
             }
           });
-          this.$refs.formularioGenerales.validate((valid) => {
-            if (!valid) {
-              valid_form++;
-              form = "generales";
-            }
-          });
-          if (valid_form === 2) {
-            this.$message.warning(
-              "Hay problemas en las pestañas Proyecto y Generales, por favor antes de continuar revíselas!",
-              5
-            );
-          } else if (valid_form === 1 && form === "proyecto") {
-            this.$message.warning(
-              "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!",
-              5
-            );
-          } else if (valid_form === 1 && form === "generales") {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              5
-            );
-          } else this.confirm();
         }
+        this.$refs.formularioGenerales.validate((valid) => {
+          if (!valid) {
+            valid_form++;
+            form = "generales";
+          }
+        });
+        if (valid_form === 2) {
+          this.$message.warning(
+            "Hay problemas en las pestañas Proyecto y Generales, por favor antes de continuar revíselas!",
+            5
+          );
+        } else if (valid_form === 1 && form === "proyecto") {
+          this.$message.warning(
+            "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!",
+            5
+          );
+        } else if (valid_form === 1 && form === "generales") {
+          this.$message.warning(
+            "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+            5
+          );
+        } else this.confirm();
       }
     },
     compareArrays(old_array, new_array) {
@@ -1608,13 +1613,13 @@ export default {
       if (!isJpgOrPng) {
         this.valid_image = false;
         this.$message.error(
-          "Sólo puedes subir imágenes como identificador del proyecto"
+          "Sólo puedes subir imágenes como identificador del Proyecto"
         );
       } else this.$message.success("Identificador cargado correctamente");
       return false;
     },
     siguiente(tab, siguienteTab) {
-      if (tab == "tab_1") {
+      if (tab === "tab_1") {
         if (this.action_modal === "editar") {
           for (let i = 0; i < this.autoresProd.length; i++) {
             this.autoresProd[i].id = this.find_element_autor(

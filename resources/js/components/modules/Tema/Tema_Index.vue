@@ -296,8 +296,8 @@ export default {
       },
       tooltip: {
         enable: true,
-        header: "temas por Estado",
-        format: "${point.x} : ${point.y} temas",
+        header: "Temas por Estado",
+        format: "${point.x} : ${point.y} Temas",
         fill: "rgba(115, 25, 84, 0.9)",
         border: { width: 0 },
       },
@@ -320,7 +320,7 @@ export default {
         labelStyle: { color: "white" },
       },
       primary_y_axis: {
-        title: "temas",
+        title: "Temas",
         titleStyle: {
           color: "white",
           size: "16px",
@@ -353,8 +353,10 @@ export default {
             template: `
               <div>
                 <a-popconfirm
+                    :visible="visible_pop"
                     :placement="position"
                     @confirm="confirm_change_status"
+                    @visibleChange="handle_visible_pop_change"
 										ok-text="Si"
 										cancel-text="No"
 								>
@@ -363,8 +365,8 @@ export default {
                     <template slot="title">
                       <p>¿Desea {{ action }} el Tema?</p>
                     </template>
-                    <a-tooltip title="Cambiar estado" placement="left">
-                      <a-switch class="hover-switch" :style="color_status" :checked="checked" :loading="loading">
+                    <a-tooltip :title="data.track === null ? 'No es posible modificar estado, el Track al que está asociado este Tema se encuentra inactivo' : 'Cambiar estado'" placement="left">
+                      <a-switch class="hover-switch" :disabled="data.track === null" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>
                       </a-switch>
@@ -375,6 +377,7 @@ export default {
               return {
                 action: "",
                 position: "",
+                visible_pop: false,
                 data: {},
                 axios: axios,
                 checked: false,
@@ -394,6 +397,10 @@ export default {
               },
             },
             methods: {
+              handle_visible_pop_change(visible) {
+                if (this.data.track === null) this.visible_pop = false;
+                else this.visible_pop = visible;
+              },
               confirm_change_status() {
                 let error = false;
                 if (this.checked) {
@@ -825,7 +832,15 @@ export default {
       if (this.action_management !== "detalles") {
         this.change_spin();
       }
-      axios.post("/temas/listar").then((response) => {
+      axios.post("/tracks/listar").then((response) => {
+        if (response.data.length === 0) {
+          this.content =
+            "No se puede gestionar Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
+          this.type = "info";
+          this.show_help = true;
+        }
+      });
+      axios.post("/temas/listar", { relations: ["track"] }).then((response) => {
         this.temas_list = response.data;
         this.series_data = [];
         this.temas_list.forEach((tema) => {
@@ -885,7 +900,7 @@ export default {
     panel_export_click(args) {
       let pdfExportProperties = {
         hierarchyExportMode: "Expanded",
-        fileName: "Reporte_temas.pdf",
+        fileName: "Reporte_Temas.pdf",
         pageOrientation: "Landscape",
         header: {
           fromTop: 0,
@@ -905,7 +920,7 @@ export default {
             },
             {
               type: "Text",
-              value: "Reporte de temas",
+              value: "Reporte de Temas",
               position: { x: 0, y: 40 },
               style: {
                 textBrushColor: "#731954",
@@ -954,7 +969,7 @@ export default {
               cells: [
                 {
                   colSpan: 4,
-                  value: "Reporte de temas",
+                  value: "Reporte de Temas",
                   style: {
                     fontColor: "#731954",
                     fontSize: 20,
@@ -993,11 +1008,11 @@ export default {
         this.$refs.gridObj.getColumns()[8].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
-        excelExportProperties.fileName = "Reporte_temas.xlsx";
+        excelExportProperties.fileName = "Reporte_Temas.xlsx";
         this.$refs.gridObj.getColumns()[8].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
-        excelExportProperties.fileName = "Reporte_temas.csv";
+        excelExportProperties.fileName = "Reporte_Temas.csv";
         this.$refs.gridObj.getColumns()[8].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {

@@ -535,7 +535,7 @@ export default {
                     <template slot="title">
                       <p>¿Desea {{ action }} el Producto?</p>
                     </template>
-                    <a-tooltip :title="data.proyecto === null ? 'No es posible modificar estado, el proyecto al que está asociado este producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
+                    <a-tooltip :title="data.proyecto === null ? 'No es posible modificar estado, el Proyecto al que está asociado este Producto se encuentra inactivo' : 'Cambiar estado'" placement="left">
                       <a-switch class="hover-switch" :disabled="data.proyecto === null" :style="color_status" :checked="checked" :loading="loading">
                          <span slot="checkedChildren">Activo</span>
                          <span slot="unCheckedChildren">Inactivo</span>

@@ -99,18 +99,17 @@ class AudiovisualController extends Controller
 			"nacioDueñoDerchAud" => $request->nacioDueñoDerchAud,
 			"fenomRefAud" => $request->fenomRefAud
 		]);
-		if ($request->type_relation === "productos") {
-			if ($request->product_id !== "undefined") {
-				$productos = explode(",", $request->product_id);
-				foreach ($productos as $producto) {
-					Producto_Audiovisual::create([
-						"producto_id" => $producto,
-						"audiovisual_id" => $audiovisual->id
-					]);
-				}
-				$this->crearDirectorios($productos, $request->codigAud);
+		if ($request->product_id !== "undefined") {
+			$productos = explode(",", $request->product_id);
+			foreach ($productos as $producto) {
+				Producto_Audiovisual::create([
+					"producto_id" => $producto,
+					"audiovisual_id" => $audiovisual->id
+				]);
 			}
-		} else if ($request->type_relation === "autores") {
+			$this->crearDirectorios($productos, $request->codigAud);
+		}
+		if ($request->type_relation === "autores") {
 			$autores = explode(",", $request->autores_id);
 			foreach ($autores as $autor) {
 				Audiovisual_Autor::create([
@@ -356,7 +355,8 @@ class AudiovisualController extends Controller
 		}
 	}
 
-	public function realizadores(Request $request) {
+	public function realizadores(Request $request)
+	{
 		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
 		for ($i = count($audiovisual->realizadores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 			$audiovisual->realizadores()->withTrashed()->get()[$i]->pivot->delete();
@@ -370,7 +370,8 @@ class AudiovisualController extends Controller
 		return response()->json($audiovisual);
 	}
 
-	public function entrevistados(Request $request) {
+	public function entrevistados(Request $request)
+	{
 		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
 		for ($i = count($audiovisual->entrevistados()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 			$audiovisual->entrevistados()->withTrashed()->get()[$i]->pivot->delete();
@@ -384,7 +385,8 @@ class AudiovisualController extends Controller
 		return response()->json($audiovisual);
 	}
 
-	public function autores(Request $request) {
+	public function autores(Request $request)
+	{
 		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
 		for ($i = count($audiovisual->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 			$audiovisual->autores()->withTrashed()->get()[$i]->pivot->delete();
@@ -398,7 +400,8 @@ class AudiovisualController extends Controller
 		return response()->json($audiovisual);
 	}
 
-	public function interpretes(Request $request) {
+	public function interpretes(Request $request)
+	{
 		$audiovisual = Audiovisual::withTrashed()->findOrFail($request->id);
 		for ($i = count($audiovisual->interpretes()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 			$audiovisual->interpretes()->withTrashed()->get()[$i]->pivot->delete();
@@ -406,11 +409,11 @@ class AudiovisualController extends Controller
 		for ($i = 0; $i < count($request->interpretes); $i++) {
 			var_dump($request->interpretes[$i][1]);
 			Audiovisual_Interprete::create([
-					"interprete_id" => $request->interpretes[$i][0],
-					"rolInterp" => $request->interpretes[$i][1],
-					"audiovisual_id" => $request->id
+				"interprete_id" => $request->interpretes[$i][0],
+				"rolInterp" => $request->interpretes[$i][1],
+				"audiovisual_id" => $request->id
 			]);
-	}
+		}
 		return response()->json($audiovisual);
 	}
 }

@@ -14,7 +14,7 @@ class Tema extends Model
     //SECCIÓN DE FILLABLE
     // Atributos del Modelo Tema
     protected $fillable = [
-				'codigTema',
+		'codigTema',
         'tituloTem',  // Título Tema
         'catalDigitalTem',  // ¿Estará Tema en el Catálogo Digital?
         'sociedadGestionTem',  // Sociedad de Gestión Tema *nom
@@ -33,6 +33,10 @@ class Tema extends Model
     public function track()
     {
         return $this->belongsTo(Track::class); // Un Tema tiene asociado un Track
+    }
+    public function autores()
+    {
+        return $this->belongsToMany(Autor::class, 'tema_autor'); // Un Audiovisual tiene muchos Realizadores
     }
     //SECCIÓN DE RELACIONES
 

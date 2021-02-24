@@ -915,7 +915,7 @@ export default {
   },
   created() {
     this.load_nomenclators();
-		this.set_action();
+    this.set_action();
     if (this.action_modal === "crear") {
       this.codigo = this.generar_codigo(this.fonograms_list);
       this.$store.state.duration = moment("00:00:00", "HH:mm:ss").format(
@@ -929,13 +929,36 @@ export default {
   computed: {
     active() {
       if (this.text_button === "Editar") {
+        let same_photo = false;
+        if (this.file_list[0]) {
+          same_photo = this.file_list[0].uid !== this.fonogram_modal.id;
+        }
         return (
-          !this.compare_object ||
-          (this.valid_image &&
-            this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.fonogram_modal.id)
+          (same_photo || this.file_list.length === 0 || !this.compare_object) &&
+          this.valid_image
         );
-      } else return this.fonogram_modal.tituloFong && this.valid_image;
+      } else
+        return (
+          this.fonogram_modal.tituloFong &&
+          this.fonogram_modal.añoFong &&
+          this.valid_image
+        );
+    },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      return (
+        this.fonogram_modal.tituloFong === this.fonogram.tituloFong &&
+        this.fonogram_modal.añoFong === this.fonogram.añoFong &&
+        this.fonogram_modal.clasficacionFong ===
+          this.fonogram.clasficacionFong &&
+        this.fonogram_modal.dueñoDerchFong === this.fonogram.dueñoDerchFong &&
+        this.fonogram_modal.nacioDueñoDerchFong ===
+          this.fonogram.nacioDueñoDerchFong &&
+        this.fonogram_modal.descripEspFong === this.fonogram.descripEspFong &&
+        this.fonogram_modal.descripIngFong === this.fonogram.descripIngFong
+      );
     },
   },
   methods: {
@@ -972,6 +995,7 @@ export default {
     },
     handle_cancel(e) {
       if (e === "cancelar") {
+        this.$emit("actualizar");
         if (this.$refs.formularioGenerales !== undefined) {
           this.$refs.formularioGenerales.resetFields();
         }
@@ -1230,6 +1254,10 @@ export default {
           this.fonogram.descripEspFong === null
             ? ""
             : this.fonogram.descripEspFong;
+        this.fonogram.dueñoDerchFong =
+          this.fonogram.dueñoDerchFong === null
+            ? ""
+            : this.fonogram.dueñoDerchFong;
         this.fonogram.descripIngFong =
           this.fonogram.descripIngFong === null
             ? ""
@@ -1255,12 +1283,12 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.fonogram_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
-				}
-				this.$store.state["tracks"] = this.fonogram_modal.tracks;
+        }
+        this.$store.state["tracks"] = this.fonogram_modal.tracks;
       } else if (this.action_modal === "detalles") {
         this.$store.state.duration = this.fonogram.duracionFong;
         this.active_tab = "2";
@@ -1295,7 +1323,7 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.fonogram_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
@@ -1303,7 +1331,7 @@ export default {
       } else {
         this.fonogram_modal = { ...this.fonogram };
         this.file_list.push({
-          uid: 1,
+          uid: -1,
           name: "Logo ver vertical_Ltr Negras.png",
           url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
         });
@@ -1515,9 +1543,9 @@ export default {
     //Fin de metodos para generar el codigo
 
     getTracksID() {
-			let answer = [];
-			let all_tracks = this.$store.getters.getTracksFormGetters;
-			console.log(this.fonogram_modal);
+      let answer = [];
+      let all_tracks = this.$store.getters.getTracksFormGetters;
+      console.log(this.fonogram_modal);
       for (let index = 0; index < all_tracks.length; index++) {
         answer.push([all_tracks[index].id, index + 1]);
       }
@@ -1534,7 +1562,7 @@ export default {
     },
 
     order_down(id) {
-			console.log(this.$store.getters.getAllTracksStaticsFormGetters);
+      console.log(this.$store.getters.getAllTracksStaticsFormGetters);
       let temp = this.$store.getters.getTracksFormGetters[id];
       this.$store.state["tracks"][
         id

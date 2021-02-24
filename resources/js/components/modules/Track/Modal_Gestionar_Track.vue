@@ -65,7 +65,12 @@
         <div slot="tabBarExtraContent">{{ text_header_button }} Track</div>
         <a-tab-pane
           key="1"
-          v-if="action_modal === 'crear' || action_modal === 'editar'"
+          v-if="
+            (action_modal === 'crear' &&
+              action_modal === 'crear_track' &&
+              action_modal === 'crear_track_tabla_component') ||
+            (action_modal === 'editar' && !track.tabla)
+          "
         >
           <span slot="tab"> Fonograma </span>
           <a-spin :spinning="spinning">
@@ -621,9 +626,13 @@
                               <a-button
                                 :disabled="disabled"
                                 style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                  color: white;
+                                  background-color: rgb(
+                                    45,
+                                    171,
+                                    229
+                                  ) !important;
+                                "
                                 @click="add_autor"
                               >
                                 <a-icon type="plus" />
@@ -639,9 +648,13 @@
                               <a-button
                                 :disabled="disabled"
                                 style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                  color: white;
+                                  background-color: rgb(
+                                    45,
+                                    171,
+                                    229
+                                  ) !important;
+                                "
                                 @click="new_autor"
                               >
                                 <a-icon type="plus" />
@@ -692,7 +705,7 @@
                           <label>Roles</label>
                         </div>
                         <a-select
-												style="width: 100%"
+                          style="width: 100%"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           :disabled="disabled"
                           mode="multiple"
@@ -755,9 +768,13 @@
                               <a-button
                                 :disabled="disabled"
                                 style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                  color: white;
+                                  background-color: rgb(
+                                    45,
+                                    171,
+                                    229
+                                  ) !important;
+                                "
                                 @click="add_interprete"
                               >
                                 <a-icon type="plus" />
@@ -773,9 +790,13 @@
                               <a-button
                                 :disabled="disabled"
                                 style="
-                              color: white;
-                              background-color: rgb(45, 171, 229) !important;
-                            "
+                                  color: white;
+                                  background-color: rgb(
+                                    45,
+                                    171,
+                                    229
+                                  ) !important;
+                                "
                                 @click="new_interprete"
                               >
                                 <a-icon type="plus" />
@@ -813,12 +834,20 @@
             </a-button>
           </a-row>
         </a-tab-pane>
-        <a-tab-pane key="3" :disabled="tab_2" v-if="action_modal !== 'crear'">
-          <span slot="tab"> Autores/Intérptetes </span>
+        <a-tab-pane
+          key="3"
+          :disabled="tab_3"
+          v-if="
+            action_modal !== 'crear' &&
+            action_modal !== 'crear_track_tabla_component' &&
+            action_modal !== 'crear_track'
+          "
+        >
+          <span slot="tab"> Autores/Intérptetes/Temas </span>
           <a-row>
             <a-col span="12">
               <div class="section-title">
-                <h4>Autores/Intérptetes</h4>
+                <h4>Autores/Intérptetes/Temas</h4>
               </div>
             </a-col>
           </a-row>
@@ -843,6 +872,15 @@
                 @close_modal="show = $event"
               />
               <tabla_interpretes
+                v-else-if="current === 1"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="track_modal"
+                entity_relation="tracks"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_temas
                 v-else
                 :detalles_prop="detalles"
                 @reload="reload_parent"
@@ -867,7 +905,7 @@
         </a-tab-pane>
       </a-tabs>
     </a-modal>
-		<modal_management_autores
+    <modal_management_autores
       v-if="visible_management_autor"
       :action="action_management_autores"
       @close_modal="visible_management_autor = $event"
@@ -883,12 +921,12 @@
 </template>
 
 <script>
-import axios from "../../../config/axios/axios";
 import moment from "../../../../../node_modules/moment";
 import modal_management_autores from "../Artistas/Autor/Modal_Gestionar_Autor";
 import modal_management_interpretes from "../Artistas/Interprete/Modal_Gestionar_Interprete";
 import tabla_autores from "../Artistas/Autor/Tabla_Autores";
 import tabla_interpretes from "../Artistas/Interprete/Tabla_Interpretes";
+import tabla_temas from "../Tema/Tabla_Temas";
 export default {
   props: ["action", "track", "tracks_list"],
   data() {
@@ -908,6 +946,7 @@ export default {
     return {
       action_management_autores: "crear_autor",
       action_management_interpretes: "crear_interprete",
+      action_management_temas: "crear_tema",
       steps: [
         {
           title: "Autores",
@@ -915,11 +954,15 @@ export default {
         {
           title: "Intérpretes",
         },
+        {
+          title: "Temas",
+        },
       ],
       vista_editar: true,
       current: 0,
       detalles: false,
       tab_2: true,
+      tab_3: true,
       tabs_list: [],
       active_tab: "1",
       tab_visibility: true,
@@ -961,8 +1004,8 @@ export default {
       oldDuration: "",
       visible_management_autor: false,
       visible_management_interprete: false,
-			roles_interp: [],
-			formItemLayout: {
+      roles_interp: [],
+      formItemLayout: {
         wrapperCol: {
           xs: { span: 24, offset: 0 },
           sm: { span: 20, offset: 4 },
@@ -1086,6 +1129,8 @@ export default {
       this.action_modal === "crear_track"
     ) {
       this.active_tab = "2";
+      this.tabs_list.push("tab_1");
+      this.tab_2 = false;
     }
   },
   computed: {
@@ -1100,8 +1145,41 @@ export default {
           this.track_modal.gestionTrk
         );
     },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      this.track_modal.muestraTrk = this.muestraTrk === true ? 1 : 0;
+      this.track_modal.bonusTrk = this.bonusTrk === true ? 1 : 0;
+      this.track_modal.envivoTrk = this.envivoTrk === true ? 1 : 0;
+      return (
+        this.track_modal.tituloTrk === this.track.tituloTrk &&
+        this.track_modal.duracionTrk === this.track.duracionTrk &&
+        this.track_modal.paisgrabTrk === this.track.paisgrabTrk &&
+        this.track_modal.muestraTrk === this.track.muestraTrk &&
+        this.track_modal.generoTrk === this.track.generoTrk &&
+        this.track_modal.subgeneroTrk === this.track.subgeneroTrk &&
+        this.compareArrays(this.track_modal.moodTrk, this.track.moodTrk) &&
+        this.track_modal.gestionTrk === this.track.gestionTrk &&
+        this.track_modal.bonusTrk === this.track.bonusTrk &&
+        this.track_modal.envivoTrk === this.track.envivoTrk
+      );
+    },
   },
   methods: {
+    compareArrays(old_array, new_array) {
+      let igual_cont = 0;
+      if (new_array.length === old_array.length) {
+        for (let i = 0; i < old_array.length; i++) {
+          if (old_array[i] === new_array[i]) {
+            igual_cont++;
+          }
+        }
+        if (igual_cont !== new_array.length) {
+          return false;
+        } else return true;
+      } else return false;
+    },
     moment,
     onChange(current) {
       this.current = current;
@@ -1128,6 +1206,12 @@ export default {
               this.active_tab = siguienteTab;
             }
           });
+        } else {
+          this.tab_3 = false;
+          if (this.tabs_list.indexOf(tab) == -1) {
+            this.tabs_list.push(tab);
+          }
+          this.active_tab = siguienteTab;
         }
       }
     },
@@ -1136,10 +1220,11 @@ export default {
     },
     handle_cancel(e) {
       if (e === "cancelar") {
+        this.$emit("actualizar");
         if (this.tabs_list.indexOf("tab_1") !== -1) {
           this.$refs.formularioGenerales.resetFields();
         }
-				if (this.$store.getters.getCreatedAutoresFormGetters.length !== 0) {
+        if (this.$store.getters.getCreatedAutoresFormGetters.length !== 0) {
           for (
             let index = 0;
             index < this.$store.getters.getCreatedAutoresFormGetters.length;
@@ -1280,7 +1365,7 @@ export default {
               this.text_button = "Crear";
               this.spinning = false;
               this.waiting = false;
-							axios
+              axios
                 .post("/tracks/autores", {
                   autores: this.getAutoresID(),
                   id: res.data.id,
@@ -1485,9 +1570,14 @@ export default {
         this.muestraTrk = this.track_modal.muestraTrk === 0 ? false : true;
         this.envivoTrk = this.track_modal.envivoTrk === 0 ? false : true;
         this.bonusTrk = this.track_modal.bonusTrk === 0 ? false : true;
+        if (this.track.moodTrk !== null) {
+          this.track.moodTrk = this.track.moodTrk.split(" ");
+          this.track.moodTrk.pop();
+        } else this.track.moodTrk = [];
         if (this.track_modal.moodTrk !== null) {
           this.track_modal.moodTrk = this.track_modal.moodTrk.split(" ");
-        } else delete this.track_modal.moodTrk;
+          this.track_modal.moodTrk.pop();
+        } else this.track_modal.moodTrk = [];
       } else if (this.action_modal === "detalles") {
         this.detalles = true;
         if (this.track.deleted_at !== null) {
@@ -1532,7 +1622,7 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-			axios
+      axios
         .post("/autores/listar")
         .then((response) => {
           let prod = response.data;
@@ -1573,7 +1663,7 @@ export default {
           this.subgeneros = this.list_nomenclators[1][0];
           this.paises = this.list_nomenclators[4][0];
           this.gestiones = this.list_nomenclators[3][0];
-					this.roles_interp = this.list_nomenclators[5][0];
+          this.roles_interp = this.list_nomenclators[5][0];
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
@@ -1660,7 +1750,7 @@ export default {
       return -1;
     },
 
-		getAutoresID() {
+    getAutoresID() {
       let answer = [];
       let all_autores = this.$store.getters.getAutoresFormGetters;
       for (let index = 0; index < all_autores.length; index++) {
@@ -1681,7 +1771,7 @@ export default {
       return answer;
     },
 
-		create_roles_string(array) {
+    create_roles_string(array) {
       let answer = "";
       for (let index = 0; index < array.length; index++) {
         if (index === 0) {
@@ -1791,10 +1881,11 @@ export default {
       }
     },
   },
-	components: {
-		modal_management_interpretes,
-		modal_management_autores,
+  components: {
+    modal_management_interpretes,
+    modal_management_autores,
     tabla_autores,
+    tabla_temas,
     tabla_interpretes,
   },
 };
@@ -1858,7 +1949,7 @@ export default {
   transition: all 0.3s;
 }
 .ant-select-selection--multiple {
-	min-height: 35px !important;
+  min-height: 35px !important;
 }
 #modal_gestionar_tracks .ant-col-sm-20 {
   width: 100%;

@@ -270,13 +270,13 @@
                         v-if="action_modal !== 'detalles'"
                         has-feedback
                         label="Reseña biográfica del Autor"
-                        prop="biogAutr"
+                        prop="reseñaBiogAutr"
                         id="resenha"
                       >
                         <a-input
                           :disabled="disabled"
                           style="width: 100%; height: 150px"
-                          v-model="author_modal.biogAutr"
+                          v-model="author_modal.reseñaBiogAutr"
                           type="textarea"
                         />
                       </a-form-model-item>
@@ -459,26 +459,55 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" v-if="action_modal !== 'crear'">
-          <span slot="tab"> Audiovisuales </span>
+          <span slot="tab"> Audiovisuales/Temas </span>
           <a-row>
             <a-col span="12">
               <div class="section-title">
-                <h4>Audiovisuales</h4>
+                <h4>Audiovisuales/Temas</h4>
               </div>
             </a-col>
           </a-row>
-          <br />
+
           <div>
-            <tabla_audiovisuales
-              :detalles_prop="detalles"
-              @reload="reload_parent"
-              :entity="author_modal"
-              entity_relation="autores"
-              :vista_editar="vista_editar"
-              @close_modal="show = $event"
-            />
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_audiovisuales
+                v-if="current === 0"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="author_modal"
+                entity_relation="autores"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_temas
+                v-else
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="author_modal"
+                entity_relation="autores"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
             <br />
           </div>
+          <a-button
+            :disabled="disabled"
+            style="float: left"
+            type="default"
+            @click="atras('1')"
+          >
+            <a-icon type="left" />
+            Atrás
+          </a-button>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -492,8 +521,6 @@
 </template>
 
 <script>
-import tabla_audiovisuales from "../../Audiovisual/Tabla_Audiovisuales";
-import modal_management_temas from "../../Tema/Modal_Gestionar_Tema";
 export default {
   props: ["action", "author", "autors_list"],
   data() {
@@ -519,6 +546,15 @@ export default {
       } else callback();
     };
     return {
+      steps: [
+        {
+          title: "Audiovisuales",
+        },
+        {
+          title: "Temas",
+        },
+      ],
+      current: 0,
       detalles: true,
       vista_editar: true,
       action_cancel_title: "",
@@ -645,7 +681,7 @@ export default {
             trigger: "change",
           },
         ],
-        biogAutr: [
+        reseñaBiogAutr: [
           {
             whitespace: true,
             message: "Espacio no válido",
@@ -670,11 +706,13 @@ export default {
   computed: {
     active() {
       if (this.text_button === "Editar") {
+        let same_photo = false;
+        if (this.file_list[0]) {
+          same_photo = this.file_list[0].uid !== this.author_modal.id;
+        }
         return (
-          !this.compare_object ||
-          (this.valid_image &&
-            this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.author_modal.id)
+          (same_photo || this.file_list.length === 0 || !this.compare_object) &&
+          this.valid_image
         );
       } else
         return (
@@ -685,6 +723,22 @@ export default {
           this.valid_image
         );
     },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      this.author_modal.fallecidoAutr = this.fallecidoAutr === true ? 1 : 0;
+      this.author_modal.obrasCatEditAutr =
+        this.obrasCatEditAutr === true ? 1 : 0;
+      return (
+        this.author_modal.nombresAutr === this.author.nombresAutr &&
+        this.author_modal.apellidosAutr === this.author.apellidosAutr &&
+        this.author_modal.sexoAutr === this.author.sexoAutr &&
+        this.author_modal.fallecidoAutr === this.author.fallecidoAutr &&
+        this.author_modal.obrasCatEditAutr === this.author.obrasCatEditAutr &&
+        this.author_modal.reseñaBiogAutr === this.author.reseñaBiogAutr
+      );
+    },
   },
   methods: {
     filter_option(input, option) {
@@ -693,6 +747,9 @@ export default {
           .toLowerCase()
           .indexOf(input.toLowerCase()) >= 0
       );
+    },
+    onChange(current) {
+      this.current = current;
     },
     reload_parent() {
       this.$emit("refresh");
@@ -857,8 +914,8 @@ export default {
       this.author_modal.fallecidoAutr = this.fallecidoAutr === false ? 0 : 1;
       this.author_modal.obrasCatEditAutr =
         this.obrasCatEditAutr === false ? 0 : 1;
-      if (this.author_modal.biogAutr === undefined) {
-        this.author_modal.biogAutr = "";
+      if (this.author_modal.reseñaBiogAutr === undefined) {
+        this.author_modal.reseñaBiogAutr = "";
       }
       let form_data = new FormData();
       if (this.action_modal === "editar" || this.action_modal === "detalles") {
@@ -874,7 +931,7 @@ export default {
       form_data.append("nombresAutr", this.author_modal.nombresAutr);
       form_data.append("apellidosAutr", this.author_modal.apellidosAutr);
       form_data.append("sexoAutr", this.author_modal.sexoAutr);
-      form_data.append("reseñaBiogAutr", this.author_modal.biogAutr);
+      form_data.append("reseñaBiogAutr", this.author_modal.reseñaBiogAutr);
       form_data.append("fallecidoAutr", this.author_modal.fallecidoAutr);
       form_data.append("obrasCatEditAutr", this.author_modal.obrasCatEditAutr);
       if (this.author_modal.audiovisuales_autrs) {
@@ -920,8 +977,8 @@ export default {
         this.action_cancel_title = "¿Desea cancelar la edición del Autor?";
         this.action_title = "¿Desea guardar los cambios en el Autor?";
         this.action_close = "La edición del Autor se canceló correctamente";
-        this.author.biogAutr =
-          this.author.biogAutr === null ? "" : this.author.biogAutr;
+        this.author.reseñaBiogAutr =
+          this.author.reseñaBiogAutr === null ? "" : this.author.reseñaBiogAutr;
         this.author_modal = { ...this.author };
         this.author_modal.codigAutr = this.author.codigAutr.substr(5);
         this.fallecidoAutr =
@@ -942,7 +999,7 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.author_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
@@ -954,8 +1011,8 @@ export default {
         }
         this.text_header_button = "Detalles";
         this.text_button = "Detalles";
-        this.author.biogAutr =
-          this.author.biogAutr === null ? "" : this.author.biogAutr;
+        this.author.reseñaBiogAutr =
+          this.author.reseñaBiogAutr === null ? "" : this.author.reseñaBiogAutr;
         this.author_modal = { ...this.author };
         if (this.author_modal.fotoAutr !== null) {
           if (
@@ -971,7 +1028,7 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.author_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
@@ -1154,8 +1211,8 @@ export default {
     },
   },
   components: {
-    modal_management_temas,
-    tabla_audiovisuales,
+    tabla_audiovisuales: () => import("../../Audiovisual/Tabla_Audiovisuales"),
+    tabla_temas: () => import("../../Tema/Tabla_Temas"),
   },
 };
 </script>

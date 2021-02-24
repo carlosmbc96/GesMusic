@@ -41,7 +41,7 @@
           <e-column
             headerText="Estado"
             width="145"
-            :template="status_template"
+            :template="status"
             :visible="true"
             textAlign="Center"
           />

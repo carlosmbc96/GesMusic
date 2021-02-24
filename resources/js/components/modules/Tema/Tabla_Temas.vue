@@ -1,12 +1,12 @@
 <template>
-  <div id="tabla_autores">
+  <div id="tabla_temas">
     <!-- Inicio Sección de Tabla de datos -->
     <!-- Tabla -->
     <a-spin :spinning="spinning">
       <ejs-grid
         id="datatable"
         ref="gridObj"
-        :dataSource="autores_list"
+        :dataSource="temas_list"
         locale="es-ES"
         :toolbar="toolbar"
         :toolbarClick="click_toolbar"
@@ -21,53 +21,33 @@
       >
         <e-columns>
           <e-column
-            field="codigAutr"
+            field="codigTema"
             headerText="Código"
-            width="115"
-            textAlign="Left"
-          />
-          <e-column
-            field="ciAutr"
-            headerText="Carnet de Identidad"
-            width="130"
-            textAlign="Left"
-          />
-          <e-column
-            field="nombresAutr"
-            headerText="Nombre"
-            width="120"
-            textAlign="Left"
-          />
-          <e-column
-            field="apellidosAutr"
-            headerText="Apellidos"
-            width="128"
-            textAlign="Left"
-          />
-          <e-column
-            field="sexoAutr"
-            headerText="Sexo"
             width="110"
             textAlign="Left"
           />
           <e-column
-            :displayAsCheckBox="true"
-            field="fallecidoAutr"
-            headerText="Fallecido"
-            width="125"
-            textAlign="Center"
-            type="boolean"
+            field="tituloTem"
+            headerText="Título"
+            width="105"
+            textAlign="Left"
+          />
+          <e-column
+            field="sociedadGestionTem"
+            headerText="Sociedad de Acciones"
+            width="110"
+            textAlign="Left"
           />
           <e-column
             headerText="Estado"
-            width="115"
+            width="118"
             :template="status"
             :visible="true"
             textAlign="Center"
           />
           <e-column
             headerText="Acciones"
-            width="155"
+            width="160"
             :template="actions_template"
             :visible="true"
             textAlign="Center"
@@ -82,9 +62,9 @@
       v-if="visible_management"
       :action="action_management"
       @actualizar="refresh_table"
-      :author="row_selected"
+      :tema="row_selected"
       @close_modal="visible_management = $event"
-      :autors_list="all_autores"
+      :temas_list="all_temas"
     />
     <!-- Fin Sección de Modals -->
     <transfer_modal
@@ -102,8 +82,8 @@
  *Importaciones
  */
 import Vue from "vue";
-import modal_management from "./Modal_Gestionar_Autor";
-import transfer_modal from "./Transfer_Modal_Autores";
+import modal_management from "./Modal_Gestionar_Tema";
+import transfer_modal from "./Transfer_Modal_Temas";
 import {
   GridPlugin,
   Edit,
@@ -135,7 +115,7 @@ import * as weekData from "cldr-data/supplemental/weekData.json";
 import * as timeZoneNames from "cldr-data/main/es/timeZoneNames.json";
 import * as numbers from "cldr-data/main/es/numbers.json";
 import * as gregorian from "cldr-data/main/es/ca-gregorian.json";
-import { image } from "../../../../../../public/assets/logo_base64";
+import { image } from "../../../../../public/assets/logo_base64";
 Vue.use(GridPlugin);
 Vue.use(ButtonPlugin);
 Vue.use(ChartPlugin);
@@ -207,12 +187,12 @@ export default {
         pageSize: 10,
       },
       filter_settings: { type: "Menu" },
-      toolbar: this.detalles_prop
+      /* toolbar: this.detalles_prop
         ? ["Search"]
         : [
             {
-              text: "Añadir Autor",
-              tooltipText: "Añadir Autor",
+              text: "Añadir Tema",
+              tooltipText: "Añadir Tema",
               prefixIcon: "e-add-icon",
               id: `ad-${this.entity_relation}`,
             },
@@ -223,7 +203,8 @@ export default {
               prefixIcon: "e-transfer-icon",
               id: `vinc_desvinc`,
             },
-          ],
+          ], */
+      toolbar: this.menuToolbar(),
       status_child_template: () => {
         return {
           template: Vue.component("columnTemplate", {
@@ -263,7 +244,7 @@ export default {
 								<a-icon v-if="action === 'inactivar'" slot="icon" type="close-circle" theme="filled" style="color: #731954;" />
 								<a-icon v-else slot="icon" type="check-circle" theme="filled" style="color: #BCC821 ;" />
                     <template slot="title">
-                      <p>¿Desea {{ action }} el Autor?</p>
+                      <p>¿Desea {{ action }} el Tema?</p>
                     </template>
                     <a-tooltip title="Cambiar estado" placement="left">
                       <a-switch class="hover-switch" :disabled="$parent.$parent.$parent.detalles" :style="color_status" :checked="checked" :loading="loading">
@@ -300,7 +281,7 @@ export default {
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Autor?",
+                    "¿Esta acción inactivará el Tema?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -316,7 +297,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea inactivar el Autor?",
+                              "¿Desea inactivar el Tema?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -334,7 +315,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "autores/desactivar/" + this.data.id
+                                          "temas/desactivar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -389,7 +370,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará el Autor?",
+                    "¿Esta acción ativará el Tema?",
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -405,7 +386,7 @@ export default {
                           "<button>Si</button>",
                           (instance, toast) => {
                             this.$toast.question(
-                              "¿Desea activar el Autor?",
+                              "¿Desea activar el Tema?",
                               "Confirmación",
                               {
                                 timeout: 5000,
@@ -422,9 +403,7 @@ export default {
                                     (instance, toast) => {
                                       this.loading = true;
                                       axios
-                                        .get(
-                                          "autores/restaurar/" + this.data.id
-                                        )
+                                        .get("temas/restaurar/" + this.data.id)
                                         .catch((errors) => {
                                           error = true;
                                         })
@@ -478,10 +457,10 @@ export default {
               finally_method(action, error) {
                 this.loading = false;
                 if (!error) {
-                  this.$parent.$parent.$parent.load_autores();
+                  this.$parent.$parent.$parent.load_temas();
                   this.checked = !this.checked;
                   this.$toast.success(
-                    `El Autor se ${action} correctamente`,
+                    `El Tema se ${action} correctamente`,
                     "¡Éxito!",
                     {
                       timeout: 2000,
@@ -545,11 +524,11 @@ export default {
       visible_transfer: false,
       status: "",
       detalles: this.detalles_prop,
-      autores_list: [], //* Lista de Audiovisuales que es cargada en la tabla
+      temas_list: [], //* Lista de Audiovisuales que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | Audiovisual seleccionado
       visible_details: false, //* variable para visualizar el modal de detalles del Audiovisual
       visible_management: false, //* variable para visualizar el modal de gestión del Audiovisual
-      all_autores: [],
+      all_temas: [],
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
     };
   },
@@ -557,9 +536,40 @@ export default {
     this.status = this.detalles_prop
       ? this.status_child_template
       : this.status_template;
-    this.load_autores();
+    this.load_temas();
   },
   methods: {
+    menuToolbar() {
+      if (this.entity_relation === "tracks" && !this.detalles_prop) {
+        return [
+          {
+            text: "Añadir Tema",
+            tooltipText: "Añadir Tema",
+            prefixIcon: "e-add-icon",
+            id: `ad-${this.entity_relation}`,
+          },
+          "Search",
+        ];
+      } else if (this.entity_relation === "autores") {
+        return [
+          {
+            text: "Añadir Tema",
+            tooltipText: "Añadir Tema",
+            prefixIcon: "e-add-icon",
+            id: `ad-${this.entity_relation}`,
+          },
+          "Search",
+          {
+            text: "Gestionar Relaciones",
+            tooltipText: "Gestionar Relaciones",
+            prefixIcon: "e-transfer-icon",
+            id: `vinc_desvinc`,
+          },
+        ];
+      } else if (this.detalles_prop) {
+        return ["Search"];
+      }
+    },
     /*
      * Método que activa y desactiva el spin
      */
@@ -577,44 +587,44 @@ export default {
     /*
      * Método que carga los productos de la bd
      */
-    load_autores() {
+    load_temas() {
       this.$emit("reload");
       this.change_spin();
       if (this.vista_editar) {
-        axios
-          .post("/autores/listar", { relations: [this.entity_relation] })
-          .then((response) => {
-            this.autores_list = [];
-            let pertenece = false;
-            response.data.forEach((autor) => {
-              if (this.entity_relation === "audiovisuales") {
-                autor.audiovisuales.forEach((audiovisual) => {
-                  if (audiovisual.id === this.entity.id) {
-                    pertenece = true;
-                  }
-                });
-              } else if (this.entity_relation === "tracks") {
-                autor.tracks.forEach((track) => {
-                  if (track.id === this.entity.id) {
-                    pertenece = true;
-                  }
-                });
-              } else if (this.entity_relation === "temas") {
-                autor.temas.forEach((tema) => {
-                  if (tema.id === this.entity.id) {
-                    pertenece = true;
-                  }
-                });
-              }
-              if (pertenece) {
-                this.autores_list.push(autor);
-              }
-              pertenece = false;
+        if (this.entity_relation === "autores") {
+          axios
+            .post("/temas/listar", { relations: [this.entity_relation] })
+            .then((response) => {
+              this.temas_list = [];
+              let pertenece = false;
+              response.data.forEach((tema) => {
+                if (this.entity_relation === "autores") {
+                  tema.autores.forEach((autor) => {
+                    if (autor.id === this.entity.id) {
+                      pertenece = true;
+                    }
+                  });
+                }
+                if (pertenece) {
+                  this.temas_list.push(tema);
+                }
+                pertenece = false;
+              });
+              this.change_spin();
             });
-            this.change_spin();
-          });
-        axios.post("/autores/listar").then((response) => {
-          this.all_autores = response.data;
+        } else {
+          axios
+            .post("/temas/listar", {
+              atributo: "track_id",
+              valorbuscado: this.entity.id,
+            })
+            .then((response) => {
+              this.temas_list = response.data;
+              this.change_spin();
+            });
+        }
+        axios.post("/temas/listar").then((response) => {
+          this.all_temas = response.data;
         });
       }
     },
@@ -622,29 +632,20 @@ export default {
      * Método que actualiza los datos de la tabla
      */
     refresh_table() {
-      this.autores_list = null;
-      this.load_autores();
+      this.temas_list = null;
+      this.load_temas();
     },
     /*
      * Método con la lógica de los botones del toolbar de la tabla
      */
     click_toolbar(args) {
       switch (args.item.id) {
-        case "ad-temas": {
+        case "ad-autores": {
           this.action_management = "crear";
           this.visible_management = true;
           this.row_selected = {
             modal_detalles: true,
-            temas_autrs: this.entity.id,
-          };
-          break;
-        }
-        case "ad-audiovisuales": {
-          this.action_management = "crear";
-          this.visible_management = true;
-          this.row_selected = {
-            modal_detalles: true,
-            audiovisuales_autrs: this.entity.id,
+            autores_temas: this.entity.id,
           };
           break;
         }
@@ -653,7 +654,7 @@ export default {
           this.visible_management = true;
           this.row_selected = {
             modal_detalles: true,
-            tracks_autrs: this.entity.id,
+            tracks_temas: this.entity.id,
           };
           break;
         }
@@ -690,61 +691,61 @@ export default {
 </script>
 
 <style>
-#tabla_autores .e-headercontent,
-#tabla_autores .e-sortfilter,
-#tabla_autores thead,
-#tabla_autores tr,
-#tabla_autores td,
-#tabla_autores th,
-#tabla_autores .e-pagercontainer,
-#tabla_autores .e-pagerdropdown,
-#tabla_autores .e-first,
-#tabla_autores .e-prev,
-#tabla_autores .e-numericcontainer,
-#tabla_autores .e-next,
-#tabla_autores .e-last,
-#tabla_autores .e-table,
-#tabla_autores .e-input-group,
-#tabla_autores .e-content,
-#tabla_autores .e-toolbar-items,
-#tabla_autores .e-tbar-btn,
-#tabla_autores .e-toolbar-item,
-#tabla_autores .e-gridheader,
-#tabla_autores .e-gridcontent,
-#tabla_autores .e-gridpager,
-#tabla_autores .e-toolbar {
+#tabla_temas .e-headercontent,
+#tabla_temas .e-sortfilter,
+#tabla_temas thead,
+#tabla_temas tr,
+#tabla_temas td,
+#tabla_temas th,
+#tabla_temas .e-pagercontainer,
+#tabla_temas .e-pagerdropdown,
+#tabla_temas .e-first,
+#tabla_temas .e-prev,
+#tabla_temas .e-numericcontainer,
+#tabla_temas .e-next,
+#tabla_temas .e-last,
+#tabla_temas .e-table,
+#tabla_temas .e-input-group,
+#tabla_temas .e-content,
+#tabla_temas .e-toolbar-items,
+#tabla_temas .e-tbar-btn,
+#tabla_temas .e-toolbar-item,
+#tabla_temas .e-gridheader,
+#tabla_temas .e-gridcontent,
+#tabla_temas .e-gridpager,
+#tabla_temas .e-toolbar {
   background-color: transparent !important;
 }
-#tabla_autores .e-grid {
+#tabla_temas .e-grid {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-#tabla_autores .e-grid {
+#tabla_temas .e-grid {
   border-radius: 5px !important;
 }
-#tabla_autores .e-gridheader {
+#tabla_temas .e-gridheader {
   border-bottom-color: rgba(115, 25, 84, 0.7) !important;
   border-top-color: transparent !important;
 }
-#tabla_autores td {
+#tabla_temas td {
   border-color: lightgrey !important;
 }
-#tabla_autores .e-grid,
-#tabla_autores .e-toolbar,
-#tabla_autores .e-grid .e-headercontent {
+#tabla_temas .e-grid,
+#tabla_temas .e-toolbar,
+#tabla_temas .e-grid .e-headercontent {
   border-color: transparent !important;
 }
-#tabla_autores .e-row:hover {
+#tabla_temas .e-row:hover {
   background-color: rgba(115, 25, 84, 0.1) !important;
 }
-#tabla_autores thead span,
-#tabla_autores .e-icon-filter {
+#tabla_temas thead span,
+#tabla_temas .e-icon-filter {
   color: rgb(115, 25, 84) !important;
   font-weight: bold !important;
 }
-#tabla_autores .ant-switch-inner {
+#tabla_temas .ant-switch-inner {
   width: auto !important;
 }
-#tabla_autores .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
+#tabla_temas .e-badge.e-badge-success:not(.e-badge-ghost):not([href]),
 .e-badge.e-badge-success[href]:not(.e-badge-ghost) {
   color: white !important;
 }

@@ -429,11 +429,15 @@ export default {
      */
     active() {
       if (this.text_button === "Editar") {
+        let same_photo = false;
+        if (this.file_list[0]) {
+          same_photo = this.file_list[0].uid !== this.project_modal.id;
+        }
         return (
-          !this.compare_object ||
-          (this.valid_image &&
-            this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.project_modal.id)
+          (same_photo ||
+          this.file_list.length === 0
+          || !this
+          .compare_object) && this.valid_image
         );
       } else
         return (
@@ -656,7 +660,6 @@ export default {
           this.project.descripIng === null ? "" : this.project.descripIng;
         this.project_modal = { ...this.project };
         this.project_modal.codigProy = this.project.codigProy.substr(5);
-        console.log(this.project_modal.codigProy);
         if (this.project_modal.identificadorProy !== null) {
           if (
             this.project_modal.identificadorProy !==
@@ -671,7 +674,7 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.project_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
@@ -706,14 +709,14 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.project_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
         }
       } else {
         this.file_list.push({
-          uid: 1,
+          uid: -1,
           name: "Logo ver vertical_Ltr Negras.png",
           url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
         });

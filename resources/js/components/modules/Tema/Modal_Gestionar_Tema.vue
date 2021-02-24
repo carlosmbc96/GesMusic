@@ -293,6 +293,28 @@
             </a-form-model>
           </a-spin>
         </a-tab-pane>
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+          <span slot="tab"> Autores </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Autores</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <br />
+          <div>
+            <tabla_autores
+              :detalles_prop="detalles"
+              @reload="reload_parent"
+              :entity="tema_modal"
+              entity_relation="temas"
+              :vista_editar="vista_editar"
+              @close_modal="show = $event"
+            />
+            <br />
+          </div>
+        </a-tab-pane>
       </a-tabs>
     </a-modal>
   </div>
@@ -424,6 +446,18 @@ export default {
         return !this.compare_object;
       } else return this.tema_modal.tituloTem;
     },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      this.tema_modal.catalDigitalTem = this.catalDigitalTem === true ? 1 : 0;
+      return (
+        this.tema_modal.tituloTem === this.tema.tituloTem &&
+        this.tema_modal.sociedadGestionTem === this.tema.sociedadGestionTem &&
+        this.tema_modal.catalDigitalTem === this.tema.catalDigitalTem &&
+        this.tema_modal.descripTem === this.tema.descripTem
+      );
+    },
   },
   methods: {
     reload_parent() {
@@ -521,7 +555,7 @@ export default {
         this.text_header_button = "Crear";
         this.action_cancel_title = "¿Desea cancelar la creación del Tema?";
         this.action_title = "¿Desea crear el Tema?";
-        this.action_close = "La creación del tema se canceló correctamente";
+        this.action_close = "La creación del Tema se canceló correctamente";
       }
     },
     confirm() {
@@ -727,6 +761,9 @@ export default {
           });
         });
     },
+  },
+  components: {
+    tabla_autores: () => import("../Artistas/Autor/Tabla_Autores"),
   },
 };
 </script>

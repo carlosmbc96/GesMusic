@@ -13,9 +13,9 @@ class TemaController extends Controller
         $valorbuscado = $request->valorbuscado;
         $atributo = $request->atributo;
         if ( ($atributo) && ($valorbuscado) ) {
-            $temas=Tema::BusqSelect($atributo, $valorbuscado)->paginate(5);
+            $temas=Tema::withTrashed()->BusqSelect($atributo, $valorbuscado)->get();
         } else if($valorbuscado){
-            $temas=Tema::BusqGeneral($valorbuscado)->paginate(5);
+            $temas=Tema::withTrashed()->BusqGeneral($valorbuscado)->get();
         } else {
             $temas=Tema::withTrashed()->get();
         }
@@ -27,6 +27,7 @@ class TemaController extends Controller
                 $length = count($temas);
                 for ($i ; $i < $length; $i++) {
                     $temas[$i]->tracks;
+                    $temas[$i]->autores;
                 }
             }
             else {
@@ -46,7 +47,27 @@ class TemaController extends Controller
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Tema
     {
-        return response()->json(Tema::create($request->all()));
+        $tema = Tema::create([
+            "codigTema" => $request->codigTema,
+            "tituloTem" => $request->tituloTem,
+            "catalDigitalTem" => $request->catalDigitalTem,
+            "sociedadGestionTem" => $request->sociedadGestionTem,
+            "descripTem" => $request->descripTem,
+            "track_id" => $request->track_id,
+        ]);
+        /* if ($request->type_relation === "audiovisuales") {
+            if ($request->audiovisual_id !== "undefined") {
+                $audiovisuales = explode(",", $request->audiovisual_id);
+                foreach ($audiovisuales as $audiovisual) {
+                    Audiovisual_Autor::create([
+                        "autor_id" => $autor->id,
+                        "audiovisual_id" => $audiovisual
+                    ]);
+                }
+            }
+        } */
+        $tema->save();
+        return response()->json($tema);
     }
 
     public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Tema
@@ -64,9 +85,9 @@ class TemaController extends Controller
         return response()->json(Tema::findOrFail($id)->forceDelete());
     }
 
-    public function restoreLog(Tema $tema, $id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Tema
+    public function restoreLog($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Tema
     {
-        return response()->json(Tema::findOrFail($id)->restore());
+        return response()->json(Tema::onlyTrashed()->findOrFail($id)->restore());
     }
 
 		public function nomenclators()  // Nomenclators | Método que carga los Nomencladores en el Modelo:Track

@@ -1965,6 +1965,13 @@ export default {
             trigger: "change",
           },
         ],
+        /* etiquetasAud: [
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+        ], */
         descripEspAud: [
           {
             whitespace: true,
@@ -2025,11 +2032,14 @@ export default {
   computed: {
     active() {
       if (this.action_modal === "editar") {
-        return true; /* !this
-          .compare_object  ||
-          (this.valid_image &&
-            this.file_list.length !== 0 &&
-            this.file_list[0].uid !== this.audiovisual_modal.id);*/
+        let same_photo = false;
+        if (this.file_list[0]) {
+          same_photo = this.file_list[0].uid !== this.audiovisual_modal.id;
+        }
+        return (
+          (same_photo || this.file_list.length === 0 || !this.compare_object) &&
+          this.valid_image
+        );
       } else
         return (
           this.audiovisual_modal.tituloAud &&
@@ -2039,17 +2049,13 @@ export default {
           this.valid_image
         );
     },
-  },
-  methods: {
     /*
      *Método que compara los campos editables del producto para saber si se ha modificado
      */
     compare_object() {
       this.audiovisual_modal.makingOfAud = this.makingOfAud === true ? 1 : 0;
       return (
-        this.audiovisual_modal.paisGrabAud ===
-        this.audiovisual
-          .paisGrabAud /*  &&
+        this.audiovisual_modal.paisGrabAud === this.audiovisual.paisGrabAud &&
         this.audiovisual_modal.makingOfAud === this.audiovisual.makingOfAud &&
         this.audiovisual_modal.fenomRefAud === this.audiovisual.fenomRefAud &&
         this.audiovisual_modal.duracionAud === this.audiovisual.duracionAud &&
@@ -2077,8 +2083,23 @@ export default {
         this.compareArrays(
           this.audiovisual_modal.etiquetasAud,
           this.audiovisual.etiquetasAud
-        ) */
+        )
       );
+    },
+  },
+  methods: {
+    compareArrays(old_array, new_array) {
+      let igual_cont = 0;
+      if (new_array.length === old_array.length) {
+        for (let i = 0; i < old_array.length; i++) {
+          if (old_array[i] === new_array[i]) {
+            igual_cont++;
+          }
+        }
+        if (igual_cont !== new_array.length) {
+          return false;
+        } else return true;
+      } else return false;
     },
     moment,
     onChange(current) {
@@ -2096,7 +2117,6 @@ export default {
           }
         });
       } else if (tab === "tab_2") {
-        if (this.action_modal !== "detalles") {
           this.$refs.general_form.validate((valid) => {
             if (valid) {
               this.tab_3 = false;
@@ -2106,7 +2126,6 @@ export default {
               this.active_tab = siguienteTab;
             }
           });
-        }
       }
     },
     reload_parent() {
@@ -2544,7 +2563,7 @@ export default {
       let subtitulos = "";
       if (this.audiovisual_modal.etiquetasAud !== "") {
         this.audiovisual_modal.etiquetasAud.forEach((item) => {
-          etiquetas += item + " ";
+          etiquetas += item + ",";
         });
         this.audiovisual_modal.etiquetasAud = etiquetas;
       }
@@ -2613,10 +2632,8 @@ export default {
       form_data.append("descripEspAud", this.audiovisual_modal.descripEspAud);
       form_data.append("descripIngAud", this.audiovisual_modal.descripIngAud);
       form_data.append("paisGrabAud", this.audiovisual_modal.paisGrabAud);
-      if (this.audiovisual.productos_audvs) {
+      if (this.audiovisual_modal.productos_audvs) {
         form_data.append("product_id", this.audiovisual_modal.productos_audvs);
-        this.relation = "productos";
-        form_data.append("type_relation", this.relation);
       } else if (this.audiovisual.autores_audvs) {
         form_data.append("autores_id", this.audiovisual_modal.autores_audvs);
         this.relation = "autores";
@@ -2701,6 +2718,12 @@ export default {
             this.audiovisual.productos_audvs.push(element.id);
           });
         }
+        if (this.audiovisual.fenomRefAud === null) {
+          this.audiovisual.fenomRefAud = "";
+        }
+        if (this.audiovisual.dueñoDerchAud === null) {
+          this.audiovisual.dueñoDerchAud = "";
+        }
         this.audiovisual_modal = { ...this.audiovisual };
         if (!this.is_isrc()) {
           this.audiovisual_modal.codigAud = this.audiovisual.codigAud.substr(5);
@@ -2724,13 +2747,15 @@ export default {
           this.audiovisual_modal.makingOfAud === 0 ? false : true;
         if (this.audiovisual.etiquetasAud !== null) {
           this.audiovisual.etiquetasAud = this.audiovisual.etiquetasAud.split(
-            " "
+            ","
           );
+          this.audiovisual.etiquetasAud.pop();
         } else this.audiovisual.etiquetasAud = [];
         if (this.audiovisual_modal.etiquetasAud !== null) {
           this.audiovisual_modal.etiquetasAud = this.audiovisual_modal.etiquetasAud.split(
-            " "
+            ","
           );
+          this.audiovisual_modal.etiquetasAud.pop();
         } else this.audiovisual_modal.etiquetasAud = [];
         if (this.audiovisual.idiomaAud !== null) {
           this.audiovisual.idiomaAud = this.audiovisual.idiomaAud.split(" ");
@@ -2764,7 +2789,7 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.audiovisual_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });
@@ -2810,7 +2835,7 @@ export default {
             });
           } else
             this.file_list.push({
-              uid: 1,
+              uid: this.audiovisual_modal.id,
               name: "Logo ver vertical_Ltr Negras.png",
               url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
             });

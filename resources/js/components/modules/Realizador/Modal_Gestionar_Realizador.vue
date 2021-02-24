@@ -82,7 +82,10 @@
               <a-row>
                 <a-col span="11">
                   <a-form-model-item
-                    v-if="action_modal === 'crear' || action_modal === 'crear_realizador'"
+                    v-if="
+                      action_modal === 'crear' ||
+                      action_modal === 'crear_realizador'
+                    "
                     :validate-status="show_error"
                     prop="codigRealiz"
                     has-feedback
@@ -224,7 +227,7 @@
 
 <script>
 export default {
-	name: "modal_management_realizadores",
+  name: "modal_management_realizadores",
   props: ["action", "realizador", "realizadores_list"],
   data() {
     let validate_codig_unique = (rule, value, callback) => {
@@ -328,7 +331,10 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear" || this.action_modal === "crear_realizador") {
+    if (
+      this.action_modal === "crear" ||
+      this.action_modal === "crear_realizador"
+    ) {
       this.codigo = this.generar_codigo(this.realizadores_list);
     }
   },
@@ -341,6 +347,18 @@ export default {
           this.realizadores_modal.nombreApellidosRealiz &&
           this.realizadores_modal.sexoRealiz
         );
+    },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      return (
+        this.realizadores_modal.nombreApellidosRealiz ===
+          this.realizador.nombreApellidosRealiz &&
+        this.realizadores_modal.sexoRealiz === this.realizador.sexoRealiz &&
+        this.realizadores_modal.descripEspRealiz ===
+          this.realizador.descripEspRealiz
+      );
     },
   },
   methods: {
@@ -471,7 +489,7 @@ export default {
             this.text_button = "Creando...";
             this.spinning = false;
             this.waiting = false;
-						if (this.action_modal === "crear_realizador") {
+            if (this.action_modal === "crear_realizador") {
               let realizadores = [];
               axios
                 .post("/realizadores/listar")
@@ -614,7 +632,7 @@ export default {
     },
   },
   components: {
-    tabla_audiovisuales: () => import('../Audiovisual/Tabla_Audiovisuales')
+    tabla_audiovisuales: () => import("../Audiovisual/Tabla_Audiovisuales"),
   },
 };
 </script>

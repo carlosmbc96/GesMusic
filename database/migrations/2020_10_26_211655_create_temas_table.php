@@ -20,7 +20,7 @@ class CreateTemasTable extends Migration
             $table->timestamps();  // Fecha de Creación y Actualización del Registro
 
             // Relaciones
-            $table->foreignId('track_id')->references('id')->on('tracks');
+            $table->foreignId('track_id')->references('id')->on('tracks')->onDelete("cascade");
         });
     }
 

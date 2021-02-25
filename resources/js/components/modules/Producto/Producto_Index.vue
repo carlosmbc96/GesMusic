@@ -174,14 +174,14 @@
 
           <!-- Inicio Sección de Modals -->
           <modal_management
-            v-if="visible_management"
+            v-if="visible_management && projects_not_empty"
             :action="action_management"
             @actualizar="refresh_table"
             :product="row_selected"
             @close_modal="visible_management = $event"
             :products_list="products_list"
           />
-          <help v-if="show_help" :content="content" :type="type"></help>
+          <help @close="reset" v-if="show_help" :content="content" :type="type"></help>
           <!-- Fin Sección de Modals -->
         </div>
       </div>
@@ -775,6 +775,7 @@ export default {
       },
       spinning: false,
       type: "",
+      projects_not_empty: true,
       show_help: false,
       content: "",
       export_view: false, //* Vista del panel de exportaciones
@@ -837,14 +838,6 @@ export default {
       if (this.action_management !== "detalles") {
         this.change_spin();
       }
-      axios.post("/proyectos/listar").then((response) => {
-        if (response.data.length === 0) {
-          this.content =
-            "No se puede gestionar Productos sin Proyectos existentes, vaya al módulo de Proyectos y cree al menos un Proyecto!";
-          this.type = "info";
-          this.show_help = true;
-        }
-      });
       axios
         .post("/productos/listar", { relations: ["proyecto"] })
         .then((response) => {
@@ -900,9 +893,19 @@ export default {
      */
     click_toolbar(args) {
       if (args.item.id === "ad") {
-        this.action_management = "crear";
-        this.visible_management = true;
-        this.row_selected = {};
+        axios.post("/proyectos/listar").then((response) => {
+          if (response.data.length === 0) {
+            this.content =
+              "No se puede gestionar Productos sin Proyectos existentes, vaya al módulo de Proyectos y cree al menos un Proyecto!";
+            this.type = "info";
+            this.show_help = true;
+            this.projects_not_empty = false;
+          } else {
+            this.action_management = "crear";
+            this.visible_management = true;
+            this.row_selected = {};
+          }
+        });
       }
     },
     /*
@@ -1031,6 +1034,11 @@ export default {
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
+     reset() {
+      this.show_help = false;
+      this.content = "";
+      this.type = "";
+    },
     /*
      * Métodos para volver a mostrar las columnas luego de exportar
      */
@@ -1039,41 +1047,6 @@ export default {
     },
     excel_export_complete(args) {
       this.$refs.gridObj.getColumns()[7].visible = true;
-    },
-    /*
-     * Método con la lógica del botón detalles
-     */
-    detail_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-eye-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      if (this.row_selected.deleted_at == null) this.visible_details = true;
-    },
-    /*
-     * Método con la lógica del botón editar
-     */
-    edit_btn_click(args) {
-      var target = args.target;
-      if (target.classList.contains("e-edit-icon")) {
-        target = target.parentElement;
-      }
-      let row_obj = this.$refs.gridObj.ej2Instances.getRowObjectFromUID(
-        target.parentElement.parentElement.parentElement.getAttribute(
-          "data-uid"
-        )
-      );
-      this.row_selected = row_obj.data;
-      if (this.row_selected.deleted_at == null) {
-        this.action_management = "editar";
-        this.visible_management = true;
-      }
     },
   },
   components: {

@@ -124,7 +124,7 @@
                     <a-form-model-item
                       v-if="
                         action_modal === 'crear' ||
-                          action_modal === 'crear_autor'
+                        action_modal === 'crear_autor'
                       "
                       :validate-status="show_error"
                       prop="codigAutr"
@@ -162,7 +162,7 @@
                     <a-form-model-item
                       v-if="
                         action_modal === 'crear' ||
-                          action_modal === 'crear_autor'
+                        action_modal === 'crear_autor'
                       "
                       :validate-status="show_error"
                       prop="ciAutr"
@@ -337,7 +337,7 @@
                   <a-col span="11">
                     <a-row
                       style="margin-top: 20px"
-                      v-if="action_modal === 'crear'"
+                      v-if="action_modal === 'crear' || action_modal === 'crear_autor'"
                     >
                       <a-col span="24">
                         <a-row>
@@ -355,97 +355,97 @@
                                 $store.getters.getTemasFormGetters.length === 0
                               "
                             ></a-mentions>
-														<div class="custom-form-item">
-															<a-form-model-item
-                              v-for="(tema, index) in $store.getters
-                                .getTemasFormGetters"
-                              :key="tema.id"
-                              v-bind="index === 0 ? formItemLayout : {}"
-                            >
-                              <a-row>
-                                <a-col span="22">
-                                  <a-mentions
-                                    style="margin-top: 3px"
-                                    readonly
-                                    :placeholder="tema.tituloTem"
-                                  ></a-mentions>
-                                </a-col>
-                                <a-col span="2" style="float: right">
-                                  <a-button
-                                    class="dynamic-delete-button"
-                                    @click="remove_tema(tema)"
-                                  >
-                                    <small>
-                                      <b style="vertical-align: top"> x </b>
-                                    </small>
-                                  </a-button>
-                                </a-col>
-                              </a-row>
-                            </a-form-model-item>
-														</div>
+                            <div class="custom-form-item">
+                              <a-form-model-item
+                                v-for="(tema, index) in $store.getters
+                                  .getTemasFormGetters"
+                                :key="tema.id"
+                                v-bind="index === 0 ? formItemLayout : {}"
+                              >
+                                <a-row>
+                                  <a-col span="22">
+                                    <a-mentions
+                                      style="margin-top: 3px"
+                                      readonly
+                                      :placeholder="tema.tituloTem"
+                                    ></a-mentions>
+                                  </a-col>
+                                  <a-col span="2" style="float: right">
+                                    <a-button
+                                      class="dynamic-delete-button"
+                                      @click="remove_tema(tema)"
+                                    >
+                                      <small>
+                                        <b style="vertical-align: top"> x </b>
+                                      </small>
+                                    </a-button>
+                                  </a-col>
+                                </a-row>
+                              </a-form-model-item>
+                            </div>
                             <a-row style="margin-top: 20px">
                               <a-col span="24">
                                 <div class="section-title">
                                   <h5>Selector de Temas</h5>
                                 </div>
-																<div class="custom-form-item">
-                                <a-form-model
-                                  ref="formularioAgregarTema"
-                                  :layout="'horizontal'"
-                                  :model="author_modal"
-                                >
-                                  <a-form-model-item>
-                                    <a-select
-                                      placeholder="Titulo"
-                                      option-filter-prop="children"
-                                      :filter-option="filter_option"
-                                      show-search
-                                      v-model="author_modal.temas"
-                                      :disabled="disabled"
-                                    >
-                                      <a-select-option
-                                        v-for="tema in $store.getters
-                                          .getAllTemasFormGetters"
-                                        :key="tema.id"
-                                        :value="tema.id"
+                                <div class="custom-form-item">
+                                  <a-form-model
+                                    ref="formularioAgregarTema"
+                                    :layout="'horizontal'"
+                                    :model="author_modal"
+                                  >
+                                    <a-form-model-item>
+                                      <a-select
+                                        placeholder="Titulo"
+                                        option-filter-prop="children"
+                                        :filter-option="filter_option"
+                                        show-search
+                                        v-model="author_modal.temas"
+                                        :disabled="disabled"
                                       >
-                                        {{ tema.tituloTem }}
-                                      </a-select-option>
-                                    </a-select>
-                                  </a-form-model-item>
-                                  <a-row>
-                                    <a-col span="12">
-                                      <a-form-model-item
-                                        v-bind="formItemLayout"
-                                      >
-                                        <a-button
-                                          :disabled="disabled"
-                                          type="primary"
-                                          @click="add_tema"
+                                        <a-select-option
+                                          v-for="tema in $store.getters
+                                            .getAllTemasFormGetters"
+                                          :key="tema.id"
+                                          :value="tema.id"
                                         >
-                                          <a-icon type="plus" />
-                                          Agregar Tema
-                                        </a-button>
-                                      </a-form-model-item>
-                                    </a-col>
-                                    <a-col span="12">
-                                      <a-form-model-item
-                                        v-bind="formItemLayout"
-                                        style="float: right"
-                                      >
-                                        <a-button
-                                          :disabled="disabled"
-                                          type="primary"
-                                          @click="new_tema"
+                                          {{ tema.tituloTem }}
+                                        </a-select-option>
+                                      </a-select>
+                                    </a-form-model-item>
+                                    <a-row>
+                                      <a-col span="12">
+                                        <a-form-model-item
+                                          v-bind="formItemLayout"
                                         >
-                                          <a-icon type="plus" />
-                                          Crear Tema
-                                        </a-button>
-                                      </a-form-model-item>
-                                    </a-col>
-                                  </a-row>
-                                </a-form-model>
-																</div>
+                                          <a-button
+                                            :disabled="disabled"
+                                            type="primary"
+                                            @click="add_tema"
+                                          >
+                                            <a-icon type="plus" />
+                                            Agregar Tema
+                                          </a-button>
+                                        </a-form-model-item>
+                                      </a-col>
+                                      <a-col span="12">
+                                        <a-form-model-item
+                                          v-bind="formItemLayout"
+                                          style="float: right"
+                                        >
+                                          <a-button
+                                            :disabled="disabled"
+                                            type="primary"
+                                            @click="new_tema"
+                                          >
+                                            <a-icon type="plus" />
+                                            Crear Tema
+                                          </a-button>
+                                        </a-form-model-item>
+                                      </a-col>
+                                    </a-row>
+                                  </a-form-model>
+                                </div>
                               </a-col>
                             </a-row>
                           </a-col>
@@ -458,7 +458,7 @@
             </a-spin>
           </div>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+        <a-tab-pane key="2" v-if="action_modal !== 'crear' && action_modal !== 'crear_autor'">
           <span slot="tab"> Audiovisuales/Temas </span>
           <a-row>
             <a-col span="12">
@@ -480,7 +480,7 @@
             <div>
               <tabla_audiovisuales
                 v-if="current === 0"
-                :detalles_prop="detalles"
+                :detalles_prop="detalles_autor"
                 @reload="reload_parent"
                 :entity="author_modal"
                 entity_relation="autores"
@@ -499,28 +499,27 @@
             </div>
             <br />
           </div>
-          <a-button
-            :disabled="disabled"
-            style="float: left"
-            type="default"
-            @click="atras('1')"
-          >
-            <a-icon type="left" />
-            Atrás
-          </a-button>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
+
     <modal_management_temas
-      v-if="visible_management_tema"
+      v-if="visible_management_tema && tracks_not_empty"
       :action="action_management_temas"
       @close_modal="visible_management_tema = $event"
       :temas_list="$store.getters.getAllTemasStaticsFormGetters"
     />
+    <help
+      @close="reset"
+      v-if="show_help"
+      :content="content"
+      :type="type"
+    ></help>
   </div>
 </template>
 
 <script>
+import help from "../../Help";
 export default {
   props: ["action", "author", "autors_list"],
   data() {
@@ -554,8 +553,13 @@ export default {
           title: "Temas",
         },
       ],
+      tracks_not_empty: true,
+      show_help: false,
+      content: "",
+      type: "",
       current: 0,
-      detalles: true,
+      detalles: false,
+      detalles_autor: true,
       vista_editar: true,
       action_cancel_title: "",
       action_title: "",
@@ -741,6 +745,11 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.show_help = false;
+      this.content = "";
+      this.type = "";
+    },
     filter_option(input, option) {
       return (
         option.componentOptions.children[0].text
@@ -924,7 +933,6 @@ export default {
       if (this.author_modal.codigAutr === undefined) {
         this.author_modal.codigAutr = this.codigo;
       }
-      console.log(this.author_modal.audiovisuales_autrs);
       this.author_modal.codigAutr = "AUTR-" + this.author_modal.codigAutr;
       form_data.append("codigAutr", this.author_modal.codigAutr);
       form_data.append("ciAutr", this.author_modal.ciAutr);
@@ -962,11 +970,6 @@ export default {
       return form_data;
     },
     set_action() {
-      if (this.author.temas_autrs) {
-        this.tab_visibility = false;
-        this.active_tab = "2";
-        this.tabs_list.push("tab_1");
-      }
       if (this.action_modal === "editar") {
         if (this.author.deleted_at !== null) {
           this.disabled = true;
@@ -1005,6 +1008,7 @@ export default {
             });
         }
       } else if (this.action_modal === "detalles") {
+        this.detalles = true;
         if (this.author.deleted_at !== null) {
           this.disabled = true;
           this.activated = false;
@@ -1172,7 +1176,6 @@ export default {
         );
         this.author_modal.temas = undefined;
       }
-      console.log(this.$store.getters.getTemasFormGetters);
     },
 
     remove_tema(item) {
@@ -1182,7 +1185,15 @@ export default {
     },
 
     new_tema() {
-      this.visible_management_tema = true;
+      axios.post("/tracks/listar").then((response) => {
+        if (response.data.length === 0) {
+          this.content =
+            "No se puede crear Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
+          this.type = "info";
+          this.show_help = true;
+          this.tracks_not_empty = false;
+        } else this.visible_management_tema = true;
+      });
     },
 
     get_tema(id) {
@@ -1211,8 +1222,10 @@ export default {
     },
   },
   components: {
+    help,
     tabla_audiovisuales: () => import("../../Audiovisual/Tabla_Audiovisuales"),
     tabla_temas: () => import("../../Tema/Tabla_Temas"),
+    modal_management_temas: () => import("../../Tema/Modal_Gestionar_Tema"),
   },
 };
 </script>

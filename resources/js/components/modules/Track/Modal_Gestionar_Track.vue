@@ -65,12 +65,7 @@
         <div slot="tabBarExtraContent">{{ text_header_button }} Track</div>
         <a-tab-pane
           key="1"
-          v-if="
-            (action_modal === 'crear' &&
-              action_modal === 'crear_track' &&
-              action_modal === 'crear_track_tabla_component') ||
-            (action_modal === 'editar' && !track.tabla)
-          "
+          v-if="action_modal !== 'editar' && action_modal !== 'detalles'"
         >
           <span slot="tab"> Fonograma </span>
           <a-spin :spinning="spinning">
@@ -814,6 +809,7 @@
           </a-row>
           <a-row>
             <a-button
+              v-if="action_modal === 'editar' || action_modal === 'detalles'"
               :disabled="disabled"
               style="float: right"
               type="default"
@@ -1126,7 +1122,8 @@ export default {
     }
     if (
       this.action_modal === "detalles" ||
-      this.action_modal === "crear_track"
+      this.action_modal === "crear_track" ||
+      this.action_modal === "editar"
     ) {
       this.active_tab = "2";
       this.tabs_list.push("tab_1");

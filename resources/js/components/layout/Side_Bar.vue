@@ -222,7 +222,7 @@
                 <li class="nav-item" @click="change_route('/tema_index')">
                   <a class="nav-link">
                     <i class="icon-note font-white" />
-                    <span class="title font-white"> Gestión temas </span>
+                    <span class="title font-white"> Gestión Temas </span>
                   </a>
                 </li>
                 <li class="nav-item">

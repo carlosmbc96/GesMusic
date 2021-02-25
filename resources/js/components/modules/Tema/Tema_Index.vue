@@ -156,14 +156,19 @@
 
           <!-- Inicio Sección de Modals -->
           <modal_management
-            v-if="visible_management"
+            v-if="visible_management && tracks_not_empty"
             :action="action_management"
             @actualizar="refresh_table"
             :tema="row_selected"
             @close_modal="visible_management = $event"
             :temas_list="temas_list"
           />
-          <help v-if="show_help" :content="content" :type="type"></help>
+          <help
+            @close="reset"
+            v-if="show_help"
+            :content="content"
+            :type="type"
+          ></help>
           <!-- Fin Sección de Modals -->
         </div>
       </div>
@@ -439,8 +444,7 @@ export default {
                                       this.loading = true;
                                       axios
                                         .delete(
-                                          "temas/desactivar/" +
-                                            this.data.id
+                                          "temas/desactivar/" + this.data.id
                                         )
                                         .catch((errors) => {
                                           error = true;
@@ -528,10 +532,7 @@ export default {
                                     (instance, toast) => {
                                       this.loading = true;
                                       axios
-                                        .get(
-                                          "temas/restaurar/" +
-                                            this.data.id
-                                        )
+                                        .get("temas/restaurar/" + this.data.id)
                                         .catch((errors) => {
                                           error = true;
                                         })
@@ -692,9 +693,7 @@ export default {
                                   (instance, toast) => {
                                     this.$parent.$parent.$parent.change_spin();
                                     axios
-                                      .delete(
-                                        `temas/eliminar/${this.data.id}`
-                                      )
+                                      .delete(`temas/eliminar/${this.data.id}`)
                                       .then((ress) => {
                                         this.$parent.$parent.$parent.refresh_table();
                                         this.$toast.success(
@@ -763,6 +762,7 @@ export default {
       },
       spinning: false,
       show_help: false,
+      tracks_not_empty: true,
       content: "",
       type: "",
       export_view: false, //* Vista del panel de exportaciones
@@ -832,14 +832,6 @@ export default {
       if (this.action_management !== "detalles") {
         this.change_spin();
       }
-      axios.post("/tracks/listar").then((response) => {
-        if (response.data.length === 0) {
-          this.content =
-            "No se puede gestionar Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
-          this.type = "info";
-          this.show_help = true;
-        }
-      });
       axios.post("/temas/listar", { relations: ["track"] }).then((response) => {
         this.temas_list = response.data;
         this.series_data = [];
@@ -884,14 +876,29 @@ export default {
     refresh_table() {
       this.load_temas();
     },
+    reset() {
+      this.show_help = false;
+      this.content = "";
+      this.type = "";
+    },
     /*
      * Método con la lógica de los botones del toolbar de la tabla
      */
     click_toolbar(args) {
       if (args.item.id === "ad") {
-        this.action_management = "crear";
-        this.visible_management = true;
-        this.row_selected = {};
+        axios.post("/tracks/listar").then((response) => {
+          if (response.data.length === 0) {
+            this.content =
+              "No se puede gestionar Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
+            this.type = "info";
+            this.show_help = true;
+            this.tracks_not_empty = false;
+          } else {
+            this.action_management = "crear";
+            this.visible_management = true;
+            this.row_selected = {};
+          }
+        });
       }
     },
     /*

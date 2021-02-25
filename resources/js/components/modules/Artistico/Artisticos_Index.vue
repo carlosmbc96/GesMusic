@@ -132,14 +132,19 @@
 
           <!-- Inicio Sección de Modals -->
           <modal_management
-            v-if="visible_management"
+            v-if="visible_management && interpretes_not_empty"
             :action="action_management"
             @actualizar="refresh_table"
             :artistico="row_selected"
             @close_modal="visible_management = $event"
             :artisticos_list="artisticos_list"
           />
-          <help v-if="show_help" :content="content" :type="type"></help>
+          <help
+            @close="reset"
+            v-if="show_help"
+            :content="content"
+            :type="type"
+          ></help>
           <!-- Fin Sección de Modals -->
         </div>
       </div>
@@ -672,6 +677,7 @@ export default {
       spinning: false,
       show_help: false,
       content: "",
+      interpretes_not_empty: true,
       type: "",
       export_view: false, //* Vista del panel de exportaciones
       artisticos_list: [], //* Lista de artisticos que es cargada en la tabla
@@ -740,22 +746,18 @@ export default {
       if (this.action_management !== "detalles") {
         this.change_spin();
       }
-      axios.post("/interpretes/listar").then((response) => {
-        if (response.data.length === 0) {
-          this.content =
-            "No se pueden gestionar Nombres Artísticos sin haber creado previamente un Intérprete , vaya al módulo de Intérpretes y cree al menos un Intérprete!";
-          this.type = "info";
-          this.show_help = true;
+      axios.post("artisticos/listar").then((response) => {
+        this.artisticos_list = response.data;
+        if (this.action_management !== "detalles") {
+          this.change_spin();
         }
       });
-      axios
-        .post("artisticos/listar" /* { relations: ["productos"] } */)
-        .then((response) => {
-          this.artisticos_list = response.data;
-          if (this.action_management !== "detalles") {
-            this.change_spin();
-          }
-        });
+    },
+    reset() {
+      this.show_help = false;
+      this.content = "";
+      this.type = "";
+      this.interpretes_not_empty = true;
     },
     /*
      * Método que actualiza los datos de la tabla
@@ -768,9 +770,19 @@ export default {
      */
     click_toolbar(args) {
       if (args.item.id === "ad") {
-        this.action_management = "crear";
-        this.visible_management = true;
-        this.row_selected = {};
+        axios.post("/interpretes/listar").then((response) => {
+          if (response.data.length === 0) {
+            this.content =
+              "No se pueden gestionar Nombres Artísticos sin haber creado previamente un Intérprete , vaya al módulo de Intérpretes y cree al menos un Intérprete!";
+            this.type = "info";
+            this.show_help = true;
+            this.interpretes_not_empty = false;
+          } else {
+            this.action_management = "crear";
+            this.visible_management = true;
+            this.row_selected = {};
+          }
+        });
       }
     },
     /*

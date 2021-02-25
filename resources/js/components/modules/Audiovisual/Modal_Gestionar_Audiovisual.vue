@@ -782,7 +782,7 @@
                               "
                               :disabled="disabled"
                               :valueFormat="'HH:mm:ss'"
-                              placeholder="00:00"
+                              placeholder="hh:mm:ss"
                               v-model="audiovisual_modal.duracionAud"
                             />
                           </a-form-model-item>
@@ -1038,16 +1038,16 @@
                           <div class="section-title">
                             <h4>Realizadores</h4>
                           </div>
-													<a-alert
-														v-if="
-															action_modal === 'detalles' &&
-																$store.getters.getRealizadoresFormGetters
-																	.length === 0
-														"
-														message="El audiovisual no posee realizadores"
-														type="info"
-														show-icon
-													/>
+                          <a-alert
+                            v-if="
+                              action_modal === 'detalles' &&
+                              $store.getters.getRealizadoresFormGetters
+                                .length === 0
+                            "
+                            message="El audiovisual no posee realizadores"
+                            type="info"
+                            show-icon
+                          />
                         </a-col>
                       </a-row>
                       <a-row v-if="action_modal !== 'detalles'">
@@ -1172,16 +1172,16 @@
                           <div class="section-title">
                             <h4>Entrevistados</h4>
                           </div>
-													<a-alert
-														v-if="
-															action_modal === 'detalles' &&
-																$store.getters.getEntrevistadosFormGetters
-																	.length === 0
-														"
-														message="El audiovisual no posee entrevistados"
-														type="info"
-														show-icon
-													/>
+                          <a-alert
+                            v-if="
+                              action_modal === 'detalles' &&
+                              $store.getters.getEntrevistadosFormGetters
+                                .length === 0
+                            "
+                            message="El audiovisual no posee entrevistados"
+                            type="info"
+                            show-icon
+                          />
                         </a-col>
                       </a-row>
                       <a-row v-if="action_modal !== 'detalles'">
@@ -1301,7 +1301,10 @@
                       </a-row>
                     </a-col>
                   </a-row>
-                  <a-row style="margin-top: 20px" v-if="action_modal === 'crear'">
+                  <a-row
+                    style="margin-top: 20px"
+                    v-if="action_modal === 'crear'"
+                  >
                     <a-col span="11">
                       <a-row>
                         <a-col span="24">
@@ -2117,15 +2120,15 @@ export default {
           }
         });
       } else if (tab === "tab_2") {
-          this.$refs.general_form.validate((valid) => {
-            if (valid) {
-              this.tab_3 = false;
-              if (this.tabs_list.indexOf(tab) == -1) {
-                this.tabs_list.push(tab);
-              }
-              this.active_tab = siguienteTab;
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_3 = false;
+            if (this.tabs_list.indexOf(tab) == -1) {
+              this.tabs_list.push(tab);
             }
-          });
+            this.active_tab = siguienteTab;
+          }
+        });
       }
     },
     reload_parent() {
@@ -2634,7 +2637,9 @@ export default {
       form_data.append("paisGrabAud", this.audiovisual_modal.paisGrabAud);
       if (this.audiovisual_modal.productos_audvs) {
         form_data.append("product_id", this.audiovisual_modal.productos_audvs);
-      } else if (this.audiovisual.autores_audvs) {
+      } else
+        form_data.append("product_id", this.audiovisual_modal.productos_audvs);
+      if (this.audiovisual.autores_audvs) {
         form_data.append("autores_id", this.audiovisual_modal.autores_audvs);
         this.relation = "autores";
         form_data.append("type_relation", this.relation);

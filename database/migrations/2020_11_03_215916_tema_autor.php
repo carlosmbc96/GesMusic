@@ -15,7 +15,7 @@ class TemaAutor extends Migration
             $table->timestamps();  // Fecha de Creación y Actualización del Registro
 
             // Relaciones
-            $table->foreignId('tema_id')->references('id')->on('temas');
+            $table->foreignId('tema_id')->references('id')->on('temas')->onDelete("cascade");
             $table->foreignId('autor_id')->references('id')->on('autores');
         });
     }

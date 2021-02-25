@@ -59,7 +59,7 @@
 
     <!-- Inicio Sección de Modals -->
     <modal_management
-      v-if="visible_management"
+      v-if="visible_management && tracks_not_empty"
       :action="action_management"
       @actualizar="refresh_table"
       :tema="row_selected"
@@ -74,6 +74,12 @@
       :entity_relation="entity_relation"
       @close_modal="visible_transfer = $event"
     />
+    <help
+      @close="reset"
+      v-if="show_help"
+      :content="content"
+      :type="type"
+    ></help>
   </div>
 </template>
 
@@ -84,6 +90,7 @@
 import Vue from "vue";
 import modal_management from "./Modal_Gestionar_Tema";
 import transfer_modal from "./Transfer_Modal_Temas";
+import help from "../Help";
 import {
   GridPlugin,
   Edit,
@@ -176,7 +183,7 @@ L10n.load({
 });
 setCulture("es-ES");
 export default {
-  name: "Tabla_Autores",
+  name: "Tabla_Temas",
   props: ["entity", "vista_editar", "detalles_prop", "entity_relation"],
   data() {
     return {
@@ -187,23 +194,6 @@ export default {
         pageSize: 10,
       },
       filter_settings: { type: "Menu" },
-      /* toolbar: this.detalles_prop
-        ? ["Search"]
-        : [
-            {
-              text: "Añadir Tema",
-              tooltipText: "Añadir Tema",
-              prefixIcon: "e-add-icon",
-              id: `ad-${this.entity_relation}`,
-            },
-            "Search",
-            {
-              text: "Gestionar Relaciones",
-              tooltipText: "Gestionar Relaciones",
-              prefixIcon: "e-transfer-icon",
-              id: `vinc_desvinc`,
-            },
-          ], */
       toolbar: this.menuToolbar(),
       status_child_template: () => {
         return {
@@ -500,6 +490,11 @@ export default {
                */
               detail_btn_click(args) {
                 this.$parent.$parent.$parent.row_selected = this.data;
+                if (
+                  this.$parent.$parent.$parent.entity_relation === "autores"
+                ) {
+                  this.$parent.$parent.$parent.row_selected.tabla_autores = true;
+                }
                 if (this.data.deleted_at === null)
                   this.$parent.$parent.$parent.action_management = "detalles";
                 this.$parent.$parent.$parent.visible_management = true;
@@ -509,6 +504,11 @@ export default {
                */
               edit_btn_click(args) {
                 this.$parent.$parent.$parent.row_selected = this.data;
+                if (
+                  this.$parent.$parent.$parent.entity_relation === "autores"
+                ) {
+                  this.$parent.$parent.$parent.row_selected.tabla_autores = true;
+                }
                 this.$parent.$parent.$parent.row_selected.tabla = true;
                 if (this.data.deleted_at === null) {
                   this.$parent.$parent.$parent.action_management = "editar";
@@ -522,6 +522,10 @@ export default {
       export_view: false, //* Vista del panel de exportaciones
       spinning: false,
       visible_transfer: false,
+      tracks_not_empty: true,
+      show_help: false,
+      content: "",
+      type: "",
       status: "",
       detalles: this.detalles_prop,
       temas_list: [], //* Lista de Audiovisuales que es cargada en la tabla
@@ -539,6 +543,11 @@ export default {
     this.load_temas();
   },
   methods: {
+    reset() {
+      this.show_help = false;
+      this.content = "";
+      this.type = "";
+    },
     menuToolbar() {
       if (this.entity_relation === "tracks" && !this.detalles_prop) {
         return [
@@ -551,21 +560,25 @@ export default {
           "Search",
         ];
       } else if (this.entity_relation === "autores") {
-        return [
-          {
-            text: "Añadir Tema",
-            tooltipText: "Añadir Tema",
-            prefixIcon: "e-add-icon",
-            id: `ad-${this.entity_relation}`,
-          },
-          "Search",
-          {
-            text: "Gestionar Relaciones",
-            tooltipText: "Gestionar Relaciones",
-            prefixIcon: "e-transfer-icon",
-            id: `vinc_desvinc`,
-          },
-        ];
+        if (this.detalles_prop) {
+          return ["Search"];
+        } else {
+          return [
+            {
+              text: "Añadir Tema",
+              tooltipText: "Añadir Tema",
+              prefixIcon: "e-add-icon",
+              id: `ad-${this.entity_relation}`,
+            },
+            "Search",
+            {
+              text: "Gestionar Relaciones",
+              tooltipText: "Gestionar Relaciones",
+              prefixIcon: "e-transfer-icon",
+              id: `vinc_desvinc`,
+            },
+          ];
+        }
       } else if (this.detalles_prop) {
         return ["Search"];
       }
@@ -598,13 +611,11 @@ export default {
               this.temas_list = [];
               let pertenece = false;
               response.data.forEach((tema) => {
-                if (this.entity_relation === "autores") {
-                  tema.autores.forEach((autor) => {
-                    if (autor.id === this.entity.id) {
-                      pertenece = true;
-                    }
-                  });
-                }
+                tema.autores.forEach((autor) => {
+                  if (autor.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
                 if (pertenece) {
                   this.temas_list.push(tema);
                 }
@@ -641,21 +652,41 @@ export default {
     click_toolbar(args) {
       switch (args.item.id) {
         case "ad-autores": {
-          this.action_management = "crear";
-          this.visible_management = true;
-          this.row_selected = {
-            modal_detalles: true,
-            autores_temas: this.entity.id,
-          };
+          axios.post("/tracks/listar").then((response) => {
+            if (response.data.length === 0) {
+              this.content =
+                "No se puede gestionar Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
+              this.type = "info";
+              this.show_help = true;
+              this.tracks_not_empty = false;
+            } else {
+              this.action_management = "crear_temas_autor";
+              this.visible_management = true;
+              this.row_selected = {
+                modal_detalles: true,
+                autores_temas: this.entity.id,
+              };
+            }
+          });
           break;
         }
         case "ad-tracks": {
-          this.action_management = "crear";
-          this.visible_management = true;
-          this.row_selected = {
-            modal_detalles: true,
-            tracks_temas: this.entity.id,
-          };
+          axios.post("/tracks/listar").then((response) => {
+            if (response.data.length === 0) {
+              this.content =
+                "No se puede gestionar Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
+              this.type = "info";
+              this.show_help = true;
+              this.tracks_not_empty = false;
+            } else {
+              this.action_management = "crear_temas_track";
+              this.visible_management = true;
+              this.row_selected = {
+                modal_detalles: true,
+                track_id: this.entity.id,
+              };
+            }
+          });
           break;
         }
         case "vinc_desvinc": {
@@ -669,6 +700,7 @@ export default {
   components: {
     modal_management,
     transfer_modal,
+    help,
   },
   provide: {
     grid: [

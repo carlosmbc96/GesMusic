@@ -148,6 +148,8 @@ Route::post('/temas/editar', 'TemaController@update');
 Route::delete('/temas/desactivar/{id}', 'TemaController@destroyLog');
 Route::delete('/temas/eliminar/{id}', 'TemaController@destroyFis');
 Route::post('/temas/nomencladores', 'TemaController@nomenclators');
+Route::post('/temas/actualizarRelacionesTem', 'TemaController@actualizarRelacionesTem');
+
 /*
 // RUTAS DEL RECURSO: ELEMENTO
 //Route::resource('elementos','ElementoController'); // Ruta que Lista todos los Recursos de la Clase Elementos

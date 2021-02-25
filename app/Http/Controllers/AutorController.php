@@ -6,6 +6,7 @@ use App\Autor;
 use App\Audiovisual;
 use App\Track;
 use App\Audiovisual_Autor;
+use App\Tema;
 use App\Tema_Autor;
 use App\Track_Autor;
 use App\Vocabulario;
@@ -190,20 +191,33 @@ class AutorController extends Controller
                 ]);
             }
             return response()->json($track);
+        } else if ($request->relation === "temas") {
+            $tema = Tema::withTrashed()->findOrFail($request->id);
+            for ($i = count($tema->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+                $tema->autores()->withTrashed()->get()[$i]->pivot->delete();
+            }
+            foreach ($request->autores as $autor) {
+                Tema_Autor::create([
+                    "tema_id" => $request->id,
+                    "autor_id" => $autor
+                ]);
+            }
+            return response()->json($tema);
         }
     }
 
-		public function temas(Request $request) {
-			$autor = Autor::withTrashed()->findOrFail($request->id);
-			for ($i = count($autor->temas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
-				$autor->temas()->withTrashed()->get()[$i]->pivot->delete();
-			}
-			foreach ($request->temas as $tema) {
-				Tema_Autor::create([
-					"autor_id" => $request->id,
-					"tema_id" => $tema,
-				]);
-			}
-			return response()->json($autor);
-		}
+    public function temas(Request $request)
+    {
+        $autor = Autor::withTrashed()->findOrFail($request->id);
+        for ($i = count($autor->temas()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+            $autor->temas()->withTrashed()->get()[$i]->pivot->delete();
+        }
+        foreach ($request->temas as $tema) {
+            Tema_Autor::create([
+                "autor_id" => $request->id,
+                "tema_id" => $tema,
+            ]);
+        }
+        return response()->json($autor);
+    }
 }

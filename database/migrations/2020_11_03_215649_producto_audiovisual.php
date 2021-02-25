@@ -15,7 +15,7 @@ class ProductoAudiovisual extends Migration
             $table->timestamps();  // Fecha de Creación y Actualización del Registro
 
             // Relaciones
-            $table->foreignId('producto_id')->references('id')->on('productos');
+            $table->foreignId('producto_id')->references('id')->on('productos')->onDelete("cascade");;
             $table->foreignId('audiovisual_id')->references('id')->on('audiovisuales');
         });
     }

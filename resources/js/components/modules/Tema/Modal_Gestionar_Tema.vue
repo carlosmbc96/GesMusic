@@ -66,7 +66,11 @@
         <!-- Tab 1 -->
         <a-tab-pane
           key="1"
-          v-if="tab_visibility && action_modal !== 'detalles'"
+          v-if="
+            action_modal === 'crear' ||
+            action_modal === 'crear_temas_autor' ||
+            action_modal === 'crear_tema'
+          "
         >
           <span slot="tab"> Track </span>
           <div>
@@ -84,11 +88,7 @@
                   </a-col>
                 </a-row>
                 <a-col span="12">
-                  <a-form-model-item
-                    label="Código"
-                    prop="track_id"
-                    has-feedback
-                  >
+                  <a-form-model-item label="ISRC" prop="track_id" has-feedback>
                     <a-select
                       option-filter-prop="children"
                       :filter-option="filter_option"
@@ -160,7 +160,9 @@
                   <a-form-model-item
                     v-if="
                       action_modal === 'crear' ||
-                        action_modal === 'crear_tema'
+                      action_modal === 'crear_temas_track' ||
+                      action_modal === 'crear_temas_autor' ||
+                      action_modal === 'crear_tema'
                     "
                     :validate-status="show_error"
                     prop="codigTema"
@@ -277,23 +279,44 @@
                       <a-mentions readonly :placeholder="tema_modal.descripTem">
                       </a-mentions>
                     </div>
-                    <a-button
-                      v-if="tab_visibility && action_modal !== 'detalles'"
-                      :disabled="disabled"
-                      style="float: left"
-                      type="default"
-                      @click="atras('1')"
-                    >
-                      <a-icon type="left" />
-                      Atrás
-                    </a-button>
                   </a-form-model-item>
                 </a-col>
+              </a-row>
+              <a-row>
+                <a-button
+                  v-if="
+                    action_modal === 'editar' || action_modal === 'detalles'
+                  "
+                  :disabled="disabled"
+                  style="float: right"
+                  type="default"
+                  @click="siguiente('tab_2', '3')"
+                >
+                  Siguiente
+                  <a-icon type="right" />
+                </a-button>
+                <a-button
+                  v-if="tab_visibility && action_modal !== 'detalles'"
+                  :disabled="disabled"
+                  style="float: left"
+                  type="default"
+                  @click="atras('1')"
+                >
+                  <a-icon type="left" />
+                  Atrás
+                </a-button>
               </a-row>
             </a-form-model>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+        <a-tab-pane
+          key="3"
+          :disabled="tab_3"
+          v-if="
+            (action_modal === 'editar' && !tema.tabla_autores) ||
+            (action_modal === 'detalles' && !tema.tabla_autores)
+          "
+        >
           <span slot="tab"> Autores </span>
           <a-row>
             <a-col span="12">
@@ -314,6 +337,17 @@
             />
             <br />
           </div>
+          <a-row>
+            <a-button
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('2')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-row>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -360,6 +394,7 @@ export default {
       list_nomenclators: [],
       catalDigitalTem: false,
       tab_2: true,
+      tab_3: true,
       tabs_list: [],
       active_tab: "1",
       tab_visibility: true,
@@ -431,12 +466,22 @@ export default {
   created() {
     this.load_nomenclators();
     this.set_action();
-    if (this.action_modal === "crear" || this.action_modal === "crear_tema") {
+    if (this.action_modal !== "detalles" && this.action_modal !== "editar") {
       this.codigo = this.generar_codigo(this.temas_list);
     }
-    if (this.action_modal === "detalles") {
+    if (
+      this.action_modal === "crear_temas_track" ||
+      this.action_modal === "editar" ||
+      this.action_modal === "detalles"
+    ) {
       this.tabs_list.push("tab_1");
       this.tab_visibility = false;
+      this.active_tab = "2";
+    }
+    if (this.action_modal === "crear_temas_track") {
+      this.tema_modal.track_id = this.tema.track_id;
+      this.tab_visibility = false;
+      this.tab_2 = false;
       this.active_tab = "2";
     }
   },
@@ -474,7 +519,7 @@ export default {
       );
     },
     siguiente(tab, siguienteTab) {
-      if (tab == "tab_1") {
+      if (tab === "tab_1") {
         this.$refs.formulariotrack.validate((valid) => {
           if (valid) {
             this.tab_2 = false;
@@ -484,6 +529,12 @@ export default {
             this.active_tab = siguienteTab;
           }
         });
+      } else if (tab === "tab_2") {
+        this.tab_3 = false;
+        if (this.tabs_list.indexOf(tab) == -1) {
+          this.tabs_list.push(tab);
+        }
+        this.active_tab = siguienteTab;
       }
     },
     atras(tabAnterior) {
@@ -491,9 +542,9 @@ export default {
     },
     handle_cancel(e) {
       if (e === "cancelar") {
-				if (this.$refs.general_form !== undefined) {
-        	this.$refs.general_form.resetFields();
-				}
+        if (this.$refs.general_form !== undefined) {
+          this.$refs.general_form.resetFields();
+        }
         this.show = false;
         this.tab_visibility = true;
         this.tabs_list = [];
@@ -551,6 +602,7 @@ export default {
           this.tema.descripTem === null ? "" : this.tema.descripTem;
         this.tema_modal = { ...this.tema };
       } else {
+        this.tema_modal = { ...this.tema };
         this.text_button = "Crear";
         this.text_header_button = "Crear";
         this.action_cancel_title = "¿Desea cancelar la creación del Tema?";
@@ -598,7 +650,7 @@ export default {
             },
           })
           .then((res) => {
-						if (this.action_modal === "crear_tema") {
+            if (this.action_modal === "crear_tema") {
               let temas = [];
               axios
                 .post("/temas/listar")
@@ -609,9 +661,7 @@ export default {
                       temas.push(element);
                     }
                   });
-                  this.$store.state["temas"].push(
-                    temas[temas.length - 1]
-                  );
+                  this.$store.state["temas"].push(temas[temas.length - 1]);
                   this.$store.state["created_temas"].push(
                     temas[temas.length - 1]
                   );
@@ -651,6 +701,11 @@ export default {
       } else if (this.tema_modal.descripTem === null) {
         this.tema_modal.descripTem = "";
       }
+      if (this.tema_modal.sociedadGestionTem === undefined) {
+        this.tema_modal.sociedadGestionTem = "";
+      } else if (this.tema_modal.sociedadGestionTem === null) {
+        this.tema_modal.sociedadGestionTem = "";
+      }
       let form_data = new FormData();
       if (this.action_modal === "editar" || this.action_modal === "detalles") {
         form_data.append("id", this.tema_modal.id);
@@ -658,26 +713,22 @@ export default {
       if (this.tema_modal.codigTema === undefined) {
         this.tema_modal.codigTema = this.codigo;
       }
-      if (this.tema_modal.track_id) {
-        this.tab_visibility = false;
-        this.tab_2 = false;
-        this.active_tab = "2";
-      }
-			console.log("ok");
       this.tema_modal.codigTema = "TEMA-" + this.tema_modal.codigTema;
-			console.log("ok");
       form_data.append("codigTema", this.tema_modal.codigTema);
       form_data.append("track_id", this.tema_modal.track_id);
       form_data.append("tituloTem", this.tema_modal.tituloTem);
       form_data.append("catalDigitalTem", this.tema_modal.catalDigitalTem);
       form_data.append("descripTem", this.tema_modal.descripTem);
+      if (this.tema_modal.autores_temas) {
+        this.relation = "autores";
+        form_data.append("type_relation", this.relation);
+        form_data.append("autor_id", this.tema_modal.autores_temas);
+      }
       form_data.append(
         "sociedadGestionTem",
         this.tema_modal.sociedadGestionTem
       );
-			console.log("ok");
       this.text_button = "Creando...";
-			console.log("ok");
       return form_data;
     },
     //Metodos para generar el codigo

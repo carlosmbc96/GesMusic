@@ -192,7 +192,7 @@ export default {
         .post("temas/actualizarRelacionesTem", {
           relation: this.entity_relation,
           id: this.entity_id,
-          autores: this.new_relations,
+          temas: this.new_relations,
         })
         .then((response) => {
           this.$emit("actualizar");

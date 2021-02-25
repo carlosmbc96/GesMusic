@@ -271,14 +271,14 @@
                     >
                       <a-input
                         :disabled="action_modal === 'editar'"
-                        v-model="track_modal.isrcTrk"
+                        v-model="pretty_isrc"
                       />
                     </a-form-model-item>
                     <a-form-model-item
                       label="ISRC"
                       v-if="action_modal === 'detalles'"
                     >
-                      <a-mentions readonly :placeholder="track_modal.isrcTrk">
+                      <a-mentions readonly :placeholder="pretty_isrc">
                       </a-mentions>
                     </a-form-model-item>
                     <a-form-model-item
@@ -541,7 +541,7 @@
               </div>
             </a-spin>
           </a-row>
-          <a-row style="margin-top: 20px" v-if="action_modal === 'crear'">
+          <a-row style="margin-top: 20px" v-if="action_modal === 'crear' || action_modal === 'crear_track' || action_modal === 'crear_track_tabla_component'">
             <a-col span="11">
               <a-row>
                 <a-col span="24">
@@ -620,14 +620,7 @@
                             <a-form-model-item v-bind="formItemLayout">
                               <a-button
                                 :disabled="disabled"
-                                style="
-                                  color: white;
-                                  background-color: rgb(
-                                    45,
-                                    171,
-                                    229
-                                  ) !important;
-                                "
+                                type="primary"
                                 @click="add_autor"
                               >
                                 <a-icon type="plus" />
@@ -642,14 +635,7 @@
                             >
                               <a-button
                                 :disabled="disabled"
-                                style="
-                                  color: white;
-                                  background-color: rgb(
-                                    45,
-                                    171,
-                                    229
-                                  ) !important;
-                                "
+                                type="primary"
                                 @click="new_autor"
                               >
                                 <a-icon type="plus" />
@@ -762,14 +748,7 @@
                             <a-form-model-item v-bind="formItemLayout">
                               <a-button
                                 :disabled="disabled"
-                                style="
-                                  color: white;
-                                  background-color: rgb(
-                                    45,
-                                    171,
-                                    229
-                                  ) !important;
-                                "
+                                type="primary"
                                 @click="add_interprete"
                               >
                                 <a-icon type="plus" />
@@ -784,14 +763,7 @@
                             >
                               <a-button
                                 :disabled="disabled"
-                                style="
-                                  color: white;
-                                  background-color: rgb(
-                                    45,
-                                    171,
-                                    229
-                                  ) !important;
-                                "
+                                type="primary"
                                 @click="new_interprete"
                               >
                                 <a-icon type="plus" />
@@ -1000,6 +972,7 @@ export default {
       oldDuration: "",
       visible_management_autor: false,
       visible_management_interprete: false,
+			pretty_isrc: "",
       roles_interp: [],
       formItemLayout: {
         wrapperCol: {
@@ -1394,7 +1367,7 @@ export default {
                     timeout: 2000,
                   });
                 });
-              if (this.action_modal === "crear_track") {
+              if (this.action_modal === "crear_track" || this.action_modal === "crear_track_tabla_component") {
                 let tracks = [];
                 axios
                   .post("/tracks/listar")
@@ -1575,6 +1548,7 @@ export default {
           this.track_modal.moodTrk = this.track_modal.moodTrk.split(" ");
           this.track_modal.moodTrk.pop();
         } else this.track_modal.moodTrk = [];
+				this.pretty_isrc = this.build_pretty_isrc(this.track_modal.isrcTrk);
       } else if (this.action_modal === "detalles") {
         this.detalles = true;
         if (this.track.deleted_at !== null) {
@@ -1595,6 +1569,7 @@ export default {
         if (this.track_modal.moodTrk !== null) {
           this.track_modal.moodTrk = this.track_modal.moodTrk.split(" ");
         } else delete this.track_modal.moodTrk;
+				this.pretty_isrc = this.build_pretty_isrc(this.track_modal.isrcTrk);
       } else {
         this.track_modal = { ...this.track };
         this.text_button = "Crear";
@@ -1625,7 +1600,7 @@ export default {
           let prod = response.data;
           prod.forEach((element) => {
             if (!element.deleted_at) {
-              if (this.action_modal === "crear") {
+              if (this.action_modal === "crear" || this.action_modal === "crear_track" || this.action_modal === "crear_track_tabla_component") {
                 this.$store.state["all_autores"].push(element);
               }
               this.$store.state["all_autores_statics"].push(element);
@@ -1641,7 +1616,7 @@ export default {
           let prod = response.data;
           prod.forEach((element) => {
             if (!element.deleted_at) {
-              if (this.action_modal === "crear") {
+              if (this.action_modal === "crear" || this.action_modal === "crear_track" || this.action_modal === "crear_track_tabla_component") {
                 this.$store.state["all_interpretes"].push(element);
               }
               this.$store.state["all_interpretes_statics"].push(element);
@@ -1759,11 +1734,16 @@ export default {
     getInterpretesID() {
       let answer = [];
       let all_interpretes = this.$store.getters.getInterpretesFormGetters;
+			let roles = [];
       for (let index = 0; index < all_interpretes.length; index++) {
+				if (all_interpretes[index].role !== undefined) {
+					roles = all_interpretes[index].role
+				}
         answer.push([
           all_interpretes[index].id,
-          this.create_roles_string(all_interpretes[index].role),
+          this.create_roles_string(roles),
         ]);
+				roles = [];
       }
       return answer;
     },
@@ -1876,6 +1856,18 @@ export default {
           form_data = new FormData();
         }
       }
+    },
+
+		build_pretty_isrc(isrc) {
+      return (
+        isrc.substr(0, 2) +
+        "-" +
+        isrc.substr(2, 3) +
+        "-" +
+        isrc.substr(5, 2) +
+        "-" +
+        isrc.substr(7)
+      );
     },
   },
   components: {

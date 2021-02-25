@@ -222,7 +222,7 @@
                       </a-form-model-item>
                       <a-form-model-item
                         v-else
-                        style="width: 55% !important"
+                        style="width: 55% !important; margin-top: -25px"
                         label="Año"
                       >
                         <a-mentions readonly :placeholder="product.añoProd">
@@ -584,7 +584,7 @@
                       v-bind="index === 0 ? formItemLayout : {}"
                     >
                       <a-row>
-                        <a-col span="12">
+                        <a-col span="24">
                           <div class="ant-form-item-label">
                             <label>Intérprete</label>
                           </div>
@@ -597,7 +597,7 @@
                             mode="single"
                             v-model="interprete.value"
                             :id="interprete.key"
-                            class="interpretes-select"
+														class="interpretes-select"
                             @focus="last_interprete(interprete)"
                             @change="change_interprete(interprete)"
                           >
@@ -610,9 +610,8 @@
                             </a-select-option>
                           </a-select>
                           <a-button
-                            v-if="interpretesProd.length > 1"
+                            v-if="interpretesProd[0].value !== ''"
                             class="dynamic-delete-button"
-                            :disabled="interpretesProd.length === 1"
                             @click="remove_interprete(interprete)"
                           >
                             <small>
@@ -671,9 +670,8 @@
                         </a-select-option>
                       </a-select>
                       <a-button
-                        v-if="autoresProd.length > 1"
+                        v-if="autoresProd[0].value !== ''"
                         class="dynamic-delete-button"
-                        :disabled="autoresProd.length === 1"
                         @click="remove_autor(autor)"
                       >
                         <small>
@@ -2004,6 +2002,14 @@ export default {
       if (index !== -1) {
         this.autoresProd.splice(index, 1);
       }
+			if (this.autoresProd.length === 0) {
+				this.autoresProd = [
+					{
+						key: 1,
+						value: ""
+					}
+				]
+			}
     },
     add_autor() {
       if (this.autoresProd.length < this.list_autores.length) {
@@ -2026,6 +2032,14 @@ export default {
       if (index !== -1) {
         this.interpretesProd.splice(index, 1);
       }
+			if (this.interpretesProd.length === 0) {
+				this.interpretesProd = [
+					{
+						key: 2,
+						value: ""
+					}
+				]
+			}
     },
     add_interprete() {
       if (this.interpretesProd.length < this.list_interpretes.length) {
@@ -2289,11 +2303,11 @@ export default {
   height: 150px !important;
 }
 #modal_gestionar_productos .autores-select {
-  width: 85% !important;
+  width: 90% !important;
   margin-right: 3px !important;
 }
 #modal_gestionar_productos .interpretes-select {
-  width: 80% !important;
+  width: 90% !important;
 }
 #modal_gestionar_productos .dynamic-delete-button {
   cursor: pointer;

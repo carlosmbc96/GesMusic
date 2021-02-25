@@ -68,8 +68,8 @@
           key="1"
           v-if="
             action_modal === 'crear' ||
-            action_modal === 'crear_temas_autor' ||
-            action_modal === 'crear_tema'
+              action_modal === 'crear_temas_autor' ||
+              action_modal === 'crear_tema'
           "
         >
           <span slot="tab"> Track </span>
@@ -160,9 +160,9 @@
                   <a-form-model-item
                     v-if="
                       action_modal === 'crear' ||
-                      action_modal === 'crear_temas_track' ||
-                      action_modal === 'crear_temas_autor' ||
-                      action_modal === 'crear_tema'
+                        action_modal === 'crear_temas_track' ||
+                        action_modal === 'crear_temas_autor' ||
+                        action_modal === 'crear_tema'
                     "
                     :validate-status="show_error"
                     prop="codigTema"
@@ -314,7 +314,7 @@
           :disabled="tab_3"
           v-if="
             (action_modal === 'editar' && !tema.tabla_autores) ||
-            (action_modal === 'detalles' && !tema.tabla_autores)
+              (action_modal === 'detalles' && !tema.tabla_autores)
           "
         >
           <span slot="tab"> Autores </span>
@@ -795,6 +795,7 @@ export default {
               this.tracks.push(element);
             }
           });
+					this.build_pretty_isrc(this.tracks);
         })
         .catch((error) => {});
       axios
@@ -811,6 +812,19 @@ export default {
             timeout: 2000,
           });
         });
+    },
+
+    build_pretty_isrc(array) {
+      for (let index = 0; index < array.length; index++) {
+        array[index].isrcTrk =
+          array[index].isrcTrk.substr(0, 2) +
+          "-" +
+          array[index].isrcTrk.substr(2, 3) +
+          "-" +
+          array[index].isrcTrk.substr(5, 2) +
+          "-" +
+          array[index].isrcTrk.substr(7);
+      }
     },
   },
   components: {

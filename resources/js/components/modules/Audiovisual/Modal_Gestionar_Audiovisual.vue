@@ -236,11 +236,12 @@
                               <a-form-model-item
                                 v-if="
                                   action_modal === 'crear' &&
-                                  (audiovisual_modal.generoAud ===
-                                    'Entrevista' ||
-                                    audiovisual_modal.generoAud ===
-                                      'Making of' ||
-                                    audiovisual_modal.generoAud === 'Trailers')
+                                    (audiovisual_modal.generoAud ===
+                                      'Entrevista' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Making of' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Trailers')
                                 "
                                 :validate-status="show_error"
                                 prop="codigAud"
@@ -258,11 +259,12 @@
                               <a-form-model-item
                                 v-if="
                                   action_modal === 'editar' &&
-                                  (audiovisual_modal.generoAud ===
-                                    'Entrevista' ||
-                                    audiovisual_modal.generoAud ===
-                                      'Making of' ||
-                                    audiovisual_modal.generoAud === 'Trailers')
+                                    (audiovisual_modal.generoAud ===
+                                      'Entrevista' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Making of' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Trailers')
                                 "
                                 label="Código"
                                 prop="codigAud"
@@ -287,11 +289,12 @@
                                 label="Código"
                                 v-if="
                                   action_modal === 'detalles' &&
-                                  (audiovisual_modal.generoAud ===
-                                    'Entrevista' ||
-                                    audiovisual_modal.generoAud ===
-                                      'Making of' ||
-                                    audiovisual_modal.generoAud === 'Trailers')
+                                    (audiovisual_modal.generoAud ===
+                                      'Entrevista' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Making of' ||
+                                      audiovisual_modal.generoAud ===
+                                        'Trailers')
                                 "
                               >
                                 <a-mentions
@@ -305,9 +308,10 @@
                           <a-row
                             v-if="
                               action_modal === 'crear' &&
-                              (audiovisual_modal.generoAud === 'Concierto' ||
-                                audiovisual_modal.generoAud === 'Video Clip' ||
-                                audiovisual_modal.generoAud === 'Documental')
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud === 'Documental')
                             "
                           >
                             <a-col span="24">
@@ -422,10 +426,12 @@
                           <a-row
                             v-if="
                               action_modal === 'editar' &&
-                              (audiovisual_modal.generoAud === 'Concierto' ||
-                                audiovisual_modal.generoAud === 'Video Clip' ||
-                                audiovisual_modal.generoAud === 'Documental') &&
-                              audiovisual_modal.generoAud !== genero_pivot
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Documental') &&
+                                audiovisual_modal.generoAud !== genero_pivot
                             "
                           >
                             <a-col span="24">
@@ -567,28 +573,28 @@
                           <a-form-model-item
                             v-if="
                               action_modal === 'editar' &&
-                              (audiovisual_modal.generoAud === 'Concierto' ||
-                                audiovisual_modal.generoAud === 'Video Clip' ||
-                                audiovisual_modal.generoAud === 'Documental') &&
-                              audiovisual_modal.generoAud === genero_pivot
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Documental') &&
+                                audiovisual_modal.generoAud === genero_pivot
                             "
                             label="ISRC"
                           >
-                            <a-input :disabled="true" v-model="isrc_pivot" />
+                            <a-input :disabled="true" v-model="pretty_isrc" />
                           </a-form-model-item>
                           <a-form-model-item
                             label="ISRC"
                             v-if="
                               action_modal === 'detalles' &&
-                              (audiovisual_modal.generoAud === 'Concierto' ||
-                                audiovisual_modal.generoAud === 'Video Clip' ||
-                                audiovisual_modal.generoAud === 'Documental')
+                                (audiovisual_modal.generoAud === 'Concierto' ||
+                                  audiovisual_modal.generoAud ===
+                                    'Video Clip' ||
+                                  audiovisual_modal.generoAud === 'Documental')
                             "
                           >
-                            <a-mentions
-                              readonly
-                              :placeholder="audiovisual_modal.isrcAud"
-                            >
+                            <a-mentions readonly :placeholder="pretty_isrc">
                             </a-mentions>
                           </a-form-model-item>
                         </a-col>
@@ -1041,8 +1047,8 @@
                           <a-alert
                             v-if="
                               action_modal === 'detalles' &&
-                              $store.getters.getRealizadoresFormGetters
-                                .length === 0
+                                $store.getters.getRealizadoresFormGetters
+                                  .length === 0
                             "
                             message="El audiovisual no posee realizadores"
                             type="info"
@@ -1175,8 +1181,8 @@
                           <a-alert
                             v-if="
                               action_modal === 'detalles' &&
-                              $store.getters.getEntrevistadosFormGetters
-                                .length === 0
+                                $store.getters.getEntrevistadosFormGetters
+                                  .length === 0
                             "
                             message="El audiovisual no posee entrevistados"
                             type="info"
@@ -1334,8 +1340,8 @@
                                   readonly
                                   :placeholder="
                                     autor.nombresAutr +
-                                    ' ' +
-                                    autor.apellidosAutr
+                                      ' ' +
+                                      autor.apellidosAutr
                                   "
                                 ></a-mentions>
                               </a-col>
@@ -1378,8 +1384,8 @@
                                     >
                                       {{
                                         autor.nombresAutr +
-                                        " " +
-                                        autor.apellidosAutr
+                                          " " +
+                                          autor.apellidosAutr
                                       }}
                                     </a-select-option>
                                   </a-select>
@@ -1799,6 +1805,7 @@ export default {
       visible_management_realizador: false,
       visible_management_autor: false,
       visible_management_interprete: false,
+      pretty_isrc: "",
       roles_interp: [],
       formItemLayout: {
         wrapperCol: {
@@ -2031,6 +2038,7 @@ export default {
       );
       this.codig_to_isrc = true;
     }
+    this.pretty_isrc = this.build_pretty_isrc(this.audiovisual_modal.isrcAud);
   },
   computed: {
     active() {
@@ -3191,11 +3199,16 @@ export default {
     getInterpretesID() {
       let answer = [];
       let all_interpretes = this.$store.getters.getInterpretesFormGetters;
+      let roles = [];
       for (let index = 0; index < all_interpretes.length; index++) {
+        if (all_interpretes[index].role !== undefined) {
+          roles = all_interpretes[index].role;
+        }
         answer.push([
           all_interpretes[index].id,
-          this.create_roles_string(all_interpretes[index].role),
+          this.create_roles_string(roles),
         ]);
+        roles = [];
       }
       return answer;
     },
@@ -3276,6 +3289,9 @@ export default {
 
     validate_isrc(isrc, list) {
       if (this.is_isrc()) {
+				if (this.audiovisual_modal.generoAud === this.genero_pivot) {
+					return true;
+				}
         for (let index = 0; index < list.length; index++) {
           if (list[index].isrcAud === isrc) {
             return false;
@@ -3314,7 +3330,6 @@ export default {
       let all_realizadores = this.clone_arr(
         this.$store.getters.getAllRealizadoresStaticsFormGetters
       );
-      // let realizadores = [];
       let temp = 0;
       for (
         let index = 0;
@@ -3364,6 +3379,18 @@ export default {
         }
       }
       return -1;
+    },
+
+    build_pretty_isrc(isrc) {
+      return (
+        isrc.substr(0, 2) +
+        "-" +
+        isrc.substr(2, 3) +
+        "-" +
+        isrc.substr(5, 2) +
+        "-" +
+        isrc.substr(7)
+      );
     },
   },
   components: {

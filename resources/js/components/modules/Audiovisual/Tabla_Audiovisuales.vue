@@ -588,7 +588,7 @@ export default {
       this.change_spin();
       if (this.vista_editar) {
         axios
-          .post("/audiovisuales/listar", { relations: [this.entity_relation] })
+          .post("/audiovisuales/listar", { relations: [this.entity_relation, "entrevistados", "realizadores"] })
           .then((response) => {
             this.audiovisuals_list = [];
             let pertenece = false;

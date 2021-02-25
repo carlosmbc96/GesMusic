@@ -670,7 +670,7 @@ export default {
                */
               del_physical_btn_click(args) {
                 this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
+                  "¿Esta acción de eliminación es irrevercible, si elimina este Track, <br> se eliminaránn también los Temas asociados a este?",
                   "Confirmación",
                   {
                     timeout: 5000,

@@ -599,7 +599,6 @@ export default {
       } else {
         this.$refs.general_form.resetFields();
         this.show = false;
-        this.show = false;
         this.tabs_list = [];
         this.$emit("close_modal", this.show);
       }
@@ -663,6 +662,7 @@ export default {
       this.waiting = true;
       let form_data = this.prepare_create();
       if (this.action_modal === "editar") {
+        this.text_button = "Editando...";
         axios
           .post(`/temas/editar`, form_data, {
             headers: {
@@ -670,7 +670,6 @@ export default {
             },
           })
           .then((response) => {
-            this.text_button = "Editando...";
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;
@@ -776,7 +775,6 @@ export default {
         "sociedadGestionTem",
         this.tema_modal.sociedadGestionTem
       );
-      this.text_button = "Creando...";
       return form_data;
     },
     //Metodos para generar el codigo

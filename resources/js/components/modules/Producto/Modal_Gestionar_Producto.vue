@@ -615,9 +615,8 @@
                               </a-select-option>
                             </a-select>
                             <a-button
-                              v-if="interpretesProd.length > 1"
+                              v-if="interpretesProd[0].value !== ''"
                               class="dynamic-delete-button"
-                              :disabled="interpretesProd.length === 1"
                               @click="remove_interprete(interprete)"
                             >
                               <small>
@@ -679,7 +678,7 @@
                           </a-select-option>
                         </a-select>
                         <a-button
-                          v-if="autoresProd[0].value !== 0"
+                          v-if="autoresProd[0].value !== ''"
                           class="dynamic-delete-button"
                           @click="remove_autor(autor)"
                         >

@@ -73,21 +73,31 @@ class TemaController extends Controller
 
     public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Tema
     {
-        return response()->json(Tema::findOrFail($request->id)->update($request->all()));
+        $tema = Tema::withTrashed()->findOrFail($request->id);
+        $tema->update([
+            "codigTema" => $request->codigTema,
+            "tituloTem" => $request->tituloTem,
+            "catalDigitalTem" => $request->catalDigitalTem,
+            "sociedadGestionTem" => $request->sociedadGestionTem,
+            "descripTem" => $request->descripTem,
+            "track_id" => $request->track_id,
+        ]);
+        return response()->json($tema);
     }
 
-    public function destroyLog(Tema $tema, $id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Tema
+    public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Tema
     {
         return response()->json(Tema::findOrFail($id)->delete());
     }
 
     public function destroyFis(Tema $tema, $id)  // DestroyFis | Método que Elimina de forma Física un Registro Específico del Modelo:Tema
-    {	$tema = Tema::withTrashed()->findOrFail($id);
-		if (count($tema->autores()->withTrashed()->get()) !== 0) {
-			for ($i = count($tema->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
-				$tema->autores()->withTrashed()->get()[$i]->pivot->delete();
-			}
-		}
+    {
+        $tema = Tema::withTrashed()->findOrFail($id);
+        if (count($tema->autores()->withTrashed()->get()) !== 0) {
+            for ($i = count($tema->autores()->withTrashed()->get()) - 1; $i >= 0; $i--) {
+                $tema->autores()->withTrashed()->get()[$i]->pivot->delete();
+            }
+        }
         return response()->json($tema->forceDelete());
     }
 

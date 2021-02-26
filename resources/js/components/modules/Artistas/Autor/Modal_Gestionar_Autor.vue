@@ -61,9 +61,9 @@
         </a-popconfirm>
       </template>
       <!-- Aquí comienzan los tabs -->
-      <a-tabs>
+      <a-tabs :activeKey="active_tab">
         <div slot="tabBarExtraContent">{{ text_header_button }} Autor</div>
-        <a-tab-pane key="1">
+        <a-tab-pane key="1" :disabled="tab_1">
           <span slot="tab">Generales</span>
           <div>
             <a-row>
@@ -337,7 +337,10 @@
                   <a-col span="11">
                     <a-row
                       style="margin-top: 20px"
-                      v-if="action_modal === 'crear' || action_modal === 'crear_autor'"
+                      v-if="
+                        action_modal === 'crear' ||
+                        action_modal === 'crear_autor'
+                      "
                     >
                       <a-col span="24">
                         <a-row>
@@ -356,32 +359,35 @@
                               "
                             ></a-mentions>
                             <div class="custom-form-item">
-                              <a-form-model-item
-                                v-for="(tema, index) in $store.getters
-                                  .getTemasFormGetters"
-                                :key="tema.id"
-                                v-bind="index === 0 ? formItemLayout : {}"
-                              >
-                                <a-row>
-                                  <a-col span="22">
-                                    <a-mentions
-                                      style="margin-top: 3px"
-                                      readonly
-                                      :placeholder="tema.tituloTem"
-                                    ></a-mentions>
-                                  </a-col>
-                                  <a-col span="2" style="float: right">
-                                    <a-button
-                                      class="dynamic-delete-button"
-                                      @click="remove_tema(tema)"
-                                    >
-                                      <small>
-                                        <b style="vertical-align: top"> x </b>
-                                      </small>
-                                    </a-button>
-                                  </a-col>
-                                </a-row>
-                              </a-form-model-item>
+                              <transition-group name="list">
+                                <a-form-model-item
+                                  v-for="(tema, index) in $store.getters
+                                    .getTemasFormGetters"
+                                  :key="tema.id"
+                                  v-bind="index === 0 ? formItemLayout : {}"
+                                  class="list-item"
+                                >
+                                  <a-row>
+                                    <a-col span="22">
+                                      <a-mentions
+                                        style="margin-top: 3px"
+                                        readonly
+                                        :placeholder="tema.tituloTem"
+                                      ></a-mentions>
+                                    </a-col>
+                                    <a-col span="2" style="float: right">
+                                      <a-button
+                                        class="dynamic-delete-button"
+                                        @click="remove_tema(tema)"
+                                      >
+                                        <small>
+                                          <b style="vertical-align: top"> x </b>
+                                        </small>
+                                      </a-button>
+                                    </a-col>
+                                  </a-row>
+                                </a-form-model-item>
+                              </transition-group>
                             </div>
                             <a-row style="margin-top: 20px">
                               <a-col span="24">
@@ -455,10 +461,26 @@
                   </a-col>
                 </a-row>
               </a-form-model>
+              <a-row>
+                <a-button
+                  v-if="action_modal !== 'crear'"
+                  :disabled="disabled"
+                  style="float: right"
+                  type="default"
+                  @click="siguiente('tab_1', '2')"
+                >
+                  Siguiente
+                  <a-icon type="right" />
+                </a-button>
+              </a-row>
             </a-spin>
           </div>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear' && action_modal !== 'crear_autor'">
+        <a-tab-pane
+          key="2"
+          v-if="action_modal !== 'crear' && action_modal !== 'crear_autor'"
+          :disabled="tab_2"
+        >
           <span slot="tab"> Audiovisuales/Temas </span>
           <a-row>
             <a-col span="12">
@@ -499,6 +521,17 @@
             </div>
             <br />
           </div>
+          <a-row>
+            <a-button
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('1')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-row>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -555,6 +588,9 @@ export default {
       ],
       tracks_not_empty: true,
       show_help: false,
+      active_tab: "1",
+      tab_1: false,
+      tab_2: true,
       content: "",
       type: "",
       current: 0,
@@ -574,6 +610,7 @@ export default {
       disabled: false,
       activated: true,
       file_list: [],
+      tabs_list: [],
       preview_image: "",
       valid_image: true,
       preview_visible: false,
@@ -734,14 +771,18 @@ export default {
       this.author_modal.fallecidoAutr = this.fallecidoAutr === true ? 1 : 0;
       this.author_modal.obrasCatEditAutr =
         this.obrasCatEditAutr === true ? 1 : 0;
-      return (
-        this.author_modal.nombresAutr === this.author.nombresAutr &&
-        this.author_modal.apellidosAutr === this.author.apellidosAutr &&
-        this.author_modal.sexoAutr === this.author.sexoAutr &&
-        this.author_modal.fallecidoAutr === this.author.fallecidoAutr &&
-        this.author_modal.obrasCatEditAutr === this.author.obrasCatEditAutr &&
-        this.author_modal.reseñaBiogAutr === this.author.reseñaBiogAutr
-      );
+      if (this.active_tab === "2") {
+        return false;
+      } else {
+        return (
+          this.author_modal.nombresAutr === this.author.nombresAutr &&
+          this.author_modal.apellidosAutr === this.author.apellidosAutr &&
+          this.author_modal.sexoAutr === this.author.sexoAutr &&
+          this.author_modal.fallecidoAutr === this.author.fallecidoAutr &&
+          this.author_modal.obrasCatEditAutr === this.author.obrasCatEditAutr &&
+          this.author_modal.reseñaBiogAutr === this.author.reseñaBiogAutr
+        );
+      }
     },
   },
   methods: {
@@ -811,6 +852,11 @@ export default {
         this.$refs.general_form.validate((valid) => {
           if (valid) {
             return this.confirm();
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
           }
         });
       }
@@ -917,6 +963,32 @@ export default {
               timeout: 2000,
             });
           });
+      }
+    },
+    atras(tabAnterior) {
+      if (this.active_tab === "2") {
+        this.tab_2 = true;
+        this.tab_1 = false;
+        this.active_tab = tabAnterior;
+      }
+    },
+    siguiente(tab, siguienteTab) {
+      if (tab === "tab_1") {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            this.tab_1 = true;
+            if (this.tabs_list.indexOf(tab) === -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
       }
     },
     prepare_create() {

@@ -99,15 +99,17 @@ class AudiovisualController extends Controller
 			"nacioDueñoDerchAud" => $request->nacioDueñoDerchAud,
 			"fenomRefAud" => $request->fenomRefAud
 		]);
-		if ($request->product_id !== "undefined") {
+		if ($request->product_id !== "undefined" && $request->product_id !== null) {
 			$productos = explode(",", $request->product_id);
-			foreach ($productos as $producto) {
-				Producto_Audiovisual::create([
-					"producto_id" => $producto,
-					"audiovisual_id" => $audiovisual->id
-				]);
+			if (count($productos) !== 0) {
+				foreach ($productos as $producto) {
+					Producto_Audiovisual::create([
+						"producto_id" => $producto,
+						"audiovisual_id" => $audiovisual->id
+					]);
+				}
+				$this->crearDirectorios($productos, $request->codigAud);
 			}
-			$this->crearDirectorios($productos, $request->codigAud);
 		}
 		if ($request->type_relation === "autores") {
 			$autores = explode(",", $request->autores_id);

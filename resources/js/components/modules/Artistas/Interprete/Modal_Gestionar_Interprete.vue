@@ -61,9 +61,9 @@
         </a-popconfirm>
       </template>
       <!-- Aqui comienzan los tabs -->
-      <a-tabs>
+      <a-tabs :activeKey="active_tab">
         <div slot="tabBarExtraContent">{{ text_header_button }} Intérprete</div>
-        <a-tab-pane key="1">
+        <a-tab-pane key="1"  :disabled="tab_1">
           <span slot="tab">Generales</span>
           <a-row>
             <a-col span="12">
@@ -193,9 +193,21 @@
                 </a-col>
               </a-row>
             </a-form-model>
+            <a-row>
+              <a-button
+                v-if="action_modal !== 'crear'"
+                :disabled="disabled"
+                style="float: right"
+                type="default"
+                @click="siguiente('tab_1', '2')"
+              >
+                Siguiente
+                <a-icon type="right" />
+              </a-button>
+            </a-row>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'"  :disabled="tab_2">
           <span slot="tab"> Audiovisuales </span>
           <a-row>
             <a-col span="12">
@@ -216,6 +228,17 @@
             />
             <br />
           </div>
+          <a-row>
+            <a-button
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('1')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-row>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -240,6 +263,10 @@ export default {
       } else callback();
     };
     return {
+      active_tab: "1",
+      tab_1: false,
+      tab_2: true,
+      tabs_list: [],
       roles_interp_modal: [],
       roles: [],
       detalles: true,
@@ -344,19 +371,53 @@ export default {
      */
     compare_object() {
       if (this.interp_modal.tabla) {
-        return (
-          this.interp_modal.nombreInterp === this.interp.nombreInterp &&
-          this.interp_modal.reseñaBiogInterp === this.interp.reseñaBiogInterp &&
-          this.compareArrays(this.interp.rolInterp, this.roles_interp_modal)
-        );
-      } else
+        if (this.active_tab === "2") {
+          return false;
+        } else {
+          return (
+            this.interp_modal.nombreInterp === this.interp.nombreInterp &&
+            this.interp_modal.reseñaBiogInterp ===
+              this.interp.reseñaBiogInterp &&
+            this.compareArrays(this.interp.rolInterp, this.roles_interp_modal)
+          );
+        }
+      } else if (this.active_tab === "2") {
+        return false;
+      } else {
         return (
           this.interp_modal.nombreInterp === this.interp.nombreInterp &&
           this.interp_modal.reseñaBiogInterp === this.interp.reseñaBiogInterp
         );
+      }
     },
   },
   methods: {
+    siguiente(tab, siguienteTab) {
+      if (tab === "tab_1") {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            this.tab_1 = true;
+            if (this.tabs_list.indexOf(tab) === -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              3
+            );
+          }
+        });
+      }
+    },
+    atras(tabAnterior) {
+      if (this.active_tab === "2") {
+        this.tab_2 = true;
+        this.tab_1 = false;
+        this.active_tab = tabAnterior;
+      }
+    },
     compareArrays(old_array, new_array) {
       let igual_cont = 0;
       if (new_array.length === old_array.length) {
@@ -411,6 +472,11 @@ export default {
         this.$refs.general_form.validate((valid) => {
           if (valid) {
             return this.confirm();
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              3
+            );
           }
         });
       }

@@ -152,7 +152,7 @@
                   :displayAsCheckBox="true"
                   field="bonusTrk"
                   headerText="Bonus"
-                  width="95"
+                  width="85"
                   textAlign="Center"
                   type="boolean"
                 />

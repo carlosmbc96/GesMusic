@@ -68,6 +68,7 @@
         <a-tab-pane
           key="1"
           v-if="tab_visibility && action_modal !== 'detalles'"
+          :disabled="tab_1"
         >
           <span slot="tab"> Producto </span>
           <a-spin :spinning="spinning">
@@ -1059,34 +1060,37 @@
                                 .length === 0
                             "
                           ></a-mentions>
-                          <a-form-model-item
-                            v-for="(realizador, index) in $store.getters
-                              .getRealizadoresFormGetters"
-                            :key="realizador.id"
-                            v-bind="index === 0 ? formItemLayout : {}"
-                          >
-                            <a-row>
-                              <a-col span="22">
-                                <a-mentions
-                                  style="margin-top: 3px"
-                                  readonly
-                                  :placeholder="
-                                    realizador.nombreApellidosRealiz
-                                  "
-                                ></a-mentions>
-                              </a-col>
-                              <a-col span="2" style="float: right">
-                                <a-button
-                                  class="dynamic-delete-button"
-                                  @click="remove_realizador(realizador)"
-                                >
-                                  <small>
-                                    <b style="vertical-align: top"> x </b>
-                                  </small>
-                                </a-button>
-                              </a-col>
-                            </a-row>
-                          </a-form-model-item>
+                          <transition-group name="list">
+                            <a-form-model-item
+                              v-for="(realizador, index) in $store.getters
+                                .getRealizadoresFormGetters"
+                              :key="realizador.id"
+                              v-bind="index === 0 ? formItemLayout : {}"
+                              class="list-item"
+                            >
+                              <a-row>
+                                <a-col span="22">
+                                  <a-mentions
+                                    style="margin-top: 3px"
+                                    readonly
+                                    :placeholder="
+                                      realizador.nombreApellidosRealiz
+                                    "
+                                  ></a-mentions>
+                                </a-col>
+                                <a-col span="2" style="float: right">
+                                  <a-button
+                                    class="dynamic-delete-button"
+                                    @click="remove_realizador(realizador)"
+                                  >
+                                    <small>
+                                      <b style="vertical-align: top"> x </b>
+                                    </small>
+                                  </a-button>
+                                </a-col>
+                              </a-row>
+                            </a-form-model-item>
+                          </transition-group>
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
@@ -1193,34 +1197,37 @@
                                 .length === 0
                             "
                           ></a-mentions>
-                          <a-form-model-item
-                            v-for="(entrevistado, index) in $store.getters
-                              .getEntrevistadosFormGetters"
-                            :key="entrevistado.id"
-                            v-bind="index === 0 ? formItemLayout : {}"
-                          >
-                            <a-row>
-                              <a-col span="22">
-                                <a-mentions
-                                  readonly
-                                  style="margin-top: 3px"
-                                  :placeholder="
-                                    entrevistado.nombreApellidosEntrv
-                                  "
-                                ></a-mentions>
-                              </a-col>
-                              <a-col span="2" style="float: right">
-                                <a-button
-                                  class="dynamic-delete-button"
-                                  @click="remove_entrevistado(entrevistado)"
-                                >
-                                  <small>
-                                    <b style="vertical-align: top"> x </b>
-                                  </small>
-                                </a-button>
-                              </a-col>
-                            </a-row>
-                          </a-form-model-item>
+                          <transition-group name="list">
+                            <a-form-model-item
+                              v-for="(entrevistado, index) in $store.getters
+                                .getEntrevistadosFormGetters"
+                              :key="entrevistado.id"
+                              v-bind="index === 0 ? formItemLayout : {}"
+                              class="list-item"
+                            >
+                              <a-row>
+                                <a-col span="22">
+                                  <a-mentions
+                                    readonly
+                                    style="margin-top: 3px"
+                                    :placeholder="
+                                      entrevistado.nombreApellidosEntrv
+                                    "
+                                  ></a-mentions>
+                                </a-col>
+                                <a-col span="2" style="float: right">
+                                  <a-button
+                                    class="dynamic-delete-button"
+                                    @click="remove_entrevistado(entrevistado)"
+                                  >
+                                    <small>
+                                      <b style="vertical-align: top"> x </b>
+                                    </small>
+                                  </a-button>
+                                </a-col>
+                              </a-row>
+                            </a-form-model-item>
+                          </transition-group>
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
@@ -1321,36 +1328,39 @@
                               $store.getters.getAutoresFormGetters.length === 0
                             "
                           ></a-mentions>
-                          <a-form-model-item
-                            v-for="(autor, index) in $store.getters
-                              .getAutoresFormGetters"
-                            :key="autor.id"
-                            v-bind="index === 0 ? formItemLayout : {}"
-                          >
-                            <a-row>
-                              <a-col span="22">
-                                <a-mentions
-                                  style="margin-top: 3px"
-                                  readonly
-                                  :placeholder="
-                                    autor.nombresAutr +
-                                    ' ' +
-                                    autor.apellidosAutr
-                                  "
-                                ></a-mentions>
-                              </a-col>
-                              <a-col span="2" style="float: right">
-                                <a-button
-                                  class="dynamic-delete-button"
-                                  @click="remove_autor(autor)"
-                                >
-                                  <small>
-                                    <b style="vertical-align: top"> x </b>
-                                  </small>
-                                </a-button>
-                              </a-col>
-                            </a-row>
-                          </a-form-model-item>
+                          <transition-group name="list">
+                            <a-form-model-item
+                              v-for="(autor, index) in $store.getters
+                                .getAutoresFormGetters"
+                              :key="autor.id"
+                              v-bind="index === 0 ? formItemLayout : {}"
+                              class="list-item"
+                            >
+                              <a-row>
+                                <a-col span="22">
+                                  <a-mentions
+                                    style="margin-top: 3px"
+                                    readonly
+                                    :placeholder="
+                                      autor.nombresAutr +
+                                      ' ' +
+                                      autor.apellidosAutr
+                                    "
+                                  ></a-mentions>
+                                </a-col>
+                                <a-col span="2" style="float: right">
+                                  <a-button
+                                    class="dynamic-delete-button"
+                                    @click="remove_autor(autor)"
+                                  >
+                                    <small>
+                                      <b style="vertical-align: top"> x </b>
+                                    </small>
+                                  </a-button>
+                                </a-col>
+                              </a-row>
+                            </a-form-model-item>
+                          </transition-group>
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
@@ -1436,60 +1446,63 @@
                                 .length === 0
                             "
                           ></a-mentions>
-                          <a-form-model-item
-                            v-for="(interprete, index) in $store.getters
-                              .getInterpretesFormGetters"
-                            :key="interprete.id"
-                            v-bind="index === 0 ? formItemLayout : {}"
-                          >
-                            <a-row>
-                              <a-col span="11">
-                                <div class="ant-form-item-label">
-                                  <label>Nombre</label>
-                                </div>
-                                <a-mentions
-                                  readonly
-                                  style="margin-top: 3px"
-                                  :placeholder="interprete.nombreInterp"
-                                ></a-mentions>
-                              </a-col>
-                              <a-col span="10" style="margin-left: 10px">
-                                <div class="ant-form-item-label">
-                                  <label>Roles</label>
-                                </div>
-                                <a-select
-                                  :getPopupContainer="
-                                    (trigger) => trigger.parentNode
-                                  "
-                                  :disabled="disabled"
-                                  mode="multiple"
-                                  v-model="interprete.role"
-                                  class="interpretes-select"
-                                >
-                                  <a-select-option
-                                    v-for="rol in roles_interp"
-                                    :key="rol.id"
-                                    :value="rol.nombreTer"
+                          <transition-group name="list">
+                            <a-form-model-item
+                              v-for="(interprete, index) in $store.getters
+                                .getInterpretesFormGetters"
+                              :key="interprete.id"
+                              v-bind="index === 0 ? formItemLayout : {}"
+                              class="list-item"
+                            >
+                              <a-row>
+                                <a-col span="11">
+                                  <div class="ant-form-item-label">
+                                    <label>Nombre</label>
+                                  </div>
+                                  <a-mentions
+                                    readonly
+                                    style="margin-top: 3px"
+                                    :placeholder="interprete.nombreInterp"
+                                  ></a-mentions>
+                                </a-col>
+                                <a-col span="10" style="margin-left: 10px">
+                                  <div class="ant-form-item-label">
+                                    <label>Roles</label>
+                                  </div>
+                                  <a-select
+                                    :getPopupContainer="
+                                      (trigger) => trigger.parentNode
+                                    "
+                                    :disabled="disabled"
+                                    mode="multiple"
+                                    v-model="interprete.role"
+                                    class="interpretes-select"
                                   >
-                                    {{ rol.nombreTer }}
-                                  </a-select-option>
-                                </a-select>
-                              </a-col>
-                              <a-col
-                                span="2"
-                                style="float: right; margin-top: 40px"
-                              >
-                                <a-button
-                                  class="dynamic-delete-button"
-                                  @click="remove_interprete(interprete)"
+                                    <a-select-option
+                                      v-for="rol in roles_interp"
+                                      :key="rol.id"
+                                      :value="rol.nombreTer"
+                                    >
+                                      {{ rol.nombreTer }}
+                                    </a-select-option>
+                                  </a-select>
+                                </a-col>
+                                <a-col
+                                  span="2"
+                                  style="float: right; margin-top: 40px"
                                 >
-                                  <small>
-                                    <b style="vertical-align: top"> x </b>
-                                  </small>
-                                </a-button>
-                              </a-col>
-                            </a-row>
-                          </a-form-model-item>
+                                  <a-button
+                                    class="dynamic-delete-button"
+                                    @click="remove_interprete(interprete)"
+                                  >
+                                    <small>
+                                      <b style="vertical-align: top"> x </b>
+                                    </small>
+                                  </a-button>
+                                </a-col>
+                              </a-row>
+                            </a-form-model-item>
+                          </transition-group>
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
@@ -1561,6 +1574,7 @@
           </a-row>
           <a-row>
             <a-button
+              v-if="action_modal !== 'crear'"
               :disabled="disabled"
               style="float: right"
               type="default"
@@ -1624,6 +1638,7 @@
           </div>
 
           <a-button
+            v-if="active_tab !== '3'"
             :disabled="disabled"
             style="float: right"
             type="default"
@@ -1642,7 +1657,7 @@
             Atrás
           </a-button>
         </a-tab-pane>
-        <a-tab-pane key="4" :disabled="tab_3">
+        <a-tab-pane key="4" :disabled="tab_4">
           <span slot="tab"> Elementos </span>
           <h4>Elementos</h4>
           <a-button
@@ -1740,6 +1755,8 @@ export default {
           title: "Intérpretes",
         },
       ],
+      compare_realizadores: [],
+      compare_entrevistados: [],
       vista_editar: true,
       current: 0,
       detalles: false,
@@ -1748,8 +1765,10 @@ export default {
       action_management_autores: "crear_autor",
       action_management_interpretes: "crear_interprete",
       relation: "",
+      tab_1: false,
       tab_2: true,
       tab_3: true,
+      tab_4: true,
       tabs_list: [],
       product_audiovisual_modal: {},
       active_tab: "1",
@@ -2057,37 +2076,53 @@ export default {
      */
     compare_object() {
       this.audiovisual_modal.makingOfAud = this.makingOfAud === true ? 1 : 0;
-      return (
-        this.audiovisual_modal.paisGrabAud === this.audiovisual.paisGrabAud &&
-        this.audiovisual_modal.makingOfAud === this.audiovisual.makingOfAud &&
-        this.audiovisual_modal.fenomRefAud === this.audiovisual.fenomRefAud &&
-        this.audiovisual_modal.duracionAud === this.audiovisual.duracionAud &&
-        this.audiovisual_modal.tituloAud === this.audiovisual.tituloAud &&
-        this.audiovisual_modal.generoAud === this.audiovisual.generoAud &&
-        this.audiovisual_modal.clasifAud === this.audiovisual.clasifAud &&
-        this.audiovisual_modal.añoFinAud === this.audiovisual.añoFinAud &&
-        this.audiovisual_modal.dueñoDerchAud ===
-          this.audiovisual.dueñoDerchAud &&
-        this.audiovisual_modal.nacioDueñoDerchAud ===
-          this.audiovisual.nacioDueñoDerchAud &&
-        this.audiovisual_modal.derechosAud === this.audiovisual.derechosAud &&
-        this.audiovisual_modal.descripEspAud ===
-          this.audiovisual.descripEspAud &&
-        this.audiovisual_modal.descripIngAud ===
-          this.audiovisual.descripIngAud &&
-        this.compareArrays(
-          this.audiovisual_modal.idiomaAud,
-          this.audiovisual.idiomaAud
-        ) &&
-        this.compareArrays(
-          this.audiovisual_modal.subtitulosAud,
-          this.audiovisual.subtitulosAud
-        ) &&
-        this.compareArrays(
-          this.audiovisual_modal.etiquetasAud,
-          this.audiovisual.etiquetasAud
-        )
-      );
+      if (this.active_tab === "3") {
+        return false;
+      } else {
+        return (
+          this.compareArrays(
+            this.audiovisual_modal.productos_audvs,
+            this.audiovisual.productos_audvs
+          ) &&
+          this.audiovisual_modal.paisGrabAud === this.audiovisual.paisGrabAud &&
+          this.audiovisual_modal.makingOfAud === this.audiovisual.makingOfAud &&
+          this.audiovisual_modal.fenomRefAud === this.audiovisual.fenomRefAud &&
+          this.audiovisual_modal.duracionAud === this.audiovisual.duracionAud &&
+          this.audiovisual_modal.tituloAud === this.audiovisual.tituloAud &&
+          this.audiovisual_modal.generoAud === this.audiovisual.generoAud &&
+          this.audiovisual_modal.clasifAud === this.audiovisual.clasifAud &&
+          this.audiovisual_modal.añoFinAud === this.audiovisual.añoFinAud &&
+          this.audiovisual_modal.dueñoDerchAud ===
+            this.audiovisual.dueñoDerchAud &&
+          this.audiovisual_modal.nacioDueñoDerchAud ===
+            this.audiovisual.nacioDueñoDerchAud &&
+          this.audiovisual_modal.derechosAud === this.audiovisual.derechosAud &&
+          this.audiovisual_modal.descripEspAud ===
+            this.audiovisual.descripEspAud &&
+          this.audiovisual_modal.descripIngAud ===
+            this.audiovisual.descripIngAud &&
+          this.compareArrays(
+            this.audiovisual_modal.idiomaAud,
+            this.audiovisual.idiomaAud
+          ) &&
+          this.compareArrays(
+            this.audiovisual_modal.subtitulosAud,
+            this.audiovisual.subtitulosAud
+          ) &&
+          this.compareArraysComponents(
+            this.compare_realizadores,
+            this.$store.getters.getRealizadoresFormGetters
+          ) &&
+          this.compareArraysComponents(
+            this.compare_entrevistados,
+            this.$store.getters.getEntrevistadosFormGetters
+          ) &&
+          this.compareArrays(
+            this.audiovisual_modal.etiquetasAud,
+            this.audiovisual.etiquetasAud
+          )
+        );
+      }
     },
   },
   methods: {
@@ -2096,6 +2131,19 @@ export default {
       if (new_array.length === old_array.length) {
         for (let i = 0; i < old_array.length; i++) {
           if (old_array[i] === new_array[i]) {
+            igual_cont++;
+          }
+        }
+        if (igual_cont !== new_array.length) {
+          return false;
+        } else return true;
+      } else return false;
+    },
+    compareArraysComponents(old_array, new_array) {
+      let igual_cont = 0;
+      if (new_array.length === old_array.length) {
+        for (let i = 0; i < old_array.length; i++) {
+          if (old_array[i].id === new_array[i].id) {
             igual_cont++;
           }
         }
@@ -2113,6 +2161,7 @@ export default {
         this.$refs.formularioProduct.validate((valid) => {
           if (valid) {
             this.tab_2 = false;
+            this.tab_1 = true;
             if (this.tabs_list.indexOf(tab) === -1) {
               this.tabs_list.push(tab);
             }
@@ -2123,12 +2172,25 @@ export default {
         this.$refs.general_form.validate((valid) => {
           if (valid) {
             this.tab_3 = false;
+            this.tab_2 = true;
             if (this.tabs_list.indexOf(tab) == -1) {
               this.tabs_list.push(tab);
             }
             this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
           }
         });
+      } else if (tab === "tab_3") {
+        this.tab_4 = false;
+        this.tab_3 = true;
+        if (this.tabs_list.indexOf(tab) == -1) {
+          this.tabs_list.push(tab);
+        }
+        this.active_tab = siguienteTab;
       }
     },
     reload_parent() {
@@ -2290,23 +2352,46 @@ export default {
         this.audiovisual_modal.codigPais = "CU";
       }
       if (!this.used) {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
-          this.$refs.general_form.validate((valid) => {
-            if (valid) {
-              if (this.file_list.length !== 0) {
-                return this.confirm();
-              }
-            } else
-              this.$message.warning(
-                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-                5
-              );
-          });
+        if (this.active_tab !== "1") {
+          if (this.tabs_list.indexOf("tab_1") !== -1) {
+            this.$refs.general_form.validate((valid) => {
+              if (valid) {
+                if (this.file_list.length !== 0) {
+                  return this.confirm();
+                }
+              } else
+                this.$message.warning(
+                  "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                  4
+                );
+            });
+          } else return this.confirm();
         } else return this.confirm();
       }
     },
     atras(tabAnterior) {
-      this.active_tab = tabAnterior;
+      if (this.active_tab === "2") {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_2 = true;
+            this.tab_1 = false;
+            this.active_tab = tabAnterior;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
+      } else if (this.active_tab === "3") {
+        this.tab_3 = true;
+        this.tab_2 = false;
+        this.active_tab = tabAnterior;
+      } else if (this.active_tab === "4") {
+        this.tab_4 = true;
+        this.tab_3 = false;
+        this.active_tab = tabAnterior;
+      }
     },
     confirm() {
       this.spinning = true;
@@ -2636,7 +2721,12 @@ export default {
       form_data.append("descripIngAud", this.audiovisual_modal.descripIngAud);
       form_data.append("paisGrabAud", this.audiovisual_modal.paisGrabAud);
       if (this.audiovisual_modal.productos_audvs) {
-        form_data.append("product_id", this.audiovisual_modal.productos_audvs);
+        if (this.audiovisual_modal.productos_audvs.length !== 0) {
+          form_data.append(
+            "product_id",
+            this.audiovisual_modal.productos_audvs
+          );
+        }
       } else
         form_data.append("product_id", this.audiovisual_modal.productos_audvs);
       if (this.audiovisual.autores_audvs) {
@@ -2801,9 +2891,15 @@ export default {
         }
         this.genero_pivot = this.audiovisual_modal.generoAud;
         this.$store.state["realizadores"] = this.audiovisual_modal.realizadores;
+        this.audiovisual.realizadores.forEach((element) => {
+          this.compare_realizadores.push(element);
+        });
         this.$store.state[
           "entrevistados"
         ] = this.audiovisual_modal.entrevistados;
+        this.audiovisual.entrevistados.forEach((element) => {
+          this.compare_entrevistados.push(element);
+        });
         this.audiovisual_modal.realizadores = undefined;
         this.audiovisual_modal.entrevistados = undefined;
       } else if (this.action_modal === "detalles") {

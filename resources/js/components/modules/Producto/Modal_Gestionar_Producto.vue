@@ -66,6 +66,7 @@
         <a-tab-pane
           key="1"
           v-if="tab_visibility && action_modal !== 'detalles'"
+          :disabled="tab_1"
         >
           <span slot="tab"> Proyecto </span>
           <div>
@@ -578,50 +579,55 @@
                         ¿El Producto tiene varios intérpretes?
                       </a-checkbox>
                     </a-form-model-item>
-                    <a-form-model-item
-                      v-for="(interprete, index) in interpretesProd"
-                      :key="interprete.key"
-                      v-bind="index === 0 ? formItemLayout : {}"
-                    >
-                      <a-row>
-                        <a-col span="12">
-                          <div class="ant-form-item-label">
-                            <label>Intérprete</label>
-                          </div>
-                          <a-select
-                            :getPopupContainer="(trigger) => trigger.parentNode"
-                            option-filter-prop="children"
-                            :filter-option="filter_option"
-                            show-search
-                            :disabled="disabled"
-                            mode="single"
-                            v-model="interprete.value"
-                            :id="interprete.key"
-                            class="interpretes-select"
-                            @focus="last_interprete(interprete)"
-                            @change="change_interprete(interprete)"
-                          >
-                            <a-select-option
-                              v-for="_interprete in copia_interpretes"
-                              :key="_interprete.id"
-                              :value="_interprete.nombreInterp"
+                    <transition-group name="list">
+                      <a-form-model-item
+                        v-for="(interprete, index) in interpretesProd"
+                        :key="interprete.key"
+                        v-bind="index === 0 ? formItemLayout : {}"
+                        class="list-item"
+                      >
+                        <a-row>
+                          <a-col span="12">
+                            <div class="ant-form-item-label">
+                              <label>Intérprete</label>
+                            </div>
+                            <a-select
+                              :getPopupContainer="
+                                (trigger) => trigger.parentNode
+                              "
+                              option-filter-prop="children"
+                              :filter-option="filter_option"
+                              show-search
+                              :disabled="disabled"
+                              mode="single"
+                              v-model="interprete.value"
+                              :id="interprete.key"
+                              class="interpretes-select"
+                              @focus="last_interprete(interprete)"
+                              @change="change_interprete(interprete)"
                             >
-                              {{ _interprete.nombreInterp }}
-                            </a-select-option>
-                          </a-select>
-                          <a-button
-                            v-if="interpretesProd.length > 1"
-                            class="dynamic-delete-button"
-                            :disabled="interpretesProd.length === 1"
-                            @click="remove_interprete(interprete)"
-                          >
-                            <small>
-                              <b style="vertical-align: top"> x </b>
-                            </small>
-                          </a-button>
-                        </a-col>
-                      </a-row>
-                    </a-form-model-item>
+                              <a-select-option
+                                v-for="_interprete in copia_interpretes"
+                                :key="_interprete.id"
+                                :value="_interprete.nombreInterp"
+                              >
+                                {{ _interprete.nombreInterp }}
+                              </a-select-option>
+                            </a-select>
+                            <a-button
+                              v-if="interpretesProd.length > 1"
+                              class="dynamic-delete-button"
+                              :disabled="interpretesProd.length === 1"
+                              @click="remove_interprete(interprete)"
+                            >
+                              <small>
+                                <b style="vertical-align: top"> x </b>
+                              </small>
+                            </a-button>
+                          </a-col>
+                        </a-row>
+                      </a-form-model-item>
+                    </transition-group>
                     <a-form-model-item
                       v-bind="formItemLayout"
                       v-if="varios_int"
@@ -641,46 +647,49 @@
                     <div class="section-title">
                       <h4>Gestión de Autores</h4>
                     </div>
-                    <a-form-model-item
-                      v-for="(autor, index) in autoresProd"
-                      :key="autor.key"
-                      v-bind="index === 0 ? formItemLayout : {}"
-                    >
-                      <div class="ant-form-item-label">
-                        <label id="autor" class="ant-form-item">Autor</label>
-                      </div>
-                      <a-select
-                        :getPopupContainer="(trigger) => trigger.parentNode"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
-                        :disabled="disabled"
-                        mode="single"
-                        v-model="autor.value"
-                        :id="autor.key"
-                        class="autores-select"
-                        @focus="last_autor(autor)"
-                        @change="change_autor(autor)"
+                    <transition-group name="list">
+                      <a-form-model-item
+                        v-for="(autor, index) in autoresProd"
+                        :key="autor.key"
+                        v-bind="index === 0 ? formItemLayout : {}"
+                        class="list-item"
                       >
-                        <a-select-option
-                          v-for="(_autor, i) in copia_autores"
-                          :key="i"
-                          :value="`${_autor.nombresAutr}`"
+                        <div class="ant-form-item-label">
+                          <label id="autor" class="ant-form-item">Autor</label>
+                        </div>
+                        <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          :disabled="disabled"
+                          mode="single"
+                          v-model="autor.value"
+                          :id="autor.key"
+                          class="autores-select"
+                          @focus="last_autor(autor)"
+                          @change="change_autor(autor)"
                         >
-                          {{ _autor.nombresAutr }}
-                        </a-select-option>
-                      </a-select>
-                      <a-button
-                        v-if="autoresProd.length > 1"
-                        class="dynamic-delete-button"
-                        :disabled="autoresProd.length === 1"
-                        @click="remove_autor(autor)"
-                      >
-                        <small>
-                          <b style="vertical-align: top"> x </b>
-                        </small>
-                      </a-button>
-                    </a-form-model-item>
+                          <a-select-option
+                            v-for="(_autor, i) in copia_autores"
+                            :key="i"
+                            :value="`${_autor.nombresAutr}`"
+                          >
+                            {{ _autor.nombresAutr }}
+                          </a-select-option>
+                        </a-select>
+                        <a-button
+                          v-if="autoresProd.length > 1"
+                          class="dynamic-delete-button"
+                          :disabled="autoresProd.length === 1"
+                          @click="remove_autor(autor)"
+                        >
+                          <small>
+                            <b style="vertical-align: top"> x </b>
+                          </small>
+                        </a-button>
+                      </a-form-model-item>
+                    </transition-group>
                     <a-form-model-item v-bind="formItemLayout">
                       <a-button
                         :disabled="disabled"
@@ -1024,6 +1033,7 @@ export default {
       active_tab: "1", //* variable usada para almacenar el tab que esta activo.
       tabs_list: [], //* variable usada para almacenar los tabs por los que se ha pasado.
       waiting: false, //* variable usada para poner el ícono de cargando.
+      tab_1: false, //*
       tab_2: true, //*
       tab_3: true, //*
       tab_4: true, //*
@@ -1483,31 +1493,39 @@ export default {
         this.product_modal.codigBarProd === ""
           ? null
           : this.product_modal.codigBarProd;
-      return (
-        this.product_modal.tituloProd === this.product.tituloProd &&
-        this.product_modal.añoProd === this.product.añoProd &&
-        this.product_modal.descripEspPro === this.product.descripEspPro &&
-        this.product_modal.descripIngPro === this.product.descripIngPro &&
-        this.product_modal.producPrincProd === this.product.producPrincProd &&
-        this.product_modal.codigBarProd === this.product.codigBarProd &&
-        this.compareArrays(
-          this.product_modal.destinosComerPro,
-          this.product.destinosComerPro
-        ) &&
-        this.product_modal.statusComProd === this.product.statusComProd &&
-        this.product_modal.sellodiscProd === this.product.sellodiscProd &&
-        this.product_modal.genMusicPro === this.product.genMusicPro &&
-        this.product_modal.activoCatalbisPro ===
-          this.product.activoCatalbisPro &&
-        this.product_modal.catalDigitalPro === this.product.catalDigitalPro &&
-        this.product_modal.primeraPantProd === this.product.primeraPantProd &&
-        this.product_modal.estadodigProd === this.product.estadodigProd &&
-        this.compareInterpAndAtr(this.autoresProd, this.product.autoresProd) &&
-        this.compareInterpAndAtr(
-          this.interpretesProd,
-          this.product.interpretesProd
-        )
-      );
+      if (this.active_tab === "3") {
+        return false;
+      } else {
+        return (
+          this.product_modal.tituloProd === this.product.tituloProd &&
+          this.product_modal.proyecto_id === this.product.proyecto_id &&
+          this.product_modal.añoProd === this.product.añoProd &&
+          this.product_modal.descripEspPro === this.product.descripEspPro &&
+          this.product_modal.descripIngPro === this.product.descripIngPro &&
+          this.product_modal.producPrincProd === this.product.producPrincProd &&
+          this.product_modal.codigBarProd === this.product.codigBarProd &&
+          this.compareArrays(
+            this.product_modal.destinosComerPro,
+            this.product.destinosComerPro
+          ) &&
+          this.product_modal.statusComProd === this.product.statusComProd &&
+          this.product_modal.sellodiscProd === this.product.sellodiscProd &&
+          this.product_modal.genMusicPro === this.product.genMusicPro &&
+          this.product_modal.activoCatalbisPro ===
+            this.product.activoCatalbisPro &&
+          this.product_modal.catalDigitalPro === this.product.catalDigitalPro &&
+          this.product_modal.primeraPantProd === this.product.primeraPantProd &&
+          this.product_modal.estadodigProd === this.product.estadodigProd &&
+          this.compareInterpAndAtr(
+            this.autoresProd,
+            this.product.autoresProd
+          ) &&
+          this.compareInterpAndAtr(
+            this.interpretesProd,
+            this.product.interpretesProd
+          )
+        );
+      }
     },
   },
   methods: {
@@ -1529,26 +1547,28 @@ export default {
             }
           });
         }
-        this.$refs.formularioGenerales.validate((valid) => {
-          if (!valid) {
-            valid_form++;
-            form = "generales";
-          }
-        });
+        if (this.active_tab !== "1") {
+          this.$refs.formularioGenerales.validate((valid) => {
+            if (!valid) {
+              valid_form++;
+              form = "generales";
+            }
+          });
+        }
         if (valid_form === 2) {
           this.$message.warning(
             "Hay problemas en las pestañas Proyecto y Generales, por favor antes de continuar revíselas!",
-            5
+            4
           );
         } else if (valid_form === 1 && form === "proyecto") {
           this.$message.warning(
             "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!",
-            5
+            4
           );
         } else if (valid_form === 1 && form === "generales") {
           this.$message.warning(
             "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-            5
+            4
           );
         } else this.confirm();
       }
@@ -1639,6 +1659,7 @@ export default {
         this.$refs.formularioproject.validate((valid) => {
           if (valid) {
             this.tab_2 = false;
+            this.tab_1 = true;
             if (this.tabs_list.indexOf(tab) == -1) {
               this.tabs_list.push(tab);
             }
@@ -1650,10 +1671,16 @@ export default {
           this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
               this.tab_3 = false;
+              this.tab_2 = true;
               if (this.tabs_list.indexOf(tab) == -1) {
                 this.tabs_list.push(tab);
               }
               this.active_tab = siguienteTab;
+            } else {
+              this.$message.warning(
+                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                4
+              );
             }
           });
         } else {
@@ -1663,8 +1690,9 @@ export default {
           }
           this.active_tab = siguienteTab;
         }
-      } else if (tab == "tab_3") {
+      } else if (tab === "tab_3") {
         this.tab_4 = false;
+        this.tab_3 = true;
         if (this.tabs_list.indexOf(tab) == -1) {
           this.tabs_list.push(tab);
         }
@@ -1672,7 +1700,28 @@ export default {
       }
     },
     atras(tabAnterior) {
-      this.active_tab = tabAnterior;
+      if (this.active_tab === "2") {
+        this.$refs.formularioGenerales.validate((valid) => {
+          if (valid) {
+            this.tab_2 = true;
+            this.tab_1 = false;
+            this.active_tab = tabAnterior;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
+      } else if (this.active_tab === "3") {
+        this.tab_3 = true;
+        this.tab_2 = false;
+        this.active_tab = tabAnterior;
+      } else if (this.active_tab === "4") {
+        this.tab_4 = true;
+        this.tab_3 = false;
+        this.active_tab = tabAnterior;
+      }
     },
     confirm() {
       this.product_modal.primeraPantProd =
@@ -1983,7 +2032,9 @@ export default {
           });
         }
       } else {
-        this.$refs.formularioGenerales.resetFields();
+        if (this.active_tab !== "1") {
+          this.$refs.formularioGenerales.resetFields();
+        }
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;

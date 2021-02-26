@@ -64,6 +64,7 @@
         <a-tab-pane
           key="1"
           v-if="tab_visibility && action_modal !== 'detalles'"
+          :disabled="tab_1"
         >
           <span slot="tab"> Producto </span>
           <div>
@@ -494,56 +495,40 @@
                   <a-col span="1"></a-col>
                   <a-col span="7">
                     <h5>Título</h5>
-                    <transition
-                      enter-active-class="animate__animated animate__fadeIn"
-                      leave-active-class="animate__animated animate__fadeOut"
+                    <a-mentions
+                      v-if="$store.getters.getTracksFormGetters.length === 0"
+                      readonly
                     >
-                      <a-mentions
-                        v-if="$store.getters.getTracksFormGetters.length === 0"
-                        readonly
-                      >
-                      </a-mentions>
-                    </transition>
+                    </a-mentions>
                   </a-col>
                   <a-col span="1"></a-col>
                   <a-col span="5">
                     <h5>Duración</h5>
-                    <transition
-                      enter-active-class="animate__animated animate__fadeIn"
-                      leave-active-class="animate__animated animate__fadeOut"
+                    <a-mentions
+                      v-if="$store.getters.getTracksFormGetters.length === 0"
+                      readonly
                     >
-                      <a-mentions
-                        v-if="$store.getters.getTracksFormGetters.length === 0"
-                        readonly
-                      >
-                      </a-mentions>
-                    </transition>
+                    </a-mentions>
                   </a-col>
                   <a-col span="1"></a-col>
                   <a-col span="5">
                     <h5>Género</h5>
-                    <transition
-                      enter-active-class="animate__animated animate__fadeIn"
-                      leave-active-class="animate__animated animate__fadeOut"
+                    <a-mentions
+                      v-if="$store.getters.getTracksFormGetters.length === 0"
+                      readonly
                     >
-                      <a-mentions
-                        v-if="$store.getters.getTracksFormGetters.length === 0"
-                        readonly
-                      >
-                      </a-mentions>
-                    </transition>
+                    </a-mentions>
                   </a-col>
                   <a-col span="1"></a-col>
                 </a-row>
-
-                <div style="min-height: 70px">
-                  <transition-group name="list-tracks">
+                <div>
+                  <transition-group name="list">
                     <a-form-model-item
                       v-for="(track, index) in $store.getters
                         .getTracksFormGetters"
                       :key="track.id"
                       v-bind="index === 0 ? formItemLayout : {}"
-                      class="list-tracks-item"
+                      class="list-item"
                     >
                       <a-row align="middle">
                         <a-col span="2">
@@ -714,6 +699,7 @@
           </a-row>
           <a-col span="24">
             <a-button
+              v-if="active_tab !== '3'"
               :disabled="disabled"
               style="float: right"
               type="default"
@@ -784,6 +770,7 @@ export default {
       origin: true,
       detalles: false,
       vista_editar: true,
+      tab_1: false,
       tab_2: true,
       tab_3: true,
       tab_4: true,
@@ -948,17 +935,25 @@ export default {
      *Método que compara los campos editables del producto para saber si se ha modificado
      */
     compare_object() {
-      return (
-        this.fonogram_modal.tituloFong === this.fonogram.tituloFong &&
-        this.fonogram_modal.añoFong === this.fonogram.añoFong &&
-        this.fonogram_modal.clasficacionFong ===
-          this.fonogram.clasficacionFong &&
-        this.fonogram_modal.dueñoDerchFong === this.fonogram.dueñoDerchFong &&
-        this.fonogram_modal.nacioDueñoDerchFong ===
-          this.fonogram.nacioDueñoDerchFong &&
-        this.fonogram_modal.descripEspFong === this.fonogram.descripEspFong &&
-        this.fonogram_modal.descripIngFong === this.fonogram.descripIngFong
-      );
+      if (this.active_tab === "3") {
+        return false;
+      } else {
+        return (
+          this.fonogram_modal.tituloFong === this.fonogram.tituloFong &&
+          this.compareArrays(
+            this.fonogram_modal.productos_fongs,
+            this.fonogram.productos_fongs
+          ) &&
+          this.fonogram_modal.añoFong === this.fonogram.añoFong &&
+          this.fonogram_modal.clasficacionFong ===
+            this.fonogram.clasficacionFong &&
+          this.fonogram_modal.dueñoDerchFong === this.fonogram.dueñoDerchFong &&
+          this.fonogram_modal.nacioDueñoDerchFong ===
+            this.fonogram.nacioDueñoDerchFong &&
+          this.fonogram_modal.descripEspFong === this.fonogram.descripEspFong &&
+          this.fonogram_modal.descripIngFong === this.fonogram.descripIngFong
+        );
+      }
     },
   },
   methods: {
@@ -967,6 +962,7 @@ export default {
         this.$refs.formularioProducto.validate((valid) => {
           if (valid) {
             this.tab_2 = false;
+            this.tab_1 = true;
             if (this.tabs_list.indexOf(tab) === -1) {
               this.tabs_list.push(tab);
             }
@@ -978,14 +974,21 @@ export default {
           this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
               this.tab_3 = false;
+              this.tab_2 = true;
               if (this.tabs_list.indexOf(tab) == -1) {
                 this.tabs_list.push(tab);
               }
               this.active_tab = siguienteTab;
+            } else {
+              this.$message.warning(
+                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                4
+              );
             }
           });
-        } else {
-          this.tab_3 = false;
+        } else if (tab === "tab_3") {
+          this.tab_4 = false;
+          this.tab_3 = true;
           if (this.tabs_list.indexOf(tab) == -1) {
             this.tabs_list.push(tab);
           }
@@ -1046,19 +1049,47 @@ export default {
     },
     validate() {
       if (!this.used) {
-        if (this.tabs_list.indexOf("tab_1") !== -1) {
-          this.$refs.formularioGenerales.validate((valid) => {
-            if (valid) {
-              if (this.file_list.length !== 0) {
-                return this.confirm();
+        if (this.active_tab !== "1") {
+          if (this.tabs_list.indexOf("tab_1") !== -1) {
+            this.$refs.formularioGenerales.validate((valid) => {
+              if (valid) {
+                if (this.file_list.length !== 0) {
+                  return this.confirm();
+                }
+              } else {
+                this.$message.warning(
+                  "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                  4
+                );
               }
-            }
-          });
+            });
+          } else return this.confirm();
         } else return this.confirm();
       }
     },
     atras(tabAnterior) {
-      this.active_tab = tabAnterior;
+      if (this.active_tab === "2") {
+        this.$refs.formularioGenerales.validate((valid) => {
+          if (valid) {
+            this.tab_2 = true;
+            this.tab_1 = false;
+            this.active_tab = tabAnterior;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
+      } else if (this.active_tab === "3") {
+        this.tab_3 = true;
+        this.tab_2 = false;
+        this.active_tab = tabAnterior;
+      } else if (this.active_tab === "4") {
+        this.tab_4 = true;
+        this.tab_3 = false;
+        this.active_tab = tabAnterior;
+      }
     },
     confirm() {
       this.spinning = true;
@@ -1358,6 +1389,19 @@ export default {
     handle_change({ fileList }) {
       this.file_list = fileList;
     },
+    compareArrays(old_array, new_array) {
+      let igual_cont = 0;
+      if (new_array.length === old_array.length) {
+        for (let i = 0; i < old_array.length; i++) {
+          if (old_array[i] === new_array[i]) {
+            igual_cont++;
+          }
+        }
+        if (igual_cont !== new_array.length) {
+          return false;
+        } else return true;
+      } else return false;
+    },
     before_upload(file) {
       const isJpgOrPng =
         file.type === "image/jpeg" ||
@@ -1579,18 +1623,6 @@ export default {
 </script>
 
 <style>
-.list-tracks-item {
-  transition: all 0.3s;
-}
-.list-tracks-leave-active {
-  position: absolute !important;
-  width: -webkit-fill-available !important;
-}
-.list-tracks-enter,
-.list-tracks-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
-}
 #modal_gestionar_fonogramas .ant-col-6 {
   width: 50% !important;
 }

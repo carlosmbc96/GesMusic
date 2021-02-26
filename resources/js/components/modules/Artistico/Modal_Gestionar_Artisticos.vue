@@ -351,7 +351,8 @@ export default {
         this.actualNombreArts === true ? 1 : 0;
       return (
         this.artisticos_modal.NombreArts === this.artistico.NombreArts &&
-        this.artisticos_modal.descripNombreArts === this.artistico.descripNombreArts &&
+        this.artisticos_modal.descripNombreArts ===
+          this.artistico.descripNombreArts &&
         this.artisticos_modal.interprete_id === this.artistico.interprete_id &&
         this.artisticos_modal.actualNombreArts ===
           this.artistico.actualNombreArts
@@ -394,6 +395,11 @@ export default {
         this.$refs.general_form.validate((valid) => {
           if (valid) {
             return this.confirm();
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              3
+            );
           }
         });
       }

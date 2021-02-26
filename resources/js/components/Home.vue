@@ -107,6 +107,18 @@ export default {
 </script>
 
 <style>
+.list-item {
+  transition: all 0.3s;
+}
+.list-leave-active {
+  position: absolute !important;
+  width: -webkit-fill-available !important;
+}
+.list-enter,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
 .hover:hover{
   filter: drop-shadow(5px 5px 5px black) !important;
 }

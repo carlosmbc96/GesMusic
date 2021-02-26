@@ -65,7 +65,11 @@
         <div slot="tabBarExtraContent">{{ text_header_button }} Track</div>
         <a-tab-pane
           key="1"
-          v-if="action_modal !== 'editar' && action_modal !== 'detalles'"
+          v-if="
+            action_modal !== 'detalles' &&
+            action_modal !== 'crear_track_tabla_component'
+          "
+          :disabled="tab_1"
         >
           <span slot="tab"> Fonograma </span>
           <a-spin :spinning="spinning">
@@ -556,34 +560,37 @@
                     readonly
                     v-if="$store.getters.getAutoresFormGetters.length === 0"
                   ></a-mentions>
-                  <a-form-model-item
-                    v-for="(autor, index) in $store.getters
-                      .getAutoresFormGetters"
-                    :key="autor.id"
-                    v-bind="index === 0 ? formItemLayout : {}"
-                  >
-                    <a-row>
-                      <a-col span="22">
-                        <a-mentions
-                          style="margin-top: 3px"
-                          readonly
-                          :placeholder="
-                            autor.nombresAutr + ' ' + autor.apellidosAutr
-                          "
-                        ></a-mentions>
-                      </a-col>
-                      <a-col span="2" style="float: right; margin-top: 2px">
-                        <a-button
-                          class="dynamic-delete-button"
-                          @click="remove_autor(autor)"
-                        >
-                          <small>
-                            <b style="vertical-align: top"> x </b>
-                          </small>
-                        </a-button>
-                      </a-col>
-                    </a-row>
-                  </a-form-model-item>
+                  <transition-group name="list">
+                    <a-form-model-item
+                      v-for="(autor, index) in $store.getters
+                        .getAutoresFormGetters"
+                      :key="autor.id"
+                      v-bind="index === 0 ? formItemLayout : {}"
+                      class="list-item"
+                    >
+                      <a-row>
+                        <a-col span="22">
+                          <a-mentions
+                            style="margin-top: 3px"
+                            readonly
+                            :placeholder="
+                              autor.nombresAutr + ' ' + autor.apellidosAutr
+                            "
+                          ></a-mentions>
+                        </a-col>
+                        <a-col span="2" style="float: right; margin-top: 2px">
+                          <a-button
+                            class="dynamic-delete-button"
+                            @click="remove_autor(autor)"
+                          >
+                            <small>
+                              <b style="vertical-align: top"> x </b>
+                            </small>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </a-form-model-item>
+                  </transition-group>
                   <a-row style="margin-top: 20px">
                     <a-col span="24">
                       <div class="section-title">
@@ -664,56 +671,59 @@
                     readonly
                     v-if="$store.getters.getInterpretesFormGetters.length === 0"
                   ></a-mentions>
-                  <a-form-model-item
-                    v-for="(interprete, index) in $store.getters
-                      .getInterpretesFormGetters"
-                    :key="interprete.id"
-                    v-bind="index === 0 ? formItemLayout : {}"
-                  >
-                    <a-row>
-                      <a-col span="11">
-                        <div class="ant-form-item-label">
-                          <label>Nombre</label>
-                        </div>
-                        <a-mentions
-                          readonly
-                          style="margin-top: 3px"
-                          :placeholder="interprete.nombreInterp"
-                        ></a-mentions>
-                      </a-col>
-                      <a-col span="10" style="margin-left: 10px">
-                        <div class="ant-form-item-label">
-                          <label>Roles</label>
-                        </div>
-                        <a-select
-                          style="width: 100%"
-                          :getPopupContainer="(trigger) => trigger.parentNode"
-                          :disabled="disabled"
-                          mode="multiple"
-                          v-model="interprete.role"
-                          class="interpretes-select"
-                        >
-                          <a-select-option
-                            v-for="rol in roles_interp"
-                            :key="rol.id"
-                            :value="rol.nombreTer"
+                  <transition-group name="list">
+                    <a-form-model-item
+                      v-for="(interprete, index) in $store.getters
+                        .getInterpretesFormGetters"
+                      :key="interprete.id"
+                      v-bind="index === 0 ? formItemLayout : {}"
+                      class="list-item"
+                    >
+                      <a-row>
+                        <a-col span="11">
+                          <div class="ant-form-item-label">
+                            <label>Nombre</label>
+                          </div>
+                          <a-mentions
+                            readonly
+                            style="margin-top: 3px"
+                            :placeholder="interprete.nombreInterp"
+                          ></a-mentions>
+                        </a-col>
+                        <a-col span="10" style="margin-left: 10px">
+                          <div class="ant-form-item-label">
+                            <label>Roles</label>
+                          </div>
+                          <a-select
+                            style="width: 100%"
+                            :getPopupContainer="(trigger) => trigger.parentNode"
+                            :disabled="disabled"
+                            mode="multiple"
+                            v-model="interprete.role"
+                            class="interpretes-select"
                           >
-                            {{ rol.nombreTer }}
-                          </a-select-option>
-                        </a-select>
-                      </a-col>
-                      <a-col span="2" style="float: right; margin-top: 40px">
-                        <a-button
-                          class="dynamic-delete-button"
-                          @click="remove_interprete(interprete)"
-                        >
-                          <small>
-                            <b style="vertical-align: top"> x </b>
-                          </small>
-                        </a-button>
-                      </a-col>
-                    </a-row>
-                  </a-form-model-item>
+                            <a-select-option
+                              v-for="rol in roles_interp"
+                              :key="rol.id"
+                              :value="rol.nombreTer"
+                            >
+                              {{ rol.nombreTer }}
+                            </a-select-option>
+                          </a-select>
+                        </a-col>
+                        <a-col span="2" style="float: right; margin-top: 40px">
+                          <a-button
+                            class="dynamic-delete-button"
+                            @click="remove_interprete(interprete)"
+                          >
+                            <small>
+                              <b style="vertical-align: top"> x </b>
+                            </small>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </a-form-model-item>
+                  </transition-group>
                   <a-row style="margin-top: 20px">
                     <a-col span="24">
                       <div class="section-title">
@@ -929,6 +939,7 @@ export default {
       vista_editar: true,
       current: 0,
       detalles: false,
+      tab_1: false,
       tab_2: true,
       tab_3: true,
       tabs_list: [],
@@ -1095,8 +1106,7 @@ export default {
     }
     if (
       this.action_modal === "detalles" ||
-      this.action_modal === "crear_track" ||
-      this.action_modal === "editar"
+      this.action_modal === "crear_track"
     ) {
       this.active_tab = "2";
       this.tabs_list.push("tab_1");
@@ -1122,18 +1132,26 @@ export default {
       this.track_modal.muestraTrk = this.muestraTrk === true ? 1 : 0;
       this.track_modal.bonusTrk = this.bonusTrk === true ? 1 : 0;
       this.track_modal.envivoTrk = this.envivoTrk === true ? 1 : 0;
-      return (
-        this.track_modal.tituloTrk === this.track.tituloTrk &&
-        this.track_modal.duracionTrk === this.track.duracionTrk &&
-        this.track_modal.paisgrabTrk === this.track.paisgrabTrk &&
-        this.track_modal.muestraTrk === this.track.muestraTrk &&
-        this.track_modal.generoTrk === this.track.generoTrk &&
-        this.track_modal.subgeneroTrk === this.track.subgeneroTrk &&
-        this.compareArrays(this.track_modal.moodTrk, this.track.moodTrk) &&
-        this.track_modal.gestionTrk === this.track.gestionTrk &&
-        this.track_modal.bonusTrk === this.track.bonusTrk &&
-        this.track_modal.envivoTrk === this.track.envivoTrk
-      );
+      if (this.active_tab === "3") {
+        return false;
+      } else {
+        return (
+          this.track_modal.tituloTrk === this.track.tituloTrk &&
+          this.track_modal.duracionTrk === this.track.duracionTrk &&
+          this.track_modal.paisgrabTrk === this.track.paisgrabTrk &&
+          this.track_modal.muestraTrk === this.track.muestraTrk &&
+          this.track_modal.generoTrk === this.track.generoTrk &&
+          this.track_modal.subgeneroTrk === this.track.subgeneroTrk &&
+          this.compareArrays(this.track_modal.moodTrk, this.track.moodTrk) &&
+          this.compareArrays(
+            this.track_modal.fonogramas_tracks,
+            this.track.fonogramas_tracks
+          ) &&
+          this.track_modal.gestionTrk === this.track.gestionTrk &&
+          this.track_modal.bonusTrk === this.track.bonusTrk &&
+          this.track_modal.envivoTrk === this.track.envivoTrk
+        );
+      }
     },
   },
   methods: {
@@ -1159,6 +1177,7 @@ export default {
         this.$refs.formularioFonograma.validate((valid) => {
           if (valid) {
             this.tab_2 = false;
+            this.tab_1 = true;
             if (this.tabs_list.indexOf(tab) === -1) {
               this.tabs_list.push(tab);
             }
@@ -1170,18 +1189,18 @@ export default {
           this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
               this.tab_3 = false;
+              this.tab_2 = true;
               if (this.tabs_list.indexOf(tab) == -1) {
                 this.tabs_list.push(tab);
               }
               this.active_tab = siguienteTab;
+            } else {
+              this.$message.warning(
+                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                4
+              );
             }
           });
-        } else {
-          this.tab_3 = false;
-          if (this.tabs_list.indexOf(tab) == -1) {
-            this.tabs_list.push(tab);
-          }
-          this.active_tab = siguienteTab;
         }
       }
     },
@@ -1268,21 +1287,40 @@ export default {
         this.track_modal.codigPais = "CU";
       }
       if (!this.used) {
-        if (this.$refs.formularioGenerales !== undefined) {
-          this.$refs.formularioGenerales.validate((valid) => {
-            if (valid) {
-              return this.confirm();
-            } else
-              this.$message.warning(
-                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-                5
-              );
-          });
+        if (this.active_tab !== "1") {
+          if (this.$refs.formularioGenerales !== undefined) {
+            this.$refs.formularioGenerales.validate((valid) => {
+              if (valid) {
+                return this.confirm();
+              } else
+                this.$message.warning(
+                  "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                  4
+                );
+            });
+          } else return this.confirm();
         } else return this.confirm();
       }
     },
     atras(tabAnterior) {
-      this.active_tab = tabAnterior;
+      if (this.active_tab === "2") {
+        this.$refs.formularioGenerales.validate((valid) => {
+          if (valid) {
+            this.tab_2 = true;
+            this.tab_1 = false;
+            this.active_tab = tabAnterior;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
+      } else if (this.active_tab === "3") {
+        this.tab_3 = true;
+        this.tab_2 = false;
+        this.active_tab = tabAnterior;
+      }
     },
     confirm() {
       this.spinning = true;

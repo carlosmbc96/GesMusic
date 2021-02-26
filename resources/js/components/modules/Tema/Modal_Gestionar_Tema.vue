@@ -68,9 +68,12 @@
           key="1"
           v-if="
             action_modal === 'crear' ||
-              action_modal === 'crear_temas_autor' ||
-              action_modal === 'crear_tema'
+            action_modal === 'crear_temas_autor' ||
+            action_modal === 'crear_tema' ||
+            action_modal === 'editar' ||
+            action_modal !== 'editar_track'
           "
+          :disabled="tab_1"
         >
           <span slot="tab"> Track </span>
           <div>
@@ -393,6 +396,7 @@ export default {
       codigo: "",
       list_nomenclators: [],
       catalDigitalTem: false,
+      tab_1: false,
       tab_2: true,
       tab_3: true,
       tabs_list: [],
@@ -471,7 +475,6 @@ export default {
     }
     if (
       this.action_modal === "crear_temas_track" ||
-      this.action_modal === "editar" ||
       this.action_modal === "detalles"
     ) {
       this.tabs_list.push("tab_1");
@@ -496,12 +499,17 @@ export default {
      */
     compare_object() {
       this.tema_modal.catalDigitalTem = this.catalDigitalTem === true ? 1 : 0;
-      return (
-        this.tema_modal.tituloTem === this.tema.tituloTem &&
-        this.tema_modal.sociedadGestionTem === this.tema.sociedadGestionTem &&
-        this.tema_modal.catalDigitalTem === this.tema.catalDigitalTem &&
-        this.tema_modal.descripTem === this.tema.descripTem
-      );
+      if (this.active_tab === "3") {
+        return false;
+      } else {
+        return (
+          this.tema_modal.tituloTem === this.tema.tituloTem &&
+          this.tema_modal.track_id === this.tema.track_id &&
+          this.tema_modal.sociedadGestionTem === this.tema.sociedadGestionTem &&
+          this.tema_modal.catalDigitalTem === this.tema.catalDigitalTem &&
+          this.tema_modal.descripTem === this.tema.descripTem
+        );
+      }
     },
   },
   methods: {
@@ -523,22 +531,55 @@ export default {
         this.$refs.formulariotrack.validate((valid) => {
           if (valid) {
             this.tab_2 = false;
+            this.tab_1 = true;
             if (this.tabs_list.indexOf(tab) == -1) {
               this.tabs_list.push(tab);
             }
             this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Track, por favor antes de continuar revísela!",
+              3
+            );
           }
         });
       } else if (tab === "tab_2") {
-        this.tab_3 = false;
-        if (this.tabs_list.indexOf(tab) == -1) {
-          this.tabs_list.push(tab);
-        }
-        this.active_tab = siguienteTab;
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_3 = false;
+            this.tab_2 = true;
+            if (this.tabs_list.indexOf(tab) == -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
       }
     },
     atras(tabAnterior) {
-      this.active_tab = tabAnterior;
+      if (this.active_tab === "2") {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_2 = true;
+            this.tab_1 = false;
+            this.active_tab = tabAnterior;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
+      } else if (this.active_tab === "3") {
+        this.tab_3 = true;
+        this.tab_2 = false;
+        this.active_tab = tabAnterior;
+      }
     },
     handle_cancel(e) {
       if (e === "cancelar") {
@@ -568,11 +609,18 @@ export default {
         this.tema_modal.codigTema = this.codigo;
       }
       if (!this.used) {
-        this.$refs.general_form.validate((valid) => {
-          if (valid) {
-            return this.confirm();
-          }
-        });
+        if (this.active_tab !== "1") {
+          this.$refs.general_form.validate((valid) => {
+            if (valid) {
+              return this.confirm();
+            } else {
+              this.$message.warning(
+                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+                4
+              );
+            }
+          });
+        } else return this.confirm();
       }
     },
     set_action() {

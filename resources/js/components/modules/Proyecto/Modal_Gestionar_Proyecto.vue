@@ -58,10 +58,10 @@
         </a-popconfirm>
       </template>
       <!-- Aquí comienza los tabs -->
-      <a-tabs>
+      <a-tabs :activeKey="active_tab">
         <div slot="tabBarExtraContent">{{ text_header_button }} Proyecto</div>
         <!-- Contenido del tab Generales -->
-        <a-tab-pane key="1">
+        <a-tab-pane key="1"  :disabled="tab_1">
           <span slot="tab"> Generales </span>
           <!-- <span v-else slot="tab"> Generales </span> -->
           <div>
@@ -194,17 +194,17 @@
                         has-feedback
                         label="Nombre Completo"
                       >
-                          <a-input
-                            :disabled="disabled"
-                            v-model="project_modal.nombreProy"
-                          />
+                        <a-input
+                          :disabled="disabled"
+                          v-model="project_modal.nombreProy"
+                        />
                       </a-form-model-item>
                       <a-form-model-item label="Nombre Completo" v-else>
-                          <a-mentions
-                            readonly
-                            :placeholder="project_modal.nombreProy"
-                          >
-                          </a-mentions>
+                        <a-mentions
+                          readonly
+                          :placeholder="project_modal.nombreProy"
+                        >
+                        </a-mentions>
                       </a-form-model-item>
                     </div>
                   </a-col>
@@ -266,11 +266,23 @@
                   </a-col>
                 </a-row>
               </a-form-model>
+              <a-row>
+                <a-button
+                  v-if="action_modal !== 'crear'"
+                  :disabled="disabled"
+                  style="float: right"
+                  type="default"
+                  @click="siguiente('tab_1', '2')"
+                >
+                  Siguiente
+                  <a-icon type="right" />
+                </a-button>
+              </a-row>
             </a-spin>
           </div>
         </a-tab-pane>
         <!-- Fin del contenido del tab Generales -->
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'" :disabled="tab_2">
           <span slot="tab"> Productos </span>
           <a-col span="12">
             <div class="section-title">
@@ -285,6 +297,19 @@
             :vista_editar="vista_editar"
             @close_modal="show = $event"
           />
+          <br />
+          <a-row>
+            <a-button
+              v-if="action_modal !== 'crear'"
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('1')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-row>
         </a-tab-pane>
       </a-tabs>
       <!-- Fin de los tabs -->
@@ -317,6 +342,7 @@ export default {
       } else callback();
     };
     return {
+      active_tab: "1",
       detalles: false,
       action_cancel_title: "",
       action_title: "",
@@ -330,6 +356,7 @@ export default {
       disabled: false, //*
       activated: true, //*Variable que almacena si se ejecuta o no el borrado lógico
       file_list: [], //*Variable usada para guardar la imagen subida
+      tabs_list: [],
       preview_image: "", //*Variable usada para saber si ya se ha subido una imagen
       preview_visible: false, //*Variable usada para previsualizar la imagen subida a través de un modal
       list_nomenclators: [], //*Contiene los nomencladores usados en la creación de un proyecto
@@ -340,6 +367,8 @@ export default {
       waiting: false, //*Variable que indica que el proceso de guardar o crear no ha terminado
       vista_editar: true,
       codigo: "",
+      tab_1: false,
+      tab_2: true,
       rules: {
         //*reglas de validacion de los campos del formulario
         codigProy: [
@@ -427,17 +456,15 @@ export default {
     /*
      *Muestra u oculta el botón de crear/editar
      */
-    active() {
+    active(tab) {
       if (this.text_button === "Editar") {
         let same_photo = false;
         if (this.file_list[0]) {
           same_photo = this.file_list[0].uid !== this.project_modal.id;
         }
         return (
-          (same_photo ||
-          this.file_list.length === 0
-          || !this
-          .compare_object) && this.valid_image
+          (same_photo || this.file_list.length === 0 || !this.compare_object) &&
+          this.valid_image
         );
       } else
         return (
@@ -450,12 +477,16 @@ export default {
      *Método que compara los campos editables del proyecto para saber si se ha modificado
      */
     compare_object() {
-      return (
-        this.project_modal.nombreProy === this.project.nombreProy &&
-        this.project_modal.añoProy === this.project.añoProy &&
-        this.project_modal.descripEsp === this.project.descripEsp &&
-        this.project_modal.descripIng === this.project.descripIng
-      );
+      if (this.active_tab === "2") {
+        return false;
+      } else {
+        return (
+          this.project_modal.nombreProy === this.project.nombreProy &&
+          this.project_modal.añoProy === this.project.añoProy &&
+          this.project_modal.descripEsp === this.project.descripEsp &&
+          this.project_modal.descripIng === this.project.descripIng
+        );
+      }
     },
   },
   methods: {
@@ -470,7 +501,7 @@ export default {
           } else {
             this.$message.warning(
               "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              5
+              4
             );
           }
         });
@@ -572,6 +603,32 @@ export default {
               timeout: 2000,
             });
           });
+      }
+    },
+    siguiente(tab, siguienteTab) {
+      if (tab === "tab_1") {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            this.tab_1 = true;
+            if (this.tabs_list.indexOf(tab) == -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
+      }
+    },
+    atras(tabAnterior) {
+      if (this.active_tab === "2") {
+        this.tab_2 = true;
+        this.tab_1 = false;
+        this.active_tab = tabAnterior;
       }
     },
     prepare_create() {

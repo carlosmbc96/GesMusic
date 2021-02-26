@@ -511,7 +511,13 @@ export default {
                 }
                 this.$parent.$parent.$parent.row_selected.tabla = true;
                 if (this.data.deleted_at === null) {
-                  this.$parent.$parent.$parent.action_management = "editar";
+                  if (
+                    this.$parent.$parent.$parent.entity_relation === "tracks"
+                  ) {
+                    this.$parent.$parent.$parent.action_management =
+                      "editar_track";
+                  } else
+                    this.$parent.$parent.$parent.action_management = "editar";
                   this.$parent.$parent.$parent.visible_management = true;
                 }
               },

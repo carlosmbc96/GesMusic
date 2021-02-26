@@ -61,11 +61,11 @@
         </a-popconfirm>
       </template>
       <!-- Aqui comienzan los tabs -->
-      <a-tabs>
+      <a-tabs :activeKey="active_tab">
         <div slot="tabBarExtraContent">
           {{ text_header_button }} Entrevistado
         </div>
-        <a-tab-pane key="1">
+        <a-tab-pane key="1" :disabled="tab_1">
           <span slot="tab">Generales</span>
           <a-row>
             <a-col span="12">
@@ -198,9 +198,21 @@
                 </a-col>
               </a-row>
             </a-form-model>
+            <a-row>
+              <a-button
+                v-if="action_modal !== 'crear'"
+                :disabled="disabled"
+                style="float: right"
+                type="default"
+                @click="siguiente('tab_1', '2')"
+              >
+                Siguiente
+                <a-icon type="right" />
+              </a-button>
+            </a-row>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'">
+        <a-tab-pane key="2" v-if="action_modal !== 'crear'" :disabled="tab_2">
           <span slot="tab"> Audiovisuales </span>
           <a-row>
             <a-col span="12">
@@ -221,6 +233,17 @@
             />
             <br />
           </div>
+          <a-row>
+            <a-button
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('1')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-row>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -245,6 +268,10 @@ export default {
       } else callback();
     };
     return {
+      active_tab: "1",
+      tab_1: false,
+      tab_2: true,
+      tabs_list: [],
       detalles: true,
       vista_editar: true,
       action_cancel_title: "",
@@ -353,14 +380,46 @@ export default {
      *Método que compara los campos editables del producto para saber si se ha modificado
      */
     compare_object() {
-      return (
-        this.entrevistados_modal.nombreApellidosEntrv === this.entrevistado.nombreApellidosEntrv &&
-        this.entrevistados_modal.sexoEntrv === this.entrevistado.sexoEntrv &&
-        this.entrevistados_modal.descripEspEntrv === this.entrevistado.descripEspEntrv
-      );
+      if (this.active_tab === "2") {
+        return false;
+      } else {
+        return (
+          this.entrevistados_modal.nombreApellidosEntrv ===
+            this.entrevistado.nombreApellidosEntrv &&
+          this.entrevistados_modal.sexoEntrv === this.entrevistado.sexoEntrv &&
+          this.entrevistados_modal.descripEspEntrv ===
+            this.entrevistado.descripEspEntrv
+        );
+      }
     },
   },
   methods: {
+    siguiente(tab, siguienteTab) {
+      if (tab === "tab_1") {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            this.tab_1 = true;
+            if (this.tabs_list.indexOf(tab) === -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              3
+            );
+          }
+        });
+      }
+    },
+    atras(tabAnterior) {
+      if (this.active_tab === "2") {
+        this.tab_2 = true;
+        this.tab_1 = false;
+        this.active_tab = tabAnterior;
+      }
+    },
     reload_parent() {
       this.$emit("refresh");
     },
@@ -399,6 +458,11 @@ export default {
         this.$refs.general_form.validate((valid) => {
           if (valid) {
             return this.confirm();
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              3
+            );
           }
         });
       }

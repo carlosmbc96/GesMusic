@@ -514,10 +514,9 @@ export default {
                   if (
                     this.$parent.$parent.$parent.entity_relation === "tracks"
                   ) {
-                    this.$parent.$parent.$parent.action_management =
-                      "editar_track";
-                  } else
-                    this.$parent.$parent.$parent.action_management = "editar";
+                    this.$parent.$parent.$parent.row_selected.editar_track = true;
+                  }
+                  this.$parent.$parent.$parent.action_management = "editar";
                   this.$parent.$parent.$parent.visible_management = true;
                 }
               },

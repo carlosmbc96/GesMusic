@@ -70,8 +70,7 @@
             action_modal === 'crear' ||
             action_modal === 'crear_temas_autor' ||
             action_modal === 'crear_tema' ||
-            action_modal === 'editar' ||
-            action_modal !== 'editar_track'
+            (action_modal === 'editar' && !tema.editar_track)
           "
           :disabled="tab_1"
         >
@@ -163,9 +162,9 @@
                   <a-form-model-item
                     v-if="
                       action_modal === 'crear' ||
-                        action_modal === 'crear_temas_track' ||
-                        action_modal === 'crear_temas_autor' ||
-                        action_modal === 'crear_tema'
+                      action_modal === 'crear_temas_track' ||
+                      action_modal === 'crear_temas_autor' ||
+                      action_modal === 'crear_tema'
                     "
                     :validate-status="show_error"
                     prop="codigTema"
@@ -317,7 +316,7 @@
           :disabled="tab_3"
           v-if="
             (action_modal === 'editar' && !tema.tabla_autores) ||
-              (action_modal === 'detalles' && !tema.tabla_autores)
+            (action_modal === 'detalles' && !tema.tabla_autores)
           "
         >
           <span slot="tab"> Autores </span>
@@ -475,7 +474,8 @@ export default {
     }
     if (
       this.action_modal === "crear_temas_track" ||
-      this.action_modal === "detalles"
+      this.action_modal === "detalles" ||
+      this.tema.editar_track
     ) {
       this.tabs_list.push("tab_1");
       this.tab_visibility = false;
@@ -608,6 +608,7 @@ export default {
         this.tema_modal.codigTema = this.codigo;
       }
       if (!this.used) {
+        //console.log(this.tema_modal.track_id);
         if (this.active_tab !== "1") {
           this.$refs.general_form.validate((valid) => {
             if (valid) {
@@ -619,7 +620,9 @@ export default {
               );
             }
           });
-        } else return this.confirm();
+        } else {
+          return this.confirm();
+        }
       }
     },
     set_action() {
@@ -841,7 +844,7 @@ export default {
               this.tracks.push(element);
             }
           });
-					this.build_pretty_isrc(this.tracks);
+          this.build_pretty_isrc(this.tracks);
         })
         .catch((error) => {});
       axios

@@ -537,6 +537,7 @@
     </a-modal>
 
     <modal_management_temas
+      :tema="tema"
       v-if="visible_management_tema && tracks_not_empty"
       :action="action_management_temas"
       @close_modal="visible_management_tema = $event"
@@ -586,6 +587,7 @@ export default {
           title: "Temas",
         },
       ],
+      tema: {},
       tracks_not_empty: true,
       show_help: false,
       active_tab: "1",
@@ -1264,7 +1266,10 @@ export default {
           this.type = "info";
           this.show_help = true;
           this.tracks_not_empty = false;
-        } else this.visible_management_tema = true;
+        } else {
+          this.visible_management_tema = true;
+          this.tema.editar_track = false;
+        }
       });
     },
 

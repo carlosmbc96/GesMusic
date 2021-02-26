@@ -67,7 +67,8 @@
           key="1"
           v-if="
             action_modal !== 'detalles' &&
-            action_modal !== 'crear_track_tabla_component'
+            action_modal !== 'crear_track_tabla_component' &&
+            !track.tabla
           "
           :disabled="tab_1"
         >

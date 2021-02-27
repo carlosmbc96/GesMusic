@@ -1012,18 +1012,18 @@ export default {
         },
       };
       if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[8].visible = false;
+        this.$refs.gridObj.getColumns()[4].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
         excelExportProperties.fileName = "Reporte_Temas.xlsx";
-        this.$refs.gridObj.getColumns()[8].visible = false;
+        this.$refs.gridObj.getColumns()[4].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
         excelExportProperties.fileName = "Reporte_Temas.csv";
-        this.$refs.gridObj.getColumns()[8].visible = false;
+        this.$refs.gridObj.getColumns()[4].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[8].visible = false;
+        this.$refs.gridObj.getColumns()[4].visible = false;
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },

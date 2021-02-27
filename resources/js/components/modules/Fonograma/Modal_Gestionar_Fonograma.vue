@@ -1053,9 +1053,7 @@ export default {
           if (this.tabs_list.indexOf("tab_1") !== -1) {
             this.$refs.formularioGenerales.validate((valid) => {
               if (valid) {
-                if (this.file_list.length !== 0) {
                   return this.confirm();
-                }
               } else {
                 this.$message.warning(
                   "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",

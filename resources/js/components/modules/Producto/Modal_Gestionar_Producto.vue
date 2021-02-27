@@ -1437,7 +1437,7 @@ export default {
       this.product_modal.autoresProd = [];
       this.product_modal.interpretesProd = [];
       this.file_list.push({
-        uid: -1,
+        uid:  1,
         name: "Logo ver vertical_Ltr Negras.png",
         url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
       });
@@ -1542,6 +1542,19 @@ export default {
             if (!valid) {
               valid_form++;
               form = "proyecto";
+            }
+          });
+        }
+        if (this.active_tab === "1") {
+          this.$refs.formularioproject.validate((valid) => {
+            if (!valid) {
+              valid_form++;
+              form = "proyecto";
+            } else {
+              this.$message.warning(
+                "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!",
+                4
+              );
             }
           });
         }
@@ -1662,6 +1675,11 @@ export default {
               this.tabs_list.push(tab);
             }
             this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Proyecto, por favor antes de continuar revísela!",
+              4
+            );
           }
         });
       } else if (tab == "tab_2") {
@@ -2053,14 +2071,14 @@ export default {
       if (index !== -1) {
         this.autoresProd.splice(index, 1);
       }
-			if (this.autoresProd.length === 0) {
-				this.autoresProd = [
-					{
-						key: 1,
-						value: ""
-					}
-				]
-			}
+      if (this.autoresProd.length === 0) {
+        this.autoresProd = [
+          {
+            key: 1,
+            value: "",
+          },
+        ];
+      }
     },
     add_autor() {
       if (this.autoresProd.length < this.list_autores.length) {
@@ -2083,14 +2101,14 @@ export default {
       if (index !== -1) {
         this.interpretesProd.splice(index, 1);
       }
-			if (this.interpretesProd.length === 0) {
-				this.interpretesProd = [
-					{
-						key: 2,
-						value: ""
-					}
-				]
-			}
+      if (this.interpretesProd.length === 0) {
+        this.interpretesProd = [
+          {
+            key: 2,
+            value: "",
+          },
+        ];
+      }
     },
     add_interprete() {
       if (this.interpretesProd.length < this.list_interpretes.length) {

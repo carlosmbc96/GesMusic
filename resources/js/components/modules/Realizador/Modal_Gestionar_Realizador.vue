@@ -198,7 +198,10 @@
             </a-form-model>
             <a-row>
               <a-button
-                v-if="action_modal !== 'crear'"
+                v-if="
+                  action_modal !== 'crear' &&
+                  action_modal !== 'crear_realizador'
+                "
                 :disabled="disabled"
                 style="float: right"
                 type="default"
@@ -210,7 +213,11 @@
             </a-row>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'" :disabled="tab_2">
+        <a-tab-pane
+          key="2"
+          v-if="action_modal !== 'crear' && action_modal !== 'crear_realizador'"
+          :disabled="tab_2"
+        >
           <span slot="tab"> Audiovisuales </span>
           <a-row>
             <a-col span="12">

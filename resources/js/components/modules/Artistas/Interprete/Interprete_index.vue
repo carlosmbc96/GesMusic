@@ -666,7 +666,7 @@ export default {
                */
               del_physical_btn_click(args) {
                 this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
+                  "¿Esta acción de eliminación es irrevercible,si elimina este Interpréte, <br> se eliminaránn también los Nombres Artísticos asociados a este?",
                   "Confirmación",
                   {
                     timeout: 5000,
@@ -675,6 +675,7 @@ export default {
                     displayMode: "once",
                     color: "#F8A6A2",
                     zindex: 999,
+                    id: "question",
                     title: "Hey",
                     position: "center",
                     buttons: [

@@ -597,7 +597,9 @@ export default {
           });
         }
       } else {
-        this.$refs.general_form.resetFields();
+        if (this.$refs.general_form !== undefined) {
+          this.$refs.general_form.resetFields();
+        }
         this.show = false;
         this.tabs_list = [];
         this.$emit("close_modal", this.show);
@@ -608,7 +610,6 @@ export default {
         this.tema_modal.codigTema = this.codigo;
       }
       if (!this.used) {
-        //console.log(this.tema_modal.track_id);
         if (this.active_tab !== "1") {
           this.$refs.general_form.validate((valid) => {
             if (valid) {

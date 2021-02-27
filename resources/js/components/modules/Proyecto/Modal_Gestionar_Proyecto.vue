@@ -61,7 +61,7 @@
       <a-tabs :activeKey="active_tab">
         <div slot="tabBarExtraContent">{{ text_header_button }} Proyecto</div>
         <!-- Contenido del tab Generales -->
-        <a-tab-pane key="1"  :disabled="tab_1">
+        <a-tab-pane key="1" :disabled="tab_1">
           <span slot="tab"> Generales </span>
           <!-- <span v-else slot="tab"> Generales </span> -->
           <div>
@@ -111,15 +111,15 @@
                           <img />
                         </div>
                       </a-upload>
-                      <br />
-                      <a-modal
-                        :visible="preview_visible"
-                        :footer="null"
-                        @cancel="preview_cancel"
-                      >
-                        <img style="width: 100%" :src="preview_image" />
-                      </a-modal>
                     </div>
+                    <br />
+                    <a-modal
+                      :visible="preview_visible"
+                      :footer="null"
+                      @cancel="preview_cancel"
+                    >
+                      <img style="width: 100%" :src="preview_image" />
+                    </a-modal>
                   </a-col>
                   <a-col span="6">
                     <a-form-model-item
@@ -698,9 +698,9 @@ export default {
      *Método que asigna el texto del botón y llena o no la varable project_modal en dependencia de la acción recivida por props
      */
     set_action() {
-      if (this.action_modal === "detalles") {
+      /* if (this.action_modal === "detalles") {
         this.active_tab = "2";
-      }
+      } */
       if (this.action_modal === "editar") {
         if (this.project.deleted_at !== null) {
           this.disabled = true;
@@ -773,7 +773,7 @@ export default {
         }
       } else {
         this.file_list.push({
-          uid: -1,
+          uid: 1,
           name: "Logo ver vertical_Ltr Negras.png",
           url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
         });

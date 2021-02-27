@@ -157,7 +157,7 @@ class AudiovisualController extends Controller
 		$audiovisual = Audiovisual::findOrFail($request->id);
 		if ($request->portadillaAud !== null) {
 			if (substr($audiovisual->portadillaAud, 33) !== "Logo ver vertical_Ltr Negras.png") {
-				Storage::disk('local')->delete(substr('/Imagenes/Audiovisuales/' . $audiovisual->portadillaAud, 33));
+				Storage::disk('local')->delete('/Imagenes/Audiovisuales/' . substr($audiovisual->portadillaAud, 33));
 			}
 			$audiovisual->setPortadillaAudAttribute($request->portadillaAud, $request->codigAud);
 		} else if ($request->img_default) {

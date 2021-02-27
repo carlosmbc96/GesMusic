@@ -1735,11 +1735,11 @@ export default {
     let custom_code_required = (rule, value, callback) => {
       if (this.codig_to_isrc || this.action_modal === "crear") {
         if (value === undefined) {
-          callback(new Error("Inserte el código"));
+          callback(new Error(" "));
         } else callback();
       } else {
         if (value === "") {
-          callback(new Error("Inserte el código"));
+          callback(new Error(" "));
         } else callback();
       }
     };
@@ -2357,9 +2357,7 @@ export default {
           if (this.tabs_list.indexOf("tab_1") !== -1) {
             this.$refs.general_form.validate((valid) => {
               if (valid) {
-                if (this.file_list.length !== 0) {
                   return this.confirm();
-                }
               } else
                 this.$message.warning(
                   "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",

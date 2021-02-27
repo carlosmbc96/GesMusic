@@ -999,18 +999,18 @@ export default {
         },
       };
       if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
         excelExportProperties.fileName = "Reporte_Fonograma.xlsx";
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
         excelExportProperties.fileName = "Reporte_Fonogramas.csv";
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[5].visible = false;
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
@@ -1018,10 +1018,10 @@ export default {
      * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
      */
     pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[5].visible = true;
     },
     excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[5].visible = true;
     },
   },
   components: {

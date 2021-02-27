@@ -96,12 +96,12 @@ class FonogramaController extends Controller
     {
         $fonograma = Fonograma::findOrFail($request->id);
         if ($request->portadillaFong !== null) {
-            if (substr($fonograma->portadillaFong, 33) !== "Logo ver vertical_Ltr Negras.png") {
-                Storage::disk('local')->delete(substr('/Imagenes/Fonogramas/' . $fonograma->portadillaFong, 33));
+            if (substr($fonograma->portadillaFong, 30) !== "Logo ver vertical_Ltr Negras.png") {
+                Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 30));
             }
             $fonograma->setPortadillaFongAttribute($request->portadillaFong, $request->codigFong);
         } else if ($request->img_default) {
-            Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 33));
+            Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 30));
             $fonograma->setPortadillaFongAttributeDefault();
         }
         $fonograma->update([
@@ -164,8 +164,8 @@ class FonogramaController extends Controller
         for ($i = count($fonograma->tracks()->withTrashed()->get()) - 1; $i >= 0; $i--) {
             $fonograma->tracks()->withTrashed()->get()[$i]->pivot->delete();
         }
-        if (substr($fonograma->portadillaFong, 33) !== "Logo ver vertical_Ltr Negras.png") {
-            Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 33));
+        if (substr($fonograma->portadillaFong, 30) !== "Logo ver vertical_Ltr Negras.png") {
+            Storage::disk('local')->delete('/Imagenes/Fonogramas/' . substr($fonograma->portadillaFong, 30));
         }
         return response()->json($fonograma->forceDelete());
     }

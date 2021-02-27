@@ -463,7 +463,9 @@
               </a-form-model>
               <a-row>
                 <a-button
-                  v-if="action_modal !== 'crear'"
+                  v-if="
+                    action_modal !== 'crear' && action_modal !== 'crear_autor'
+                  "
                   :disabled="disabled"
                   style="float: right"
                   type="default"

@@ -139,7 +139,7 @@
                 <e-column
                   field="generoTrk"
                   headerText="Género"
-                  width="100"
+                  width="95"
                   textAlign="Left"
                 />
                 <e-column
@@ -152,7 +152,7 @@
                   :displayAsCheckBox="true"
                   field="bonusTrk"
                   headerText="Bonus"
-                  width="85"
+                  width="87"
                   textAlign="Center"
                   type="boolean"
                 />
@@ -670,7 +670,7 @@ export default {
                */
               del_physical_btn_click(args) {
                 this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible, si elimina este Track, <br> se eliminaránn también los Temas asociados a este?",
+                  "¿Esta acción de eliminación es irrevercible, si elimina este Track, <br> se eliminarán también los Temas asociados a este?",
                   "Confirmación",
                   {
                     timeout: 5000,
@@ -678,6 +678,7 @@ export default {
                     overlay: true,
                     displayMode: "once",
                     color: "#F8A6A2",
+                    id: "question",
                     zindex: 999,
                     title: "Hey",
                     position: "center",
@@ -1124,18 +1125,18 @@ export default {
         },
       };
       if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
         excelExportProperties.fileName = "Reporte_Track.xlsx";
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
         excelExportProperties.fileName = "Reporte_Tracks.csv";
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[4].visible = false;
+        this.$refs.gridObj.getColumns()[7].visible = false;
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
@@ -1143,10 +1144,10 @@ export default {
      * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
      */
     pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[7].visible = true;
     },
     excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[4].visible = true;
+      this.$refs.gridObj.getColumns()[7].visible = true;
     },
   },
   components: {

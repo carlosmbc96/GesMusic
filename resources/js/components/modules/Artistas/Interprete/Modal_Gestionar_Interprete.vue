@@ -63,7 +63,7 @@
       <!-- Aqui comienzan los tabs -->
       <a-tabs :activeKey="active_tab">
         <div slot="tabBarExtraContent">{{ text_header_button }} Intérprete</div>
-        <a-tab-pane key="1"  :disabled="tab_1">
+        <a-tab-pane key="1" :disabled="tab_1">
           <span slot="tab">Generales</span>
           <a-row>
             <a-col span="12">
@@ -195,7 +195,10 @@
             </a-form-model>
             <a-row>
               <a-button
-                v-if="action_modal !== 'crear'"
+                v-if="
+                  action_modal !== 'crear' &&
+                  action_modal !== 'crear_interpretes'
+                "
                 :disabled="disabled"
                 style="float: right"
                 type="default"
@@ -207,7 +210,11 @@
             </a-row>
           </a-spin>
         </a-tab-pane>
-        <a-tab-pane key="2" v-if="action_modal !== 'crear'"  :disabled="tab_2">
+        <a-tab-pane
+          key="2"
+          v-if="action_modal !== 'crear' && action_modal !== 'crear_interprete'"
+          :disabled="tab_2"
+        >
           <span slot="tab"> Audiovisuales </span>
           <a-row>
             <a-col span="12">

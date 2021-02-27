@@ -47,7 +47,7 @@ class Producto extends Model
         if ($identificadorProd) {
             $this->attributes['identificadorProd'] = '/BisMusic/Imagenes/Productos/' . $codigProd . $identificadorProd->getClientOriginalName();
             $name = $codigProd . $identificadorProd->getClientOriginalName();
-            Storage::disk('local')->put('/Imagenes/Productos/'.$name, File::get($identificadorProd));
+            Storage::disk('local')->put('Imagenes/Productos/'.$name, File::get($identificadorProd));
         }
     }
     public function setIdentificadorProdAttributeDefault()

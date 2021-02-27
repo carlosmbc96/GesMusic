@@ -2314,7 +2314,9 @@ export default {
           });
         }
       } else {
-        this.$refs.general_form.resetFields();
+        if (this.$refs.general_form !== undefined) {
+          this.$refs.general_form.resetFields();
+        }
         this.tabs_list = [];
         this.active_tab = "1";
         this.tab_visibility = true;
@@ -2357,7 +2359,7 @@ export default {
           if (this.tabs_list.indexOf("tab_1") !== -1) {
             this.$refs.general_form.validate((valid) => {
               if (valid) {
-                  return this.confirm();
+                return this.confirm();
               } else
                 this.$message.warning(
                   "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",

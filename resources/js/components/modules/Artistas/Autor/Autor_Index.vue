@@ -175,14 +175,14 @@
           <!-- Fin Sección de Tabla de datos -->
 
           <!-- Inicio Sección de Modals -->
-            <modal_management
-              v-if="visible_management"
-              :action="action_management"
-              @actualizar="refresh_table"
-              :author="row_selected"
-              @close_modal="visible_management = $event"
-              :autors_list="autors_list"
-            />
+          <modal_management
+            v-if="visible_management"
+            :action="action_management"
+            @actualizar="refresh_table"
+            :author="row_selected"
+            @close_modal="visible_management = $event"
+            :autors_list="autors_list"
+          />
           <!-- Fin Sección de Modals -->
         </div>
       </div>
@@ -664,104 +664,144 @@ export default {
                * Método con la lógica del botón borrado físico
                */
               del_physical_btn_click(args) {
-                this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    zindex: 999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar al Autor?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    this.$parent.$parent.$parent.change_spin();
-                                    axios
-                                      .delete(
-                                        `autores/eliminar/${this.data.id}`
-                                      )
-                                      .then((ress) => {
-                                        this.$parent.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El Autor ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 2000, color: "red" }
-                                        );
-                                        this.$parent.$parent.$parent.change_spin();
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 2000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
-                              ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
-                    ],
+                let count_track = this.data.tracks.length;
+                let count_aud = this.data.audiovisuales.length;
+                let single_content_track;
+                let single_content_aud;
+                let content_plus_aud;
+                let content_plus_track;
+                if (count_track === 1) {
+                  single_content_track = "Track";
+                  content_plus_track = " del cual se eliminará";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual";
+                    content_plus_aud = " del cual se eliminará";
+                  } else {
+                    single_content_aud = "Audiovisuales";
+                    content_plus_aud = " de los cuales se eliminará";
                   }
-                );
+                } else {
+                  single_content_track = "Tracks";
+                  content_plus_track = " de los cuales se eliminará";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual";
+                    content_plus_aud = " del cual se eliminará";
+                  } else {
+                    single_content_aud = "Audiovisuales";
+                    content_plus_aud = " de los cuales se eliminará";
+                  }
+                }
+                let content =
+                  "Esta acción de eliminación es irrevercible,<br> este Autor ";
+                if (count_track === 0 && count_aud === 0) {
+                  content +=
+                    "no está asociado a ningún Audiovisual ni a ningún Track.";
+                }
+                if (count_track !== 0) {
+                  if (count_aud !== 0) {
+                    content += `está asociado a <strong style="color: black; font-size: inherit">${count_track}</strong> ${single_content_track}
+                  y a <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud} de los cuales se eliminará`;
+                  } else {
+                    content += `está asociado a <strong style="color: black; font-size: inherit">${count_track}</strong> ${single_content_track} ${content_plus_track}
+                  y a ningún Audiovisual.`;
+                  }
+                } else if (count_aud !== 0) {
+                  content += `está asociado a <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud} ${content_plus_aud}
+                  y a ningún Track.`;
+                }
+                this.$toast.question(content, "Confirmación", {
+                  timeout: 10000,
+                  close: false,
+                  overlay: true,
+                  id: "question",
+                  displayMode: "once",
+                  color: "#F8A6A2",
+                  zindex: 999,
+                  title: "Hey",
+                  position: "center",
+                  buttons: [
+                    [
+                      "<button>Si</button>",
+                      (instance, toast) => {
+                        this.$toast.question(
+                          "¿Desea eliminar al Autor?",
+                          "Confirmación",
+                          {
+                            timeout: 5000,
+                            close: false,
+                            color: "#F58983",
+                            overlay: true,
+                            displayMode: "once",
+                            zindex: 9999,
+                            title: "Hey",
+                            position: "center",
+                            buttons: [
+                              [
+                                "<button>Si</button>",
+                                (instance, toast) => {
+                                  this.$parent.$parent.$parent.change_spin();
+                                  axios
+                                    .delete(`autores/eliminar/${this.data.id}`)
+                                    .then((ress) => {
+                                      this.$parent.$parent.$parent.refresh_table();
+                                      this.$toast.success(
+                                        "El Autor ha sido eliminado correctamente",
+                                        "¡Éxito!",
+                                        { timeout: 2000, color: "red" }
+                                      );
+                                      this.$parent.$parent.$parent.change_spin();
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      this.$toast.error(
+                                        "Ha ocurrido un error",
+                                        "¡Error!",
+                                        {
+                                          timeout: 2000,
+                                        }
+                                      );
+                                    });
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                                true,
+                              ],
+                              [
+                                "<button>No</button>",
+                                function (instance, toast) {
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                              ],
+                            ],
+                          }
+                        );
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                      true,
+                    ],
+                    [
+                      "<button>No</button>",
+                      function (instance, toast) {
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                    ],
+                  ],
+                });
               },
             },
           }),
@@ -836,7 +876,7 @@ export default {
         this.change_spin();
       }
       axios
-        .post("autores/listar" /* { relations: ["productos"] } */)
+        .post("autores/listar", { relations: ["audiovisuales", "tracks"] })
         .then((response) => {
           this.autors_list = response.data;
           this.series_data = [];

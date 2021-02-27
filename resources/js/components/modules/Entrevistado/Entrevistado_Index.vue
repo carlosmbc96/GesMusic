@@ -651,8 +651,17 @@ export default {
                * Método con la lógica del botón borrado físico
                */
               del_physical_btn_click(args) {
+                let count = this.data.audiovisuales.length;
+                let single_content =
+                  count === 1 ? "Audiovisual." : "Audiovisuales.";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Entrevistado está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Entrevistado no está asociado a ningún Audiovisual.`;
+                }
                 this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
+                  content,
                   "Confirmación",
                   {
                     timeout: 5000,
@@ -660,6 +669,7 @@ export default {
                     overlay: true,
                     displayMode: "once",
                     color: "#F8A6A2",
+                    id: "question",
                     zindex: 999,
                     title: "Hey",
                     position: "center",
@@ -825,7 +835,7 @@ export default {
       if (this.action_management !== "detalles") {
         this.change_spin();
       }
-      axios.post("/entrevistados/listar").then((response) => {
+      axios.post("/entrevistados/listar", { relations: ["audiovisuales"] }).then((response) => {
         this.entrevistados_list = response.data;
         this.series_data = [];
         this.entrevistados_list.forEach((entrevistado) => {

@@ -31,6 +31,8 @@ class ProductoController extends Controller
                 $length = count($productos);
                 for ($i; $i < $length; $i++) {
                     $productos[$i]->proyecto;
+                    $productos[$i]->fonogramas;
+                    $productos[$i]->audiovisuales;
                     $productos[$i]->elementos;
                 }
             } else {

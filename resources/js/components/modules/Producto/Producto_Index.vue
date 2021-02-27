@@ -181,7 +181,12 @@
             @close_modal="visible_management = $event"
             :products_list="products_list"
           />
-          <help @close="reset" v-if="show_help" :content="content" :type="type"></help>
+          <help
+            @close="reset"
+            v-if="show_help"
+            :content="content"
+            :type="type"
+          ></help>
           <!-- Fin Sección de Modals -->
         </div>
       </div>
@@ -415,103 +420,145 @@ export default {
                * Método con la lógica del botón borrado físico
                */
               del_physical_btn_click(args) {
-                this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible?",
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    zindex: 999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar el Producto?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    this.$parent.$parent.$parent.change_spin();
-                                    axios
-                                      .delete(
-                                        `productos/eliminar/${this.data.id}`
-                                      )
-                                      .then((ress) => {
-                                        this.$parent.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El producto ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 2000, color: "red" }
-                                        );
-                                        this.$parent.$parent.$parent.change_spin();
-                                      })
-                                      .catch((err) => {
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 2000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
-                              ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
-                    ],
+                let count_fong = this.data.fonogramas.length;
+                let count_aud = this.data.audiovisuales.length;
+                let single_content_fong;
+                let single_content_aud;
+                let content_plus_aud;
+                let content_plus_fong;
+                if (count_fong === 1) {
+                  single_content_fong = "Fonograma asociado";
+                  content_plus_fong = ", el cual se eliminará";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual asociado";
+                    content_plus_aud = ", el cual se eliminará";
+                  } else {
+                    single_content_aud = "Audiovisuales asociados";
+                    content_plus_aud = ", los cuales se eliminarán";
                   }
-                );
+                } else {
+                  single_content_fong = "Fonogramas asociados";
+                  content_plus_fong = ", los cuales se eliminarán";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual asociado";
+                    content_plus_aud = ", el cual se eliminará";
+                  } else {
+                    single_content_aud = "Audiovisuales asociados";
+                    content_plus_aud = ", los cuales se eliminarán";
+                  }
+                }
+                let content =
+                  "Esta acción de eliminación es irrevercible,<br> este Producto ";
+                if (count_fong === 0 && count_aud === 0) {
+                  content +=
+                    "no tiene ni Audiovisuales ni Fonogramas asociados.";
+                }
+                if (count_fong !== 0) {
+                  if (count_aud !== 0) {
+                    content += `tiene <strong style="color: black; font-size: inherit">${count_fong}</strong> ${single_content_fong}
+                  y <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud}, los cuales se eliminarán`;
+                  } else {
+                    content += `tiene <strong style="color: black; font-size: inherit">${count_fong}</strong> ${single_content_fong} ${content_plus_fong}
+                  y no tiene Audiovisuales asociados.`;
+                  }
+                } else if (count_aud !== 0) {
+                  content += `tiene <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud} ${content_plus_aud}
+                  y no tiene Fonogramas asociados.`;
+                }
+                this.$toast.question(content, "Confirmación", {
+                  timeout: 10000,
+                  close: false,
+                  overlay: true,
+                  displayMode: "once",
+                  id: "question",
+                  color: "#F8A6A2",
+                  zindex: 999,
+                  title: "Hey",
+                  position: "center",
+                  buttons: [
+                    [
+                      "<button>Si</button>",
+                      (instance, toast) => {
+                        this.$toast.question(
+                          "¿Desea eliminar el Producto?",
+                          "Confirmación",
+                          {
+                            timeout: 5000,
+                            close: false,
+                            color: "#F58983",
+                            overlay: true,
+                            displayMode: "once",
+                            zindex: 9999,
+                            title: "Hey",
+                            position: "center",
+                            buttons: [
+                              [
+                                "<button>Si</button>",
+                                (instance, toast) => {
+                                  this.$parent.$parent.$parent.change_spin();
+                                  axios
+                                    .delete(
+                                      `productos/eliminar/${this.data.id}`
+                                    )
+                                    .then((ress) => {
+                                      this.$parent.$parent.$parent.refresh_table();
+                                      this.$toast.success(
+                                        "El producto ha sido eliminado correctamente",
+                                        "¡Éxito!",
+                                        { timeout: 2000, color: "red" }
+                                      );
+                                      this.$parent.$parent.$parent.change_spin();
+                                    })
+                                    .catch((err) => {
+                                      this.$toast.error(
+                                        "Ha ocurrido un error",
+                                        "¡Error!",
+                                        {
+                                          timeout: 2000,
+                                        }
+                                      );
+                                    });
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                                true,
+                              ],
+                              [
+                                "<button>No</button>",
+                                function (instance, toast) {
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                              ],
+                            ],
+                          }
+                        );
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                      true,
+                    ],
+                    [
+                      "<button>No</button>",
+                      function (instance, toast) {
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                    ],
+                  ],
+                });
               },
             },
           }),
@@ -839,7 +886,9 @@ export default {
         this.change_spin();
       }
       axios
-        .post("/productos/listar", { relations: ["proyecto"] })
+        .post("/productos/listar", {
+          relations: ["proyecto", "fonogramas", "audiovisuales"],
+        })
         .then((response) => {
           this.products_list = response.data;
           this.series_data = [];
@@ -1034,7 +1083,7 @@ export default {
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
-     reset() {
+    reset() {
       this.show_help = false;
       this.content = "";
       this.type = "";

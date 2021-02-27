@@ -668,105 +668,112 @@ export default {
                * Método con la lógica del botón borrado físico
                */
               del_physical_btn_click(args) {
-                this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible, si elimina este Proyecto, <br> se eliminaránn también los Productos asociados a este?",
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    id: "question",
-                    color: "#F8A6A2",
-                    zindex: 999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar el Proyecto?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    this.$parent.$parent.$parent.change_spin();
-                                    axios
-                                      .delete(
-                                        `proyectos/eliminar/${this.data.id}`
-                                      )
-                                      .then((ress) => {
-                                        this.$parent.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El Proyecto ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 2000, color: "red" }
-                                        );
-                                        this.$parent.$parent.$parent.change_spin();
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 2000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
+                let count = this.data.productos.length;
+                let single_content =
+                  count === 1
+                    ? "Producto asociado, el cual se eliminará"
+                    : "Productos asociados, los cuales se eliminarán";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Proyecto tiene <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Proyecto no tiene Productos asociados.`;
+                }
+                this.$toast.question(content, "Confirmación", {
+                  timeout: 5000,
+                  close: false,
+                  overlay: true,
+                  displayMode: "once",
+                  id: "question",
+                  color: "#F8A6A2",
+                  zindex: 999,
+                  title: "Hey",
+                  position: "center",
+                  buttons: [
+                    [
+                      "<button>Si</button>",
+                      (instance, toast) => {
+                        this.$toast.question(
+                          "¿Desea eliminar el Proyecto?",
+                          "Confirmación",
+                          {
+                            timeout: 5000,
+                            close: false,
+                            color: "#F58983",
+                            overlay: true,
+                            displayMode: "once",
+                            zindex: 9999,
+                            title: "Hey",
+                            position: "center",
+                            buttons: [
+                              [
+                                "<button>Si</button>",
+                                (instance, toast) => {
+                                  this.$parent.$parent.$parent.change_spin();
+                                  axios
+                                    .delete(
+                                      `proyectos/eliminar/${this.data.id}`
+                                    )
+                                    .then((ress) => {
+                                      this.$parent.$parent.$parent.refresh_table();
+                                      this.$toast.success(
+                                        "El Proyecto ha sido eliminado correctamente",
+                                        "¡Éxito!",
+                                        { timeout: 2000, color: "red" }
+                                      );
+                                      this.$parent.$parent.$parent.change_spin();
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      this.$toast.error(
+                                        "Ha ocurrido un error",
+                                        "¡Error!",
+                                        {
+                                          timeout: 2000,
+                                        }
+                                      );
+                                    });
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                                true,
                               ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
+                              [
+                                "<button>No</button>",
+                                function (instance, toast) {
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                              ],
+                            ],
+                          }
+                        );
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                      true,
                     ],
-                  }
-                );
+                    [
+                      "<button>No</button>",
+                      function (instance, toast) {
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                    ],
+                  ],
+                });
               },
             },
           }),

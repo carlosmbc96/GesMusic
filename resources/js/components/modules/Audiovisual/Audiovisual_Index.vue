@@ -675,8 +675,19 @@ export default {
                * Método con la lógica del botón borrado físico
                */
               del_physical_btn_click(args) {
+                let count = this.data.productos.length;
+                let single_content =
+                  count === 1
+                    ? "Producto."
+                    : "Productos.";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Audiovisual está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Audiovisual no está asociado a ningún Producto.`;
+                }
                 this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible, si el Audiovisual<br>esta siendo usado en uno o varios Productos se eliminarán de estos?",
+                  content,
                   "Confirmación",
                   {
                     timeout: 5000,

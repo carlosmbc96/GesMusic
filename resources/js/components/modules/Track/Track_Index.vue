@@ -669,8 +669,16 @@ export default {
                * Método con la lógica del botón borrado físico
                */
               del_physical_btn_click(args) {
+                let count = this.data.fonogramas.length;
+                let single_content = count === 1 ? "Fonograma." : "Fonogramas.";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Track está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación es irrevercible,<br> este Track no está asociado a ningún Fonograma.`;
+                }
                 this.$toast.question(
-                  "¿Esta acción de eliminación es irrevercible, si elimina este Track, <br> se eliminarán también los Temas asociados a este?",
+                 content,
                   "Confirmación",
                   {
                     timeout: 5000,

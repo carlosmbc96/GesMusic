@@ -418,13 +418,24 @@ export default {
             },
             methods: {
               confirm_change_status() {
+                let count = this.data.productos.length;
+                let single_content =
+                  count === 1
+                    ? "Producto."
+                    : "Productos.";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Audiovisual se inactivará y está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Audiovisual se inactivará y no está asociado a ningún Producto.`;
+                }
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Audiovisual, y a su vez<br>eliminará sus relaciones con el o los productos que lo estén usando?",
+                    content,
                     "Confirmación",
                     {
-                      timeout: 5000,
+                      timeout: 10000,
                       close: false,
                       overlay: true,
                       displayMode: "once",
@@ -512,7 +523,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará el Audiovisual?",
+                    "Esta acción ativará el Audiovisual",
                     "Confirmación",
                     {
                       timeout: 5000,

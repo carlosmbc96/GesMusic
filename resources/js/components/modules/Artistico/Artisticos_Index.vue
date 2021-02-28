@@ -316,10 +316,12 @@ export default {
             },
             methods: {
               confirm_change_status() {
+                 let count = this.data.interprete.length;
+                let content = `Esta acción de eliminación lógica es revercible,<br> este Nombre Artístico se inactivará y está asociado al Intérprete con código <strong style="color: black; font-size: inherit">${this.data.interprete.codigInterp}</strong>.`;
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Nombre Artístico?",
+                    content,
                     "Confirmación",
                     {
                       timeout: 5000,

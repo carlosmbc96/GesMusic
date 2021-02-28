@@ -407,15 +407,18 @@ export default {
                 else this.visible_pop = visible;
               },
               confirm_change_status() {
+                let count = this.data.track.length;
+                let content = `Esta acción de eliminación lógica es revercible,<br> este Tema se inactivará y está asociado al Track con ISRC <strong style="color: black; font-size: inherit">${this.data.track.isrcTrk}</strong>.`;
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Tema?",
+                    content,
                     "Confirmación",
                     {
                       timeout: 5000,
                       close: false,
                       overlay: true,
+                      id: "question",
                       displayMode: "once",
                       color: "#AB7598",
                       zindex: 999,

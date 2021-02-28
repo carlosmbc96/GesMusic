@@ -395,15 +395,25 @@ export default {
             },
             methods: {
               confirm_change_status() {
+                 let count = this.data.audiovisuales.length;
+                let single_content =
+                  count === 1 ? "Audiovisual." : "Audiovisuales.";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Entrevistado se inactivará está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Entrevistado se inactivará no está asociado a ningún Audiovisual.`;
+                }
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Entrevistado?",
+                    content,
                     "Confirmación",
                     {
-                      timeout: 5000,
+                      timeout: 10000,
                       close: false,
                       overlay: true,
+                      id: "question",
                       displayMode: "once",
                       color: "#AB7598",
                       zindex: 999,

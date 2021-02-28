@@ -415,97 +415,98 @@ export default {
             },
             methods: {
               confirm_change_status() {
+                let count = this.data.fonogramas.length;
+                let single_content = count === 1 ? "Fonograma." : "Fonogramas.";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Track se inactivará y está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Track se inactivará y no está asociado a ningún Fonograma.`;
+                }
                 let error = false;
                 if (this.checked) {
-                  this.$toast.question(
-                    "¿Esta acción inactivará el Track y <br> los Temas asociados a este?",
-                    "Confirmación",
-                    {
-                      timeout: 5000,
-                      close: false,
-                      overlay: true,
-                      id: "question",
-                      displayMode: "once",
-                      color: "#AB7598",
-                      zindex: 999,
-                      title: "Hey",
-                      position: "center",
-                      buttons: [
-                        [
-                          "<button>Si</button>",
-                          (instance, toast) => {
-                            this.$toast.question(
-                              "¿Desea inactivar el Track?",
-                              "Confirmación",
-                              {
-                                timeout: 5000,
-                                close: false,
-                                color: "#8F4776",
-                                overlay: true,
-                                displayMode: "once",
-                                zindex: 9999,
-                                title: "Hey",
-                                position: "center",
-                                buttons: [
-                                  [
-                                    "<button>Si</button>",
-                                    (instance, toast) => {
-                                      this.loading = true;
-                                      axios
-                                        .delete(
-                                          "tracks/desactivar/" + this.data.id
-                                        )
-                                        .catch((errors) => {
-                                          error = true;
-                                        })
-                                        .finally(() => {
-                                          this.finally_method(
-                                            "inactivó",
-                                            error
-                                          );
-                                        });
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                    true,
-                                  ],
-                                  [
-                                    "<button>No</button>",
-                                    function (instance, toast) {
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                  ],
+                  this.$toast.question(content, "Confirmación", {
+                    timeout: 10000,
+                    close: false,
+                    overlay: true,
+                    id: "question",
+                    displayMode: "once",
+                    color: "#AB7598",
+                    zindex: 999,
+                    title: "Hey",
+                    position: "center",
+                    buttons: [
+                      [
+                        "<button>Si</button>",
+                        (instance, toast) => {
+                          this.$toast.question(
+                            "¿Desea inactivar el Track?",
+                            "Confirmación",
+                            {
+                              timeout: 5000,
+                              close: false,
+                              color: "#8F4776",
+                              overlay: true,
+                              displayMode: "once",
+                              zindex: 9999,
+                              title: "Hey",
+                              position: "center",
+                              buttons: [
+                                [
+                                  "<button>Si</button>",
+                                  (instance, toast) => {
+                                    this.loading = true;
+                                    axios
+                                      .delete(
+                                        "tracks/desactivar/" + this.data.id
+                                      )
+                                      .catch((errors) => {
+                                        error = true;
+                                      })
+                                      .finally(() => {
+                                        this.finally_method("inactivó", error);
+                                      });
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                  true,
                                 ],
-                              }
-                            );
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                          true,
-                        ],
-                        [
-                          "<button>No</button>",
-                          function (instance, toast) {
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                        ],
+                                [
+                                  "<button>No</button>",
+                                  function (instance, toast) {
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                ],
+                              ],
+                            }
+                          );
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                        true,
                       ],
-                    }
-                  );
+                      [
+                        "<button>No</button>",
+                        function (instance, toast) {
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                      ],
+                    ],
+                  });
                 } else {
                   this.$toast.question(
                     "¿Esta acción ativará el Track?",
@@ -677,102 +678,71 @@ export default {
                 } else {
                   content = `Esta acción de eliminación es irrevercible,<br> este Track no está asociado a ningún Fonograma.`;
                 }
-                this.$toast.question(
-                 content,
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    id: "question",
-                    zindex: 999,
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar el Track?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    let durationFong;
-                                    let fonogramas = this.data.fonogramas;
-                                    let form_data = new FormData();
-                                    for (
-                                      let i = 0;
-                                      i < fonogramas.length;
-                                      i++
-                                    ) {
-                                      durationFong = moment(
-                                        fonogramas[i].duracionFong,
-                                        "HH:mm:ss"
-                                      );
+                this.$toast.question(content, "Confirmación", {
+                  timeout: 5000,
+                  close: false,
+                  overlay: true,
+                  displayMode: "once",
+                  color: "#F8A6A2",
+                  id: "question",
+                  zindex: 999,
+                  title: "Hey",
+                  position: "center",
+                  buttons: [
+                    [
+                      "<button>Si</button>",
+                      (instance, toast) => {
+                        this.$toast.question(
+                          "¿Desea eliminar el Track?",
+                          "Confirmación",
+                          {
+                            timeout: 5000,
+                            close: false,
+                            color: "#F58983",
+                            overlay: true,
+                            displayMode: "once",
+                            zindex: 9999,
+                            title: "Hey",
+                            position: "center",
+                            buttons: [
+                              [
+                                "<button>Si</button>",
+                                (instance, toast) => {
+                                  let durationFong;
+                                  let fonogramas = this.data.fonogramas;
+                                  let form_data = new FormData();
+                                  for (let i = 0; i < fonogramas.length; i++) {
+                                    durationFong = moment(
+                                      fonogramas[i].duracionFong,
+                                      "HH:mm:ss"
+                                    );
+                                    durationFong
+                                      .subtract(
+                                        moment.duration(this.data.duracionTrk)
+                                      )
+                                      .format("HH:mm:ss");
+                                    durationFong = moment(
+                                      durationFong,
+                                      "HH:mm:ss"
+                                    ).format("HH:mm:ss");
+                                    form_data.append("id", fonogramas[i].id);
+                                    form_data.append(
+                                      "duracionFong",
                                       durationFong
-                                        .subtract(
-                                          moment.duration(this.data.duracionTrk)
-                                        )
-                                        .format("HH:mm:ss");
-                                      durationFong = moment(
-                                        durationFong,
-                                        "HH:mm:ss"
-                                      ).format("HH:mm:ss");
-                                      form_data.append("id", fonogramas[i].id);
-                                      form_data.append(
-                                        "duracionFong",
-                                        durationFong
-                                      );
-                                      axios
-                                        .post(
-                                          `/fonogramas/editarDuracion`,
-                                          form_data,
-                                          {
-                                            headers: {
-                                              "Content-Type":
-                                                "multipart/form-data",
-                                            },
-                                          }
-                                        )
-                                        .then((response) => {})
-                                        .catch((error) => {
-                                          this.$toast.error(
-                                            "Ha ocurrido un error",
-                                            "¡Error!",
-                                            {
-                                              timeout: 2000,
-                                            }
-                                          );
-                                        });
-                                      form_data = new FormData();
-                                    }
-                                    this.$parent.$parent.$parent.change_spin();
+                                    );
                                     axios
-                                      .delete(`tracks/eliminar/${this.data.id}`)
-                                      .then((ress) => {
-                                        this.$parent.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El Track ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 2000, color: "red" }
-                                        );
-                                        this.$parent.$parent.$parent.change_spin();
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
+                                      .post(
+                                        `/fonogramas/editarDuracion`,
+                                        form_data,
+                                        {
+                                          headers: {
+                                            "Content-Type":
+                                              "multipart/form-data",
+                                          },
+                                        }
+                                      )
+                                      .then((response) => {})
+                                      .catch((error) => {
                                         this.$toast.error(
                                           "Ha ocurrido un error",
                                           "¡Error!",
@@ -781,54 +751,77 @@ export default {
                                           }
                                         );
                                       });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
+                                    form_data = new FormData();
+                                  }
+                                  this.$parent.$parent.$parent.change_spin();
+                                  axios
+                                    .delete(`tracks/eliminar/${this.data.id}`)
+                                    .then((ress) => {
+                                      this.$parent.$parent.$parent.refresh_table();
+                                      this.$toast.success(
+                                        "El Track ha sido eliminado correctamente",
+                                        "¡Éxito!",
+                                        { timeout: 2000, color: "red" }
+                                      );
+                                      this.$parent.$parent.$parent.change_spin();
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      this.$toast.error(
+                                        "Ha ocurrido un error",
+                                        "¡Error!",
+                                        {
+                                          timeout: 2000,
+                                        }
+                                      );
+                                    });
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                                true,
                               ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
+                              [
+                                "<button>No</button>",
+                                function (instance, toast) {
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                              ],
+                            ],
+                          }
+                        );
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                      true,
                     ],
-                  }
-                );
+                    [
+                      "<button>No</button>",
+                      function (instance, toast) {
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                    ],
+                  ],
+                });
               },
             },
           }),
         };
       },
-        status_child_template: () => {
+      status_child_template: () => {
         return {
           template: Vue.component("columnTemplate", {
             template: `<div>

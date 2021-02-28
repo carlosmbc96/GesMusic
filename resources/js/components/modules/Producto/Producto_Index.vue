@@ -619,15 +619,53 @@ export default {
                 else this.visible_pop = visible;
               },
               confirm_change_status() {
+                let count_fong = this.data.fonogramas.length;
+                let count_aud = this.data.audiovisuales.length;
+                let single_content_fong;
+                let single_content_aud;
+                if (count_fong === 1) {
+                  single_content_fong = "Fonograma asociado";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual asociado";
+                  } else {
+                    single_content_aud = "Audiovisuales asociados";
+                  }
+                } else {
+                  single_content_fong = "Fonogramas asociados";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual asociado";
+                  } else {
+                    single_content_aud = "Audiovisuales asociados";
+                  }
+                }
+                let content =
+                  "Esta acción de eliminación lógica es revercible,<br> este Producto se inactivará y ";
+                if (count_fong === 0 && count_aud === 0) {
+                  content +=
+                    "no tiene ni Audiovisuales ni Fonogramas asociados.";
+                }
+                if (count_fong !== 0) {
+                  if (count_aud !== 0) {
+                    content += `tiene <strong style="color: black; font-size: inherit">${count_fong}</strong> ${single_content_fong}
+                  y <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud}.`;
+                  } else {
+                    content += `tiene <strong style="color: black; font-size: inherit">${count_fong}</strong> ${single_content_fong}
+                  y no tiene Audiovisuales asociados.`;
+                  }
+                } else if (count_aud !== 0) {
+                  content += `tiene <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud}
+                  y no tiene Fonogramas asociados.`;
+                }
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Producto?",
+                    content,
                     "Confirmación",
                     {
-                      timeout: 5000,
+                      timeout: 10000,
                       close: false,
                       overlay: true,
+                      id: "question",
                       displayMode: "once",
                       color: "#AB7598",
                       zindex: 999,
@@ -711,7 +749,7 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará el Producto?",
+                    "Esta acción ativará el Producto.",
                     "Confirmación",
                     {
                       timeout: 5000,

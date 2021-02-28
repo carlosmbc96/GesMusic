@@ -388,10 +388,21 @@ export default {
             },
             methods: {
               confirm_change_status() {
+                let count = this.data.productos.length;
+                let single_content =
+                  count === 1
+                    ? "Producto asociado."
+                    : "Productos asociados.";
+                let content;
+                if (count !== 0) {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Proyecto se inactivará y tiene <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
+                } else {
+                  content = `Esta acción de eliminación lógica es revercible,<br> este Proyecto se inactivará y no tiene Productos asociados.`;
+                }
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará el Proyecto y <br> los Productos asociados a este?",
+                    content,
                     "Confirmación",
                     {
                       timeout: 5000,
@@ -481,14 +492,13 @@ export default {
                   );
                 } else {
                   this.$toast.question(
-                    "¿Esta acción ativará el Proyecto y <br> los Productos asociados a este?",
+                    "Esta acción ativará el Proyecto y a sus Productos asociados.",
                     "Confirmación",
                     {
                       timeout: 5000,
                       close: false,
                       overlay: true,
                       displayMode: "once",
-                      id: "question",
                       color: "#D7DE7A",
                       zindex: 999,
                       title: "Hey",

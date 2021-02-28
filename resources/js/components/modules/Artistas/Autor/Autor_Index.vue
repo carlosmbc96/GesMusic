@@ -410,14 +410,52 @@ export default {
             },
             methods: {
               confirm_change_status() {
+                let count_track = this.data.tracks.length;
+                let count_aud = this.data.audiovisuales.length;
+                let single_content_track;
+                let single_content_aud;
+                if (count_track === 1) {
+                  single_content_track = "Track.";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual.";
+                  } else {
+                    single_content_aud = "Audiovisuales.";
+                  }
+                } else {
+                  single_content_track = "Tracks.";
+                  if (count_aud === 1) {
+                    single_content_aud = "Audiovisual.";
+                  } else {
+                    single_content_aud = "Audiovisuales.";
+                  }
+                }
+                let content =
+                  "Esta acción de eliminación lógica es revercible,<br> este Autor se inactivará y ";
+                if (count_track === 0 && count_aud === 0) {
+                  content +=
+                    "no está asociado a ningún Audiovisual ni a ningún Track.";
+                }
+                if (count_track !== 0) {
+                  if (count_aud !== 0) {
+                    content += `está asociado a <strong style="color: black; font-size: inherit">${count_track}</strong> ${single_content_track}
+                  y a <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud}.`;
+                  } else {
+                    content += `está asociado a <strong style="color: black; font-size: inherit">${count_track}</strong> ${single_content_track}
+                  y a ningún Audiovisual.`;
+                  }
+                } else if (count_aud !== 0) {
+                  content += `está asociado a <strong style="color: black; font-size: inherit">${count_aud}</strong> ${single_content_aud}
+                  y a ningún Track.`;
+                }
                 let error = false;
                 if (this.checked) {
                   this.$toast.question(
-                    "¿Esta acción inactivará al Autor?",
+                    content,
                     "Confirmación",
                     {
-                      timeout: 5000,
+                      timeout: 10000,
                       close: false,
+                      id: "question",
                       overlay: true,
                       displayMode: "once",
                       color: "#AB7598",

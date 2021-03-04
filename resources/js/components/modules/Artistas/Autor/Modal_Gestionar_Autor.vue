@@ -483,11 +483,11 @@
           v-if="action_modal !== 'crear' && action_modal !== 'crear_autor'"
           :disabled="tab_2"
         >
-          <span slot="tab"> Audiovisuales/Temas </span>
+          <span slot="tab"> Audiovisuales/Tracks/Temas </span>
           <a-row>
             <a-col span="12">
               <div class="section-title">
-                <h4>Audiovisuales/Temas</h4>
+                <h4>Audiovisuales/Tracks/Temas</h4>
               </div>
             </a-col>
           </a-row>
@@ -504,6 +504,15 @@
             <div>
               <tabla_audiovisuales
                 v-if="current === 0"
+                :detalles_prop="detalles_autor"
+                @reload="reload_parent"
+                :entity="author_modal"
+                entity_relation="autores"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_tracks
+                v-else-if="current === 1"
                 :detalles_prop="detalles_autor"
                 @reload="reload_parent"
                 :entity="author_modal"
@@ -584,6 +593,9 @@ export default {
       steps: [
         {
           title: "Audiovisuales",
+        },
+        {
+          title: "Tracks",
         },
         {
           title: "Temas",
@@ -1304,6 +1316,7 @@ export default {
     help,
     tabla_audiovisuales: () => import("../../Audiovisual/Tabla_Audiovisuales"),
     tabla_temas: () => import("../../Tema/Tabla_Temas"),
+    tabla_tracks: () => import("../../Track/Tabla_Tracks"),
     modal_management_temas: () => import("../../Tema/Modal_Gestionar_Tema"),
   },
 };

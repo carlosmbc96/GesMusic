@@ -1193,7 +1193,6 @@ export default {
           }
         });
       } else if (tab === "tab_2") {
-        if (this.action_modal !== "detalles") {
           this.$refs.formularioGenerales.validate((valid) => {
             if (valid) {
               this.tab_3 = false;
@@ -1209,7 +1208,6 @@ export default {
               );
             }
           });
-        }
       }
     },
     reload_parent() {

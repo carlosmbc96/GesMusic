@@ -215,24 +215,43 @@
           v-if="action_modal !== 'crear' && action_modal !== 'crear_interprete'"
           :disabled="tab_2"
         >
-          <span slot="tab"> Audiovisuales </span>
+          <span slot="tab"> Audiovisuales/Tracks </span>
           <a-row>
             <a-col span="12">
               <div class="section-title">
-                <h4>Audiovisuales</h4>
+                <h4>Audiovisuales/Tracks</h4>
               </div>
             </a-col>
           </a-row>
-          <br />
           <div>
-            <tabla_audiovisuales
-              :detalles_prop="detalles"
-              @reload="reload_parent"
-              :entity="interp_modal"
-              entity_relation="interpretes"
-              :vista_editar="vista_editar"
-              @close_modal="show = $event"
-            />
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_audiovisuales
+                v-if="current === 0"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="interp_modal"
+                entity_relation="interpretes"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_tracks
+                v-else
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="interp_modal"
+                entity_relation="interpretes"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
             <br />
           </div>
           <a-row>
@@ -270,7 +289,16 @@ export default {
       } else callback();
     };
     return {
+      steps: [
+        {
+          title: "Audiovisuales",
+        },
+        {
+          title: "Tracks",
+        },
+      ],
       active_tab: "1",
+      current: 0,
       tab_1: false,
       tab_2: true,
       tabs_list: [],
@@ -532,6 +560,9 @@ export default {
           "La creación del Intérprete se canceló correctamente";
       }
     },
+    onChange(current) {
+      this.current = current;
+    },
     confirm() {
       this.spinning = true;
       this.waiting = true;
@@ -719,6 +750,7 @@ export default {
   },
   components: {
     tabla_audiovisuales: () => import("../../Audiovisual/Tabla_Audiovisuales"),
+    tabla_tracks: () => import("../../Track/Tabla_Tracks"),
   },
 };
 </script>

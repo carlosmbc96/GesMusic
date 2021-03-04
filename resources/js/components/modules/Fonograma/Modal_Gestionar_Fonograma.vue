@@ -476,7 +476,8 @@
             v-if="action_modal !== 'crear'"
             :detalles_prop="detalles"
             @reload="reload_parent"
-            :fonograma="fonogram_modal"
+            :entity="fonogram_modal"
+            entity_relation="fonogramas"
             :vista_editar="vista_editar"
             @close_modal="show = $event"
           />

@@ -24,7 +24,7 @@
             headerText="Orden"
             width="90"
             :template="order"
-            :visible="true"
+            :visible="this.entity_relation === 'fonogramas'"
             textAlign="Center"
           />
           <e-column
@@ -204,7 +204,7 @@ L10n.load({
 setCulture("es-ES");
 export default {
   name: "tabla_tracks",
-  props: ["fonograma", "vista_editar", "detalles_prop"],
+  props: ["entity", "vista_editar", "detalles_prop", "entity_relation"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -669,12 +669,41 @@ export default {
       this.change_spin();
       this.$emit("reload");
       if (this.vista_editar) {
-        axios
-          .post("/tracks/fonogramaTracks", { idFong: this.fonograma.id })
-          .then((response) => {
-            this.tracks_list = response.data;
-            this.change_spin();
-          });
+        if (this.entity_relation !== "fonogramas") {
+          axios
+            .post("/tracks/listar", { relations: [this.entity_relation] })
+            .then((response) => {
+              this.tracks_list = [];
+              let pertenece = false;
+              response.data.forEach((track) => {
+                if (this.entity_relation === "interpretes") {
+                  track.interpretes.forEach((interprete) => {
+                    if (interprete.id === this.entity.id) {
+                      pertenece = true;
+                    }
+                  });
+                } else if (this.entity_relation === "autores") {
+                  track.autores.forEach((autor) => {
+                    if (autor.id === this.entity.id) {
+                      pertenece = true;
+                    }
+                  });
+                }
+                if (pertenece) {
+                  this.tracks_list.push(track);
+                }
+                pertenece = false;
+              });
+              this.change_spin();
+            });
+        } else {
+          axios
+            .post("/tracks/fonogramaTracks", { idFong: this.entity.id })
+            .then((response) => {
+              this.tracks_list = response.data;
+              this.change_spin();
+            });
+        }
         axios.post("/tracks/listar").then((response) => {
           this.all_tracks = response.data;
         });
@@ -695,7 +724,7 @@ export default {
         this.visible_management = true;
         this.row_selected = {
           modal_detalles: true,
-          fonogramas_tracks: this.fonograma.id,
+          fonogramas_tracks: this.entity.id,
         };
       } else if (args.item.id === "vinc_desvinc") {
         this.visible_transfer = true;

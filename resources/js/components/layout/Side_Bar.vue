@@ -320,8 +320,8 @@
                 <span class="title font-white">Analítica</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="table_static_responsive.html" class="nav-link">
+            <li @click="change_route('/empleado_index')">
+              <a class="nav-link">
                 <i class="icon-bulb font-white" />
                 <span class="title font-white">Gestión</span>
               </a>
@@ -397,8 +397,8 @@
                 <span class="arrow" />
               </a>
               <ul class="sub-menu">
-                <li class="nav-item">
-                  <a href="table_static_basic.html" class="nav-link">
+                <li @click="change_route('/usuario_index')">
+                  <a class="nav-link">
                     <i class="icon-user-follow font-white" />
                     <span class="title font-white"> Gestión Usuarios </span>
                   </a>

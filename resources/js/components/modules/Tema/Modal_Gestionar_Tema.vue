@@ -597,9 +597,9 @@ export default {
           });
         }
       } else {
-        if (this.$refs.general_form !== undefined) {
-          this.$refs.general_form.resetFields();
-        }
+				if (this.$refs.general_form !== undefined) {
+        	this.$refs.general_form.resetFields();
+				}
         this.show = false;
         this.tabs_list = [];
         this.$emit("close_modal", this.show);
@@ -611,6 +611,7 @@ export default {
       }
       if (!this.used) {
         if (this.active_tab !== "1") {
+					console.log("ok");
           this.$refs.general_form.validate((valid) => {
             if (valid) {
               return this.confirm();
@@ -686,6 +687,7 @@ export default {
             this.handle_cancel();
           })
           .catch((error) => {
+						console.log(error);
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;

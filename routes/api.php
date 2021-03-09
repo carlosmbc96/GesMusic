@@ -30,6 +30,9 @@ Route::get('/empresas/{id}/edit','EmpresaController@edit')->name('empresas.edita
 Route::put('/empresas/{id}','EmpresaController@update')->name('empresas.actualizar'); // Ruta que Guarda un Registro Específico del Modelo Empresa
 Route::delete('/empresas/{id}','EmpresaController@destroyLog')->name('empresas.eliminar'); */ // Ruta que Elimina un Registro Específico de forma Lógica del Modelo Empresa
 
+Route::post('/empresas/listar', 'EmpresaController@index');
+Route::get('/empresa/{id}', 'EmpresaController@get');
+
 // RUTAS DEL RECURSO: PROYECTO
 Route::get('/proyectos/restaurar/{id}', 'ProyectoController@restoreLog');
 Route::post('/proyectos/nomencladores', 'ProyectoController@nomenclators');
@@ -149,6 +152,25 @@ Route::delete('/temas/desactivar/{id}', 'TemaController@destroyLog');
 Route::delete('/temas/eliminar/{id}', 'TemaController@destroyFis');
 Route::post('/temas/nomencladores', 'TemaController@nomenclators');
 Route::post('/temas/actualizarRelacionesTem', 'TemaController@actualizarRelacionesTem');
+
+// RUTAS DEL RECURSO: Empleado
+Route::get('/empleados/restaurar/{id}', 'EmpleadoController@restoreLog');
+Route::post('/empleados/listar', 'EmpleadoController@index');
+Route::post('/empleados', 'EmpleadoController@store');
+Route::post('/empleados/editar', 'EmpleadoController@update');
+Route::delete('/empleados/desactivar/{id}', 'EmpleadoController@destroyLog');
+Route::delete('/empleados/eliminar/{id}', 'EmpleadoController@destroyFis');
+Route::post('/empleados/nomencladores', 'EmpleadoController@nomenclators');
+Route::post('/empleados/actualizarRelacionesTem', 'EmpleadoController@actualizarRelacionesTem');
+
+Route::get('/usuarios/restaurar/{id}', 'UsuarioController@restoreLog');
+Route::post('/usuarios/listar', 'UsuarioController@index');
+Route::post('/usuarios', 'UsuarioController@store');
+Route::post('/usuarios/editar', 'UsuarioController@update');
+Route::delete('/usuarios/desactivar/{id}', 'UsuarioController@destroyLog');
+Route::delete('/usuarios/eliminar/{id}', 'UsuarioController@destroyFis');
+Route::post('/usuarios/nomencladores', 'UsuarioController@nomenclators');
+Route::post('/usuarios/actualizarRelacionesTem', 'UsuarioController@actualizarRelacionesTem');
 
 /*
 // RUTAS DEL RECURSO: ELEMENTO

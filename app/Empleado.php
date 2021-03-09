@@ -14,6 +14,7 @@ class Empleado extends Model
     //SECCIÓN DE FILLABLE
     // Atributos del Modelo Empleado
     protected $fillable = [
+		'codigEmpl',
         'ciEmpl',  // Número Identidad Empleado
         'fotoEmpl',  // Url del Archivo de Foto Empleado
         'nombresEmpl',  // Nombres Empleado
@@ -29,6 +30,7 @@ class Empleado extends Model
         'emailEmpl',  // Correo Electrónico Empleado
         'webSocialEmpl',  // Url Web Social Empleado
         'descripEmpl',  // Descripción Empleado
+		'empresa_id',
     ];
     //SECCIÓN DE FILLABLE
 

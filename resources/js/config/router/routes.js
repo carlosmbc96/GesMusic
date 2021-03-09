@@ -9,6 +9,8 @@ import artisticos_index from "../../components/modules/Artistico/Artisticos_Inde
 import realizador_index from "../../components/modules/Realizador/Realizador_Index.vue";
 import entrevistado_index from "../../components/modules/Entrevistado/Entrevistado_Index.vue";
 import tema_index from "../../components/modules/Tema/Tema_Index.vue";
+import empleado_index from "../../components/modules/Empleado/Empleado_Index.vue";
+import usuario_index from "../../components/modules/Usuario/Usuario_Index.vue";
 
 export const routes = [
   { path: "/proyecto_index", component: proyecto_index },
@@ -22,4 +24,6 @@ export const routes = [
   { path: "/realizador_index", component: realizador_index },
   { path: "/entrevistado_index", component: entrevistado_index },
   { path: "/tema_index", component: tema_index },
+  { path: "/usuario_index", component: usuario_index },
+  { path: "/empleado_index", component: empleado_index },
 ];

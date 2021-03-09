@@ -10,7 +10,8 @@ class CreateEmpleadosTable extends Migration
     {
         Schema::create('empleados', function (Blueprint $table) {
             $table->id()->index();  // Identificador Único de la Tabla: Empleados
-            $table->integer('ciEmpl')->unique();  // Número Identidad Empleado
+						$table->string('codigEmpl', 9)->unique();
+            $table->string('ciEmpl', 11)->unique();  // Número Identidad Empleado
             $table->string('fotoEmpl')->nullable();  // Url del Archivo de Foto Empleado
             $table->string('nombresEmpl');  // Nombres Empleado
             $table->string('apellidosEmpl');  // Apellidos Empleado

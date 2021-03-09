@@ -77,4 +77,9 @@ class EmpresaController extends Controller
     {
         return response()->json(Empresa::findOrFail($id)->restore());
     }
+
+    public function get($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Empresa
+    {
+        return response()->json(Empresa::findOrFail($id));
+    }
 }

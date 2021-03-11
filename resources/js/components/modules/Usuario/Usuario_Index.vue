@@ -851,7 +851,7 @@ export default {
         this.change_spin();
       }
       axios
-        .post("/usuarios/listar"/*, { relations: ["fonogramas"] }*/)
+        .post("/usuarios/listar", { relations: ["empleado"] })
         .then((response) => {
           this.usuarios_list = response.data;
           this.series_data = [];

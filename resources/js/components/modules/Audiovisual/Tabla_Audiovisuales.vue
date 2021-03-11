@@ -57,7 +57,7 @@
             textAlign="Left"
           />
           <e-column
-            field="idiomaAud"
+            :template="idiomas_template"
             headerText="Idioma"
             width="105"
             textAlign="Left"
@@ -542,6 +542,32 @@ export default {
                   this.$parent.$parent.$parent.visible_management = true;
                 }
               },
+            },
+          }),
+        };
+      },
+      idiomas_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `
+            <div>
+                <span v-for="idioma in data.idiomas"
+                        :key="idioma"
+                        style="background-color:  rgb(115, 25, 84, 0.3); border-radius: 50px; padding-left: 3px; padding-right: 3px">
+                        {{ idioma }}
+                </span>
+            </div>`,
+            data: function (axios) {
+              return {
+                data: {
+                  idiomas: [],
+                },
+              };
+            },
+            created() {
+              if (this.data.idiomaAud !== null) {
+                this.data.idiomas = this.data.idiomaAud.split(" ");
+              } else this.data.idiomas = [];
             },
           }),
         };

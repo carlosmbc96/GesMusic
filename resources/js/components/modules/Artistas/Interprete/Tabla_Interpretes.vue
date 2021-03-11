@@ -33,7 +33,7 @@
             textAlign="Left"
           />
           <e-column
-            field="rolInterp"
+            :template="roles_template"
             headerText="Roles"
             width="190"
             textAlign="Left"
@@ -513,9 +513,14 @@ export default {
               edit_btn_click(args) {
                 this.$parent.$parent.$parent.row_selected = this.data;
                 this.$parent.$parent.$parent.row_selected.tabla = true;
-                if (this.$parent.$parent.$parent.entity_relation === "audiovisuales") {
+                if (
+                  this.$parent.$parent.$parent.entity_relation ===
+                  "audiovisuales"
+                ) {
                   this.$parent.$parent.$parent.row_selected.audiovisuales_interps = this.$parent.$parent.$parent.entity.id;
-                } else if (this.$parent.$parent.$parent.entity_relation === "tracks") {
+                } else if (
+                  this.$parent.$parent.$parent.entity_relation === "tracks"
+                ) {
                   this.$parent.$parent.$parent.row_selected.tracks_interps = this.$parent.$parent.$parent.entity.id;
                 }
                 if (this.data.deleted_at === null) {
@@ -523,6 +528,26 @@ export default {
                   this.$parent.$parent.$parent.visible_management = true;
                 }
               },
+            },
+          }),
+        };
+      },
+      roles_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `
+            <div>
+                <span v-for="rol in data.rolInterp"
+                        :key="rol"
+                        style="background-color:  rgb(115, 25, 84, 0.3); border-radius: 50px; padding-left: 3px; padding-right: 3px;
+                        margin-left: 5px">
+                        {{ rol }}
+                </span>
+            </div>`,
+            data: function (axios) {
+              return {
+                data: {},
+              };
             },
           }),
         };

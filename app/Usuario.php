@@ -26,7 +26,7 @@ class Usuario extends Model
     //SECCIÓN DE FILLABLE
 
     //SECCIÓN DE PROTECT TABLE
-    protected $table = "usuarios" ;
+    protected $table = "usuarios";
     //SECCIÓN DE PROTECT TABLE
 
     //SECCIÓN DE RELACIONES

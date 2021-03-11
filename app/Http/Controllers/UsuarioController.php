@@ -13,9 +13,9 @@ class UsuarioController extends Controller
 		$valorbuscado = $request->valorbuscado;
 		$atributo = $request->atributo;
 		if (($atributo) && ($valorbuscado)) {
-			$usuarios = Usuario::BusqSelect($atributo, $valorbuscado)->paginate(5);
+			$usuarios = Usuario::withTrashed()->BusqSelect($atributo, $valorbuscado)->get();
 		} else if ($valorbuscado) {
-			$usuarios = Usuario::BusqGeneral($valorbuscado)->paginate(5);
+			$usuarios = Usuario::withTrashed()->BusqGeneral($valorbuscado)->get();
 		} else {
 			$usuarios = Usuario::withTrashed()->get();
 		}
@@ -27,10 +27,10 @@ class UsuarioController extends Controller
 				$length = count($usuarios);
 				for ($i; $i < $length; $i++) {
 					$usuarios[$i]->trazas;
-					$usuarios[$i]->empleados;
+					$usuarios[$i]->empleado;
 				}
 			} else {
-				$i = 0;;
+				$i = 0;
 				$lengthUsuarios = count($usuarios);
 				$lengthRelaciones = count($relaciones);
 				for ($i; $i < $lengthUsuarios; $i++) {

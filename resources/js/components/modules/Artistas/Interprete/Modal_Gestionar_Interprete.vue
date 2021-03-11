@@ -581,7 +581,7 @@ export default {
             this.waiting = false;
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha modificado el interprete correctamente",
+              "Se ha modificado el Intérprete correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );
@@ -633,7 +633,7 @@ export default {
             this.waiting = false;
             this.$emit("actualizar");
             this.$toast.success(
-              "Se ha creado el interprete correctamente",
+              "Se ha creado el Intérprete correctamente",
               "¡Éxito!",
               { timeout: 2000 }
             );

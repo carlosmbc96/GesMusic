@@ -154,8 +154,8 @@
                   textAlign="Left"
                 />
                 <e-column
-                  field="idiomaAud"
-                  headerText="Idioma"
+                  :template="idiomas_template"
+                  headerText="Idiomas"
                   width="110"
                   textAlign="Left"
                 />
@@ -419,10 +419,7 @@ export default {
             methods: {
               confirm_change_status() {
                 let count = this.data.productos.length;
-                let single_content =
-                  count === 1
-                    ? "Producto."
-                    : "Productos.";
+                let single_content = count === 1 ? "Producto." : "Productos.";
                 let content;
                 if (count !== 0) {
                   content = `Esta acción de eliminación lógica es revercible,<br> este Audiovisual se inactivará y está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
@@ -431,96 +428,89 @@ export default {
                 }
                 let error = false;
                 if (this.checked) {
-                  this.$toast.question(
-                    content,
-                    "Confirmación",
-                    {
-                      timeout: 10000,
-                      close: false,
-                      overlay: true,
-                      displayMode: "once",
-                      color: "#AB7598",
-                      id: "question",
-                      zindex: 999,
-                      title: "Hey",
-                      position: "center",
-                      buttons: [
-                        [
-                          "<button>Si</button>",
-                          (instance, toast) => {
-                            this.$toast.question(
-                              "¿Desea inactivar el Audiovisual?",
-                              "Confirmación",
-                              {
-                                timeout: 5000,
-                                close: false,
-                                color: "#8F4776",
-                                overlay: true,
-                                displayMode: "once",
-                                zindex: 9999,
-                                title: "Hey",
-                                position: "center",
-                                buttons: [
-                                  [
-                                    "<button>Si</button>",
-                                    (instance, toast) => {
-                                      this.loading = true;
-                                      axios
-                                        .delete(
-                                          "audiovisuales/desactivar/" +
-                                            this.data.id
-                                        )
-                                        .catch((errors) => {
-                                          error = true;
-                                        })
-                                        .finally(() => {
-                                          this.finally_method(
-                                            "inactivó",
-                                            error
-                                          );
-                                        });
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                    true,
-                                  ],
-                                  [
-                                    "<button>No</button>",
-                                    function (instance, toast) {
-                                      instance.hide(
-                                        { transitionOut: "fadeOut" },
-                                        toast,
-                                        "button"
-                                      );
-                                    },
-                                  ],
+                  this.$toast.question(content, "Confirmación", {
+                    timeout: 10000,
+                    close: false,
+                    overlay: true,
+                    displayMode: "once",
+                    color: "#AB7598",
+                    id: "question",
+                    zindex: 999,
+                    title: "Hey",
+                    position: "center",
+                    buttons: [
+                      [
+                        "<button>Si</button>",
+                        (instance, toast) => {
+                          this.$toast.question(
+                            "¿Desea inactivar el Audiovisual?",
+                            "Confirmación",
+                            {
+                              timeout: 5000,
+                              close: false,
+                              color: "#8F4776",
+                              overlay: true,
+                              displayMode: "once",
+                              zindex: 9999,
+                              title: "Hey",
+                              position: "center",
+                              buttons: [
+                                [
+                                  "<button>Si</button>",
+                                  (instance, toast) => {
+                                    this.loading = true;
+                                    axios
+                                      .delete(
+                                        "audiovisuales/desactivar/" +
+                                          this.data.id
+                                      )
+                                      .catch((errors) => {
+                                        error = true;
+                                      })
+                                      .finally(() => {
+                                        this.finally_method("inactivó", error);
+                                      });
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                  true,
                                 ],
-                              }
-                            );
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                          true,
-                        ],
-                        [
-                          "<button>No</button>",
-                          function (instance, toast) {
-                            instance.hide(
-                              { transitionOut: "fadeOut" },
-                              toast,
-                              "button"
-                            );
-                          },
-                        ],
+                                [
+                                  "<button>No</button>",
+                                  function (instance, toast) {
+                                    instance.hide(
+                                      { transitionOut: "fadeOut" },
+                                      toast,
+                                      "button"
+                                    );
+                                  },
+                                ],
+                              ],
+                            }
+                          );
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                        true,
                       ],
-                    }
-                  );
+                      [
+                        "<button>No</button>",
+                        function (instance, toast) {
+                          instance.hide(
+                            { transitionOut: "fadeOut" },
+                            toast,
+                            "button"
+                          );
+                        },
+                      ],
+                    ],
+                  });
                 } else {
                   this.$toast.question(
                     "Esta acción ativará el Audiovisual",
@@ -687,116 +677,135 @@ export default {
                */
               del_physical_btn_click(args) {
                 let count = this.data.productos.length;
-                let single_content =
-                  count === 1
-                    ? "Producto."
-                    : "Productos.";
+                let single_content = count === 1 ? "Producto." : "Productos.";
                 let content;
                 if (count !== 0) {
                   content = `Esta acción de eliminación es irrevercible,<br> este Audiovisual está asociado a <strong style="color: black; font-size: inherit">${count}</strong> ${single_content}`;
                 } else {
                   content = `Esta acción de eliminación es irrevercible,<br> este Audiovisual no está asociado a ningún Producto.`;
                 }
-                this.$toast.question(
-                  content,
-                  "Confirmación",
-                  {
-                    timeout: 5000,
-                    close: false,
-                    overlay: true,
-                    displayMode: "once",
-                    color: "#F8A6A2",
-                    zindex: 999,
-                    id: "question",
-                    title: "Hey",
-                    position: "center",
-                    buttons: [
-                      [
-                        "<button>Si</button>",
-                        (instance, toast) => {
-                          this.$toast.question(
-                            "¿Desea eliminar el Audiovisual?",
-                            "Confirmación",
-                            {
-                              timeout: 5000,
-                              close: false,
-                              color: "#F58983",
-                              overlay: true,
-                              displayMode: "once",
-                              zindex: 9999,
-                              title: "Hey",
-                              position: "center",
-                              buttons: [
-                                [
-                                  "<button>Si</button>",
-                                  (instance, toast) => {
-                                    this.$parent.$parent.$parent.change_spin();
-                                    axios
-                                      .delete(
-                                        `audiovisuales/eliminar/${this.data.id}`
-                                      )
-                                      .then((ress) => {
-                                        this.$parent.$parent.$parent.refresh_table();
-                                        this.$toast.success(
-                                          "El Audiovisual ha sido eliminado correctamente",
-                                          "¡Éxito!",
-                                          { timeout: 2000, color: "red" }
-                                        );
-                                        this.$parent.$parent.$parent.change_spin();
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
-                                        this.$toast.error(
-                                          "Ha ocurrido un error",
-                                          "¡Error!",
-                                          {
-                                            timeout: 2000,
-                                          }
-                                        );
-                                      });
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                  true,
-                                ],
-                                [
-                                  "<button>No</button>",
-                                  function (instance, toast) {
-                                    instance.hide(
-                                      { transitionOut: "fadeOut" },
-                                      toast,
-                                      "button"
-                                    );
-                                  },
-                                ],
+                this.$toast.question(content, "Confirmación", {
+                  timeout: 5000,
+                  close: false,
+                  overlay: true,
+                  displayMode: "once",
+                  color: "#F8A6A2",
+                  zindex: 999,
+                  id: "question",
+                  title: "Hey",
+                  position: "center",
+                  buttons: [
+                    [
+                      "<button>Si</button>",
+                      (instance, toast) => {
+                        this.$toast.question(
+                          "¿Desea eliminar el Audiovisual?",
+                          "Confirmación",
+                          {
+                            timeout: 5000,
+                            close: false,
+                            color: "#F58983",
+                            overlay: true,
+                            displayMode: "once",
+                            zindex: 9999,
+                            title: "Hey",
+                            position: "center",
+                            buttons: [
+                              [
+                                "<button>Si</button>",
+                                (instance, toast) => {
+                                  this.$parent.$parent.$parent.change_spin();
+                                  axios
+                                    .delete(
+                                      `audiovisuales/eliminar/${this.data.id}`
+                                    )
+                                    .then((ress) => {
+                                      this.$parent.$parent.$parent.refresh_table();
+                                      this.$toast.success(
+                                        "El Audiovisual ha sido eliminado correctamente",
+                                        "¡Éxito!",
+                                        { timeout: 2000, color: "red" }
+                                      );
+                                      this.$parent.$parent.$parent.change_spin();
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      this.$toast.error(
+                                        "Ha ocurrido un error",
+                                        "¡Error!",
+                                        {
+                                          timeout: 2000,
+                                        }
+                                      );
+                                    });
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                                true,
                               ],
-                            }
-                          );
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                        true,
-                      ],
-                      [
-                        "<button>No</button>",
-                        function (instance, toast) {
-                          instance.hide(
-                            { transitionOut: "fadeOut" },
-                            toast,
-                            "button"
-                          );
-                        },
-                      ],
+                              [
+                                "<button>No</button>",
+                                function (instance, toast) {
+                                  instance.hide(
+                                    { transitionOut: "fadeOut" },
+                                    toast,
+                                    "button"
+                                  );
+                                },
+                              ],
+                            ],
+                          }
+                        );
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                      true,
                     ],
-                  }
-                );
+                    [
+                      "<button>No</button>",
+                      function (instance, toast) {
+                        instance.hide(
+                          { transitionOut: "fadeOut" },
+                          toast,
+                          "button"
+                        );
+                      },
+                    ],
+                  ],
+                });
               },
+            },
+          }),
+        };
+      },
+      idiomas_template: () => {
+        return {
+          template: Vue.component("columnTemplate", {
+            template: `
+            <div>
+                <span v-for="idioma in data.idiomas"
+                        :key="idioma"
+                        style="background-color:  rgb(115, 25, 84, 0.3); border-radius: 50px; padding-left: 3px; padding-right: 3px">
+                        {{ idioma }}
+                </span>
+            </div>`,
+            data: function (axios) {
+              return {
+                data: {
+                  idiomas: [],
+                },
+              };
+            },
+            created() {
+              if (this.data.idiomaAud !== null) {
+                this.data.idiomas = this.data.idiomaAud.split(" ");
+              } else this.data.idiomas = [];
             },
           }),
         };

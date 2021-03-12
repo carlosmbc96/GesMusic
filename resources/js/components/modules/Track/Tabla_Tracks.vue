@@ -97,7 +97,7 @@
     <transfer_modal
       v-if="visible_transfer"
       @actualizar="refresh_table"
-      :entity_id="fonograma.id"
+      :entity_id="entity.id"
       @close_modal="visible_transfer = $event"
     ></transfer_modal>
   </div>

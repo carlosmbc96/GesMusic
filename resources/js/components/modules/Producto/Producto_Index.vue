@@ -138,7 +138,7 @@
                 />
                 <e-column
                   field="estadodigProd"
-                  headerText="Estado de Digitalización"
+                  headerText="Estado Digitalización"
                   width="145"
                   textAlign="Left"
                 />

@@ -32,6 +32,12 @@
             width="150"
             textAlign="Left"
           />
+           <e-column
+            field="clasficacionFong"
+            headerText="Clasificación"
+            width="150"
+            textAlign="Left"
+          />
           <e-column
             field="añoFong"
             headerText="Año"
@@ -39,9 +45,9 @@
             textAlign="Left"
           />
           <e-column
-            field="clasficacionFong"
-            headerText="Clasificación"
-            width="150"
+            field="duracionFong"
+            headerText="Duración"
+            width="110"
             textAlign="Left"
           />
           <e-column

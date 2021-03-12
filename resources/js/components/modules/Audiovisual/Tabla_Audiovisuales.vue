@@ -39,27 +39,27 @@
             textAlign="Left"
           />
           <e-column
+            field="generoAud"
+            headerText="Género Audiovisual"
+            width="130"
+            textAlign="Left"
+          />
+          <e-column
             field="añoFinAud"
             headerText="Año"
             width="85"
             textAlign="Left"
           />
           <e-column
-            field="clasifAud"
-            headerText="Clasificación"
-            width="130"
-            textAlign="Left"
-          />
-          <e-column
-            field="paisGrabAud"
-            headerText="País"
+            :template="idiomas_template"
+            headerText="Idioma"
             width="90"
             textAlign="Left"
           />
           <e-column
-            :template="idiomas_template"
-            headerText="Idioma"
-            width="105"
+            field="duracionAud"
+            headerText="Duración"
+            width="108"
             textAlign="Left"
           />
           <e-column
@@ -614,7 +614,9 @@ export default {
       this.change_spin();
       if (this.vista_editar) {
         axios
-          .post("/audiovisuales/listar", { relations: [this.entity_relation, "entrevistados", "realizadores"] })
+          .post("/audiovisuales/listar", {
+            relations: [this.entity_relation, "entrevistados", "realizadores"],
+          })
           .then((response) => {
             this.audiovisuals_list = [];
             let pertenece = false;

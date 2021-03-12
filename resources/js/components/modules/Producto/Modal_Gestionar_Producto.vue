@@ -85,7 +85,7 @@
                 </a-row>
                 <a-col span="12">
                   <a-form-model-item
-                    label="Código"
+                    label="Código:"
                     prop="proyecto_id"
                     has-feedback
                   >
@@ -201,7 +201,7 @@
                         v-if="action_modal !== 'detalles'"
                         style="width: 55% !important; margin-top: -10px"
                         has-feedback
-                        label="Año"
+                        label="Año:"
                         prop="añoProd"
                       >
                         <a-select
@@ -224,7 +224,7 @@
                       <a-form-model-item
                         v-else
                         style="width: 55% !important; margin-top: -25px"
-                        label="Año"
+                        label="Año:"
                       >
                         <a-mentions readonly :placeholder="product.añoProd">
                         </a-mentions>
@@ -238,7 +238,7 @@
                           v-model="producPrincProd"
                           :value="producPrincProd"
                         >
-                          ¿Producto principal del proyecto?
+                          ¿Producto Principal del Proyecto?
                         </a-checkbox>
                       </a-form-model-item>
                       <a-form-model-item style="margin-top: 20px" v-else>
@@ -247,7 +247,7 @@
                           v-if="product.producPrincProd === 1"
                         />
                         <i class="fa fa-square-o" v-else />
-                        ¿Producto principal del proyecto?
+                        ¿Producto Principal del Proyecto?
                       </a-form-model-item>
                     </a-col>
                     <a-col span="11" style="float: right">
@@ -257,7 +257,7 @@
                         :help="show_used_error"
                         prop="codigProd"
                         has-feedback
-                        label="Código"
+                        label="Código:"
                       >
                         <a-input
                           addon-before="PROD-"
@@ -268,7 +268,7 @@
                       </a-form-model-item>
                       <a-form-model-item
                         v-if="action_modal === 'editar'"
-                        label="Código"
+                        label="Código:"
                       >
                         <a-input
                           addon-before="PROD-"
@@ -277,7 +277,7 @@
                         />
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Código"
+                        label="Código:"
                         v-if="action_modal === 'detalles'"
                       >
                         <a-mentions readonly :placeholder="product.codigProd">
@@ -287,21 +287,21 @@
                         v-if="action_modal !== 'detalles'"
                         prop="tituloProd"
                         has-feedback
-                        label="Título"
+                        label="Título:"
                       >
                         <a-input
                           :disabled="disabled"
                           v-model="product_modal.tituloProd"
                         />
                       </a-form-model-item>
-                      <a-form-model-item label="Título" v-else>
+                      <a-form-model-item label="Título:" v-else>
                         <a-mentions readonly :placeholder="product.tituloProd">
                         </a-mentions>
                       </a-form-model-item>
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Género musical"
+                        label="Género Musical:"
                         prop="genMusicPro"
                       >
                         <a-select
@@ -321,7 +321,7 @@
                           </a-select-option>
                         </a-select>
                       </a-form-model-item>
-                      <a-form-model-item label="Género musical" v-else>
+                      <a-form-model-item label="Género Musical:" v-else>
                         <a-mentions readonly :placeholder="product.genMusicPro">
                         </a-mentions>
                       </a-form-model-item>
@@ -335,7 +335,7 @@
                       <a-row>
                         <a-form-model-item
                           has-feedback
-                          label="Descripción en español del Producto"
+                          label="Descripción en Español del Producto"
                           prop="descripEspPro"
                         >
                           <a-input
@@ -367,7 +367,7 @@
                       <a-col span="12">
                         <a-form-model-item
                           has-feedback
-                          label="Estado de Digitalización"
+                          label="Estado de Digitalización:"
                           prop="estadodigProd"
                         >
                           <a-select
@@ -401,14 +401,14 @@
                         v-if="action_modal !== 'detalles'"
                         prop="codigBarProd"
                         has-feedback
-                        label="Código de barra"
+                        label="Código de Barra:"
                       >
                         <a-input
                           :disabled="disabled"
                           v-model="product_modal.codigBarProd"
                         />
                       </a-form-model-item>
-                      <a-form-model-item label="Código de barra" v-else>
+                      <a-form-model-item label="Código de Barra:" v-else>
                         <a-mentions
                           readonly
                           :placeholder="product.codigBarProd"
@@ -418,7 +418,7 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Estatus comercial"
+                        label="Estatus Comercial:"
                         prop="statusComProd"
                       >
                         <a-select
@@ -438,7 +438,7 @@
                           </a-select-option>
                         </a-select>
                       </a-form-model-item>
-                      <a-form-model-item label="Estatus comercial" v-else>
+                      <a-form-model-item label="Estatus Comercial:" v-else>
                         <a-mentions
                           readonly
                           :placeholder="product.statusComProd"
@@ -485,7 +485,7 @@
                     </a-col>
                     <a-col span="11" style="float: right">
                       <a-form-model-item
-                        label="Destinos comerciales"
+                        label="Destinos Comerciales:"
                         v-if="action_modal !== 'detalles'"
                       >
                         <a-select
@@ -503,7 +503,7 @@
                           </a-select-option>
                         </a-select>
                       </a-form-model-item>
-                      <a-form-model-item label="Destinos comerciales" v-else>
+                      <a-form-model-item label="Destinos Comerciales:" v-else>
                         <a-mentions
                           readonly
                           :placeholder="product_modal.destinosComerPro"
@@ -513,7 +513,7 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Sello discográfico"
+                        label="Sello Discográfico:"
                         prop="sellodiscProd"
                       >
                         <a-select
@@ -533,7 +533,7 @@
                           </a-select-option>
                         </a-select>
                       </a-form-model-item>
-                      <a-form-model-item label="Sello discográfico" v-else>
+                      <a-form-model-item label="Sello Discográfico:" v-else>
                         <a-mentions
                           readonly
                           :placeholder="product.sellodiscProd"
@@ -549,7 +549,7 @@
                           v-model="catalDigitalPro"
                           :value="catalDigitalPro"
                         >
-                          ¿Estará en el catálogo digital?
+                          ¿Estará en el Catálogo Digital?
                         </a-checkbox>
                       </a-form-model-item>
                       <a-form-model-item style="margin-top: 20px" v-else>
@@ -585,11 +585,12 @@
                         :key="interprete.key"
                         v-bind="index === 0 ? formItemLayout : {}"
                         class="list-item"
+                        style="margin-bottom: 0px !important"
                       >
                         <a-row>
                           <a-col span="24">
                             <div class="ant-form-item-label">
-                              <label>Intérprete</label>
+                              <label>Intérprete:</label>
                             </div>
                             <a-select
                               :getPopupContainer="
@@ -652,6 +653,7 @@
                         :key="autor.key"
                         v-bind="index === 0 ? formItemLayout : {}"
                         class="list-item"
+                        style="margin-bottom: 0px !important"
                       >
                         <div class="ant-form-item-label">
                           <label id="autor" class="ant-form-item">Autor</label>
@@ -717,7 +719,7 @@
                         <a-form-model-item
                           v-if="action_modal !== 'detalles'"
                           has-feedback
-                          label="Descripción en español del Producto"
+                          label="Descripción en Español del Producto:"
                           prop="descripEspPro"
                         >
                           <a-input
@@ -728,7 +730,7 @@
                           />
                         </a-form-model-item>
                         <a-form-model-item
-                          label="Descripción en español del Producto"
+                          label="Descripción en Español del Producto:"
                           v-else
                         >
                           <div class="description">
@@ -746,7 +748,7 @@
                         <a-form-model-item
                           v-if="action_modal !== 'detalles'"
                           has-feedback
-                          label="Descripción en inglés del Producto"
+                          label="Descripción en Inglés del Producto:"
                           prop="descripIngPro"
                         >
                           <a-input
@@ -757,7 +759,7 @@
                           />
                         </a-form-model-item>
                         <a-form-model-item
-                          label="Descripción en inglés del Producto"
+                          label="Descripción en Inglés del Producto:"
                           v-else
                         >
                           <div id="ing">
@@ -798,7 +800,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Estado de Digitalización"
+                      label="Estado de Digitalización:"
                       prop="estadodigProd"
                     >
                       <a-select
@@ -818,7 +820,7 @@
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
-                    <a-form-model-item label="Estado de Digitalización" v-else>
+                    <a-form-model-item label="Estado de Digitalización:" v-else>
                       <a-mentions readonly :placeholder="product.estadodigProd">
                       </a-mentions>
                     </a-form-model-item>
@@ -1437,7 +1439,7 @@ export default {
       this.product_modal.autoresProd = [];
       this.product_modal.interpretesProd = [];
       this.file_list.push({
-        uid:  1,
+        uid: 1,
         name: "Logo ver vertical_Ltr Negras.png",
         url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
       });
@@ -2315,6 +2317,14 @@ export default {
 </script>
 
 <style>
+/* #modal_gestionar_productos .list-item,
+.ant-row,
+.ant-form-item {
+  margin-bottom: 0px !important;
+} */
+#modal_gestionar_productos .ant-form-item-label {
+  margin-bottom: -10px !important;
+}
 #modal_gestionar_productos .ant-col-6 {
   width: 50% !important;
 }

@@ -1115,6 +1115,7 @@ export default {
                 this.$store.state["created_tracks"] = [];
               })
               .catch((error) => {
+                console.log(error);
                 this.$toast.error("Ha ocurrido un error", "¡Error!", {
                   timeout: 2000,
                 });
@@ -1131,6 +1132,7 @@ export default {
             );
           })
           .catch((error) => {
+            console.log(error);
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;
@@ -1359,6 +1361,8 @@ export default {
             });
         }
       } else {
+        const date = new Date();
+        this.fonogram.añoFong = date.getFullYear();
         this.fonogram_modal = { ...this.fonogram };
         this.file_list.push({
           uid: -1,
@@ -1588,9 +1592,10 @@ export default {
     getTracksID() {
       let answer = [];
       let all_tracks = this.$store.getters.getTracksFormGetters;
-      console.log(this.fonogram_modal);
-      for (let index = 0; index < all_tracks.length; index++) {
-        answer.push([all_tracks[index].id, index + 1]);
+      if (all_tracks !== undefined) {
+        for (let index = 0; index < all_tracks.length; index++) {
+          answer.push([all_tracks[index].id, index + 1]);
+        }
       }
       return answer;
     },
@@ -1605,7 +1610,6 @@ export default {
     },
 
     order_down(id) {
-      console.log(this.$store.getters.getAllTracksStaticsFormGetters);
       let temp = this.$store.getters.getTracksFormGetters[id];
       this.$store.state["tracks"][
         id

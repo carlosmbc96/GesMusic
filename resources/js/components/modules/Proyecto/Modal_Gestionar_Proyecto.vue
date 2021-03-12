@@ -127,7 +127,7 @@
                       style="margin-right: 28% !important"
                       prop="añoProy"
                       has-feedback
-                      label="Año del proyecto"
+                      label="Año del Proyecto"
                     >
                       <a-select
                         :getPopupContainer="(trigger) => trigger.parentNode"
@@ -146,7 +146,7 @@
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
-                    <a-form-model-item label="Año del proyecto" v-else>
+                    <a-form-model-item label="Año del Proyecto" v-else>
                       <a-mentions readonly :placeholder="project_modal.añoProy">
                       </a-mentions>
                     </a-form-model-item>
@@ -214,18 +214,18 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Descripción en español del Proyecto"
+                      label="Descripción en Español del Proyecto"
                       prop="descripEsp"
                     >
                       <a-input
-                        style="width: 100%; height: 150px"
+                        style="width: 100%; height: 150px; margin-top: 4px;"
                         :disabled="disabled"
                         v-model="project_modal.descripEsp"
                         type="textarea"
                       />
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Descripción en Español del proyecto"
+                      label="Descripción en Español del Proyecto"
                       v-else
                     >
                       <div class="description">
@@ -241,18 +241,18 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Descripción en inglés del Proyecto"
+                      label="Descripción en Inglés del Proyecto"
                       prop="descripIng"
                     >
                       <a-input
-                        style="width: 100%; height: 150px"
+                        style="width: 100%; height: 150px; margin-top: 4px;"
                         :disabled="disabled"
                         v-model="project_modal.descripIng"
                         type="textarea"
                       />
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Descripción en Inglés del proyecto"
+                      label="Descripción en Inglés del Proyecto"
                       v-else
                     >
                       <div class="description">
@@ -286,7 +286,7 @@
           <span slot="tab"> Productos </span>
           <a-col span="12">
             <div class="section-title">
-              <h4>Productos del proyecto</h4>
+              <h4>Productos del Proyecto</h4>
             </div>
           </a-col>
           <br /><br />
@@ -698,9 +698,6 @@ export default {
      *Método que asigna el texto del botón y llena o no la varable project_modal en dependencia de la acción recivida por props
      */
     set_action() {
-      /* if (this.action_modal === "detalles") {
-        this.active_tab = "2";
-      } */
       if (this.action_modal === "editar") {
         if (this.project.deleted_at !== null) {
           this.disabled = true;
@@ -742,11 +739,7 @@ export default {
           this.disabled = true;
           this.activated = false;
         }
-        this.text_header_button = "Editar";
-        this.text_button = "Editar";
-        this.action_cancel_title = "¿Desea cancelar la edición del Proyecto?";
-        this.action_title = "¿Desea guardar los cambios en el Proyecto?";
-        this.action_close = "La edición del Proyecto se canceló correctamente";
+        this.text_header_button = "Detalles";
         this.project.descripEsp =
           this.project.descripEsp === null ? "" : this.project.descripEsp;
         this.project.descripIng =

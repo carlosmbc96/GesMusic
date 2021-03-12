@@ -120,7 +120,7 @@
                 <e-column
                   field="codigProy"
                   headerText="Código"
-                  width="110"
+                  width="60"
                   textAlign="Left"
                 />
                 <e-column
@@ -132,7 +132,7 @@
                 <e-column
                   field="añoProy"
                   headerText="Año"
-                  width="90"
+                  width="45"
                   textAlign="Left"
                 />
                 <e-column

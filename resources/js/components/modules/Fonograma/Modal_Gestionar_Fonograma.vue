@@ -1,544 +1,547 @@
 <template>
-	<div>
-		<a-modal
-			:closable="false"
-			width="80.4%"
-			:visible="show"
-			id="modal_gestionar_fonogramas"
-		>
-			<template slot="footer">
-				<a-button
-					v-if="action_modal === 'detalles'"
-					key="back"
-					type="primary"
-					@click="handle_cancel('cancelar')"
-				>
-					Aceptar</a-button
-				>
-				<a-popconfirm
-					v-if="action_modal !== 'detalles'"
-					:getPopupContainer="trigger => trigger.parentNode"
-					placement="left"
-					@confirm="handle_cancel('cancelar')"
-					ok-text="Si"
-					cancel-text="No"
-					:title="action_cancel_title"
-				>
-					<a-icon
-						slot="icon"
-						type="exclamation-circle"
-						theme="filled"
-						style="color: #f0b727"
-					/>
-					<a-button type="danger" key="back"> Cancelar </a-button>
-				</a-popconfirm>
-				<a-popconfirm
-					v-if="action_modal !== 'detalles'"
-					:getPopupContainer="trigger => trigger.parentNode"
-					placement="topRight"
-					@confirm="validate()"
-					ok-text="Si"
-					cancel-text="No"
-					:title="action_title"
-				>
-					<a-icon
-						slot="icon"
-						theme="filled"
-						type="check-circle"
-						style="color: #4cc4b1"
-					/>
-					<a-button
-						:disabled="disabled"
-						:loading="waiting"
-						v-if="active"
-						type="primary"
-					>
-						{{ text_button }}
-					</a-button>
-				</a-popconfirm>
-			</template>
-			<!-- Tabs -->
-			<a-tabs :activeKey="active_tab">
-				<div slot="tabBarExtraContent">{{ text_header_button }} Fonograma</div>
-				<!-- Tab 1 -->
-				<a-tab-pane
-					key="1"
-					v-if="tab_visibility && action_modal !== 'detalles'"
-					:disabled="tab_1"
-				>
-					<span slot="tab"> Producto </span>
-					<div>
-						<a-spin :spinning="spinning">
-							<a-form-model
-								ref="formularioProducto"
-								:model="fonogram_modal"
-								:rules="rules"
-							>
-								<a-row>
-									<a-col span="12">
-										<div class="section-title">
-											<h4>Selector de Productos</h4>
-										</div>
-									</a-col>
-								</a-row>
-								<a-col span="12">
-									<a-form-model-item label="Código" has-feedback>
-										<a-select
-											mode="multiple"
-											v-model="fonogram_modal.productos_fongs"
-											style="width: 50% !important"
-											:disabled="disabled"
-										>
-											<a-select-option
-												v-for="product in products"
-												:key="product.codigProd"
-												:value="product.id"
-											>
-												{{ product.codigProd }}
-											</a-select-option>
-										</a-select>
-									</a-form-model-item>
-									<a-form-model-item label="Nombre">
-										<a-select
-											mode="multiple"
-											v-model="fonogram_modal.productos_fongs"
-											:disabled="disabled"
-										>
-											<a-select-option
-												v-for="product in products"
-												:key="product.id"
-												:value="product.id"
-											>
-												{{ product.tituloProd }}
-											</a-select-option>
-										</a-select>
-									</a-form-model-item>
-								</a-col>
-								<a-col span="24">
-									<a-button
-										:disabled="disabled"
-										style="float: right"
-										type="default"
-										@click="siguiente('tab_1', '2')"
-									>
-										Siguiente
-										<a-icon type="right" />
-									</a-button>
-								</a-col>
-							</a-form-model>
-						</a-spin>
-					</div>
-				</a-tab-pane>
-				<!-- Tab 2 -->
-				<a-tab-pane key="2" :disabled="tab_2">
-					<span slot="tab"> Generales </span>
-					<!-- Datos Generales -->
-					<a-spin :spinning="spinning">
-						<a-form-model
-							layout="vertical"
-							ref="formularioGenerales"
-							:model="fonogram_modal"
-							:rules="rules"
-						>
-							<a-row>
-								<a-col span="11">
-									<div class="section-title">
-										<h4>Datos Generales</h4>
-									</div>
-									<a-row>
-										<a-col span="11">
-											<a-upload
-												v-if="action_modal !== 'detalles'"
-												:disabled="disabled"
-												:remove="remove_image"
-												@preview="handle_preview"
-												:file-list="file_list"
-												list-type="picture-card"
-												:before-upload="before_upload"
-												@change="handle_change"
-											>
-												<div v-if="file_list.length < 1">
-													<img v-if="preview_image" />
-													<div v-else>
-														<a-icon type="upload" />
-														<div class="ant-upload-text">
-															Cargar Identificador
-														</div>
-													</div>
-												</div>
-											</a-upload>
-											<div class="detalles-img" v-else>
-												<a-upload
-													v-if="action_modal === 'detalles'"
-													@preview="handle_preview"
-													:file-list="file_list"
-													list-type="picture-card"
-												>
-													<div v-if="file_list.length < 1">
-														<img />
-													</div>
-												</a-upload>
-											</div>
-											<br />
-											<a-modal
-												:visible="preview_visible"
-												:footer="null"
-												@cancel="preview_cancel"
-											>
-												<img style="width: 100%" :src="preview_image" />
-											</a-modal>
-										</a-col>
-										<a-col span="11" style="float: right">
-											<a-form-model-item
-												label="Código"
-												v-if="action_modal === 'detalles'"
-											>
-												<a-mentions
-													readonly
-													:placeholder="fonogram_modal.codigFong"
-												>
-												</a-mentions>
-											</a-form-model-item>
-											<a-form-model-item
-												v-if="action_modal === 'crear'"
-												:validate-status="show_error"
-												:help="show_used_error"
-												prop="codigFong"
-												has-feedback
-												label="Código"
-											>
-												<a-input
-													addon-before="FONG-"
-													:default-value="codigo"
-													:disabled="action_modal === 'editar'"
-													v-model="fonogram_modal.codigFong"
-												/>
-											</a-form-model-item>
-											<a-form-model-item
-												v-if="action_modal === 'editar'"
-												label="Código"
-											>
-												<a-input
-													addon-before="Fong-"
-													:disabled="action_modal === 'editar'"
-													v-model="fonogram_modal.codigFong"
-												/>
-											</a-form-model-item>
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												prop="tituloFong"
-												has-feedback
-												label="Título"
-											>
-												<a-input
-													:disabled="disabled"
-													v-model="fonogram_modal.tituloFong"
-												/>
-											</a-form-model-item>
-											<a-form-model-item label="Título" v-else>
-												<a-mentions
-													readonly
-													:placeholder="fonogram_modal.tituloFong"
-												>
-												</a-mentions>
-											</a-form-model-item>
-										</a-col>
-									</a-row>
-									<a-row>
-										<a-col span="11">
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												has-feedback
-												label="Año de creación"
-												prop="añoFong"
-											>
-												<a-select
-													:getPopupContainer="trigger => trigger.parentNode"
-													option-filter-prop="children"
-													:filter-option="filter_option"
-													show-search
-													:disabled="disabled"
-													v-model="fonogram_modal.añoFong"
-												>
-													<a-select-option
-														v-for="nomenclator in anhos"
-														:key="nomenclator.id"
-														:value="nomenclator.nombreTer"
-													>
-														{{ nomenclator.nombreTer }}
-													</a-select-option>
-												</a-select>
-											</a-form-model-item>
-											<a-form-model-item label="Año de creación" v-else>
-												<a-mentions
-													readonly
-													:placeholder="fonogram_modal.añoFong"
-												>
-												</a-mentions>
-											</a-form-model-item>
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												has-feedback
-												label="Clasificación del Fonograma"
-												prop="clasficacionFong"
-											>
-												<a-select
-													:getPopupContainer="trigger => trigger.parentNode"
-													option-filter-prop="children"
-													:filter-option="filter_option"
-													show-search
-													:disabled="disabled"
-													v-model="fonogram_modal.clasficacionFong"
-												>
-													<a-select-option
-														v-for="nomenclator in clasficaciones"
-														:key="nomenclator.id"
-														:value="nomenclator.nombreTer"
-													>
-														{{ nomenclator.nombreTer }}
-													</a-select-option>
-												</a-select>
-											</a-form-model-item>
-											<a-form-model-item
-												label="Clasificación del Fonograma"
-												v-else
-											>
-												<a-mentions
-													readonly
-													:placeholder="fonogram_modal.clasficacionFong"
-												>
-												</a-mentions>
-											</a-form-model-item>
-										</a-col>
-										<a-col span="11" style="float: right">
-											<a-form-model-item
-												label="Duración total"
-												v-if="action_modal === 'crear'"
-											>
-												<a-mentions
-													readonly
-													:placeholder="$store.getters.getDurationFormGetters"
-												>
-												</a-mentions>
-											</a-form-model-item>
-											<a-form-model-item label="Duración total" v-else>
-												<a-mentions
-													readonly
-													:placeholder="$store.getters.getDurationFormGetters"
-												>
-												</a-mentions>
-											</a-form-model-item>
-										</a-col>
-									</a-row>
-								</a-col>
-								<a-col span="11" style="float: right">
-									<div class="section-title">
-										<h4>Datos del dueño de los derechos del Fonograma</h4>
-									</div>
-									<a-row style="margin-bottom: 30px">
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											prop="dueñoDerchFong"
-											has-feedback
-											label="Nombre completo"
-										>
-											<a-input
-												:disabled="disabled"
-												v-model="fonogram_modal.dueñoDerchFong"
-											/>
-										</a-form-model-item>
-										<a-form-model-item label="Nombre completo" v-else>
-											<a-mentions
-												readonly
-												:placeholder="fonogram_modal.dueñoDerchFong"
-											>
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											has-feedback
-											label="Nacionalidad"
-											prop="nacioDueñoDerchFong"
-										>
-											<a-select
-												:getPopupContainer="trigger => trigger.parentNode"
-												option-filter-prop="children"
-												:filter-option="filter_option"
-												show-search
-												:disabled="disabled"
-												v-model="fonogram_modal.nacioDueñoDerchFong"
-											>
-												<a-select-option
-													v-for="nomenclator in paises"
-													:key="nomenclator.id"
-													:value="nomenclator.nombreTer"
-												>
-													{{ nomenclator.nombreTer }}
-												</a-select-option>
-											</a-select>
-										</a-form-model-item>
-										<a-form-model-item label="Nacionalidad" v-else>
-											<a-mentions
-												readonly
-												:placeholder="fonogram_modal.nacioDueñoDerchFong"
-											>
-											</a-mentions>
-										</a-form-model-item>
-										<div class="section-title">
-											<h4>Datos Descripciones</h4>
-										</div>
-										<div id="desciption-problem-icon">
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												has-feedback
-												label="Descripción en español del Fonograma"
-												prop="descripEspFong"
-											>
-												<a-input
-													:disabled="disabled"
-													style="width: 100%; height: 150px"
-													v-model="fonogram_modal.descripEspFong"
-													type="textarea"
-												/>
-											</a-form-model-item>
-											<a-form-model-item
-												label="Descripción en español del Fonograma"
-												v-else
-											>
-												<div class="description">
-													<a-mentions
-														readonly
-														:placeholder="fonogram_modal.descripEspFong"
-													>
-													</a-mentions>
-												</div>
-											</a-form-model-item>
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												has-feedback
-												label="Descripción en inglés del Fonograma"
-												prop="descripIngFong"
-											>
-												<a-input
-													:disabled="disabled"
-													style="width: 100%; height: 150px"
-													v-model="fonogram_modal.descripIngFong"
-													type="textarea"
-												/>
-											</a-form-model-item>
-											<a-form-model-item
-												label="Descripción en inglés del Fonograma"
-												v-else
-											>
-												<div class="description">
-													<a-mentions
-														readonly
-														:placeholder="fonogram_modal.descripIngFong"
-													>
-													</a-mentions>
-												</div>
-											</a-form-model-item>
-										</div>
-									</a-row>
-								</a-col>
-							</a-row>
-							<a-button
-								style="float: right"
-								type="default"
-								@click="siguiente('tab_2', '3')"
-							>
-								Siguiente
-								<a-icon type="right" />
-							</a-button>
-							<a-button
-								v-if="tab_visibility && action_modal !== 'detalles'"
-								style="float: left"
-								type="default"
-								@click="atras('1')"
-							>
-								<a-icon type="left" />
-								Atrás
-							</a-button>
-						</a-form-model>
-					</a-spin>
-				</a-tab-pane>
-				<!-- Tab 3 -->
-				<a-tab-pane key="3" :disabled="tab_3">
-					<span slot="tab"> Repertorio </span>
-					<a-row>
-						<a-col span="12" v-if="action_modal !== 'crear'">
-							<div class="section-title">
-								<h4>Tracks del Fonograma</h4>
-							</div>
-						</a-col>
-					</a-row>
-					<tabla_tracks
-						v-if="action_modal !== 'crear'"
-						:detalles_prop="detalles"
-						@reload="reload_parent"
-						:entity="fonogram_modal"
-						entity_relation="fonogramas"
-						:vista_editar="vista_editar"
-						@close_modal="show = $event"
-					/>
-					<br />
-					<a-row v-if="action_modal === 'crear'">
-						<div id="tracks">
-							<a-col span="1"></a-col>
-							<a-col span="20">
-								<div class="section-title">
-									<h4>Tracks</h4>
-								</div>
-								<a-row>
-									<a-col span="2" style="margin-top: 0px !important">
-										<h5>Orden</h5>
-									</a-col>
-									<a-col span="1"></a-col>
-									<a-col span="7">
-										<h5>Título</h5>
-										<a-mentions
-											v-if="$store.getters.getTracksFormGetters.length === 0"
-											readonly
-										>
-										</a-mentions>
-									</a-col>
-									<a-col span="1"></a-col>
-									<a-col span="5">
-										<h5>Duración</h5>
-										<a-mentions
-											v-if="$store.getters.getTracksFormGetters.length === 0"
-											readonly
-										>
-										</a-mentions>
-									</a-col>
-									<a-col span="1"></a-col>
-									<a-col span="5">
-										<h5>Género</h5>
-										<a-mentions
-											v-if="$store.getters.getTracksFormGetters.length === 0"
-											readonly
-										>
-										</a-mentions>
-									</a-col>
-									<a-col span="1"></a-col>
-								</a-row>
-								<div>
-									<transition-group name="list">
-										<a-form-model-item
-											v-for="(track, index) in $store.getters
-												.getTracksFormGetters"
-											:key="track.id"
-											v-bind="index === 0 ? formItemLayout : {}"
-											class="list-item"
-										>
-											<a-row align="middle">
-												<a-col span="2">
-													<div style="margin-left: 14px">
-														<a v-if="index !== 0" @click="order_up(index)"
-															><a-icon
-																class="icon-up"
-																type="caret-up"
-																style="
+  <div>
+    <a-modal
+      :closable="false"
+      width="80.4%"
+      :visible="show"
+      id="modal_gestionar_fonogramas"
+    >
+      <template slot="footer">
+        <a-button
+          v-if="action_modal === 'detalles'"
+          key="back"
+          type="primary"
+          @click="handle_cancel('cancelar')"
+        >
+          Aceptar</a-button
+        >
+        <a-popconfirm
+          v-if="action_modal !== 'detalles'"
+          :getPopupContainer="(trigger) => trigger.parentNode"
+          placement="left"
+          @confirm="handle_cancel('cancelar')"
+          ok-text="Si"
+          cancel-text="No"
+          :title="action_cancel_title"
+        >
+          <a-icon
+            slot="icon"
+            type="exclamation-circle"
+            theme="filled"
+            style="color: #f0b727"
+          />
+          <a-button type="danger" key="back"> Cancelar </a-button>
+        </a-popconfirm>
+        <a-popconfirm
+          v-if="action_modal !== 'detalles'"
+          :getPopupContainer="(trigger) => trigger.parentNode"
+          placement="topRight"
+          @confirm="validate()"
+          ok-text="Si"
+          cancel-text="No"
+          :title="action_title"
+        >
+          <a-icon
+            slot="icon"
+            theme="filled"
+            type="check-circle"
+            style="color: #4cc4b1"
+          />
+          <a-button
+            :disabled="disabled"
+            :loading="waiting"
+            v-if="active"
+            type="primary"
+          >
+            {{ text_button }}
+          </a-button>
+        </a-popconfirm>
+      </template>
+      <!-- Tabs -->
+      <a-tabs :activeKey="active_tab">
+        <div slot="tabBarExtraContent">{{ text_header_button }} Fonograma</div>
+        <!-- Tab 1 -->
+        <a-tab-pane
+          key="1"
+          v-if="tab_visibility && action_modal !== 'detalles'"
+          :disabled="tab_1"
+        >
+          <span slot="tab"> Producto </span>
+          <div>
+            <a-spin :spinning="spinning">
+              <a-form-model
+                ref="formularioProducto"
+                :model="fonogram_modal"
+                :rules="rules"
+              >
+                <a-row>
+                  <a-col span="12">
+                    <div class="section-title">
+                      <h4>Selector de Productos</h4>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-col span="12">
+                  <a-form-model-item label="Código:" has-feedback>
+                    <a-select
+                      :showArrow="true"
+                      mode="multiple"
+                      v-model="fonogram_modal.productos_fongs"
+                      style="width: 50% !important"
+                      :disabled="disabled"
+                    >
+                      <a-select-option
+                        v-for="product in products"
+                        :key="product.codigProd"
+                        :value="product.id"
+                      >
+                        {{ product.codigProd }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                  <a-form-model-item label="Nombre:">
+                    <a-select
+                      :showArrow="true"
+                      mode="multiple"
+                      v-model="fonogram_modal.productos_fongs"
+                      :disabled="disabled"
+                    >
+                      <a-select-option
+                        v-for="product in products"
+                        :key="product.id"
+                        :value="product.id"
+                      >
+                        {{ product.tituloProd }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-col>
+                <a-col span="24">
+                  <a-button
+                    :disabled="disabled"
+                    style="float: right"
+                    type="default"
+                    @click="siguiente('tab_1', '2')"
+                  >
+                    Siguiente
+                    <a-icon type="right" />
+                  </a-button>
+                </a-col>
+              </a-form-model>
+            </a-spin>
+          </div>
+        </a-tab-pane>
+        <!-- Tab 2 -->
+        <a-tab-pane key="2" :disabled="tab_2">
+          <span slot="tab"> Generales </span>
+          <!-- Datos Generales -->
+          <a-spin :spinning="spinning">
+            <a-form-model
+              layout="vertical"
+              ref="formularioGenerales"
+              :model="fonogram_modal"
+              :rules="rules"
+            >
+              <a-row>
+                <a-col span="11">
+                  <div class="section-title">
+                    <h4>Datos Generales</h4>
+                  </div>
+                  <a-row>
+                    <a-col span="11">
+                      <a-upload
+                        v-if="action_modal !== 'detalles'"
+                        :disabled="disabled"
+                        :remove="remove_image"
+                        @preview="handle_preview"
+                        :file-list="file_list"
+                        list-type="picture-card"
+                        :before-upload="before_upload"
+                        @change="handle_change"
+                      >
+                        <div v-if="file_list.length < 1">
+                          <img v-if="preview_image" />
+                          <div v-else>
+                            <a-icon type="upload" />
+                            <div class="ant-upload-text">
+                              Cargar Identificador
+                            </div>
+                          </div>
+                        </div>
+                      </a-upload>
+                      <div class="detalles-img" v-else>
+                        <a-upload
+                          v-if="action_modal === 'detalles'"
+                          @preview="handle_preview"
+                          :file-list="file_list"
+                          list-type="picture-card"
+                        >
+                          <div v-if="file_list.length < 1">
+                            <img />
+                          </div>
+                        </a-upload>
+                      </div>
+                      <br />
+                      <a-modal
+                        :visible="preview_visible"
+                        :footer="null"
+                        @cancel="preview_cancel"
+                      >
+                        <img style="width: 100%" :src="preview_image" />
+                      </a-modal>
+                    </a-col>
+                    <a-col span="11" style="float: right">
+                      <a-form-model-item
+                        label="Código:"
+                        v-if="action_modal === 'detalles'"
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.codigFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal === 'crear'"
+                        :validate-status="show_error"
+                        :help="show_used_error"
+                        prop="codigFong"
+                        has-feedback
+                        label="Código:"
+                      >
+                        <a-input
+                          addon-before="FONG-"
+                          :default-value="codigo"
+                          :disabled="action_modal === 'editar'"
+                          v-model="fonogram_modal.codigFong"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal === 'editar'"
+                        label="Código:"
+                      >
+                        <a-input
+                          addon-before="Fong-"
+                          :disabled="action_modal === 'editar'"
+                          v-model="fonogram_modal.codigFong"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        prop="tituloFong"
+                        has-feedback
+                        label="Título:"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          v-model="fonogram_modal.tituloFong"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item label="Título:" v-else>
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.tituloFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                    </a-col>
+                  </a-row>
+                  <a-row>
+                    <a-col span="11">
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Año de Creación:"
+                        prop="añoFong"
+                      >
+                        <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          :disabled="disabled"
+                          v-model="fonogram_modal.añoFong"
+                        >
+                          <a-select-option
+                            v-for="nomenclator in anhos"
+                            :key="nomenclator.id"
+                            :value="nomenclator.nombreTer"
+                          >
+                            {{ nomenclator.nombreTer }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item label="Año de Creación:" v-else>
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.añoFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Clasificación del Fonograma:"
+                        prop="clasficacionFong"
+                      >
+                        <a-select
+                          :getPopupContainer="(trigger) => trigger.parentNode"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          :disabled="disabled"
+                          v-model="fonogram_modal.clasficacionFong"
+                        >
+                          <a-select-option
+                            v-for="nomenclator in clasficaciones"
+                            :key="nomenclator.id"
+                            :value="nomenclator.nombreTer"
+                          >
+                            {{ nomenclator.nombreTer }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Clasificación del Fonograma:"
+                        v-else
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="fonogram_modal.clasficacionFong"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                    </a-col>
+                    <a-col span="11" style="float: right">
+                      <a-form-model-item
+                        label="Duración Total:"
+                        v-if="action_modal === 'crear'"
+                      >
+                        <a-mentions
+                          readonly
+                          :placeholder="$store.getters.getDurationFormGetters"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item label="Duración Total:" v-else>
+                        <a-mentions
+                          readonly
+                          :placeholder="$store.getters.getDurationFormGetters"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                    </a-col>
+                  </a-row>
+                </a-col>
+                <a-col span="11" style="float: right">
+                  <div class="section-title">
+                    <h4>Datos del dueño de los derechos del Fonograma</h4>
+                  </div>
+                  <a-row style="margin-bottom: 30px">
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      prop="dueñoDerchFong"
+                      has-feedback
+                      label="Nombres y Apellidos:"
+                    >
+                      <a-input
+                        :disabled="disabled"
+                        v-model="fonogram_modal.dueñoDerchFong"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item label="Nombres y Apellidos:" v-else>
+                      <a-mentions
+                        readonly
+                        :placeholder="fonogram_modal.dueñoDerchFong"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Nacionalidad:"
+                      prop="nacioDueñoDerchFong"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        :disabled="disabled"
+                        v-model="fonogram_modal.nacioDueñoDerchFong"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in paises"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item label="Nacionalidad:" v-else>
+                      <a-mentions
+                        readonly
+                        :placeholder="fonogram_modal.nacioDueñoDerchFong"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <div class="section-title">
+                      <h4>Datos Descripciones</h4>
+                    </div>
+                    <div id="desciption-problem-icon">
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Descripción en Español del Fonograma:"
+                        prop="descripEspFong"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 150px"
+                          v-model="fonogram_modal.descripEspFong"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en Español del Fonograma:"
+                        v-else
+                      >
+                        <div class="description">
+                          <a-mentions
+                            readonly
+                            :placeholder="fonogram_modal.descripEspFong"
+                          >
+                          </a-mentions>
+                        </div>
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Descripción en Inglés del Fonograma:"
+                        prop="descripIngFong"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 150px"
+                          v-model="fonogram_modal.descripIngFong"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        label="Descripción en Inglés del Fonograma:"
+                        v-else
+                      >
+                        <div class="description">
+                          <a-mentions
+                            readonly
+                            :placeholder="fonogram_modal.descripIngFong"
+                          >
+                          </a-mentions>
+                        </div>
+                      </a-form-model-item>
+                    </div>
+                  </a-row>
+                </a-col>
+              </a-row>
+              <a-button
+                style="float: right"
+                type="default"
+                @click="siguiente('tab_2', '3')"
+              >
+                Siguiente
+                <a-icon type="right" />
+              </a-button>
+              <a-button
+                v-if="tab_visibility && action_modal !== 'detalles'"
+                style="float: left"
+                type="default"
+                @click="atras('1')"
+              >
+                <a-icon type="left" />
+                Atrás
+              </a-button>
+            </a-form-model>
+          </a-spin>
+        </a-tab-pane>
+        <!-- Tab 3 -->
+        <a-tab-pane key="3" :disabled="tab_3">
+          <span slot="tab"> Repertorio </span>
+          <a-row>
+            <a-col span="12" v-if="action_modal !== 'crear'">
+              <div class="section-title">
+                <h4>Listado de Tracks:</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <tabla_tracks
+            v-if="action_modal !== 'crear'"
+            :detalles_prop="detalles"
+            @reload="reload_parent"
+            :entity="fonogram_modal"
+            entity_relation="fonogramas"
+            :vista_editar="vista_editar"
+            @close_modal="show = $event"
+          />
+          <br />
+          <a-row v-if="action_modal === 'crear'">
+            <div id="tracks">
+              <a-col span="1"></a-col>
+              <a-col span="20">
+                <div class="section-title">
+                  <h4>Listado de Tracks:</h4>
+                </div>
+                <a-row>
+                  <a-col span="2" style="margin-top: 0px !important">
+                    <h5>Orden</h5>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="7">
+                    <h5>Título</h5>
+                    <a-mentions
+                      v-if="$store.getters.getTracksFormGetters.length === 0"
+                      readonly
+                    >
+                    </a-mentions>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="5">
+                    <h5>Duración</h5>
+                    <a-mentions
+                      v-if="$store.getters.getTracksFormGetters.length === 0"
+                      readonly
+                    >
+                    </a-mentions>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="5">
+                    <h5>Género</h5>
+                    <a-mentions
+                      v-if="$store.getters.getTracksFormGetters.length === 0"
+                      readonly
+                    >
+                    </a-mentions>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                </a-row>
+                <div>
+                  <transition-group name="list">
+                    <a-form-model-item
+                      v-for="(track, index) in $store.getters
+                        .getTracksFormGetters"
+                      :key="track.id"
+                      v-bind="index === 0 ? formItemLayout : {}"
+                      class="list-item"
+                      style="margin-bottom: 0px !important"
+                    >
+                      <a-row align="middle">
+                        <a-col span="2">
+                          <div style="margin-left: 14px">
+                            <a v-if="index !== 0" @click="order_up(index)"
+                              ><a-icon
+                                class="icon-up"
+                                type="caret-up"
+                                style="
                                   color: rgb(76, 196, 177, 0.5);
                                   display: flex;
                                   margin-bottom: -10px;
@@ -598,60 +601,60 @@
 									</transition-group>
 								</div>
 
-								<a-row style="margin-top: 40px">
-									<a-col span="12">
-										<div class="section-title">
-											<h4>Selector de Tracks</h4>
-										</div>
-										<a-form-model
-											ref="formularioAgregarTrack"
-											:layout="'horizontal'"
-											:model="fonogram_modal"
-										>
-											<a-form-model-item has-feedback>
-												<a-select
-													placeholder="ISRC"
-													option-filter-prop="children"
-													:filter-option="filter_option"
-													show-search
-													v-model="fonogram_modal.tracks"
-													:disabled="disabled"
-												>
-													<a-select-option
-														v-for="track in $store.getters
-															.getAllTracksFormGetters"
-														:key="track.isrcTrk"
-														:value="track.id"
-													>
-														{{ track.isrcTrk }}
-													</a-select-option>
-												</a-select>
-											</a-form-model-item>
-											<a-form-model-item>
-												<a-select
-													placeholder="Título"
-													option-filter-prop="children"
-													:filter-option="filter_option"
-													show-search
-													v-model="fonogram_modal.tracks"
-													:disabled="disabled"
-												>
-													<a-select-option
-														v-for="track in $store.getters
-															.getAllTracksFormGetters"
-														:key="track.tituloTrk"
-														:value="track.id"
-													>
-														{{ track.tituloTrk }}
-													</a-select-option>
-												</a-select>
-											</a-form-model-item>
-											<a-row>
-												<a-col span="12">
-													<a-form-model-item v-bind="formItemLayout">
-														<a-button
-															:disabled="disabled"
-															style="
+                <a-row style="margin-top: 40px">
+                  <a-col span="12">
+                    <div class="section-title">
+                      <h4>Selector de Tracks:</h4>
+                    </div>
+                    <a-form-model
+                      ref="formularioAgregarTrack"
+                      :layout="'horizontal'"
+                      :model="fonogram_modal"
+                    >
+                      <a-form-model-item style="margin-bottom: 0px !important">
+                        <a-select
+                          placeholder="ISRC"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          v-model="fonogram_modal.tracks"
+                          :disabled="disabled"
+                        >
+                          <a-select-option
+                            v-for="track in $store.getters
+                              .getAllTracksFormGetters"
+                            :key="track.isrcTrk"
+                            :value="track.id"
+                          >
+                            {{ track.isrcTrk }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-form-model-item style="margin-bottom: 0px !important">
+                        <a-select
+                          placeholder="Título:"
+                          option-filter-prop="children"
+                          :filter-option="filter_option"
+                          show-search
+                          v-model="fonogram_modal.tracks"
+                          :disabled="disabled"
+                        >
+                          <a-select-option
+                            v-for="track in $store.getters
+                              .getAllTracksFormGetters"
+                            :key="track.tituloTrk"
+                            :value="track.id"
+                          >
+                            {{ track.tituloTrk }}
+                          </a-select-option>
+                        </a-select>
+                      </a-form-model-item>
+                      <a-row>
+                        <a-col span="12">
+                          <a-form-model-item v-bind="formItemLayout">
+                            <a-button
+                              :disabled="disabled"
+                              style="
                                 color: white;
                                 background-color: rgb(45, 171, 229) !important;
                               "
@@ -673,76 +676,78 @@
                                 color: white;
                                 background-color: rgb(45, 171, 229) !important;
                               "
-															@click="new_track"
-														>
-															<a-icon type="plus" />
-															Crear Track
-														</a-button>
-													</a-form-model-item>
-												</a-col>
-											</a-row>
-										</a-form-model>
-									</a-col>
-									<a-col span="10" style="float: right">
-										<div class="section-title">
-											<h4>Duración total</h4>
-										</div>
-										<a-mentions
-											readonly
-											:placeholder="$store.getters.getDurationFormGetters"
-										>
-										</a-mentions>
-									</a-col>
-								</a-row>
-							</a-col>
-							<a-col span="1"></a-col>
-						</div>
-					</a-row>
-					<a-col span="24">
-						<a-button
-							v-if="active_tab !== '3'"
-							:disabled="disabled"
-							style="float: right"
-							type="default"
-							@click="siguiente('tab_3', '4')"
-						>
-							Siguiente
-							<a-icon type="right" />
-						</a-button>
-						<a-button
-							:disabled="disabled"
-							style="float: left"
-							type="default"
-							@click="atras('2')"
-						>
-							<a-icon type="left" />
-							Atrás
-						</a-button>
-					</a-col>
-				</a-tab-pane>
-				<!-- Tab 4 -->
-				<a-tab-pane key="4" :disabled="tab_4">
-					<span slot="tab"> Elementos </span>
-					<h4>Elementos</h4>
-					<a-button
-						:disabled="disabled"
-						style="float: left"
-						type="default"
-						@click="atras('3')"
-					>
-						<a-icon type="left" />
-						Atrás
-					</a-button>
-				</a-tab-pane>
-			</a-tabs>
-		</a-modal>
-		<modal_management
-			v-if="visible_management"
-			:action="action_management"
-			@close_modal="visible_management = $event"
-			:tracks_list="$store.getters.getAllTracksStaticsFormGetters"
-		/>
-	</div>
+                              @click="new_track"
+                            >
+                              <a-icon type="plus" />
+                              Crear Track
+                            </a-button>
+                          </a-form-model-item>
+                        </a-col>
+                      </a-row>
+                    </a-form-model>
+                  </a-col>
+                  <a-col span="10" style="float: right">
+                    <div class="section-title">
+                      <h4>Duración Total:</h4>
+                    </div>
+                    <a-mentions
+                    style="width: 26% !important"
+                      readonly
+                      :placeholder="$store.getters.getDurationFormGetters"
+                    >
+                    </a-mentions>
+                  </a-col>
+                </a-row>
+              </a-col>
+              <a-col span="1"></a-col>
+            </div>
+          </a-row>
+          <a-col span="24">
+            <a-button
+              v-if="active_tab !== '3'"
+              :disabled="disabled"
+              style="float: right"
+              type="default"
+              @click="siguiente('tab_3', '4')"
+            >
+              Siguiente
+              <a-icon type="right" />
+            </a-button>
+            <a-button
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('2')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-col>
+        </a-tab-pane>
+        <!-- Tab 4 -->
+        <a-tab-pane key="4" :disabled="tab_4">
+          <span slot="tab"> Elementos </span>
+          <h4>Elementos</h4>
+          <a-button
+            :disabled="disabled"
+            style="float: left"
+            type="default"
+            @click="atras('3')"
+          >
+            <a-icon type="left" />
+            Atrás
+          </a-button>
+        </a-tab-pane>
+      </a-tabs>
+    </a-modal>
+    <modal_management
+      v-if="visible_management"
+      :track="track"
+      :action="action_management"
+      @close_modal="visible_management = $event"
+      :tracks_list="$store.getters.getAllTracksStaticsFormGetters"
+    />
+  </div>
 </template>
 
 <script>
@@ -773,6 +778,7 @@ export default {
 			} else callback();
 		};
 		return {
+			track: {},
 			origin: true,
 			detalles: false,
 			vista_editar: true,
@@ -876,6 +882,13 @@ export default {
 						trigger: "change"
 					}
 				],
+				clasficacionFong: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+        ],
 				añoFong: [
 					{
 						required: true,
@@ -938,6 +951,7 @@ export default {
 				return (
 					this.fonogram_modal.tituloFong &&
 					this.fonogram_modal.añoFong &&
+					this.fonogram_modal.clasficacionFong &&
 					this.valid_image
 				);
 		},
@@ -980,7 +994,6 @@ export default {
 					}
 				});
 			} else if (tab === "tab_2") {
-				if (this.action_modal !== "detalles") {
 					this.$refs.formularioGenerales.validate(valid => {
 						if (valid) {
 							this.tab_3 = false;
@@ -996,7 +1009,7 @@ export default {
 							);
 						}
 					});
-				} else if (tab === "tab_3") {
+				if (tab === "tab_3") {
 					this.tab_4 = false;
 					this.tab_3 = true;
 					if (this.tabs_list.indexOf(tab) == -1) {
@@ -1334,6 +1347,7 @@ export default {
 				this.$store.state.duration = this.fonogram.duracionFong;
 				this.active_tab = "2";
 				this.detalles = true;
+				this.text_header_button = "Detalles";
 				this.action_cancel_title = "¿Desea cerrar la vista de detalles?";
 				this.action_title = "¿Desea guardar los cambios en el Fonograma?";
 				this.action_close = "La vista de detalles fue cerrada correctamente";
@@ -1522,9 +1536,10 @@ export default {
 			this.$store.state["all_tracks"].push(item);
 		},
 
-		new_track() {
-			this.visible_management = true;
-		},
+    new_track() {
+      this.visible_management = true;
+      this.track.table = false;
+    },
 
 		get_track(id) {
 			for (
@@ -1635,6 +1650,9 @@ export default {
 </script>
 
 <style>
+#modal_gestionar_fonogramas .ant-form-item-label {
+  margin-bottom: -10px !important;
+}
 #modal_gestionar_fonogramas .ant-col-6 {
 	width: 50% !important;
 }

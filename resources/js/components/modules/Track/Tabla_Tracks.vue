@@ -22,7 +22,7 @@
         <e-columns>
           <e-column
             headerText="Orden"
-            width="90"
+            width="75"
             :template="order"
             :visible="this.entity_relation === 'fonogramas'"
             textAlign="Center"
@@ -36,13 +36,13 @@
           <e-column
             field="tituloTrk"
             headerText="Título"
-            width="98"
+            width="120"
             textAlign="Left"
           />
           <e-column
             field="duracionTrk"
             headerText="Duración"
-            width="115"
+            width="90"
             textAlign="Left"
           />
           <e-column
@@ -52,29 +52,23 @@
             textAlign="Left"
           />
           <e-column
-            field="subgeneroTrk"
-            headerText="Subgénero"
-            width="123"
-            textAlign="Left"
-          />
-          <e-column
             :displayAsCheckBox="true"
             field="bonusTrk"
             headerText="Bonus"
-            width="100"
+            width="80"
             textAlign="Center"
             type="boolean"
           />
           <e-column
             headerText="Estado"
-            width="115"
+            width="80"
             :template="status"
             :visible="true"
             textAlign="Center"
           />
           <e-column
             headerText="Acciones"
-            width="120"
+            width="100"
             :template="actions_template"
             :visible="true"
             textAlign="Center"

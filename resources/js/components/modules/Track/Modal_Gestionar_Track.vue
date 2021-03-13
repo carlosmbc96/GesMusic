@@ -1,842 +1,844 @@
 <template>
-	<div>
-		<a-modal
-			:closable="false"
-			width="80.4%"
-			okText="Guardar"
-			cancelText="Cancelar"
-			cancelType="danger"
-			:visible="show"
-			id="modal_gestionar_tracks"
-		>
-			<template slot="footer">
-				<a-button
-					v-if="action_modal === 'detalles'"
-					key="back"
-					type="primary"
-					@click="handle_cancel('cancelar')"
-				>
-					Aceptar</a-button
-				>
-				<a-popconfirm
-					v-if="action_modal !== 'detalles'"
-					:getPopupContainer="trigger => trigger.parentNode"
-					placement="left"
-					@confirm="handle_cancel('cancelar')"
-					ok-text="Si"
-					cancel-text="No"
-					:title="action_cancel_title"
-				>
-					<a-icon
-						slot="icon"
-						type="exclamation-circle"
-						theme="filled"
-						style="color: #f0b727"
-					/>
-					<a-button type="danger" key="back"> Cancelar </a-button>
-				</a-popconfirm>
-				<a-popconfirm
-					v-if="action_modal !== 'detalles'"
-					:getPopupContainer="trigger => trigger.parentNode"
-					placement="topRight"
-					@confirm="validate()"
-					ok-text="Si"
-					cancel-text="No"
-					:title="action_title"
-				>
-					<a-icon
-						slot="icon"
-						theme="filled"
-						type="check-circle"
-						style="color: #4cc4b1"
-					/>
-					<a-button
-						:disabled="disabled"
-						:loading="waiting"
-						v-if="active"
-						type="primary"
-					>
-						{{ text_button }}
-					</a-button>
-				</a-popconfirm>
-			</template>
-			<!-- Aquí comienzan los tabs -->
-			<a-tabs :activeKey="active_tab">
-				<div slot="tabBarExtraContent">{{ text_header_button }} Track</div>
-				<a-tab-pane
-					key="1"
-					v-if="
-						action_modal !== 'detalles' &&
-							action_modal !== 'crear_track_tabla_component' &&
-							!track.tabla
-					"
-					:disabled="tab_1"
-				>
-					<span slot="tab"> Fonograma </span>
-					<a-spin :spinning="spinning">
-						<div>
-							<a-form-model
-								ref="formularioFonograma"
-								:model="track_modal"
-								:rules="rules"
-							>
-								<a-row>
-									<a-col span="12">
-										<div class="section-title">
-											<h4>Selector de Fonogramas</h4>
-										</div>
-									</a-col>
-								</a-row>
-								<a-col span="12">
-									<a-form-model-item
-										label="Código"
-										has-feedback
-										prop="fonogramas"
-									>
-										<a-select
-											mode="multiple"
-											v-model="track_modal.fonogramas_tracks"
-											style="width: 50% !important"
-											:disabled="disabled"
-										>
-											<a-select-option
-												v-for="fonogram in fonograms"
-												:key="fonogram.codigFong"
-												:value="fonogram.id"
-											>
-												{{ fonogram.codigFong }}
-											</a-select-option>
-										</a-select>
-									</a-form-model-item>
-									<a-form-model-item label="Título">
-										<a-select
-											mode="multiple"
-											v-model="track_modal.fonogramas_tracks"
-											:disabled="disabled"
-										>
-											<a-select-option
-												v-for="fonogram in fonograms"
-												:key="fonogram.id"
-												:value="fonogram.id"
-											>
-												{{ fonogram.tituloFong }}
-											</a-select-option>
-										</a-select>
-									</a-form-model-item>
-								</a-col>
-								<a-col span="24">
-									<a-button
-										:disabled="disabled"
-										style="float: right"
-										type="default"
-										@click="siguiente('tab_1', '2')"
-									>
-										Siguiente
-										<a-icon type="right" />
-									</a-button>
-								</a-col>
-							</a-form-model>
-						</div>
-					</a-spin>
-				</a-tab-pane>
-				<a-tab-pane key="2" :disabled="tab_2">
-					<span slot="tab">Generales</span>
-					<a-row>
-						<a-col span="11">
-							<div class="section-title">
-								<h4>Datos Generales</h4>
-							</div>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-spin :spinning="spinning">
-							<div>
-								<a-form-model
-									ref="formularioGenerales"
-									layout="horizontal"
-									:model="track_modal"
-									:rules="rules"
-								>
-									<a-col span="11">
-										<a-row
-											v-if="
-												action_modal === 'crear' ||
-													action_modal === 'crear_track' ||
-													action_modal === 'crear_track_tabla_component'
-											"
-											style="margin-top: 31px"
-										>
-											<a-col span="5" style="margin-top: 8px">
-												<label id="isrc">Código ISRC:</label>
-											</a-col>
-											<a-col span="19" style="float: right">
-												<a-row>
-													<a-col span="4">
-														<a-tooltip
-															placement="bottom"
-															title="Código de dos letras que representan el país Ej: CU (Cuba)"
-														>
-															<a-form-model-item
-																:validate-status="show_error"
-																prop="codigPais"
-																has-feedback
-																:help="show_used_error"
-																class="isrc"
-															>
-																<a-input
-																	default-value="CU"
-																	:disabled="action_modal === 'editar'"
-																	v-model="track_modal.codigPais"
-																	:class="isrc_validation"
-																/>
-															</a-form-model-item>
-														</a-tooltip>
-													</a-col>
-													<a-col
-														span="1"
-														style="margin-top: 8px; text-align: center"
-														>-</a-col
-													>
-													<a-col span="5">
-														<a-tooltip
-															placement="bottom"
-															title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
-														>
-															<a-form-model-item
-																:validate-status="show_error"
-																prop="codigRegistro"
-																has-feedback
-																class="isrc"
-															>
-																<a-input
-																	placeholder="XXX"
-																	:disabled="action_modal === 'editar'"
-																	v-model="track_modal.codigRegistro"
-																	:class="isrc_validation"
-																/>
-															</a-form-model-item>
-														</a-tooltip>
-													</a-col>
-													<a-col
-														span="1"
-														style="margin-top: 8px; text-align: center"
-														>-</a-col
-													>
-													<a-col span="4">
-														<a-tooltip
-															placement="bottom"
-															title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
-														>
-															<a-form-model-item
-																:validate-status="show_error"
-																prop="anhoRegistro"
-																has-feedback
-																class="isrc"
-															>
-																<a-input
-																	placeholder="00"
-																	:disabled="action_modal === 'editar'"
-																	v-model="track_modal.anhoRegistro"
-																	:class="isrc_validation"
-																/>
-															</a-form-model-item>
-														</a-tooltip>
-													</a-col>
-													<a-col
-														span="1"
-														style="margin-top: 8px; text-align: center"
-														>-</a-col
-													>
-													<a-col span="8" style="float: right">
-														<a-tooltip
-															placement="bottom"
-															title="Código identificador de cinco dígitos (valor 00000 no permitido) Ej: 00001"
-														>
-															<a-form-model-item
-																:validate-status="show_error"
-																prop="identificador"
-																has-feedback
-																class="isrc"
-															>
-																<a-input
-																	:default-value="codigo"
-																	:disabled="action_modal === 'editar'"
-																	v-model="track_modal.identificador"
-																	:class="isrc_validation"
-																/>
-															</a-form-model-item>
-														</a-tooltip>
-													</a-col>
-												</a-row>
-											</a-col>
-										</a-row>
-										<a-form-model-item
-											v-if="action_modal === 'editar'"
-											label="ISRC"
-										>
-											<a-input
-												:disabled="action_modal === 'editar'"
-												v-model="pretty_isrc"
-											/>
-										</a-form-model-item>
-										<a-form-model-item
-											label="ISRC"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions readonly :placeholder="pretty_isrc">
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											prop="tituloTrk"
-											has-feedback
-											label="Título"
-										>
-											<a-input
-												:disabled="disabled"
-												v-model="track_modal.tituloTrk"
-											/>
-										</a-form-model-item>
-										<a-form-model-item
-											label="Título"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions readonly :placeholder="track_modal.tituloTrk">
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											prop="duracionTrk"
-											has-feedback
-											label="Duración"
-										>
-											<a-time-picker
-												placeholder="hh:mm:ss"
-												:default-open-value="moment('00:00:00', 'HH:mm:ss')"
-												:disabled="disabled"
-												:valueFormat="'HH:mm:ss'"
-												v-model="track_modal.duracionTrk"
-											/>
-										</a-form-model-item>
-										<a-form-model-item
-											label="Duración"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions
-												readonly
-												:placeholder="track_modal.duracionTrk"
-											>
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											has-feedback
-											label="País de grabación"
-											prop="paisgrabTrk"
-										>
-											<a-select
-												:getPopupContainer="trigger => trigger.parentNode"
-												option-filter-prop="children"
-												:filter-option="filter_option"
-												show-search
-												:disabled="disabled"
-												v-model="track_modal.paisgrabTrk"
-											>
-												<a-select-option
-													v-for="nomenclator in paises"
-													:key="nomenclator.id"
-													:value="nomenclator.nombreTer"
-												>
-													{{ nomenclator.nombreTer }}
-												</a-select-option>
-											</a-select>
-										</a-form-model-item>
-										<a-form-model-item
-											label="País de grabación"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions
-												readonly
-												:placeholder="track_modal.paisgrabTrk"
-											>
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item v-if="action_modal !== 'detalles'">
-											<a-checkbox
-												:disabled="disabled"
-												v-model="muestraTrk"
-												:value="muestraTrk"
-											>
-												¿El Track tiene una pista de muestra?
-											</a-checkbox>
-										</a-form-model-item>
-										<a-form-model-item style="margin-top: 20px" v-else>
-											<i
-												class="fa fa-check-square-o hidden-xs"
-												v-if="track.muestraTrk === 1"
-											/>
-											<i class="fa fa-square-o" v-else />
-											¿El Track tiene una pista de muestra?
-										</a-form-model-item>
-									</a-col>
-									<a-col span="11" style="float: right">
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											has-feedback
-											label="Género musical"
-											prop="generoTrk"
-										>
-											<a-select
-												:getPopupContainer="trigger => trigger.parentNode"
-												option-filter-prop="children"
-												:filter-option="filter_option"
-												show-search
-												:disabled="disabled"
-												v-model="track_modal.generoTrk"
-											>
-												<a-select-option
-													v-for="nomenclator in generos"
-													:key="nomenclator.id"
-													:value="nomenclator.nombreTer"
-												>
-													{{ nomenclator.nombreTer }}
-												</a-select-option>
-											</a-select>
-										</a-form-model-item>
-										<a-form-model-item
-											label="Género musical"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions readonly :placeholder="track_modal.generoTrk">
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											has-feedback
-											label="Subgénero musical"
-											prop="subgeneroTrk"
-										>
-											<a-select
-												:getPopupContainer="trigger => trigger.parentNode"
-												option-filter-prop="children"
-												:filter-option="filter_option"
-												show-search
-												:disabled="disabled"
-												v-model="track_modal.subgeneroTrk"
-											>
-												<a-select-option
-													v-for="nomenclator in subgeneros"
-													:key="nomenclator.id"
-													:value="nomenclator.nombreTer"
-												>
-													{{ nomenclator.nombreTer }}
-												</a-select-option>
-											</a-select>
-										</a-form-model-item>
-										<a-form-model-item
-											label="Subgénero musical"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions
-												readonly
-												:placeholder="track_modal.subgeneroTrk"
-											>
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											has-feedback
-											label="Estados de ánimo del Track"
-											prop="moodTrk"
-										>
-											<a-select
-												:getPopupContainer="trigger => trigger.parentNode"
-												mode="multiple"
-												:disabled="disabled"
-												v-model="track_modal.moodTrk"
-											>
-												<a-select-option
-													v-for="nomenclator in moods"
-													:key="nomenclator.id"
-													:value="nomenclator.nombreTer"
-												>
-													{{ nomenclator.nombreTer }}
-												</a-select-option>
-											</a-select>
-										</a-form-model-item>
-										<a-form-model-item
-											label="Estados de ánimo del Track"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions readonly :placeholder="track_modal.moodTrk">
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											has-feedback
-											label="Gestión"
-											prop="gestionTrk"
-										>
-											<a-select
-												:getPopupContainer="trigger => trigger.parentNode"
-												:disabled="disabled"
-												v-model="track_modal.gestionTrk"
-											>
-												<a-select-option
-													v-for="nomenclator in gestiones"
-													:key="nomenclator.id"
-													:value="nomenclator.nombreTer"
-												>
-													{{ nomenclator.nombreTer }}
-												</a-select-option>
-											</a-select>
-										</a-form-model-item>
-										<a-form-model-item
-											label="Gestión"
-											v-if="action_modal === 'detalles'"
-										>
-											<a-mentions
-												readonly
-												:placeholder="track_modal.gestionTrk"
-											>
-											</a-mentions>
-										</a-form-model-item>
-										<a-row>
-											<a-col span="11">
-												<a-form-model-item v-if="action_modal !== 'detalles'">
-													<a-checkbox
-														:disabled="disabled"
-														v-model="bonusTrk"
-														:value="bonusTrk"
-													>
-														¿Es un bonus Track?
-													</a-checkbox>
-												</a-form-model-item>
-												<a-form-model-item style="margin-top: 20px" v-else>
-													<i
-														class="fa fa-check-square-o hidden-xs"
-														v-if="track.bonusTrk === 1"
-													/>
-													<i class="fa fa-square-o" v-else />
-													¿Es un bonus Track?
-												</a-form-model-item>
-											</a-col>
-											<a-col span="11" style="float: right">
-												<a-form-model-item v-if="action_modal !== 'detalles'">
-													<a-checkbox
-														:disabled="disabled"
-														v-model="envivoTrk"
-														:value="envivoTrk"
-													>
-														¿El Track se Grabó en Vivo?
-													</a-checkbox>
-												</a-form-model-item>
-												<a-form-model-item style="margin-top: 20px" v-else>
-													<i
-														class="fa fa-check-square-o hidden-xs"
-														v-if="track.envivoTrk === 1"
-													/>
-													<i class="fa fa-square-o" v-else />
-													¿El Track se Grabó en Vivo?
-												</a-form-model-item>
-											</a-col>
-										</a-row>
-									</a-col>
-								</a-form-model>
-							</div>
-						</a-spin>
-					</a-row>
-					<a-row
-						style="margin-top: 20px"
-						v-if="
-							action_modal === 'crear' ||
-								action_modal === 'crear_track' ||
-								action_modal === 'crear_track_tabla_component'
-						"
-					>
-						<a-col span="11">
-							<a-row>
-								<a-col span="24">
-									<div class="section-title">
-										<h4>Autores</h4>
-									</div>
-								</a-col>
-							</a-row>
-							<a-row>
-								<a-col span="24">
-									<a-mentions
-										readonly
-										v-if="$store.getters.getAutoresFormGetters.length === 0"
-									></a-mentions>
-									<transition-group name="list">
-										<a-form-model-item
-											v-for="(autor, index) in $store.getters
-												.getAutoresFormGetters"
-											:key="autor.id"
-											v-bind="index === 0 ? formItemLayout : {}"
-											class="list-item"
-										>
-											<a-row>
-												<a-col span="22">
-													<a-mentions
-														style="margin-top: 3px"
-														readonly
-														:placeholder="
-															autor.nombresAutr + ' ' + autor.apellidosAutr
-														"
-													></a-mentions>
-												</a-col>
-												<a-col span="2" style="float: right; margin-top: 2px">
-													<a-button
-														class="dynamic-delete-button"
-														@click="remove_autor(autor)"
-													>
-														<small>
-															<b style="vertical-align: top"> x </b>
-														</small>
-													</a-button>
-												</a-col>
-											</a-row>
-										</a-form-model-item>
-									</transition-group>
-									<a-row style="margin-top: 20px">
-										<a-col span="24">
-											<div class="section-title">
-												<h5>Selector de Autores</h5>
-											</div>
-											<a-form-model
-												ref="formularioAgregarAutor"
-												:layout="'horizontal'"
-												:model="track_modal"
-											>
-												<a-form-model-item>
-													<a-select
-														placeholder="Nombre completo"
-														option-filter-prop="children"
-														:filter-option="filter_option"
-														show-search
-														v-model="track_modal.autores"
-														:disabled="disabled"
-													>
-														<a-select-option
-															v-for="autor in $store.getters
-																.getAllAutoresFormGetters"
-															:key="autor.id"
-															:value="autor.id"
-														>
-															{{
-																autor.nombresAutr + " " + autor.apellidosAutr
-															}}
-														</a-select-option>
-													</a-select>
-												</a-form-model-item>
-												<a-row>
-													<a-col span="12">
-														<a-form-model-item v-bind="formItemLayout">
-															<a-button
-																:disabled="disabled"
-																type="primary"
-																@click="add_autor"
-															>
-																<a-icon type="plus" />
-																Agregar Autor
-															</a-button>
-														</a-form-model-item>
-													</a-col>
-													<a-col span="12">
-														<a-form-model-item
-															v-bind="formItemLayout"
-															style="float: right"
-														>
-															<a-button
-																:disabled="disabled"
-																type="primary"
-																@click="new_autor"
-															>
-																<a-icon type="plus" />
-																Crear Autor
-															</a-button>
-														</a-form-model-item>
-													</a-col>
-												</a-row>
-											</a-form-model>
-										</a-col>
-									</a-row>
-								</a-col>
-							</a-row>
-						</a-col>
-						<a-col span="11" style="float: right">
-							<a-row>
-								<a-col span="24">
-									<div class="section-title">
-										<h4>Interpretes</h4>
-									</div>
-								</a-col>
-							</a-row>
-							<a-row v-if="action_modal !== 'detalles'">
-								<a-col span="24">
-									<a-mentions
-										readonly
-										v-if="$store.getters.getInterpretesFormGetters.length === 0"
-									></a-mentions>
-									<transition-group name="list">
-										<a-form-model-item
-											v-for="(interprete, index) in $store.getters
-												.getInterpretesFormGetters"
-											:key="interprete.id"
-											v-bind="index === 0 ? formItemLayout : {}"
-											class="list-item"
-										>
-											<a-row>
-												<a-col span="11">
-													<div class="ant-form-item-label">
-														<label>Nombre</label>
-													</div>
-													<a-mentions
-														readonly
-														style="margin-top: 3px"
-														:placeholder="interprete.nombreInterp"
-													></a-mentions>
-												</a-col>
-												<a-col span="10" style="margin-left: 10px">
-													<div class="ant-form-item-label">
-														<label>Roles</label>
-													</div>
-													<a-select
-														style="width: 100%"
-														:getPopupContainer="trigger => trigger.parentNode"
-														:disabled="disabled"
-														mode="multiple"
-														v-model="interprete.role"
-														class="interpretes-select"
-													>
-														<a-select-option
-															v-for="rol in roles_interp"
-															:key="rol.id"
-															:value="rol.nombreTer"
-														>
-															{{ rol.nombreTer }}
-														</a-select-option>
-													</a-select>
-												</a-col>
-												<a-col span="2" style="float: right; margin-top: 40px">
-													<a-button
-														class="dynamic-delete-button"
-														@click="remove_interprete(interprete)"
-													>
-														<small>
-															<b style="vertical-align: top"> x </b>
-														</small>
-													</a-button>
-												</a-col>
-											</a-row>
-										</a-form-model-item>
-									</transition-group>
-									<a-row style="margin-top: 20px">
-										<a-col span="24">
-											<div class="section-title">
-												<h5>Selector de Interpretes</h5>
-											</div>
-											<a-form-model
-												ref="formularioAgregarInterprete"
-												:layout="'horizontal'"
-												:model="track_modal"
-											>
-												<a-form-model-item has-feedback>
-													<a-select
-														placeholder="Nombre completo"
-														option-filter-prop="children"
-														:filter-option="filter_option"
-														show-search
-														v-model="track_modal.interpretes"
-														:disabled="disabled"
-													>
-														<a-select-option
-															v-for="interprete in $store.getters
-																.getAllInterpretesFormGetters"
-															:key="interprete.id"
-															:value="interprete.id"
-														>
-															{{ interprete.nombreInterp }}
-														</a-select-option>
-													</a-select>
-												</a-form-model-item>
-												<a-row>
-													<a-col span="12">
-														<a-form-model-item v-bind="formItemLayout">
-															<a-button
-																:disabled="disabled"
-																type="primary"
-																@click="add_interprete"
-															>
-																<a-icon type="plus" />
-																Agregar Interprete
-															</a-button>
-														</a-form-model-item>
-													</a-col>
-													<a-col span="12">
-														<a-form-model-item
-															v-bind="formItemLayout"
-															style="float: right"
-														>
-															<a-button
-																:disabled="disabled"
-																type="primary"
-																@click="new_interprete"
-															>
-																<a-icon type="plus" />
-																Crear Interprete
-															</a-button>
-														</a-form-model-item>
-													</a-col>
-												</a-row>
-											</a-form-model>
-										</a-col>
-									</a-row>
-								</a-col>
-							</a-row>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-button
-							v-if="action_modal === 'editar' || action_modal === 'detalles'"
-							:disabled="disabled"
-							style="float: right"
-							type="default"
-							@click="siguiente('tab_2', '3')"
-						>
-							Siguiente
-							<a-icon type="right" />
-						</a-button>
-						<a-button
-							v-if="action_modal === 'crear' || action_modal === 'editar'"
-							:disabled="disabled"
-							style="float: left"
-							type="default"
-							@click="atras('1')"
-						>
-							<a-icon type="left" />
-							Atrás
-						</a-button>
-					</a-row>
-				</a-tab-pane>
-				<a-tab-pane
-					key="3"
-					:disabled="tab_3"
-					v-if="
-						action_modal !== 'crear' &&
-							action_modal !== 'crear_track_tabla_component' &&
-							action_modal !== 'crear_track'
-					"
-				>
-					<span slot="tab"> Autores/Intérptetes/Temas </span>
-					<a-row>
-						<a-col span="12">
-							<div class="section-title">
-								<h4>Autores/Intérptetes/Temas</h4>
-							</div>
-						</a-col>
-					</a-row>
+  <div>
+    <a-modal
+      :closable="false"
+      width="80.4%"
+      okText="Guardar"
+      cancelText="Cancelar"
+      cancelType="danger"
+      :visible="show"
+      id="modal_gestionar_tracks"
+    >
+      <template slot="footer">
+        <a-button
+          v-if="action_modal === 'detalles'"
+          key="back"
+          type="primary"
+          @click="handle_cancel('cancelar')"
+        >
+          Aceptar</a-button
+        >
+        <a-popconfirm
+          v-if="action_modal !== 'detalles'"
+          :getPopupContainer="(trigger) => trigger.parentNode"
+          placement="left"
+          @confirm="handle_cancel('cancelar')"
+          ok-text="Si"
+          cancel-text="No"
+          :title="action_cancel_title"
+        >
+          <a-icon
+            slot="icon"
+            type="exclamation-circle"
+            theme="filled"
+            style="color: #f0b727"
+          />
+          <a-button type="danger" key="back"> Cancelar </a-button>
+        </a-popconfirm>
+        <a-popconfirm
+          v-if="action_modal !== 'detalles'"
+          :getPopupContainer="(trigger) => trigger.parentNode"
+          placement="topRight"
+          @confirm="validate()"
+          ok-text="Si"
+          cancel-text="No"
+          :title="action_title"
+        >
+          <a-icon
+            slot="icon"
+            theme="filled"
+            type="check-circle"
+            style="color: #4cc4b1"
+          />
+          <a-button
+            :disabled="disabled"
+            :loading="waiting"
+            v-if="active"
+            type="primary"
+          >
+            {{ text_button }}
+          </a-button>
+        </a-popconfirm>
+      </template>
+      <!-- Aquí comienzan los tabs -->
+      <a-tabs :activeKey="active_tab">
+        <div slot="tabBarExtraContent">{{ text_header_button }} Track</div>
+        <a-tab-pane
+          key="1"
+          v-if="
+            action_modal !== 'detalles' &&
+            action_modal !== 'crear_track_tabla_component' &&
+            !track.tabla
+          "
+          :disabled="tab_1"
+        >
+          <span slot="tab"> Fonogramas </span>
+          <a-spin :spinning="spinning">
+            <div>
+              <a-form-model
+                ref="formularioFonograma"
+                :model="track_modal"
+                :rules="rules"
+              >
+                <a-row>
+                  <a-col span="12">
+                    <div class="section-title">
+                      <h4>Selector de Fonogramas</h4>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-col span="12">
+                  <a-form-model-item
+                    label="Código:"
+                    has-feedback
+                    prop="fonogramas"
+                  >
+                    <a-select
+                      :showArrow="true"
+                      mode="multiple"
+                      v-model="track_modal.fonogramas_tracks"
+                      style="width: 50% !important"
+                      :disabled="disabled"
+                    >
+                      <a-select-option
+                        v-for="fonogram in fonograms"
+                        :key="fonogram.codigFong"
+                        :value="fonogram.id"
+                      >
+                        {{ fonogram.codigFong }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                  <a-form-model-item label="Título:">
+                    <a-select
+                      :showArrow="true"
+                      mode="multiple"
+                      v-model="track_modal.fonogramas_tracks"
+                      :disabled="disabled"
+                    >
+                      <a-select-option
+                        v-for="fonogram in fonograms"
+                        :key="fonogram.id"
+                        :value="fonogram.id"
+                      >
+                        {{ fonogram.tituloFong }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-col>
+                <a-col span="24">
+                  <a-button
+                    :disabled="disabled"
+                    style="float: right"
+                    type="default"
+                    @click="siguiente('tab_1', '2')"
+                  >
+                    Siguiente
+                    <a-icon type="right" />
+                  </a-button>
+                </a-col>
+              </a-form-model>
+            </div>
+          </a-spin>
+        </a-tab-pane>
+        <a-tab-pane key="2" :disabled="tab_2">
+          <span slot="tab">Generales</span>
+          <a-row>
+            <a-col span="11">
+              <div class="section-title">
+                <h4>Datos Generales</h4>
+              </div>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-spin :spinning="spinning">
+              <div>
+                <a-form-model
+                  ref="formularioGenerales"
+                  layout="horizontal"
+                  :model="track_modal"
+                  :rules="rules"
+                >
+                  <a-col span="11">
+                    <a-row
+                      v-if="
+                        action_modal === 'crear' ||
+                        action_modal === 'crear_track' ||
+                        action_modal === 'crear_track_tabla_component'
+                      "
+                      style="margin-top: 31px"
+                    >
+                      <a-col span="5" style="margin-top: 8px">
+                        <label id="isrc">Código ISRC:</label>
+                      </a-col>
+                      <a-col span="19" style="float: right">
+                        <a-row>
+                          <a-col span="4">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Código de dos letras que representan el país Ej: CU (Cuba)"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="codigPais"
+                                has-feedback
+                                :help="show_used_error"
+                                class="isrc"
+                              >
+                                <a-input
+                                  default-value="CU"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.codigPais"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                          <a-col
+                            span="1"
+                            style="margin-top: 8px; text-align: center"
+                            >-</a-col
+                          >
+                          <a-col span="5">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Código de registro que consta de tres caracteres alfanuméricos Ej: MB4"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="codigRegistro"
+                                has-feedback
+                                class="isrc"
+                              >
+                                <a-input
+                                  placeholder="XXX"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.codigRegistro"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                          <a-col
+                            span="1"
+                            style="margin-top: 8px; text-align: center"
+                            >-</a-col
+                          >
+                          <a-col span="4">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Dos últimos dígitos del año de registro Ej: 21 (2021)"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="anhoRegistro"
+                                has-feedback
+                                class="isrc"
+                              >
+                                <a-input
+                                  placeholder="00"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.anhoRegistro"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                          <a-col
+                            span="1"
+                            style="margin-top: 8px; text-align: center"
+                            >-</a-col
+                          >
+                          <a-col span="8" style="float: right">
+                            <a-tooltip
+                              placement="bottom"
+                              title="Código identificador de cinco dígitos Ej: 00001"
+                            >
+                              <a-form-model-item
+                                :validate-status="show_error"
+                                prop="identificador"
+                                has-feedback
+                                class="isrc"
+                              >
+                                <a-input
+                                  :default-value="codigo"
+                                  :disabled="action_modal === 'editar'"
+                                  v-model="track_modal.identificador"
+                                  :class="isrc_validation"
+                                />
+                              </a-form-model-item>
+                            </a-tooltip>
+                          </a-col>
+                        </a-row>
+                      </a-col>
+                    </a-row>
+                    <a-form-model-item
+                      v-if="action_modal === 'editar'"
+                      label="ISRC"
+                    >
+                      <a-input
+                        :disabled="action_modal === 'editar'"
+                        v-model="pretty_isrc"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="ISRC"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions readonly :placeholder="pretty_isrc">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      prop="tituloTrk"
+                      has-feedback
+                      label="Título:"
+                    >
+                      <a-input
+                        :disabled="disabled"
+                        v-model="track_modal.tituloTrk"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Título:"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions readonly :placeholder="track_modal.tituloTrk">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      prop="duracionTrk"
+                      has-feedback
+                      label="Duración:"
+                    >
+                      <a-time-picker
+                        placeholder="hh:mm:ss"
+                        :default-open-value="moment('00:00:00', 'HH:mm:ss')"
+                        :disabled="disabled"
+                        :valueFormat="'HH:mm:ss'"
+                        v-model="track_modal.duracionTrk"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Duración:"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions
+                        readonly
+                        :placeholder="track_modal.duracionTrk"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="País de Grabación:"
+                      prop="paisgrabTrk"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        :disabled="disabled"
+                        v-model="track_modal.paisgrabTrk"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in paises"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="País de Grabación:"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions
+                        readonly
+                        :placeholder="track_modal.paisgrabTrk"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item v-if="action_modal !== 'detalles'">
+                      <a-checkbox
+                        :disabled="disabled"
+                        v-model="muestraTrk"
+                        :value="muestraTrk"
+                      >
+                        ¿El Track tiene una pista de muestra?
+                      </a-checkbox>
+                    </a-form-model-item>
+                    <a-form-model-item style="margin-top: 20px" v-else>
+                      <i
+                        class="fa fa-check-square-o hidden-xs"
+                        v-if="track.muestraTrk === 1"
+                      />
+                      <i class="fa fa-square-o" v-else />
+                      ¿El Track tiene una pista de muestra?
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col span="11" style="float: right">
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Género Musical:"
+                      prop="generoTrk"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        :disabled="disabled"
+                        v-model="track_modal.generoTrk"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in generos"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Género Musical:"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions readonly :placeholder="track_modal.generoTrk">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Subgénero musical"
+                      prop="subgeneroTrk"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        :disabled="disabled"
+                        v-model="track_modal.subgeneroTrk"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in subgeneros"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Subgénero musical"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions
+                        readonly
+                        :placeholder="track_modal.subgeneroTrk"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Estados de Ánimo:"
+                      prop="moodTrk"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        mode="multiple"
+                        :disabled="disabled"
+                        v-model="track_modal.moodTrk"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in moods"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Estados de ánimo del Track"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions readonly :placeholder="track_modal.moodTrk">
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Estado de Gestión:"
+                      prop="gestionTrk"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        :disabled="disabled"
+                        v-model="track_modal.gestionTrk"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in gestiones"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      label="Estado de Gestión:"
+                      v-if="action_modal === 'detalles'"
+                    >
+                      <a-mentions
+                        readonly
+                        :placeholder="track_modal.gestionTrk"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-row>
+                      <a-col span="11">
+                        <a-form-model-item v-if="action_modal !== 'detalles'">
+                          <a-checkbox
+                            :disabled="disabled"
+                            v-model="bonusTrk"
+                            :value="bonusTrk"
+                          >
+                            ¿Es un Bonus Track?
+                          </a-checkbox>
+                        </a-form-model-item>
+                        <a-form-model-item v-else>
+                          <i
+                            class="fa fa-check-square-o hidden-xs"
+                            v-if="track.bonusTrk === 1"
+                          />
+                          <i class="fa fa-square-o" v-else />
+                          ¿Es un bonus Track?
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col span="11" style="float: right">
+                        <a-form-model-item v-if="action_modal !== 'detalles'">
+                          <a-checkbox
+                            :disabled="disabled"
+                            v-model="envivoTrk"
+                            :value="envivoTrk"
+                          >
+                            ¿El Track se Grabó en Vivo?
+                          </a-checkbox>
+                        </a-form-model-item>
+                        <a-form-model-item v-else>
+                          <i
+                            class="fa fa-check-square-o hidden-xs"
+                            v-if="track.envivoTrk === 1"
+                          />
+                          <i class="fa fa-square-o" v-else />
+                          ¿El Track se Grabó en Vivo?
+                        </a-form-model-item>
+                      </a-col>
+                    </a-row>
+                  </a-col>
+                </a-form-model>
+              </div>
+            </a-spin>
+          </a-row>
+          <a-row
+            style="margin-top: 20px"
+            v-if="
+              action_modal === 'crear' ||
+              action_modal === 'crear_track' ||
+              action_modal === 'crear_track_tabla_component'
+            "
+          >
+            <a-col span="11">
+              <a-row>
+                <a-col span="24">
+                  <div class="section-title">
+                    <h4>Autores</h4>
+                  </div>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col span="24">
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getAutoresFormGetters.length === 0"
+                  ></a-mentions>
+                  <transition-group name="list">
+                    <a-form-model-item
+                      v-for="(autor, index) in $store.getters
+                        .getAutoresFormGetters"
+                      :key="autor.id"
+                      v-bind="index === 0 ? formItemLayout : {}"
+                      class="list-item"
+                    >
+                      <a-row>
+                        <a-col span="22">
+                          <a-mentions
+                            style="margin-top: 3px"
+                            readonly
+                            :placeholder="
+                              autor.nombresAutr + ' ' + autor.apellidosAutr
+                            "
+                          ></a-mentions>
+                        </a-col>
+                        <a-col span="2" style="float: right; margin-top: 2px">
+                          <a-button
+                            class="dynamic-delete-button"
+                            @click="remove_autor(autor)"
+                          >
+                            <small>
+                              <b style="vertical-align: top"> x </b>
+                            </small>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </a-form-model-item>
+                  </transition-group>
+                  <a-row style="margin-top: 20px">
+                    <a-col span="24">
+                      <div class="section-title">
+                        <h5>Selector de Autores</h5>
+                      </div>
+                      <a-form-model
+                        ref="formularioAgregarAutor"
+                        :layout="'horizontal'"
+                        :model="track_modal"
+                      >
+                        <a-form-model-item>
+                          <a-select
+                            placeholder="Nombre completo"
+                            option-filter-prop="children"
+                            :filter-option="filter_option"
+                            show-search
+                            v-model="track_modal.autores"
+                            :disabled="disabled"
+                          >
+                            <a-select-option
+                              v-for="autor in $store.getters
+                                .getAllAutoresFormGetters"
+                              :key="autor.id"
+                              :value="autor.id"
+                            >
+                              {{
+                                autor.nombresAutr + " " + autor.apellidosAutr
+                              }}
+                            </a-select-option>
+                          </a-select>
+                        </a-form-model-item>
+                        <a-row>
+                          <a-col span="12">
+                            <a-form-model-item v-bind="formItemLayout">
+                              <a-button
+                                :disabled="disabled"
+                                type="primary"
+                                @click="add_autor"
+                              >
+                                <a-icon type="plus" />
+                                Agregar Autor
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                          <a-col span="12">
+                            <a-form-model-item
+                              v-bind="formItemLayout"
+                              style="float: right"
+                            >
+                              <a-button
+                                :disabled="disabled"
+                                type="primary"
+                                @click="new_autor"
+                              >
+                                <a-icon type="plus" />
+                                Crear Autor
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                        </a-row>
+                      </a-form-model>
+                    </a-col>
+                  </a-row>
+                </a-col>
+              </a-row>
+            </a-col>
+            <a-col span="11" style="float: right">
+              <a-row>
+                <a-col span="24">
+                  <div class="section-title">
+                    <h4>Interpretes</h4>
+                  </div>
+                </a-col>
+              </a-row>
+              <a-row v-if="action_modal !== 'detalles'">
+                <a-col span="24">
+                  <a-mentions
+                    readonly
+                    v-if="$store.getters.getInterpretesFormGetters.length === 0"
+                  ></a-mentions>
+                  <transition-group name="list">
+                    <a-form-model-item
+                      v-for="(interprete, index) in $store.getters
+                        .getInterpretesFormGetters"
+                      :key="interprete.id"
+                      v-bind="index === 0 ? formItemLayout : {}"
+                      class="list-item"
+                    >
+                      <a-row>
+                        <a-col span="11">
+                          <div class="ant-form-item-label">
+                            <label>Nombre</label>
+                          </div>
+                          <a-mentions
+                            readonly
+                            style="margin-top: 3px"
+                            :placeholder="interprete.nombreInterp"
+                          ></a-mentions>
+                        </a-col>
+                        <a-col span="10" style="margin-left: 10px">
+                          <div class="ant-form-item-label">
+                            <label>Roles</label>
+                          </div>
+                          <a-select
+                            style="width: 100%"
+                            :getPopupContainer="(trigger) => trigger.parentNode"
+                            :disabled="disabled"
+                            mode="multiple"
+                            v-model="interprete.role"
+                            class="interpretes-select"
+                          >
+                            <a-select-option
+                              v-for="rol in roles_interp"
+                              :key="rol.id"
+                              :value="rol.nombreTer"
+                            >
+                              {{ rol.nombreTer }}
+                            </a-select-option>
+                          </a-select>
+                        </a-col>
+                        <a-col span="2" style="float: right; margin-top: 40px">
+                          <a-button
+                            class="dynamic-delete-button"
+                            @click="remove_interprete(interprete)"
+                          >
+                            <small>
+                              <b style="vertical-align: top"> x </b>
+                            </small>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </a-form-model-item>
+                  </transition-group>
+                  <a-row style="margin-top: 20px">
+                    <a-col span="24">
+                      <div class="section-title">
+                        <h5>Selector de Interpretes</h5>
+                      </div>
+                      <a-form-model
+                        ref="formularioAgregarInterprete"
+                        :layout="'horizontal'"
+                        :model="track_modal"
+                      >
+                        <a-form-model-item has-feedback>
+                          <a-select
+                            placeholder="Nombre completo"
+                            option-filter-prop="children"
+                            :filter-option="filter_option"
+                            show-search
+                            v-model="track_modal.interpretes"
+                            :disabled="disabled"
+                          >
+                            <a-select-option
+                              v-for="interprete in $store.getters
+                                .getAllInterpretesFormGetters"
+                              :key="interprete.id"
+                              :value="interprete.id"
+                            >
+                              {{ interprete.nombreInterp }}
+                            </a-select-option>
+                          </a-select>
+                        </a-form-model-item>
+                        <a-row>
+                          <a-col span="12">
+                            <a-form-model-item v-bind="formItemLayout">
+                              <a-button
+                                :disabled="disabled"
+                                type="primary"
+                                @click="add_interprete"
+                              >
+                                <a-icon type="plus" />
+                                Agregar Interprete
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                          <a-col span="12">
+                            <a-form-model-item
+                              v-bind="formItemLayout"
+                              style="float: right"
+                            >
+                              <a-button
+                                :disabled="disabled"
+                                type="primary"
+                                @click="new_interprete"
+                              >
+                                <a-icon type="plus" />
+                                Crear Interprete
+                              </a-button>
+                            </a-form-model-item>
+                          </a-col>
+                        </a-row>
+                      </a-form-model>
+                    </a-col>
+                  </a-row>
+                </a-col>
+              </a-row>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-button
+              v-if="action_modal === 'editar' || action_modal === 'detalles'"
+              :disabled="disabled"
+              style="float: right"
+              type="default"
+              @click="siguiente('tab_2', '3')"
+            >
+              Siguiente
+              <a-icon type="right" />
+            </a-button>
+            <a-button
+              v-if="action_modal === 'crear' || action_modal === 'editar'"
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('1')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-row>
+        </a-tab-pane>
+        <a-tab-pane
+          key="3"
+          :disabled="tab_3"
+          v-if="
+            action_modal !== 'crear' &&
+            action_modal !== 'crear_track_tabla_component' &&
+            action_modal !== 'crear_track'
+          "
+        >
+          <span slot="tab"> Autores/Intérptetes/Temas </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Autores/Intérptetes/Temas</h4>
+              </div>
+            </a-col>
+          </a-row>
 
 					<div>
 						<a-steps :current="current" @change="onChange">
@@ -1641,6 +1643,7 @@ export default {
 				} else delete this.track_modal.moodTrk;
 				this.pretty_isrc = this.build_pretty_isrc(this.track_modal.isrcTrk);
 			} else {
+				this.track.gestionTrk = "Incompleto";
 				this.track_modal = { ...this.track };
 				this.text_button = "Crear";
 				this.text_header_button = "Crear";

@@ -409,7 +409,6 @@ class AudiovisualController extends Controller
 			$audiovisual->interpretes()->withTrashed()->get()[$i]->pivot->delete();
 		}
 		for ($i = 0; $i < count($request->interpretes); $i++) {
-			var_dump($request->interpretes[$i][1]);
 			Audiovisual_Interprete::create([
 				"interprete_id" => $request->interpretes[$i][0],
 				"rolInterp" => $request->interpretes[$i][1],

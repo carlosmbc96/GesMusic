@@ -121,7 +121,7 @@
                 <e-column
                   field="codigFong"
                   headerText="Código"
-                  width="110"
+                  width="60"
                   textAlign="Left"
                 />
                 <e-column
@@ -133,18 +133,18 @@
                 <e-column
                   field="añoFong"
                   headerText="Año"
-                  width="110"
+                  width="50"
                   textAlign="Left"
                 />
                 <e-column
                   field="clasficacionFong"
                   headerText="Clasificación"
-                  width="150"
+                  width="80"
                   textAlign="Left"
                 />
                 <e-column
                   headerText="Estado"
-                  width="120"
+                  width="50"
                   :template="status_template"
                   :visible="true"
                   textAlign="Center"

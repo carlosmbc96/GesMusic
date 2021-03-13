@@ -120,24 +120,24 @@
                 <e-column
                   field="codigEntrv"
                   headerText="Código"
-                  width="110"
+                  width="50"
                   textAlign="Left"
                 />
                 <e-column
                   field="nombreApellidosEntrv"
-                  headerText="Nombre Completo"
-                  width="105"
+                  headerText="Nombres y Apellidos"
+                  width="150"
                   textAlign="Left"
                 />
                 <e-column
                   field="sexoEntrv"
                   headerText="Sexo"
-                  width="110"
+                  width="50"
                   textAlign="Left"
                 />
                 <e-column
                   headerText="Estado"
-                  width="118"
+                  width="60"
                   :template="status_template"
                   :visible="true"
                   textAlign="Center"

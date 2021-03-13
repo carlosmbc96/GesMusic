@@ -1,496 +1,500 @@
 <template>
-	<div>
-		<a-modal
-			:closable="false"
-			width="80.4%"
-			okText="Guardar"
-			cancelText="Cancelar"
-			cancelType="danger"
-			:visible="show"
-			id="modal_gestionar_autores"
-		>
-			<template slot="footer">
-				<a-button
-					v-if="action_modal === 'detalles'"
-					key="back"
-					type="primary"
-					@click="handle_cancel('cancelar')"
-				>
-					Aceptar</a-button
-				>
-				<a-popconfirm
-					v-if="action_modal !== 'detalles'"
-					:getPopupContainer="trigger => trigger.parentNode"
-					placement="left"
-					@confirm="handle_cancel('cancelar')"
-					ok-text="Si"
-					cancel-text="No"
-					:title="action_cancel_title"
-				>
-					<a-icon
-						slot="icon"
-						type="exclamation-circle"
-						theme="filled"
-						style="color: #f0b727"
-					/>
-					<a-button type="danger" key="back"> Cancelar </a-button>
-				</a-popconfirm>
-				<a-popconfirm
-					v-if="action_modal !== 'detalles'"
-					:getPopupContainer="trigger => trigger.parentNode"
-					placement="topRight"
-					@confirm="validate()"
-					ok-text="Si"
-					cancel-text="No"
-					:title="action_title"
-				>
-					<a-icon
-						slot="icon"
-						theme="filled"
-						type="check-circle"
-						style="color: #4cc4b1"
-					/>
-					<a-button
-						:disabled="disabled"
-						:loading="waiting"
-						v-if="active"
-						type="primary"
-					>
-						{{ text_button }}
-					</a-button>
-				</a-popconfirm>
-			</template>
-			<!-- Aquí comienzan los tabs -->
-			<a-tabs :activeKey="active_tab">
-				<div slot="tabBarExtraContent">{{ text_header_button }} Autor</div>
-				<a-tab-pane key="1" :disabled="tab_1">
-					<span slot="tab">Generales</span>
-					<div>
-						<a-row>
-							<a-col span="12">
-								<div class="section-title">
-									<h4>Datos Generales</h4>
-								</div>
-							</a-col>
-						</a-row>
-						<a-spin :spinning="spinning">
-							<a-form-model
-								ref="general_form"
-								layout="horizontal"
-								:model="author_modal"
-								:rules="rules"
-							>
-								<a-row>
-									<a-col span="6">
-										<a-upload
-											v-if="action_modal !== 'detalles'"
-											:disabled="disabled"
-											:remove="remove_image"
-											@preview="handle_preview"
-											:file-list="file_list"
-											list-type="picture-card"
-											:before-upload="before_upload"
-											@change="handle_change"
-										>
-											<div v-if="file_list.length < 1">
-												<img v-if="preview_image" />
-												<div v-else>
-													<a-icon type="upload" />
-													<div class="ant-upload-text">Cargar foto</div>
-												</div>
-											</div>
-										</a-upload>
-										<div class="detalles-img" v-else>
-											<a-upload
-												@preview="handle_preview"
-												:file-list="file_list"
-												list-type="picture-card"
-											>
-												<div v-if="file_list.length < 1">
-													<img />
-												</div>
-											</a-upload>
-										</div>
-										<br />
-										<a-modal
-											:visible="preview_visible"
-											:footer="null"
-											@cancel="preview_cancel"
-										>
-											<img style="width: 100%" :src="preview_image" />
-										</a-modal>
-									</a-col>
-									<a-col span="6">
-										<a-form-model-item
-											v-if="
-												action_modal === 'crear' ||
-													action_modal === 'crear_autor'
-											"
-											:validate-status="show_error"
-											prop="codigAutr"
-											has-feedback
-											label="Código"
-											:help="show_used_error"
-										>
-											<a-input
-												addon-before="AUTR-"
-												:default-value="codigo"
-												:disabled="action_modal === 'editar'"
-												v-model="author_modal.codigAutr"
-											/>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal === 'editar'"
-											label="Código"
-										>
-											<a-input
-												addon-before="AUTR-"
-												:disabled="action_modal === 'editar'"
-												v-model="author_modal.codigAutr"
-											/>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal === 'detalles'"
-											label="Código"
-										>
-											<a-mentions
-												readonly
-												:placeholder="author_modal.codigAutr"
-											>
-											</a-mentions>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="
-												action_modal === 'crear' ||
-													action_modal === 'crear_autor'
-											"
-											:validate-status="show_error"
-											prop="ciAutr"
-											has-feedback
-											label="Carnet de identidad(CI)"
-											:help="show_used_error"
-										>
-											<a-input
-												:disabled="action_modal === 'editar'"
-												v-model="author_modal.ciAutr"
-											/>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal === 'editar'"
-											label="Carnet de identidad(CI)"
-										>
-											<a-input
-												:disabled="action_modal === 'editar'"
-												v-model="author_modal.ciAutr"
-											/>
-										</a-form-model-item>
-										<a-form-model-item
-											v-if="action_modal === 'detalles'"
-											label="Carnet de identidad(CI)"
-										>
-											<a-mentions readonly :placeholder="author_modal.ciAutr">
-											</a-mentions>
-										</a-form-model-item>
-									</a-col>
-									<a-col span="6">
-										<div id="nombresAutr">
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												prop="nombresAutr"
-												has-feedback
-												label="Nombre"
-											>
-												<a-input
-													:disabled="disabled"
-													v-model="author_modal.nombresAutr"
-												/>
-											</a-form-model-item>
-											<a-form-model-item v-else label="Nombre">
-												<a-mentions
-													readonly
-													:placeholder="author_modal.nombresAutr"
-												>
-												</a-mentions>
-											</a-form-model-item>
-										</div>
-										<a-form-model-item
-											v-if="action_modal !== 'detalles'"
-											has-feedback
-											label="Sexo"
-											prop="sexoAutr"
-										>
-											<a-select
-												:getPopupContainer="trigger => trigger.parentNode"
-												option-filter-prop="children"
-												show-search
-												:disabled="disabled"
-												v-model="author_modal.sexoAutr"
-											>
-												<a-select-option
-													v-for="nomenclator in list_nomenclators"
-													:key="nomenclator.id"
-													:value="nomenclator.nombreTer"
-												>
-													{{ nomenclator.nombreTer }}
-												</a-select-option>
-											</a-select>
-										</a-form-model-item>
-										<a-form-model-item v-else label="Sexo">
-											<a-mentions readonly :placeholder="author_modal.sexoAutr">
-											</a-mentions>
-										</a-form-model-item>
-									</a-col>
-									<a-col span="6">
-										<div id="apellidosAutr">
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												prop="apellidosAutr"
-												has-feedback
-												label="Apellidos"
-											>
-												<a-input
-													:disabled="disabled"
-													v-model="author_modal.apellidosAutr"
-												/>
-											</a-form-model-item>
-											<a-form-model-item v-else label="Apellidos">
-												<a-mentions
-													readonly
-													:placeholder="author_modal.apellidosAutr"
-												>
-												</a-mentions>
-											</a-form-model-item>
-										</div>
-									</a-col>
-								</a-row>
-								<a-row>
-									<a-col span="11">
-										<div id="resenha">
-											<a-form-model-item
-												v-if="action_modal !== 'detalles'"
-												has-feedback
-												label="Reseña biográfica del Autor"
-												prop="reseñaBiogAutr"
-												id="resenha"
-											>
-												<a-input
-													:disabled="disabled"
-													style="width: 100%; height: 150px"
-													v-model="author_modal.reseñaBiogAutr"
-													type="textarea"
-												/>
-											</a-form-model-item>
-											<a-form-model-item
-												v-else
-												label="Reseña biográfica del Autor"
-											>
-												<div class="description">
-													<a-mentions
-														readonly
-														:placeholder="author_modal.reseñaBiogAutr"
-													>
-													</a-mentions>
-												</div>
-											</a-form-model-item>
-											<div id="checkbox">
-												<a-form-model-item v-if="action_modal !== 'detalles'">
-													<a-checkbox
-														:disabled="disabled"
-														v-model="fallecidoAutr"
-														:value="fallecidoAutr"
-														style="margin-top: 20px"
-													>
-														¿El Autor es Fallecido?
-													</a-checkbox>
-												</a-form-model-item>
-												<a-form-model-item v-else>
-													<i
-														class="fa fa-check-square-o hidden-xs"
-														v-if="author.fallecidoAutr === 1"
-													/>
-													<i class="fa fa-square-o" v-else />
-													¿El Autor es Fallecido?
-												</a-form-model-item>
-											</div>
-											<a-form-model-item v-if="action_modal !== 'detalles'">
-												<a-checkbox
-													:disabled="disabled"
-													v-model="obrasCatEditAutr"
-													:value="obrasCatEditAutr"
-												>
-													¿El Autor tiene Obras en el Catalgo Editorial de
-													Bismusic?
-												</a-checkbox>
-											</a-form-model-item>
-											<a-form-model-item v-else>
-												<i
-													class="fa fa-check-square-o hidden-xs"
-													v-if="author.obrasCatEditAutr === 1"
-												/>
-												<i class="fa fa-square-o" v-else />
-												¿El Autor tiene Obras en el Catálgo Editorial de
-												Bismusic?
-											</a-form-model-item>
-										</div>
-									</a-col>
-									<a-col span="1"></a-col>
-									<a-col span="11">
-										<a-row
-											style="margin-top: 20px"
-											v-if="
-												action_modal === 'crear' ||
-													action_modal === 'crear_autor'
-											"
-										>
-											<a-col span="24">
-												<a-row>
-													<a-col span="24">
-														<div class="section-title">
-															<h4>Temas</h4>
-														</div>
-													</a-col>
-												</a-row>
-												<a-row>
-													<a-col span="24">
-														<a-mentions
-															readonly
-															v-if="
-																$store.getters.getTemasFormGetters.length === 0
-															"
-														></a-mentions>
-														<div class="custom-form-item">
-															<transition-group name="list">
-																<a-form-model-item
-																	v-for="(tema, index) in $store.getters
-																		.getTemasFormGetters"
-																	:key="tema.id"
-																	v-bind="index === 0 ? formItemLayout : {}"
-																	class="list-item"
-																>
-																	<a-row>
-																		<a-col span="22">
-																			<a-mentions
-																				style="margin-top: 3px"
-																				readonly
-																				:placeholder="tema.tituloTem"
-																			></a-mentions>
-																		</a-col>
-																		<a-col span="2" style="float: right">
-																			<a-button
-																				class="dynamic-delete-button"
-																				@click="remove_tema(tema)"
-																			>
-																				<small>
-																					<b style="vertical-align: top"> x </b>
-																				</small>
-																			</a-button>
-																		</a-col>
-																	</a-row>
-																</a-form-model-item>
-															</transition-group>
-														</div>
-														<a-row style="margin-top: 20px">
-															<a-col span="24">
-																<div class="section-title">
-																	<h5>Selector de Temas</h5>
-																</div>
-																<div class="custom-form-item">
-																	<a-form-model
-																		ref="formularioAgregarTema"
-																		:layout="'horizontal'"
-																		:model="author_modal"
-																	>
-																		<a-form-model-item>
-																			<a-select
-																				placeholder="Titulo"
-																				option-filter-prop="children"
-																				:filter-option="filter_option"
-																				show-search
-																				v-model="author_modal.temas"
-																				:disabled="disabled"
-																			>
-																				<a-select-option
-																					v-for="tema in $store.getters
-																						.getAllTemasFormGetters"
-																					:key="tema.id"
-																					:value="tema.id"
-																				>
-																					{{ tema.tituloTem }}
-																				</a-select-option>
-																			</a-select>
-																		</a-form-model-item>
-																		<a-row>
-																			<a-col span="12">
-																				<a-form-model-item
-																					v-bind="formItemLayout"
-																				>
-																					<a-button
-																						:disabled="disabled"
-																						type="primary"
-																						@click="add_tema"
-																					>
-																						<a-icon type="plus" />
-																						Agregar Tema
-																					</a-button>
-																				</a-form-model-item>
-																			</a-col>
-																			<a-col span="12">
-																				<a-form-model-item
-																					v-bind="formItemLayout"
-																					style="float: right"
-																				>
-																					<a-button
-																						:disabled="disabled"
-																						type="primary"
-																						@click="new_tema"
-																					>
-																						<a-icon type="plus" />
-																						Crear Tema
-																					</a-button>
-																				</a-form-model-item>
-																			</a-col>
-																		</a-row>
-																	</a-form-model>
-																</div>
-															</a-col>
-														</a-row>
-													</a-col>
-												</a-row>
-											</a-col>
-										</a-row>
-									</a-col>
-								</a-row>
-							</a-form-model>
-							<a-row>
-								<a-button
-									v-if="
-										action_modal !== 'crear' && action_modal !== 'crear_autor'
-									"
-									:disabled="disabled"
-									style="float: right"
-									type="default"
-									@click="siguiente('tab_1', '2')"
-								>
-									Siguiente
-									<a-icon type="right" />
-								</a-button>
-							</a-row>
-						</a-spin>
-					</div>
-				</a-tab-pane>
-				<a-tab-pane
-					key="2"
-					v-if="action_modal !== 'crear' && action_modal !== 'crear_autor'"
-					:disabled="tab_2"
-				>
-					<span slot="tab"> Audiovisuales/Tracks/Temas </span>
-					<a-row>
-						<a-col span="12">
-							<div class="section-title">
-								<h4>Audiovisuales/Tracks/Temas</h4>
-							</div>
-						</a-col>
-					</a-row>
+  <div>
+    <a-modal
+      :closable="false"
+      width="80.4%"
+      okText="Guardar"
+      cancelText="Cancelar"
+      cancelType="danger"
+      :visible="show"
+      id="modal_gestionar_autores"
+    >
+      <template slot="footer">
+        <a-button
+          v-if="action_modal === 'detalles'"
+          key="back"
+          type="primary"
+          @click="handle_cancel('cancelar')"
+        >
+          Aceptar</a-button
+        >
+        <a-popconfirm
+          v-if="action_modal !== 'detalles'"
+          :getPopupContainer="(trigger) => trigger.parentNode"
+          placement="left"
+          @confirm="handle_cancel('cancelar')"
+          ok-text="Si"
+          cancel-text="No"
+          :title="action_cancel_title"
+        >
+          <a-icon
+            slot="icon"
+            type="exclamation-circle"
+            theme="filled"
+            style="color: #f0b727"
+          />
+          <a-button type="danger" key="back"> Cancelar </a-button>
+        </a-popconfirm>
+        <a-popconfirm
+          v-if="action_modal !== 'detalles'"
+          :getPopupContainer="(trigger) => trigger.parentNode"
+          placement="topRight"
+          @confirm="validate()"
+          ok-text="Si"
+          cancel-text="No"
+          :title="action_title"
+        >
+          <a-icon
+            slot="icon"
+            theme="filled"
+            type="check-circle"
+            style="color: #4cc4b1"
+          />
+          <a-button
+            :disabled="disabled"
+            :loading="waiting"
+            v-if="active"
+            type="primary"
+          >
+            {{ text_button }}
+          </a-button>
+        </a-popconfirm>
+      </template>
+      <!-- Aquí comienzan los tabs -->
+      <a-tabs :activeKey="active_tab">
+        <div slot="tabBarExtraContent">{{ text_header_button }} Autor</div>
+        <a-tab-pane key="1" :disabled="tab_1">
+          <span slot="tab">Generales</span>
+          <div>
+            <a-row>
+              <a-col span="12">
+                <div class="section-title">
+                  <h4>Datos Generales</h4>
+                </div>
+              </a-col>
+            </a-row>
+            <a-spin :spinning="spinning">
+              <a-form-model
+                ref="general_form"
+                layout="horizontal"
+                :model="author_modal"
+                :rules="rules"
+              >
+                <a-row>
+                  <a-col span="6">
+                    <a-upload
+                      v-if="action_modal !== 'detalles'"
+                      :disabled="disabled"
+                      :remove="remove_image"
+                      @preview="handle_preview"
+                      :file-list="file_list"
+                      list-type="picture-card"
+                      :before-upload="before_upload"
+                      @change="handle_change"
+                    >
+                      <div v-if="file_list.length < 1">
+                        <img v-if="preview_image" />
+                        <div v-else>
+                          <a-icon type="upload" />
+                          <div class="ant-upload-text">Cargar foto</div>
+                        </div>
+                      </div>
+                    </a-upload>
+                    <div class="detalles-img" v-else>
+                      <a-upload
+                        @preview="handle_preview"
+                        :file-list="file_list"
+                        list-type="picture-card"
+                      >
+                        <div v-if="file_list.length < 1">
+                          <img />
+                        </div>
+                      </a-upload>
+                    </div>
+                    <br />
+                    <a-modal
+                      :visible="preview_visible"
+                      :footer="null"
+                      @cancel="preview_cancel"
+                    >
+                      <img style="width: 100%" :src="preview_image" />
+                    </a-modal>
+                  </a-col>
+                  <a-col span="6">
+                    <a-form-model-item
+                      v-if="
+                        action_modal === 'crear' ||
+                        action_modal === 'crear_autor'
+                      "
+                      :validate-status="show_error"
+                      prop="codigAutr"
+                      has-feedback
+                      label="Código:"
+                      :help="show_used_error"
+                    >
+                      <a-input
+                        addon-before="AUTR-"
+                        :default-value="codigo"
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.codigAutr"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal === 'editar'"
+                      label="Código:"
+                    >
+                      <a-input
+                        addon-before="AUTR-"
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.codigAutr"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal === 'detalles'"
+                      label="Código:"
+                    >
+                      <a-mentions
+                        readonly
+                        :placeholder="author_modal.codigAutr"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="
+                        action_modal === 'crear' ||
+                        action_modal === 'crear_autor'
+                      "
+                      :validate-status="show_error"
+                      prop="ciAutr"
+                      has-feedback
+                      label="# Identidad (CI):"
+                      :help="show_used_error"
+                    >
+                      <a-input
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.ciAutr"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal === 'editar'"
+                      label="# Identidad (CI):"
+                    >
+                      <a-input
+                        :disabled="action_modal === 'editar'"
+                        v-model="author_modal.ciAutr"
+                      />
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal === 'detalles'"
+                      label="# Identidad (CI):"
+                    >
+                      <a-mentions readonly :placeholder="author_modal.ciAutr">
+                      </a-mentions>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col span="6">
+                    <div id="nombresAutr">
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        prop="nombresAutr"
+                        has-feedback
+                        label="Nombres:"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          v-model="author_modal.nombresAutr"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item v-else label="Nombres:">
+                        <a-mentions
+                          readonly
+                          :placeholder="author_modal.nombresAutr"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                    </div>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Sexo:"
+                      prop="sexoAutr"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
+                        show-search
+                        :disabled="disabled"
+                        v-model="author_modal.sexoAutr"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in list_nomenclators"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item v-else label="Sexo:">
+                      <a-mentions readonly :placeholder="author_modal.sexoAutr">
+                      </a-mentions>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col span="6">
+                    <div id="apellidosAutr">
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        prop="apellidosAutr"
+                        has-feedback
+                        label="Apellidos:"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          v-model="author_modal.apellidosAutr"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item v-else label="Apellidos:">
+                        <a-mentions
+                          readonly
+                          :placeholder="author_modal.apellidosAutr"
+                        >
+                        </a-mentions>
+                      </a-form-model-item>
+                    </div>
+                  </a-col>
+                </a-row>
+                <a-row>
+                  <a-col span="11">
+                    <div id="resenha">
+                      <a-form-model-item
+                        v-if="action_modal !== 'detalles'"
+                        has-feedback
+                        label="Reseña Biográfica del Autor"
+                        prop="reseñaBiogAutr"
+                        id="resenha"
+                      >
+                        <a-input
+                          :disabled="disabled"
+                          style="width: 100%; height: 150px; margin-top: 4px"
+                          v-model="author_modal.reseñaBiogAutr"
+                          type="textarea"
+                        />
+                      </a-form-model-item>
+                      <a-form-model-item
+                        v-else
+                        label="Reseña Biográfica del Autor"
+                      >
+                        <div class="description">
+                          <a-mentions
+                          style=" margin-top: 2px"
+                            readonly
+                            :placeholder="author_modal.reseñaBiogAutr"
+                          >
+                          </a-mentions>
+                        </div>
+                      </a-form-model-item>
+                      <div id="checkbox">
+                        <a-form-model-item v-if="action_modal !== 'detalles'">
+                          <a-checkbox
+                            :disabled="disabled"
+                            v-model="fallecidoAutr"
+                            :value="fallecidoAutr"
+                            style="margin-top: 20px"
+                          >
+                            ¿El Autor es Fallecido?
+                          </a-checkbox>
+                        </a-form-model-item>
+                        <a-form-model-item v-else>
+                          <i
+                            class="fa fa-check-square-o hidden-xs"
+                            v-if="author.fallecidoAutr === 1"
+                          />
+                          <i class="fa fa-square-o" v-else />
+                          ¿El Autor es Fallecido?
+                        </a-form-model-item>
+                      </div>
+                      <a-form-model-item v-if="action_modal !== 'detalles'">
+                        <a-checkbox
+                          :disabled="disabled"
+                          v-model="obrasCatEditAutr"
+                          :value="obrasCatEditAutr"
+                        >
+                          ¿El Autor tiene Obras en el Catálgo Editorial de
+                          Bismusic?
+                        </a-checkbox>
+                      </a-form-model-item>
+                      <a-form-model-item v-else>
+                        <i
+                          class="fa fa-check-square-o hidden-xs"
+                          v-if="author.obrasCatEditAutr === 1"
+                        />
+                        <i class="fa fa-square-o" v-else />
+                        ¿El Autor tiene Obras en el Catálgo Editorial de
+                        Bismusic?
+                      </a-form-model-item>
+                    </div>
+                  </a-col>
+                  <a-col span="1"></a-col>
+                  <a-col span="11">
+                    <a-row
+                      style="margin-top: 20px"
+                      v-if="
+                        action_modal === 'crear' ||
+                        action_modal === 'crear_autor'
+                      "
+                    >
+                      <a-col span="24">
+                        <a-row>
+                          <a-col span="24">
+                            <div class="section-title">
+                              <h4>Temas</h4>
+                            </div>
+                          </a-col>
+                        </a-row>
+                        <a-row>
+                          <a-col span="24">
+                            <a-mentions
+                              readonly
+                              v-if="
+                                $store.getters.getTemasFormGetters.length === 0
+                              "
+                            ></a-mentions>
+                            <div class="custom-form-item">
+                              <transition-group name="list">
+                                <a-form-model-item
+                                  v-for="(tema, index) in $store.getters
+                                    .getTemasFormGetters"
+                                  :key="tema.id"
+                                  v-bind="index === 0 ? formItemLayout : {}"
+                                  class="list-item"
+                                  style="margin-bottom: 0px"
+                                >
+                                  <a-row>
+                                    <a-col span="22">
+                                      <a-mentions
+                                        style="margin-top: 3px"
+                                        readonly
+                                        :placeholder="tema.tituloTem"
+                                      ></a-mentions>
+                                    </a-col>
+                                    <a-col span="2" style="float: right">
+                                      <a-button
+                                        class="dynamic-delete-button"
+                                        @click="remove_tema(tema)"
+                                      >
+                                        <small>
+                                          <b style="vertical-align: top"> x </b>
+                                        </small>
+                                      </a-button>
+                                    </a-col>
+                                  </a-row>
+                                </a-form-model-item>
+                              </transition-group>
+                            </div>
+                            <a-row style="margin-top: 20px">
+                              <a-col span="24">
+                                <div class="section-title">
+                                  <h5>Selector de Temas:</h5>
+                                </div>
+                                <div class="custom-form-item">
+                                  <a-form-model
+                                    ref="formularioAgregarTema"
+                                    :layout="'horizontal'"
+                                    :model="author_modal"
+                                  >
+                                    <a-form-model-item
+                                      style="margin-bottom: 0px"
+                                    >
+                                      <a-select
+                                        placeholder="Titulo"
+                                        option-filter-prop="children"
+                                        :filter-option="filter_option"
+                                        show-search
+                                        v-model="author_modal.temas"
+                                        :disabled="disabled"
+                                      >
+                                        <a-select-option
+                                          v-for="tema in $store.getters
+                                            .getAllTemasFormGetters"
+                                          :key="tema.id"
+                                          :value="tema.id"
+                                        >
+                                          {{ tema.tituloTem }}
+                                        </a-select-option>
+                                      </a-select>
+                                    </a-form-model-item>
+                                    <a-row>
+                                      <a-col span="12">
+                                        <a-form-model-item
+                                          v-bind="formItemLayout"
+                                        >
+                                          <a-button
+                                            :disabled="disabled"
+                                            type="primary"
+                                            @click="add_tema"
+                                          >
+                                            <a-icon type="plus" />
+                                            Agregar Tema
+                                          </a-button>
+                                        </a-form-model-item>
+                                      </a-col>
+                                      <a-col span="12">
+                                        <a-form-model-item
+                                          v-bind="formItemLayout"
+                                          style="float: right"
+                                        >
+                                          <a-button
+                                            :disabled="disabled"
+                                            type="primary"
+                                            @click="new_tema"
+                                          >
+                                            <a-icon type="plus" />
+                                            Crear Tema
+                                          </a-button>
+                                        </a-form-model-item>
+                                      </a-col>
+                                    </a-row>
+                                  </a-form-model>
+                                </div>
+                              </a-col>
+                            </a-row>
+                          </a-col>
+                        </a-row>
+                      </a-col>
+                    </a-row>
+                  </a-col>
+                </a-row>
+              </a-form-model>
+              <a-row>
+                <a-button
+                  v-if="
+                    action_modal !== 'crear' && action_modal !== 'crear_autor'
+                  "
+                  :disabled="disabled"
+                  style="float: right"
+                  type="default"
+                  @click="siguiente('tab_1', '2')"
+                >
+                  Siguiente
+                  <a-icon type="right" />
+                </a-button>
+              </a-row>
+            </a-spin>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane
+          key="2"
+          v-if="action_modal !== 'crear' && action_modal !== 'crear_autor'"
+          :disabled="tab_2"
+        >
+          <span slot="tab"> Audiovisuales/Tracks/Temas </span>
+          <a-row>
+            <a-col span="12">
+              <div class="section-title">
+                <h4>Audiovisuales/Tracks/Temas</h4>
+              </div>
+            </a-col>
+          </a-row>
 
 					<div>
 						<a-steps :current="current" @change="onChange">

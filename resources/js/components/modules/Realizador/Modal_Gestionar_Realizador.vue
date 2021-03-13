@@ -89,7 +89,7 @@
                     :validate-status="show_error"
                     prop="codigRealiz"
                     has-feedback
-                    label="Código"
+                    label="Código:"
                     :help="show_used_error"
                   >
                     <a-input
@@ -101,7 +101,7 @@
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal === 'editar'"
-                    label="Código"
+                    label="Código:"
                   >
                     <a-input
                       addon-before="REAL-"
@@ -111,7 +111,7 @@
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal === 'detalles'"
-                    label="Código"
+                    label="Código:"
                   >
                     <a-mentions
                       readonly
@@ -122,7 +122,7 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Nombre Completo"
+                    label="Nombres y Apellidos:"
                     prop="nombreApellidosRealiz"
                   >
                     <a-input
@@ -130,7 +130,7 @@
                       v-model="realizadores_modal.nombreApellidosRealiz"
                     />
                   </a-form-model-item>
-                  <a-form-model-item v-else label="Nombre Completo">
+                  <a-form-model-item v-else label="Nombres y Apellidos:">
                     <a-mentions
                       readonly
                       :placeholder="realizadores_modal.nombreApellidosRealiz"
@@ -140,7 +140,7 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Sexo"
+                    label="Sexo:"
                     prop="sexoRealiz"
                   >
                     <a-select
@@ -159,7 +159,7 @@
                       </a-select-option>
                     </a-select>
                   </a-form-model-item>
-                  <a-form-model-item v-else label="Sexo">
+                  <a-form-model-item v-else label="Sexo:">
                     <a-mentions
                       readonly
                       :placeholder="realizadores_modal.sexoRealiz"
@@ -171,22 +171,23 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Descripción del Realizador"
+                    label="Descripción del Realizador:"
                     prop="descripEspRealiz"
                   >
                     <a-input
                       :disabled="disabled"
-                      style="width: 100%; height: 150px"
+                      style="width: 100%; height: 150px; margin-top: 4px"
                       v-model="realizadores_modal.descripEspRealiz"
                       type="textarea"
                     />
                   </a-form-model-item>
                   <a-form-model-item
-                    label="Descripción del Realizador"
+                    label="Descripción del Realizador:"
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
                       <a-mentions
+                      style="margin-top: 2px"
                         readonly
                         :placeholder="realizadores_modal.descripEspRealiz"
                       >
@@ -344,7 +345,7 @@ export default {
             trigger: "change",
           },
           {
-            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
+            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z0-9# ]*$",
             message: "Caracter no válido",
             trigger: "change",
           },

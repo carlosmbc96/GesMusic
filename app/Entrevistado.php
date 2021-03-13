@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class Entrevistado extends Model
 {
@@ -15,6 +17,7 @@ class Entrevistado extends Model
 	// Atributos del Modelo Entrevistado
 	protected $fillable = [
 		'codigEntrv',
+		'fotoEntrv',
 		'nombreApellidosEntrv',  // Nombre y Apellidos del Entrevistado
 		'sexoEntrv',  // Sexo del Entrevistado
 		'descripEspEntrv',  // Descripción en Español del Entrevistado
@@ -29,10 +32,23 @@ class Entrevistado extends Model
 	//Relación de Many to One Entrevistados - Audiovisuales
 	public function audiovisuales()
 	{
-		return $this->belongsToMany(Audiovisual::class,'audiovisual_entrevistado');
+		return $this->belongsToMany(Audiovisual::class, 'audiovisual_entrevistado');
 	}
 	//SECCIÓN DE RELACIONES
 
+	//SECCIÓN DE IMÁGENES
+	public function setFotoEntrvAttribute($fotoEntrv, $codigEntrv)
+	{
+		$this->attributes['fotoEntrv'] = '/BisMusic/Imagenes/Entrevistados/' . $codigEntrv . $fotoEntrv->getClientOriginalName();
+		$name = $codigEntrv . $fotoEntrv->getClientOriginalName();
+		Storage::disk('local')->put('Imagenes/Entrevistados/' . $name, File::get($fotoEntrv));
+	}
+
+	public function setFotoEntrvAttributeDefault()
+	{
+		$this->attributes['fotoEntrv'] = '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png';
+	}
+	//SECCIÓN DE IMÁGENESF
 
 	//SECCIÓN DE QUERY SCOPE
 	// Query Scope que devuelve el Total de Registros del Modelo Entrevistado

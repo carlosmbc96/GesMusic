@@ -879,36 +879,37 @@
 						</a-col>
 					</a-row>
 
-					<div>
-						<a-steps :current="current" @change="onChange">
-							<a-step
-								v-for="item in steps"
-								:key="item.title"
-								:title="item.title"
-							/>
-						</a-steps>
-						<br />
-						<div>
-							<tabla_audiovisuales
-								v-if="current === 0"
-								:detalles_prop="detalles"
-								@reload="reload_parent"
-								:entity="product_modal"
-								entity_relation="productos"
-								:vista_editar="vista_editar"
-								@close_modal="show = $event"
-							/>
-							<tabla_fonogramas
-								v-else
-								:detalles_prop="detalles"
-								@reload="reload_parent"
-								:producto="product_modal"
-								:vista_editar="vista_editar"
-								@close_modal="show = $event"
-							/>
-						</div>
-						<br />
-					</div>
+          <div>
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_audiovisuales
+                v-if="current === 0"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="product_modal"
+                entity_relation="productos"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_fonogramas
+                v-else
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="product_modal"
+                entity_relation="productos"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
+            <br />
+          </div>
 
 					<a-button
 						v-if="false"
@@ -2326,11 +2327,6 @@ export default {
 </script>
 
 <style>
-/* #modal_gestionar_productos .list-item,
-.ant-row,
-.ant-form-item {
-  margin-bottom: 0px !important;
-} */
 #modal_gestionar_productos .ant-form-item-label {
 	margin-bottom: -10px !important;
 }

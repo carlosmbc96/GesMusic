@@ -18,7 +18,6 @@ class CreateTracksTable extends Migration
             $table->boolean('muestraTrk')->nullable();  // ¿El Track tiene una pista de Muestra?
             $table->boolean('envivoTrk')->nullable();  // ¿El Track se Grabó en Vivo?
             $table->string('generoTrk')->nullable();  // Género Musical Track *nom
-            $table->string('subgeneroTrk')->nullable();  // Subgénero Musical Track *nom
             $table->boolean('bonusTrk')->nullable();  // ¿Es un bonus Track?
             $table->text('moodTrk')->nullable();  // Estados de Ánimos que refiere el Track *nom
             $table->string('gestionTrk')->nullable();  // Gestión Track *nom

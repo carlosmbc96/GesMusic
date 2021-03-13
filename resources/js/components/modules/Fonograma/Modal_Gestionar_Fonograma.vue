@@ -335,7 +335,7 @@
                 </a-col>
                 <a-col span="11" style="float: right">
                   <div class="section-title">
-                    <h4>Datos del dueño de los derechos del Fonograma</h4>
+                    <h4>Datos del dDueño de los Derechos</h4>
                   </div>
                   <a-row style="margin-bottom: 30px">
                     <a-form-model-item
@@ -369,6 +369,36 @@
                         show-search
                         :disabled="disabled"
                         v-model="fonogram_modal.nacioDueñoDerchFong"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in paises"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item label="Nacionalidad:" v-else>
+                      <a-mentions
+                        readonly
+                        :placeholder="fonogram_modal.nacioDueñoDerchFong"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Derechos sobre el Fonograma:"
+                      prop="derechosFong"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        :disabled="disabled"
+                        v-model="fonogram_modal.derechosFong"
                       >
                         <a-select-option
                           v-for="nomenclator in paises"
@@ -466,24 +496,45 @@
         </a-tab-pane>
         <!-- Tab 3 -->
         <a-tab-pane key="3" :disabled="tab_3">
-          <span slot="tab"> Repertorio </span>
+          <span slot="tab"> Repertorio/Productos </span>
           <a-row>
             <a-col span="12" v-if="action_modal !== 'crear'">
               <div class="section-title">
-                <h4>Listado de Tracks:</h4>
+                <h4>Listado de Tracks/Productos</h4>
               </div>
             </a-col>
           </a-row>
-          <tabla_tracks
-            v-if="action_modal !== 'crear'"
-            :detalles_prop="detalles"
-            @reload="reload_parent"
-            :entity="fonogram_modal"
-            entity_relation="fonogramas"
-            :vista_editar="vista_editar"
-            @close_modal="show = $event"
-          />
-          <br />
+          <div v-if="action_modal !== 'crear'">
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_tracks
+                v-if="current === 0"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="fonogram_modal"
+                entity_relation="fonogramas"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_productos
+                v-else
+                :detalles_prop="detalles_prod"
+                @reload="reload_parent"
+                :entity="fonogram_modal"
+                entity_relation="fonogramas"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
+            <br />
+          </div>
           <a-row v-if="action_modal === 'crear'">
             <div id="tracks">
               <a-col span="1"></a-col>
@@ -691,7 +742,7 @@
                       <h4>Duración Total:</h4>
                     </div>
                     <a-mentions
-                    style="width: 26% !important"
+                      style="width: 26% !important"
                       readonly
                       :placeholder="$store.getters.getDurationFormGetters"
                     >
@@ -778,7 +829,16 @@ export default {
 			} else callback();
 		};
 		return {
+      steps: [
+        {
+          title: "Listado de Tracks",
+        },
+        {
+          title: "Productos",
+        },
+      ],
 			track: {},
+      detalles_prod: true,
 			origin: true,
 			detalles: false,
 			vista_editar: true,
@@ -861,18 +921,6 @@ export default {
 					},
 					{
 						pattern: "^[üáéíóúÁÉÍÓÚñÑa-zA-Z0-9 ]*$",
-						message: "Caracter no válido",
-						trigger: "change"
-					},
-					{
-						whitespace: true,
-						message: "Espacio no válido",
-						trigger: "change"
-					}
-				],
-				dueñoDerchFong: [
-					{
-						pattern: "^[ a-zA-Z-üáéíóúÁÉÍÓÚñÑ]*$",
 						message: "Caracter no válido",
 						trigger: "change"
 					},
@@ -1019,6 +1067,9 @@ export default {
 				}
 			}
 		},
+    onChange(current) {
+      this.current = current;
+    },
 		handle_cancel(e) {
 			if (e === "cancelar") {
 				this.$emit("actualizar");
@@ -1645,6 +1696,7 @@ export default {
 	components: {
 		tabla_tracks,
 		modal_management
+    tabla_productos: () => import("../Producto/Tabla_Productos"),
 	}
 };
 </script>

@@ -20,7 +20,7 @@ class CreateFonogramasTable extends Migration
             $table->string('territorioFong')->nullable();  // Territorio del Audiovisual
             $table->string('dueñoDerchFong')->nullable();  // Nombre y Apellidos del Dueño de los Derechos del Fonograma
             $table->string('nacioDueñoDerchFong')->nullable();  // Nacionalidad del Dueño de los Derechos del Fonograma
-            $table->string('propiedadFong')->nullable();  // Nacionalidad Dueño Fonograma *nom
+            $table->string('derechosFong')->nullable();  // Nacionalidad Dueño Fonograma *nom
             $table->string('dirArbolFong')->nullable();  // Ruta URL del directorio donde se almacena el Fonograma
             $table->text('descripEspFong')->nullable();  // Descripción en Español del Fonograma
             $table->text('descripIngFong')->nullable();  // Descripción en Inglés del Fonograma

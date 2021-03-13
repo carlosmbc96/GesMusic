@@ -189,8 +189,8 @@ L10n.load({
 });
 setCulture("es-ES");
 export default {
-  name: "Proyecto_Index",
-  props: ["proyecto", "vista_editar", "detalles_prop"],
+  name: "tabla_productos",
+  props: ["entity", "vista_editar", "detalles_prop", "entity_relation"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -586,15 +586,45 @@ export default {
       this.$emit("reload");
       this.change_spin();
       if (this.vista_editar) {
-        axios
+        if (this.entity_relation === "proyecto") {
+          axios
           .post("/productos/listar", {
             atributo: "proyecto_id",
-            valorbuscado: this.proyecto.id,
+            valorbuscado: this.entity.id,
           })
           .then((response) => {
             this.products_list = response.data;
             this.change_spin();
           });
+        }
+        else {
+          axios
+          .post("/productos/listar", { relations: [this.entity_relation] })
+          .then((response) => {
+            this.products_list = [];
+            let pertenece = false;
+            response.data.forEach((producto) => {
+              if (this.entity_relation === "audiovisuales") {
+                producto.audiovisuales.forEach((audiovisual) => {
+                  if (audiovisual.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              } else if (this.entity_relation === "fonogramas") {
+                producto.fonogramas.forEach((fonograma) => {
+                  if (fonograma.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              }
+              if (pertenece) {
+                this.products_list.push(producto);
+              }
+              pertenece = false;
+            });
+            this.change_spin();
+          });
+        }
         axios
           .post("/productos/listar", { relations: ["proyecto"] })
           .then((response) => {
@@ -623,7 +653,7 @@ export default {
         this.visible_management = true;
         this.row_selected = {
           tabla: true,
-          proyecto_id: this.proyecto.id,
+          proyecto_id: this.entity.id,
         };
       }
     },

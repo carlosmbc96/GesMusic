@@ -90,7 +90,7 @@
                   </a-col>
                 </a-row>
                 <a-col span="12">
-                  <a-form-model-item label="ISRC" prop="track_id" has-feedback>
+                  <a-form-model-item label="ISRC:" prop="track_id" has-feedback>
                     <a-select
                       option-filter-prop="children"
                       :filter-option="filter_option"
@@ -108,7 +108,7 @@
                       </a-select-option>
                     </a-select>
                   </a-form-model-item>
-                  <a-form-model-item label="Nombre">
+                  <a-form-model-item label="Nombre:">
                     <a-select
                       option-filter-prop="children"
                       :filter-option="filter_option"
@@ -169,7 +169,7 @@
                     :validate-status="show_error"
                     prop="codigTema"
                     has-feedback
-                    label="Código"
+                    label="Código:"
                     :help="show_used_error"
                   >
                     <a-input
@@ -181,7 +181,7 @@
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal === 'editar'"
-                    label="Código"
+                    label="Código:"
                   >
                     <a-input
                       addon-before="TEMA-"
@@ -191,7 +191,7 @@
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal === 'detalles'"
-                    label="Código"
+                    label="Código:"
                   >
                     <a-mentions readonly :placeholder="tema_modal.codigTema">
                     </a-mentions>
@@ -199,7 +199,7 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Título"
+                    label="Título:"
                     prop="tituloTem"
                   >
                     <a-input
@@ -207,14 +207,14 @@
                       v-model="tema_modal.tituloTem"
                     />
                   </a-form-model-item>
-                  <a-form-model-item v-else label="Título">
+                  <a-form-model-item v-else label="Título:">
                     <a-mentions readonly :placeholder="tema_modal.tituloTem">
                     </a-mentions>
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Sociedad de Gestión"
+                    label="Sociedad de Gestión:"
                     prop="sociedadGestionTem"
                   >
                     <a-select
@@ -233,7 +233,7 @@
                       </a-select-option>
                     </a-select>
                   </a-form-model-item>
-                  <a-form-model-item v-else label="Sociedad de Gestión">
+                  <a-form-model-item v-else label="Sociedad de Gestión:">
                     <a-mentions
                       readonly
                       :placeholder="tema_modal.sociedadGestionTem"
@@ -263,22 +263,22 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Descripción del Tema"
+                    label="Descripción del Tema:"
                     prop="descripTem"
                   >
                     <a-input
                       :disabled="disabled"
-                      style="width: 100%; height: 150px"
+                      style="width: 100%; height: 150px; margin-top: 4px"
                       v-model="tema_modal.descripTem"
                       type="textarea"
                     />
                   </a-form-model-item>
                   <a-form-model-item
-                    label="Descripción del Tema"
+                    label="Descripción del Tema:"
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
-                      <a-mentions readonly :placeholder="tema_modal.descripTem">
+                      <a-mentions style="margin-top: 2px" readonly :placeholder="tema_modal.descripTem">
                       </a-mentions>
                     </div>
                   </a-form-model-item>

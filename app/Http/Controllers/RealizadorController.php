@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Realizador;
 use App\Vocabulario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RealizadorController extends Controller
 {
@@ -52,12 +53,39 @@ class RealizadorController extends Controller
 
 	public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Realizador
 	{
-		return response()->json(Realizador::create($request->all()));
+		$realizador = Realizador::create([
+			"codigRealiz" => $request->codigRealiz,
+			"nombreApellidosRealiz" => $request->nombreApellidosRealiz,
+			"sexoRealiz" => $request->sexoRealiz,
+			"descripEspRealiz" => $request->descripEspRealiz,
+		]);
+		if ($request->fotoReal !== null) {
+			$realizador->setFotoRealAttribute($request->fotoReal, $request->codigRealiz);
+		} else
+			$realizador->setFotoRealAttributeDefault();
+		$realizador->save();
+		return response()->json($realizador);
 	}
 
 	public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Interprete
 	{
-		return response()->json(Realizador::findOrFail($request->id)->update($request->all()));
+		$realizador = Realizador::findOrFail($request->id);
+		if ($request->fotoReal !== null) {
+			if (substr($realizador->fotoReal, 32) !== "Logo ver vertical_Ltr Negras.png") {
+				Storage::disk('local')->delete('/Imagenes/Realizadores/' . substr($realizador->fotoReal, 32));
+			}
+			$realizador->setFotoRealAttribute($request->fotoReal, $request->codigRealiz);
+		} else if ($request->img_default) {
+			Storage::disk('local')->delete('/Imagenes/Realizadores/' . substr($realizador->fotoReal, 32));
+			$realizador->setFotoRealAttributeDefault();
+		}
+		$realizador->update([
+			"codigRealiz" => $request->codigRealiz,
+			"nombreApellidosRealiz" => $request->nombreApellidosRealiz,
+			"sexoRealiz" => $request->sexoRealiz,
+			"descripEspRealiz" => $request->descripEspRealiz,
+		]);
+		return response()->json($realizador);
 	}
 
 	public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Interprete
@@ -72,6 +100,9 @@ class RealizadorController extends Controller
 			for ($i = count($realizador->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 				$realizador->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
 			}
+		}
+		if (substr($realizador->fotoReal, 32) !== "Logo ver vertical_Ltr Negras.png") {
+			Storage::disk('local')->delete('/Imagenes/Realizadores/' . substr($realizador->fotoReal, 32));
 		}
 		return response()->json($realizador->forceDelete());
 	}

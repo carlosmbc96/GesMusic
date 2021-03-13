@@ -415,39 +415,6 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Subgénero musical"
-                      prop="subgeneroTrk"
-                    >
-                      <a-select
-                        :getPopupContainer="(trigger) => trigger.parentNode"
-                        option-filter-prop="children"
-                        :filter-option="filter_option"
-                        show-search
-                        :disabled="disabled"
-                        v-model="track_modal.subgeneroTrk"
-                      >
-                        <a-select-option
-                          v-for="nomenclator in subgeneros"
-                          :key="nomenclator.id"
-                          :value="nomenclator.nombreTer"
-                        >
-                          {{ nomenclator.nombreTer }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      label="Subgénero musical"
-                      v-if="action_modal === 'detalles'"
-                    >
-                      <a-mentions
-                        readonly
-                        :placeholder="track_modal.subgeneroTrk"
-                      >
-                      </a-mentions>
-                    </a-form-model-item>
-                    <a-form-model-item
-                      v-if="action_modal !== 'detalles'"
-                      has-feedback
                       label="Estados de Ánimo:"
                       prop="moodTrk"
                     >
@@ -505,7 +472,8 @@
                     </a-form-model-item>
                     <a-row>
                       <a-col span="11">
-                        <a-form-model-item v-if="action_modal !== 'detalles'">
+                        <a-form-model-item v-if="action_modal !== 'detalles'"
+                        style="margin-top: 23px">
                           <a-checkbox
                             :disabled="disabled"
                             v-model="bonusTrk"
@@ -514,7 +482,7 @@
                             ¿Es un Bonus Track?
                           </a-checkbox>
                         </a-form-model-item>
-                        <a-form-model-item v-else>
+                        <a-form-model-item style="margin-top: 23px" v-else>
                           <i
                             class="fa fa-check-square-o hidden-xs"
                             v-if="track.bonusTrk === 1"
@@ -524,7 +492,8 @@
                         </a-form-model-item>
                       </a-col>
                       <a-col span="11" style="float: right">
-                        <a-form-model-item v-if="action_modal !== 'detalles'">
+                        <a-form-model-item v-if="action_modal !== 'detalles'"
+                        style="margin-top: 23px">
                           <a-checkbox
                             :disabled="disabled"
                             v-model="envivoTrk"
@@ -533,7 +502,7 @@
                             ¿El Track se Grabó en Vivo?
                           </a-checkbox>
                         </a-form-model-item>
-                        <a-form-model-item v-else>
+                        <a-form-model-item style="margin-top: 23px" v-else>
                           <i
                             class="fa fa-check-square-o hidden-xs"
                             v-if="track.envivoTrk === 1"
@@ -831,11 +800,11 @@
             action_modal !== 'crear_track'
           "
         >
-          <span slot="tab"> Autores/Intérptetes/Temas </span>
+          <span slot="tab"> Autores/Intérptetes/Temas/Fonogramas </span>
           <a-row>
             <a-col span="12">
               <div class="section-title">
-                <h4>Autores/Intérptetes/Temas</h4>
+                <h4>Autores/Intérptetes/Temas/Fonogramas</h4>
               </div>
             </a-col>
           </a-row>
@@ -869,8 +838,17 @@
                 @close_modal="show = $event"
               />
               <tabla_temas
-                v-else
+                v-else-if="current === 2"
                 :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="track_modal"
+                entity_relation="tracks"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_fonogramas
+                v-else
+                :detalles_prop="detalles_fong"
                 @reload="reload_parent"
                 :entity="track_modal"
                 entity_relation="tracks"
@@ -945,9 +923,14 @@ export default {
         {
           title: "Temas",
         },
+        {
+          title: "Fonogramas",
+        },
       ],
       vista_editar: true,
+      detalles_fong: true,
       current: 0,
+      deralles_prod: true,
       detalles: false,
       tab_1: false,
       tab_2: true,
@@ -968,7 +951,6 @@ export default {
       track_modal: {},
       paises: [],
       generos: [],
-      subgeneros: [],
       moods: [],
       gestiones: [],
       muestraTrk: false,
@@ -1151,7 +1133,6 @@ export default {
           this.track_modal.paisgrabTrk === this.track.paisgrabTrk &&
           this.track_modal.muestraTrk === this.track.muestraTrk &&
           this.track_modal.generoTrk === this.track.generoTrk &&
-          this.track_modal.subgeneroTrk === this.track.subgeneroTrk &&
           this.compareArrays(this.track_modal.moodTrk, this.track.moodTrk) &&
           this.compareArrays(
             this.track_modal.fonogramas_tracks,
@@ -1507,11 +1488,6 @@ export default {
       this.track_modal.muestraTrk = this.muestraTrk === false ? 0 : 1;
       this.track_modal.bonusTrk = this.bonusTrk === false ? 0 : 1;
       this.track_modal.envivoTrk = this.envivoTrk === false ? 0 : 1;
-      if (this.track_modal.subgeneroTrk === undefined) {
-        this.track_modal.subgeneroTrk = "";
-      } else if (this.track_modal.subgeneroTrk === null) {
-        this.track_modal.subgeneroTrk = "";
-      }
       if (this.track_modal.moodTrk === undefined) {
         this.track_modal.moodTrk = "";
       } else if (this.track_modal.moodTrk === null) {
@@ -1558,7 +1534,6 @@ export default {
       form_data.append("envivoTrk", this.track_modal.envivoTrk);
       form_data.append("generoTrk", this.track_modal.generoTrk);
       form_data.append("moodTrk", moods);
-      form_data.append("subgeneroTrk", this.track_modal.subgeneroTrk);
       form_data.append("bonusTrk", this.track_modal.bonusTrk);
       form_data.append("gestionTrk", this.track_modal.gestionTrk);
       form_data.append("paisgrabTrk", this.track_modal.paisgrabTrk);
@@ -1688,12 +1663,11 @@ export default {
         .post("/tracks/nomencladores")
         .then((response) => {
           this.list_nomenclators = response.data;
-          this.moods = this.list_nomenclators[2][0];
+          this.moods = this.list_nomenclators[1][0];
           this.generos = this.list_nomenclators[0][0];
-          this.subgeneros = this.list_nomenclators[1][0];
-          this.paises = this.list_nomenclators[4][0];
-          this.gestiones = this.list_nomenclators[3][0];
-          this.roles_interp = this.list_nomenclators[5][0];
+          this.paises = this.list_nomenclators[3][0];
+          this.gestiones = this.list_nomenclators[2][0];
+          this.roles_interp = this.list_nomenclators[4][0];
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
@@ -1934,11 +1908,15 @@ export default {
     tabla_autores,
     tabla_temas,
     tabla_interpretes,
+    tabla_fonogramas: () => import("../Fonograma/Tabla_Fonogramas"),
   },
 };
 </script>
 
 <style>
+#modal_gestionar_tracks .ant-steps {
+  width: 60% !important;
+}
 #modal_gestionar_tracks .ant-col-6 {
   width: 50% !important;
 }

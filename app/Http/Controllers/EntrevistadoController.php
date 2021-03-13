@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Entrevistado;
 use App\Vocabulario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EntrevistadoController extends Controller
 {
@@ -52,12 +53,39 @@ class EntrevistadoController extends Controller
 
 	public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Entrevistado
 	{
-		return response()->json(Entrevistado::create($request->all()));
+		$entrevistado = Entrevistado::create([
+			"codigEntrv" => $request->codigEntrv,
+			"nombreApellidosEntrv" => $request->nombreApellidosEntrv,
+			"sexoEntrv" => $request->sexoEntrv,
+			"descripEspEntrv" => $request->descripEspEntrv,
+		]);
+		if ($request->fotoEntrv !== null) {
+			$entrevistado->setFotoEntrvAttribute($request->fotoEntrv, $request->codigEntrv);
+		} else
+			$entrevistado->setFotoEntrvAttributeDefault();
+		$entrevistado->save();
+		return response()->json($entrevistado);
 	}
 
 	public function update(Request $request)  // Update | Método que Actualiza un Registro Específico del Modelo:Interprete
 	{
-		return response()->json(Entrevistado::findOrFail($request->id)->update($request->all()));
+		$entrevistado = Entrevistado::findOrFail($request->id);
+		if ($request->fotoEntrv !== null) {
+			if (substr($entrevistado->fotoEntrv, 33) !== "Logo ver vertical_Ltr Negras.png") {
+				Storage::disk('local')->delete('/Imagenes/Entrevistados/' . substr($entrevistado->fotoEntrv, 33));
+			}
+			$entrevistado->setFotoEntrvAttribute($request->fotoEntrv, $request->codigEntrv);
+		} else if ($request->img_default) {
+			Storage::disk('local')->delete('/Imagenes/Entrevistados/' . substr($entrevistado->fotoEntrv, 33));
+			$entrevistado->setFotoEntrvAttributeDefault();
+		}
+		$entrevistado->update([
+			"codigEntrv" => $request->codigEntrv,
+			"nombreApellidosEntrv" => $request->nombreApellidosEntrv,
+			"sexoEntrv" => $request->sexoEntrv,
+			"descripEspEntrv" => $request->descripEspEntrv,
+		]);
+		return response()->json($entrevistado);
 	}
 
 	public function destroyLog($id)  // DestroyLog | Método que Elimina de forma Lógica un Registro Específico del Modelo:Interprete
@@ -72,6 +100,9 @@ class EntrevistadoController extends Controller
 			for ($i = count($entrevistado->audiovisuales()->withTrashed()->get()) - 1; $i >= 0; $i--) {
 				$entrevistado->audiovisuales()->withTrashed()->get()[$i]->pivot->delete();
 			}
+		}
+		if (substr($entrevistado->fotoEntrv, 33) !== "Logo ver vertical_Ltr Negras.png") {
+			Storage::disk('local')->delete('/Imagenes/Entrevistados/' . substr($entrevistado->fotoEntrv, 33));
 		}
 		return response()->json($entrevistado->forceDelete());
 	}

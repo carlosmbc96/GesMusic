@@ -218,7 +218,7 @@
                       prop="descripEsp"
                     >
                       <a-input
-                        style="width: 100%; height: 150px; margin-top: 4px;"
+                        style="width: 100%; height: 150px; margin-top: 4px"
                         :disabled="disabled"
                         v-model="project_modal.descripEsp"
                         type="textarea"
@@ -245,7 +245,7 @@
                       prop="descripIng"
                     >
                       <a-input
-                        style="width: 100%; height: 150px; margin-top: 4px;"
+                        style="width: 100%; height: 150px; margin-top: 4px"
                         :disabled="disabled"
                         v-model="project_modal.descripIng"
                         type="textarea"
@@ -293,7 +293,8 @@
           <tabla_productos
             :detalles_prop="detalles"
             @reload="reload_parent"
-            :proyecto="project_modal"
+            :entity="project_modal"
+            entity_relation="proyecto"
             :vista_editar="vista_editar"
             @close_modal="show = $event"
           />

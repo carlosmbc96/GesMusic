@@ -12,6 +12,7 @@ class CreateEntrevistadosTable extends Migration
 			// Migración del Modelo Entrevistados
 			$table->id()->index();  // Identificador Único de la Tabla: Entrevistados
 			$table->string('codigEntrv', 9)->unique();
+			$table->string('fotoEntrv')->nullable();
 			$table->string('nombreApellidosEntrv');  // Nombre y Apellidos del Entrevistado
 			$table->string('sexoEntrv');  // Sexo del Entrevistado
 			$table->text('descripEspEntrv')->nullable();  // Descripción en Español del Entrevistado

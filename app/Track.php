@@ -20,7 +20,6 @@ class Track extends Model
         'muestraTrk',  // ¿El Track tiene una pista de Muestra?
         'envivoTrk',  // ¿El Track se Grabó en Vivo?
         'generoTrk',  // Género Musical Track *nom*
-        'subgeneroTrk',  // Subgénero Musical Track *nom*
         'bonusTrk',  // ¿Es un bonus Track?
         'moodTrk',  // Estados de Ánimos que refiere el Track *nom*
         'gestionTrk',  // Gestión Track *nom
@@ -107,7 +106,6 @@ class Track extends Model
                 ->orwhere('isrcTrk','like',"%$valorbuscado%")
                 ->orwhere('envivoTrk','like',"%$valorbuscado%")
                 ->orwhere('generoTrk','like',"%$valorbuscado%")
-                ->orwhere('subgeneroTrk','like',"%$valorbuscado%")
                 ->orwhere('moodTrk','like',"%$valorbuscado%")
                 ->orwhere('gestionTrk','like',"%$valorbuscado%")
                 ->orwhere('paisgrabTrk','like',"%$valorbuscado%");

@@ -82,7 +82,7 @@
     <transfer_modal
       v-if="visible_transfer"
       @actualizar="refresh_table"
-      :entity_id="producto.id"
+      :entity_id="entity.id"
       @close_modal="visible_transfer = $event"
     ></transfer_modal>
   </div>
@@ -189,7 +189,7 @@ L10n.load({
 setCulture("es-ES");
 export default {
   name: "tabla_fonogramas",
-  props: ["producto", "vista_editar", "detalles_prop"],
+  props: ["entity", "vista_editar", "detalles_prop", "entity_relation"],
   data() {
     return {
       //* Variables de configuración de la tabla
@@ -572,16 +572,24 @@ export default {
       this.$emit("reload");
       if (this.vista_editar) {
         axios
-          .post("/fonogramas/listar", { relations: ["productos"] })
+          .post("/fonogramas/listar", { relations: ["all"] })
           .then((response) => {
             this.fonograms_list = [];
             let pertenece = false;
             response.data.forEach((fonograma) => {
-              fonograma.productos.forEach((producto) => {
-                if (producto.id === this.producto.id) {
-                  pertenece = true;
-                }
-              });
+              if (this.entity_relation === "productos") {
+                fonograma.productos.forEach((producto) => {
+                  if (producto.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              } else if (this.entity_relation === "tracks") {
+                fonograma.tracks.forEach((track) => {
+                  if (track.id === this.entity.id) {
+                    pertenece = true;
+                  }
+                });
+              }
               if (pertenece) {
                 this.fonograms_list.push(fonograma);
               }
@@ -610,7 +618,7 @@ export default {
         this.visible_management = true;
         this.row_selected = {
           modal_detalles: true,
-          productos_fongs: this.producto.id,
+          productos_fongs: this.entity.id,
         };
       } else if (args.item.id === "vinc_desvinc") {
         this.visible_transfer = true;

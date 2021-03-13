@@ -335,7 +335,7 @@
                 </a-col>
                 <a-col span="11" style="float: right">
                   <div class="section-title">
-                    <h4>Datos del dueño de los derechos del Fonograma</h4>
+                    <h4>Datos del dDueño de los Derechos</h4>
                   </div>
                   <a-row style="margin-bottom: 30px">
                     <a-form-model-item
@@ -369,6 +369,36 @@
                         show-search
                         :disabled="disabled"
                         v-model="fonogram_modal.nacioDueñoDerchFong"
+                      >
+                        <a-select-option
+                          v-for="nomenclator in paises"
+                          :key="nomenclator.id"
+                          :value="nomenclator.nombreTer"
+                        >
+                          {{ nomenclator.nombreTer }}
+                        </a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                    <a-form-model-item label="Nacionalidad:" v-else>
+                      <a-mentions
+                        readonly
+                        :placeholder="fonogram_modal.nacioDueñoDerchFong"
+                      >
+                      </a-mentions>
+                    </a-form-model-item>
+                    <a-form-model-item
+                      v-if="action_modal !== 'detalles'"
+                      has-feedback
+                      label="Derechos sobre el Fonograma:"
+                      prop="derechosFong"
+                    >
+                      <a-select
+                        :getPopupContainer="(trigger) => trigger.parentNode"
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
+                        :disabled="disabled"
+                        v-model="fonogram_modal.derechosFong"
                       >
                         <a-select-option
                           v-for="nomenclator in paises"
@@ -466,24 +496,45 @@
         </a-tab-pane>
         <!-- Tab 3 -->
         <a-tab-pane key="3" :disabled="tab_3">
-          <span slot="tab"> Repertorio </span>
+          <span slot="tab"> Repertorio/Productos </span>
           <a-row>
             <a-col span="12" v-if="action_modal !== 'crear'">
               <div class="section-title">
-                <h4>Listado de Tracks:</h4>
+                <h4>Listado de Tracks/Productos</h4>
               </div>
             </a-col>
           </a-row>
-          <tabla_tracks
-            v-if="action_modal !== 'crear'"
-            :detalles_prop="detalles"
-            @reload="reload_parent"
-            :entity="fonogram_modal"
-            entity_relation="fonogramas"
-            :vista_editar="vista_editar"
-            @close_modal="show = $event"
-          />
-          <br />
+          <div v-if="action_modal !== 'crear'">
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_tracks
+                v-if="current === 0"
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="fonogram_modal"
+                entity_relation="fonogramas"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_productos
+                v-else
+                :detalles_prop="detalles_prod"
+                @reload="reload_parent"
+                :entity="fonogram_modal"
+                entity_relation="fonogramas"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
+            <br />
+          </div>
           <a-row v-if="action_modal === 'crear'">
             <div id="tracks">
               <a-col span="1"></a-col>
@@ -691,7 +742,7 @@
                       <h4>Duración Total:</h4>
                     </div>
                     <a-mentions
-                    style="width: 26% !important"
+                      style="width: 26% !important"
                       readonly
                       :placeholder="$store.getters.getDurationFormGetters"
                     >
@@ -773,9 +824,19 @@ export default {
       } else callback();
     };
     return {
+      steps: [
+        {
+          title: "Listado de Tracks",
+        },
+        {
+          title: "Productos",
+        },
+      ],
+      current: 0,
       track: {},
       origin: true,
       detalles: false,
+      detalles_prod: true,
       vista_editar: true,
       tab_1: false,
       tab_2: true,
@@ -985,21 +1046,21 @@ export default {
           }
         });
       } else if (tab === "tab_2") {
-          this.$refs.formularioGenerales.validate((valid) => {
-            if (valid) {
-              this.tab_3 = false;
-              this.tab_2 = true;
-              if (this.tabs_list.indexOf(tab) == -1) {
-                this.tabs_list.push(tab);
-              }
-              this.active_tab = siguienteTab;
-            } else {
-              this.$message.warning(
-                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-                4
-              );
+        this.$refs.formularioGenerales.validate((valid) => {
+          if (valid) {
+            this.tab_3 = false;
+            this.tab_2 = true;
+            if (this.tabs_list.indexOf(tab) == -1) {
+              this.tabs_list.push(tab);
             }
-          });
+            this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
         if (tab === "tab_3") {
           this.tab_4 = false;
           this.tab_3 = true;
@@ -1198,6 +1259,9 @@ export default {
             });
           });
       }
+    },
+     onChange(current) {
+      this.current = current;
     },
     /*
      *Métodoo usado para filtrar la búsqueda de los select
@@ -1636,6 +1700,7 @@ export default {
   components: {
     tabla_tracks,
     modal_management,
+    tabla_productos: () => import("../Producto/Tabla_Productos"),
   },
 };
 </script>

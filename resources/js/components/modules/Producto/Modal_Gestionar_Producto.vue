@@ -904,7 +904,8 @@
                 v-else
                 :detalles_prop="detalles"
                 @reload="reload_parent"
-                :producto="product_modal"
+                :entity="product_modal"
+                entity_relation="productos"
                 :vista_editar="vista_editar"
                 @close_modal="show = $event"
               />
@@ -2317,11 +2318,6 @@ export default {
 </script>
 
 <style>
-/* #modal_gestionar_productos .list-item,
-.ant-row,
-.ant-form-item {
-  margin-bottom: 0px !important;
-} */
 #modal_gestionar_productos .ant-form-item-label {
   margin-bottom: -10px !important;
 }

@@ -12,6 +12,7 @@ class CreateRealizadoresTable extends Migration
 			// Migración del Modelo Realizadores
 			$table->id()->index();  // Identificador Único de la Tabla: Realizadores
 			$table->string('codigRealiz', 9)->unique();
+			$table->string('fotoReal')->nullable();
 			$table->string('nombreApellidosRealiz');  // Nombre y Apellidos del Realizador
 			$table->string('sexoRealiz');  // Sexo Realizador *nom
 			$table->text('descripEspRealiz')->nullable();  // Descripción en Español del Realizador

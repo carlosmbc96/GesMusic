@@ -80,6 +80,45 @@
               :rules="rules"
             >
               <a-row>
+                <a-col span="6">
+                  <a-upload
+                    v-if="action_modal !== 'detalles'"
+                    :disabled="disabled"
+                    :remove="remove_image"
+                    @preview="handle_preview"
+                    :file-list="file_list"
+                    list-type="picture-card"
+                    :before-upload="before_upload"
+                    @change="handle_change"
+                  >
+                    <div v-if="file_list.length < 1">
+                      <img v-if="preview_image" />
+                      <div v-else>
+                        <a-icon type="upload" />
+                        <div class="ant-upload-text">Cargar foto</div>
+                      </div>
+                    </div>
+                  </a-upload>
+                  <div class="detalles-img" v-else>
+                    <a-upload
+                      @preview="handle_preview"
+                      :file-list="file_list"
+                      list-type="picture-card"
+                    >
+                      <div v-if="file_list.length < 1">
+                        <img />
+                      </div>
+                    </a-upload>
+                  </div>
+                  <br />
+                  <a-modal
+                    :visible="preview_visible"
+                    :footer="null"
+                    @cancel="preview_cancel"
+                  >
+                    <img style="width: 100%" :src="preview_image" />
+                  </a-modal>
+                </a-col>
                 <a-col span="11">
                   <a-form-model-item
                     v-if="
@@ -187,7 +226,7 @@
                   >
                     <div class="description">
                       <a-mentions
-                      style="margin-top: 2px"
+                        style="margin-top: 2px"
                         readonly
                         :placeholder="realizadores_modal.descripEspRealiz"
                       >
@@ -279,6 +318,10 @@ export default {
       tab_1: false,
       tab_2: true,
       tabs_list: [],
+      file_list: [],
+      preview_image: "",
+      valid_image: true,
+      preview_visible: false,
       vista_editar: true,
       detalles: true,
       action_cancel_title: "",
@@ -376,11 +419,18 @@ export default {
   computed: {
     active() {
       if (this.text_button === "Editar") {
-        return !this.compare_object;
+        let same_photo = false;
+        if (this.file_list[0]) {
+          same_photo = this.file_list[0].uid !== this.realizadores_modal.id;
+        }
+        return (
+          (same_photo || this.file_list.length === 0 || !this.compare_object) &&
+          this.valid_image
+        );
       } else
         return (
           this.realizadores_modal.nombreApellidosRealiz &&
-          this.realizadores_modal.sexoRealiz
+          this.realizadores_modal.sexoRealiz && this.valid_image
         );
     },
     /*
@@ -468,6 +518,25 @@ export default {
         this.realizadores_modal.codigRealiz = this.realizador.codigRealiz.substr(
           5
         );
+        if (this.realizadores_modal.fotoReal !== null) {
+          if (
+            this.realizadores_modal.fotoReal !==
+            "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
+          ) {
+            this.file_list.push({
+              uid: this.realizadores_modal.id,
+              name: this.realizadores_modal.fotoReal.split("/")[
+                this.realizadores_modal.fotoReal.split("/").length - 1
+              ],
+              url: this.realizadores_modal.fotoReal,
+            });
+          } else
+            this.file_list.push({
+              uid: this.realizadores_modal.id,
+              name: "Logo ver vertical_Ltr Negras.png",
+              url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+            });
+        }
       } else if (this.action_modal === "detalles") {
         if (this.realizador.deleted_at !== null) {
           this.disabled = true;
@@ -480,7 +549,31 @@ export default {
             ? ""
             : this.realizador.descripEspRealiz;
         this.realizadores_modal = { ...this.realizador };
+        if (this.realizadores_modal.fotoReal !== null) {
+          if (
+            this.realizadores_modal.fotoReal !==
+            "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
+          ) {
+            this.file_list.push({
+              uid: this.realizadores_modal.id,
+              name: this.realizadores_modal.fotoReal.split("/")[
+                this.realizadores_modal.fotoReal.split("/").length - 1
+              ],
+              url: this.realizadores_modal.fotoReal,
+            });
+          } else
+            this.file_list.push({
+              uid: this.realizadores_modal.id,
+              name: "Logo ver vertical_Ltr Negras.png",
+              url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+            });
+        }
       } else {
+        this.file_list.push({
+          uid: 1,
+          name: "Logo ver vertical_Ltr Negras.png",
+          url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+        });
         this.text_button = "Crear";
         this.text_header_button = "Crear";
         this.action_cancel_title =
@@ -489,6 +582,32 @@ export default {
         this.action_close =
           "La creación del Realizador se canceló correctamente";
       }
+    },
+    remove_image() {
+      this.file_list.pop();
+      this.preview_image = "";
+      this.valid_image = true;
+    },
+    preview_cancel() {
+      this.preview_visible = false;
+    },
+    handle_preview(file) {
+      this.preview_image = file.url || file.thumbUrl;
+      this.preview_visible = true;
+    },
+    handle_change({ fileList }) {
+      this.file_list = fileList;
+    },
+    before_upload(file) {
+      const isJpgOrPng =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "image/jpg";
+      if (!isJpgOrPng) {
+        this.valid_image = false;
+        this.$message.error("Sólo puedes subir imágenes como foto del artísta");
+      } else this.$message.success("Foto cargada correctamente");
+      return false;
     },
     confirm() {
       this.spinning = true;
@@ -627,6 +746,15 @@ export default {
         this.realizadores_modal.descripEspRealiz
       );
       form_data.append("sexoRealiz", this.realizadores_modal.sexoRealiz);
+
+      if (this.file_list.length !== 0) {
+        if (this.file_list[0].uid !== this.realizadores_modal.id) {
+          if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
+            form_data.append("fotoReal", this.file_list[0].originFileObj);
+          }
+        }
+      } else form_data.append("img_default", true);
+
       this.text_button = "Creando...";
       return form_data;
     },

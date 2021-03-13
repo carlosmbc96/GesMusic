@@ -890,7 +890,7 @@
                     </a-col>
                     <a-col span="11" style="float: right">
                       <div class="section-title">
-                        <h4>Datos del Autor</h4>
+                        <h4>Datos Dueño de los Derechos</h4>
                       </div>
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
@@ -1616,11 +1616,11 @@
           </a-row>
         </a-tab-pane>
         <a-tab-pane key="3" :disabled="tab_3" v-if="action_modal !== 'crear'">
-          <span slot="tab"> Autores/Intérptetes </span>
+          <span slot="tab"> Autores/Intérptetes/Productos </span>
           <a-row>
             <a-col span="12">
               <div class="section-title">
-                <h4>Autores/Intérptetes</h4>
+                <h4>Autores/Intérptetes/Productos</h4>
               </div>
             </a-col>
           </a-row>
@@ -1645,8 +1645,17 @@
                 @close_modal="show = $event"
               />
               <tabla_interpretes
-                v-else
+                v-else-if="current === 1"
                 :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="audiovisual_modal"
+                entity_relation="audiovisuales"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_productos
+                v-else
+                :detalles_prop="detalles_prod"
                 @reload="reload_parent"
                 :entity="audiovisual_modal"
                 entity_relation="audiovisuales"
@@ -1774,11 +1783,15 @@ export default {
         {
           title: "Intérpretes",
         },
+        {
+          title: "Productos",
+        },
       ],
       compare_realizadores: [],
       compare_entrevistados: [],
       vista_editar: true,
       current: 0,
+      detalles_prod: true,
       detalles: false,
       action_management_entrevistados: "crear_entrevistado",
       action_management_realizadores: "crear_realizador",
@@ -3513,6 +3526,7 @@ export default {
     modal_management_interpretes,
     tabla_autores,
     tabla_interpretes,
+    tabla_productos: () => import("../Producto/Tabla_Productos"),
   },
 };
 </script>

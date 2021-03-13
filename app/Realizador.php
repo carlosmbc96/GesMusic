@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class Realizador extends Model
 {
@@ -15,6 +17,7 @@ class Realizador extends Model
 	// Atributos del Modelo Realizador
 	protected $fillable = [
 		'codigRealiz',
+		'fotoReal',
 		'nombreApellidosRealiz',  // Nombre y Apellidos del Realizador
 		'sexoRealiz',  // Sexo Realizador *nom
 		'descripEspRealiz',  // Descripción en Español del Realizador
@@ -29,10 +32,23 @@ class Realizador extends Model
 	//Relación de Many to One Realizadores - Audiovisuales
 	public function audiovisuales()
 	{
-		return $this->belongsToMany(Audiovisual::class,'audiovisual_realizador');
+		return $this->belongsToMany(Audiovisual::class, 'audiovisual_realizador');
 	}
 	//SECCIÓN DE RELACIONES
 
+	//SECCIÓN DE IMÁGENES
+	public function setFotoRealAttribute($fotoReal, $codigRealiz)
+	{
+		$this->attributes['fotoReal'] = '/BisMusic/Imagenes/Realizadores/' . $codigRealiz . $fotoReal->getClientOriginalName();
+		$name = $codigRealiz . $fotoReal->getClientOriginalName();
+		Storage::disk('local')->put('Imagenes/Realizadores/' . $name, File::get($fotoReal));
+	}
+
+	public function setFotoRealAttributeDefault()
+	{
+		$this->attributes['fotoReal'] = '/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png';
+	}
+	//SECCIÓN DE IMÁGENES
 
 	//SECCIÓN DE QUERY SCOPE
 	// Query Scope que devuelve el Total de Registros del Modelo Realizador

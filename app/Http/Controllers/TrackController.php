@@ -57,12 +57,11 @@ class TrackController extends Controller
     {
         // Sección de Carga de Nomencladores a emplear en las vista
         $genMusic = Vocabulario::findorFail(16)->terminos;  // Nomenclador: Géneros Musicales
-        $SubgMusic = Vocabulario::findorFail(31)->terminos;  // Nomenclador: Subgéneros Musicales
         $mood = Vocabulario::findorFail(20)->terminos;  // Nomenclador: Mood
         $gesTrack = Vocabulario::findorFail(17)->terminos;  // Nomenclador: Gestión de Track
         $paises = Vocabulario::findorFail(23)->terminos;  // Nomenclador: Países
         $rolesInterp = Vocabulario::findorFail(26)->terminos;  // Nomenclador: Roles de Intérpretes
-        return response()->json([[$genMusic], [$SubgMusic], [$mood], [$gesTrack], [$paises], [$rolesInterp]]);  // Se envian las variables
+        return response()->json([[$genMusic], [$mood], [$gesTrack], [$paises], [$rolesInterp]]);  // Se envian las variables
     }
 
     public function store(Request $request)  // Store | Método que Guarda el Registro creado en el Modelo:Track

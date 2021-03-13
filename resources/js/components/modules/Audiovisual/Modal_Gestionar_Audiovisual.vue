@@ -1744,7 +1744,7 @@ export default {
 		};
 		let validate_ISRC_unique = (rule, value, callback) => {
 			this.lista_dividida(this.audiovisuals_list).isrc.forEach(element => {
-				if (element.isrcAud === value) {
+				if (element.isrcAud.substr(7) === value) {
 					callback(new Error("ISRC ya usado"));
 				}
 			});
@@ -1954,6 +1954,10 @@ export default {
 					},
 					{
 						validator: code_00000,
+						trigger: "change"
+					},
+					{
+						validator: validate_ISRC_unique,
 						trigger: "change"
 					},
 					{
@@ -2708,14 +2712,14 @@ export default {
 						"CU" +
 						this.audiovisual_modal.codigRegistro.toUpperCase() +
 						this.audiovisual_modal.anhoRegistro +
-						this.codigoIsrc;
+						this.codigo;
           } else if (this.audiovisual_modal.identificador === undefined) {
             this.audiovisual_modal.isrcAud =
 						"" +
 						this.audiovisual_modal.codigPais.toUpperCase() +
 						this.audiovisual_modal.codigRegistro.toUpperCase() +
 						this.audiovisual_modal.anhoRegistro +
-						this.codigoIsrc;
+						this.codigo;
           } else if (this.audiovisual_modal.codigPais === undefined) {
             this.audiovisual_modal.isrcAud =
 						"" +

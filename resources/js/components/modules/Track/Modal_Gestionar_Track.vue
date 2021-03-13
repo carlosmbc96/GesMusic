@@ -920,7 +920,7 @@ export default {
 	data() {
 		let validate_ISRC_unique = (rule, value, callback) => {
 			this.tracks_list.forEach(element => {
-				if (element.isrcTrk === value) {
+				if (element.isrcTrk.substr(7) === value) {
 					callback(new Error("ISRC ya usado"));
 				}
 			});
@@ -1064,6 +1064,10 @@ export default {
 					},
 					{
 						validator: code_00000,
+						trigger: "change"
+					},
+					{
+						validator: validate_ISRC_unique,
 						trigger: "change"
 					},
 					{
@@ -1550,14 +1554,14 @@ export default {
 						"CU" +
 						this.track_modal.codigRegistro.toUpperCase() +
 						this.track_modal.anhoRegistro +
-						this.codigoIsrc;
+						this.codigo;
 				} else if (this.track_modal.identificador === undefined) {
 					this.track_modal.isrcTrk =
 						"" +
 						this.track_modal.codigPais.toUpperCase() +
 						this.track_modal.codigRegistro.toUpperCase() +
 						this.track_modal.anhoRegistro +
-						this.codigoIsrc;
+						this.codigo;
 				} else if (this.track_modal.codigPais === undefined) {
 					this.track_modal.isrcTrk =
 						"" +

@@ -81,18 +81,19 @@
                 <a-row>
                   <a-col span="12">
                     <div class="section-title">
-                      <h4>Selector de Productos</h4>
+                      <h4>Selector de Productos:</h4>
                     </div>
                   </a-col>
                 </a-row>
                 <a-col span="12">
                   <a-form-model-item
-                    label="Código"
+                    label="Código:"
                     has-feedback
                     prop="productos_audvs"
                   >
                     <a-select
                       mode="multiple"
+                      :showArrow="true"
                       v-model="audiovisual_modal.productos_audvs"
                       style="width: 50% !important"
                       :disabled="disabled"
@@ -106,9 +107,10 @@
                       </a-select-option>
                     </a-select>
                   </a-form-model-item>
-                  <a-form-model-item label="Nombre">
+                  <a-form-model-item label="Nombre:">
                     <a-select
                       mode="multiple"
+                      :showArrow="true"
                       v-model="audiovisual_modal.productos_audvs"
                       :disabled="disabled"
                     >
@@ -202,7 +204,7 @@
                               <a-form-model-item
                                 v-if="action_modal !== 'detalles'"
                                 has-feedback
-                                label="Género Audiovisual"
+                                label="Género Audiovisual:"
                                 prop="generoAud"
                               >
                                 <a-select
@@ -225,7 +227,7 @@
                                 </a-select>
                               </a-form-model-item>
                               <a-form-model-item
-                                label="Género Audiovisual"
+                                label="Género Audiovisual:"
                                 v-if="action_modal === 'detalles'"
                               >
                                 <a-mentions
@@ -246,7 +248,7 @@
                                 :validate-status="show_error"
                                 prop="codigAud"
                                 has-feedback
-                                label="Código"
+                                label="Código:"
                                 :help="show_used_error"
                               >
                                 <a-input
@@ -265,7 +267,7 @@
                                       'Making of' ||
                                     audiovisual_modal.generoAud === 'Trailers')
                                 "
-                                label="Código"
+                                label="Código:"
                                 prop="codigAud"
                               >
                                 <a-input
@@ -285,7 +287,7 @@
                                 />
                               </a-form-model-item>
                               <a-form-model-item
-                                label="Código"
+                                label="Código:"
                                 v-if="
                                   action_modal === 'detalles' &&
                                   (audiovisual_modal.generoAud ===
@@ -316,13 +318,13 @@
                                 <a-col span="4">
                                   <a-tooltip
                                     placement="bottom"
-                                    title="Código de dos letras que representan el país Ej: BR (Brazil)"
+                                    title="Código de dos letras que representan el país Ej: CU (Cuba)"
                                   >
                                     <a-form-model-item
                                       :validate-status="show_error"
                                       prop="codigPais"
                                       has-feedback
-                                      label="ISRC"
+                                      label="ISRC:"
                                       :help="show_used_error"
                                       class="isrc"
                                     >
@@ -371,7 +373,7 @@
                                 <a-col span="4">
                                   <a-tooltip
                                     placement="bottom"
-                                    title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
+                                    title="Dos últimos dígitos del año de registro Ej: 21 (2021)"
                                   >
                                     <a-form-model-item
                                       :validate-status="show_error"
@@ -434,13 +436,13 @@
                                 <a-col span="4">
                                   <a-tooltip
                                     placement="bottom"
-                                    title="Código de dos letras que representan el país Ej: BR (Brazil)"
+                                    title="Código de dos letras que representan el país Ej: CU (Cuba)"
                                   >
                                     <a-form-model-item
                                       :validate-status="show_error"
                                       prop="codigPais"
                                       has-feedback
-                                      label="ISRC"
+                                      label="ISRC:"
                                       :help="show_used_error"
                                       class="isrc"
                                     >
@@ -507,7 +509,7 @@
                                 <a-col span="4">
                                   <a-tooltip
                                     placement="bottom"
-                                    title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
+                                    title="Dos últimos dígitos del año de registro Ej: 21 (2021)"
                                   >
                                     <a-form-model-item
                                       :validate-status="show_error"
@@ -573,12 +575,12 @@
                                 audiovisual_modal.generoAud === 'Documental') &&
                               audiovisual_modal.generoAud === genero_pivot
                             "
-                            label="ISRC"
+                            label="ISRC:"
                           >
                             <a-input :disabled="true" v-model="pretty_isrc" />
                           </a-form-model-item>
                           <a-form-model-item
-                            label="ISRC"
+                            label="ISRC:"
                             v-if="
                               action_modal === 'detalles' &&
                               (audiovisual_modal.generoAud === 'Concierto' ||
@@ -596,7 +598,7 @@
                           <a-form-model-item
                             v-if="action_modal !== 'detalles'"
                             has-feedback
-                            label="Clasificación"
+                            label="Clasificación Audiovisual:"
                             prop="clasifAud"
                           >
                             <a-select
@@ -619,7 +621,7 @@
                             </a-select>
                           </a-form-model-item>
                           <a-form-model-item
-                            label="Clasificación"
+                            label="Clasificación Audiovisual:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -631,7 +633,7 @@
                           <a-form-model-item
                             v-if="action_modal !== 'detalles'"
                             has-feedback
-                            label="País de Grabación"
+                            label="País de Grabación:"
                             prop="paisGrabAud"
                           >
                             <a-select
@@ -654,7 +656,7 @@
                             </a-select>
                           </a-form-model-item>
                           <a-form-model-item
-                            label="País de Grabación"
+                            label="País de Grabación:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -666,7 +668,7 @@
                           <a-form-model-item
                             v-if="action_modal !== 'detalles'"
                             has-feedback
-                            label="Idiomas"
+                            label="Idiomas:"
                             prop="idiomaAud"
                           >
                             <a-select
@@ -687,7 +689,7 @@
                             </a-select>
                           </a-form-model-item>
                           <a-form-model-item
-                            label="Idiomas"
+                            label="Idiomas:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -700,7 +702,7 @@
                             v-if="action_modal !== 'detalles'"
                             prop="fenomRefAud"
                             has-feedback
-                            label="Fenómeno de Referencia"
+                            label="Fenómeno de Referencia:"
                           >
                             <a-input
                               :disabled="disabled"
@@ -708,7 +710,7 @@
                             />
                           </a-form-model-item>
                           <a-form-model-item
-                            label="Fenómeno de Referencia"
+                            label="Fenómeno de Referencia:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -721,7 +723,7 @@
                             <a-form-model-item
                               v-if="action_modal !== 'detalles'"
                               has-feedback
-                              label="Etiquetas"
+                              label="Etiquetas:"
                               prop="etiquetasAud"
                             >
                               <a-select
@@ -736,7 +738,7 @@
                             </a-form-model-item>
                           </div>
                           <a-form-model-item
-                            label="Etiquetas"
+                            label="Etiquetas:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -751,7 +753,7 @@
                             v-if="action_modal !== 'detalles'"
                             prop="tituloAud"
                             has-feedback
-                            label="Título"
+                            label="Título:"
                           >
                             <a-input
                               :disabled="disabled"
@@ -759,7 +761,7 @@
                             />
                           </a-form-model-item>
                           <a-form-model-item
-                            label="Título"
+                            label="Título:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -772,9 +774,12 @@
                             v-if="action_modal !== 'detalles'"
                             prop="duracionAud"
                             has-feedback
-                            label="Duración"
+                            label="Duración:"
                           >
                             <a-time-picker
+                              :getPopupContainer="
+                                (trigger) => trigger.parentNode
+                              "
                               :default-open-value="
                                 moment('00:00:00', 'HH:mm:ss')
                               "
@@ -785,7 +790,7 @@
                             />
                           </a-form-model-item>
                           <a-form-model-item
-                            label="Duración"
+                            label="Duración:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -797,7 +802,7 @@
                           <a-form-model-item
                             v-if="action_modal !== 'detalles'"
                             has-feedback
-                            label="Año de finalización"
+                            label="Año de Finalización:"
                             prop="añoFinAud"
                           >
                             <a-select
@@ -820,7 +825,7 @@
                             </a-select>
                           </a-form-model-item>
                           <a-form-model-item
-                            label="Año de finalización"
+                            label="Año de Finalización:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -832,7 +837,7 @@
                           <a-form-model-item
                             v-if="action_modal !== 'detalles'"
                             has-feedback
-                            label="Subtítulos"
+                            label="Subtítulos:"
                             prop="subtitulosAud"
                           >
                             <a-select
@@ -853,7 +858,7 @@
                             </a-select>
                           </a-form-model-item>
                           <a-form-model-item
-                            label="Subtítulos"
+                            label="Subtítulos:"
                             v-if="action_modal === 'detalles'"
                           >
                             <a-mentions
@@ -891,7 +896,7 @@
                         v-if="action_modal !== 'detalles'"
                         prop="dueñoDerchAud"
                         has-feedback
-                        label="Nombre y Apellidos"
+                        label="Nombres y Apellidos:"
                       >
                         <a-input
                           :disabled="disabled"
@@ -899,7 +904,7 @@
                         />
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Nombre y Apellidos"
+                        label="Nombres y Apellidos:"
                         v-if="action_modal === 'detalles'"
                       >
                         <a-mentions
@@ -912,7 +917,7 @@
                         v-if="action_modal !== 'detalles'"
                         prop="nacioDueñoDerchAud"
                         has-feedback
-                        label="Nacionalidad del Dueño de los Derechos del Audiovisual"
+                        label="Nacionalidad:"
                       >
                         <a-select
                           :getPopupContainer="(trigger) => trigger.parentNode"
@@ -932,7 +937,7 @@
                         </a-select>
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Nacionalidad del dueño de los derechos de audiovisual"
+                        label="Nacionalidad:"
                         v-if="action_modal === 'detalles'"
                       >
                         <a-mentions
@@ -944,7 +949,7 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Derechos sobre el Audiovisual"
+                        label="Derechos sobre el Audiovisual:"
                         prop="derechosAud"
                       >
                         <a-select
@@ -965,7 +970,7 @@
                         </a-select>
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Derechos sobre el Audiovisual"
+                        label="Derechos sobre el Audiovisual:"
                         v-if="action_modal === 'detalles'"
                       >
                         <a-mentions
@@ -980,22 +985,23 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Descripción en español del Audiovisual"
+                        label="Descripción en Español del Audiovisual:"
                         prop="descripEspAud"
                       >
                         <a-input
                           :disabled="disabled"
-                          style="width: 100%; height: 120px"
+                          style="width: 100%; height: 120px; margin-top: 4px"
                           v-model="audiovisual_modal.descripEspAud"
                           type="textarea"
                         />
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Descripción en español del Audiovisual"
+                        label="Descripción en Español del Audiovisual:"
                         v-if="action_modal === 'detalles'"
                       >
                         <div class="description">
                           <a-mentions
+                            style="margin-top: 3px"
                             readonly
                             :placeholder="audiovisual_modal.descripEspAud"
                           >
@@ -1005,22 +1011,23 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Descripción en inglés del Audiovisual"
+                        label="Descripción en Inglés del Audiovisual:"
                         prop="descripIngAud"
                       >
                         <a-input
                           :disabled="disabled"
-                          style="width: 100%; height: 120px"
+                          style="width: 100%; height: 120px; margin-top: 4px"
                           v-model="audiovisual_modal.descripIngAud"
                           type="textarea"
                         />
                       </a-form-model-item>
                       <a-form-model-item
-                        label="Descripción en inglés del Audiovisual"
+                        label="Descripción en Inglés del Audiovisual:"
                         v-if="action_modal === 'detalles'"
                       >
                         <div class="description">
                           <a-mentions
+                            style="margin-top: 3px"
                             readonly
                             :placeholder="audiovisual_modal.descripIngAud"
                           >
@@ -1064,6 +1071,7 @@
                               :key="realizador.id"
                               v-bind="index === 0 ? formItemLayout : {}"
                               class="list-item"
+                              style="margin-bottom: 0px !important"
                             >
                               <a-row>
                                 <a-col span="22">
@@ -1091,7 +1099,7 @@
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
-                                <h5>Selector de Realizadores</h5>
+                                <h5>Selector de Realizadores:</h5>
                               </div>
                               <a-form-model
                                 ref="formularioAgregarRealizador"
@@ -1100,6 +1108,9 @@
                               >
                                 <a-form-model-item>
                                   <a-select
+                                    :getPopupContainer="
+                                      (trigger) => trigger.parentNode
+                                    "
                                     placeholder="Nombre completo"
                                     option-filter-prop="children"
                                     :filter-option="filter_option"
@@ -1201,6 +1212,7 @@
                               :key="entrevistado.id"
                               v-bind="index === 0 ? formItemLayout : {}"
                               class="list-item"
+                              style="margin-bottom: 0px !important"
                             >
                               <a-row>
                                 <a-col span="22">
@@ -1228,7 +1240,7 @@
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
-                                <h5>Selector de Entrevistados</h5>
+                                <h5>Selector de Entrevistados:</h5>
                               </div>
                               <a-form-model
                                 ref="formularioAgregarEntrevistado"
@@ -1237,6 +1249,9 @@
                               >
                                 <a-form-model-item has-feedback>
                                   <a-select
+                                    :getPopupContainer="
+                                      (trigger) => trigger.parentNode
+                                    "
                                     placeholder="Nombre completo"
                                     option-filter-prop="children"
                                     :filter-option="filter_option"
@@ -1332,6 +1347,7 @@
                               :key="autor.id"
                               v-bind="index === 0 ? formItemLayout : {}"
                               class="list-item"
+                              style="margin-bottom: 0px !important"
                             >
                               <a-row>
                                 <a-col span="22">
@@ -1361,7 +1377,7 @@
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
-                                <h5>Selector de Autores</h5>
+                                <h5>Selector de Autores:</h5>
                               </div>
                               <a-form-model
                                 ref="formularioAgregarAutor"
@@ -1370,6 +1386,9 @@
                               >
                                 <a-form-model-item>
                                   <a-select
+                                    :getPopupContainer="
+                                      (trigger) => trigger.parentNode
+                                    "
                                     placeholder="Nombre completo"
                                     option-filter-prop="children"
                                     :filter-option="filter_option"
@@ -1430,7 +1449,7 @@
                       <a-row>
                         <a-col span="24">
                           <div class="section-title">
-                            <h4>Interpretes</h4>
+                            <h4>Intérpretes</h4>
                           </div>
                         </a-col>
                       </a-row>
@@ -1450,6 +1469,7 @@
                               :key="interprete.id"
                               v-bind="index === 0 ? formItemLayout : {}"
                               class="list-item"
+                              style="margin-bottom: 0px !important"
                             >
                               <a-row>
                                 <a-col span="11">
@@ -1503,7 +1523,7 @@
                           <a-row style="margin-top: 20px">
                             <a-col span="24">
                               <div class="section-title">
-                                <h5>Selector de Interpretes</h5>
+                                <h5>Selector de Intérpretes:</h5>
                               </div>
                               <a-form-model
                                 ref="formularioAgregarInterprete"
@@ -1512,6 +1532,9 @@
                               >
                                 <a-form-model-item has-feedback>
                                   <a-select
+                                    :getPopupContainer="
+                                      (trigger) => trigger.parentNode
+                                    "
                                     placeholder="Nombre completo"
                                     option-filter-prop="children"
                                     :filter-option="filter_option"
@@ -2904,6 +2927,7 @@ export default {
         this.audiovisual_modal.realizadores = undefined;
         this.audiovisual_modal.entrevistados = undefined;
       } else if (this.action_modal === "detalles") {
+        this.text_header_button = "Detalles";
         this.action_cancel_title = "¿Desea cerrar la vista de detalles?";
         this.action_title = "¿Desea guardar los cambios en el Audiovisual?";
         this.action_close = "La vista de detalles fue cerrada correctamente";

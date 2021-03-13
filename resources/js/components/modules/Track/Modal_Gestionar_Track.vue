@@ -72,7 +72,7 @@
           "
           :disabled="tab_1"
         >
-          <span slot="tab"> Fonograma </span>
+          <span slot="tab"> Fonogramas </span>
           <a-spin :spinning="spinning">
             <div>
               <a-form-model
@@ -89,11 +89,12 @@
                 </a-row>
                 <a-col span="12">
                   <a-form-model-item
-                    label="Código"
+                    label="Código:"
                     has-feedback
                     prop="fonogramas"
                   >
                     <a-select
+                      :showArrow="true"
                       mode="multiple"
                       v-model="track_modal.fonogramas_tracks"
                       style="width: 50% !important"
@@ -108,8 +109,9 @@
                       </a-select-option>
                     </a-select>
                   </a-form-model-item>
-                  <a-form-model-item label="Título">
+                  <a-form-model-item label="Título:">
                     <a-select
+                      :showArrow="true"
                       mode="multiple"
                       v-model="track_modal.fonogramas_tracks"
                       :disabled="disabled"
@@ -174,7 +176,7 @@
                           <a-col span="4">
                             <a-tooltip
                               placement="bottom"
-                              title="Código de dos letras que representan el país Ej: BR (Brazil)"
+                              title="Código de dos letras que representan el país Ej: CU (Cuba)"
                             >
                               <a-form-model-item
                                 :validate-status="show_error"
@@ -225,7 +227,7 @@
                           <a-col span="4">
                             <a-tooltip
                               placement="bottom"
-                              title="Dos últimos dígitos del año de registro Ej: 14 (2014)"
+                              title="Dos últimos dígitos del año de registro Ej: 21 (2021)"
                             >
                               <a-form-model-item
                                 :validate-status="show_error"
@@ -290,7 +292,7 @@
                       v-if="action_modal !== 'detalles'"
                       prop="tituloTrk"
                       has-feedback
-                      label="Título"
+                      label="Título:"
                     >
                       <a-input
                         :disabled="disabled"
@@ -298,7 +300,7 @@
                       />
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Título"
+                      label="Título:"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions readonly :placeholder="track_modal.tituloTrk">
@@ -308,7 +310,7 @@
                       v-if="action_modal !== 'detalles'"
                       prop="duracionTrk"
                       has-feedback
-                      label="Duración"
+                      label="Duración:"
                     >
                       <a-time-picker
                         placeholder="hh:mm:ss"
@@ -319,7 +321,7 @@
                       />
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Duración"
+                      label="Duración:"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions
@@ -331,7 +333,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="País de grabación"
+                      label="País de Grabación:"
                       prop="paisgrabTrk"
                     >
                       <a-select
@@ -352,7 +354,7 @@
                       </a-select>
                     </a-form-model-item>
                     <a-form-model-item
-                      label="País de grabación"
+                      label="País de Grabación:"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions
@@ -383,7 +385,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Género musical"
+                      label="Género Musical:"
                       prop="generoTrk"
                     >
                       <a-select
@@ -404,7 +406,7 @@
                       </a-select>
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Género musical"
+                      label="Género Musical:"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions readonly :placeholder="track_modal.generoTrk">
@@ -446,7 +448,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Estados de ánimo del Track"
+                      label="Estados de Ánimo:"
                       prop="moodTrk"
                     >
                       <a-select
@@ -474,7 +476,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Gestión"
+                      label="Estado de Gestión:"
                       prop="gestionTrk"
                     >
                       <a-select
@@ -492,7 +494,7 @@
                       </a-select>
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Gestión"
+                      label="Estado de Gestión:"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions
@@ -509,10 +511,10 @@
                             v-model="bonusTrk"
                             :value="bonusTrk"
                           >
-                            ¿Es un bonus Track?
+                            ¿Es un Bonus Track?
                           </a-checkbox>
                         </a-form-model-item>
-                        <a-form-model-item style="margin-top: 20px" v-else>
+                        <a-form-model-item v-else>
                           <i
                             class="fa fa-check-square-o hidden-xs"
                             v-if="track.bonusTrk === 1"
@@ -531,7 +533,7 @@
                             ¿El Track se Grabó en Vivo?
                           </a-checkbox>
                         </a-form-model-item>
-                        <a-form-model-item style="margin-top: 20px" v-else>
+                        <a-form-model-item v-else>
                           <i
                             class="fa fa-check-square-o hidden-xs"
                             v-if="track.envivoTrk === 1"
@@ -1193,21 +1195,21 @@ export default {
           }
         });
       } else if (tab === "tab_2") {
-          this.$refs.formularioGenerales.validate((valid) => {
-            if (valid) {
-              this.tab_3 = false;
-              this.tab_2 = true;
-              if (this.tabs_list.indexOf(tab) == -1) {
-                this.tabs_list.push(tab);
-              }
-              this.active_tab = siguienteTab;
-            } else {
-              this.$message.warning(
-                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-                4
-              );
+        this.$refs.formularioGenerales.validate((valid) => {
+          if (valid) {
+            this.tab_3 = false;
+            this.tab_2 = true;
+            if (this.tabs_list.indexOf(tab) == -1) {
+              this.tabs_list.push(tab);
             }
-          });
+            this.active_tab = siguienteTab;
+          } else {
+            this.$message.warning(
+              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
+              4
+            );
+          }
+        });
       }
     },
     reload_parent() {
@@ -1618,6 +1620,7 @@ export default {
         } else delete this.track_modal.moodTrk;
         this.pretty_isrc = this.build_pretty_isrc(this.track_modal.isrcTrk);
       } else {
+        this.track.gestionTrk = "Incompleto";
         this.track_modal = { ...this.track };
         this.text_button = "Crear";
         this.text_header_button = "Crear";

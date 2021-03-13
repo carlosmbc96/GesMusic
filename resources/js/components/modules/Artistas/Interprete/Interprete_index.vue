@@ -121,7 +121,7 @@
                 <e-column
                   field="codigInterp"
                   headerText="Código"
-                  width="110"
+                  width="40"
                   textAlign="Left"
                 />
                 <e-column
@@ -132,7 +132,7 @@
                 />
                 <e-column
                   headerText="Estado"
-                  width="145"
+                  width="40"
                   :template="status_template"
                   :visible="true"
                   textAlign="Center"

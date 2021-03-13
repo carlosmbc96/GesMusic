@@ -89,7 +89,7 @@
                     :validate-status="show_error"
                     prop="codigInterp"
                     has-feedback
-                    label="Código"
+                    label="Código:"
                     :help="show_used_error"
                   >
                     <a-input
@@ -101,7 +101,7 @@
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal === 'editar'"
-                    label="Código"
+                    label="Código:"
                   >
                     <a-input
                       addon-before="INTR-"
@@ -111,7 +111,7 @@
                   </a-form-model-item>
                   <a-form-model-item
                     v-if="action_modal === 'detalles'"
-                    label="Código"
+                    label="Código:"
                   >
                     <a-mentions
                       readonly
@@ -123,14 +123,14 @@
                     v-if="action_modal !== 'detalles'"
                     prop="nombreInterp"
                     has-feedback
-                    label="Nombre"
+                    label="Nombre:"
                   >
                     <a-input
                       :disabled="disabled"
                       v-model="interp_modal.nombreInterp"
                     />
                   </a-form-model-item>
-                  <a-form-model-item v-else label="Nombre">
+                  <a-form-model-item v-else label="Nombre:">
                     <a-mentions
                       readonly
                       :placeholder="interp_modal.nombreInterp"
@@ -168,22 +168,23 @@
                   <a-form-model-item
                     v-if="action_modal !== 'detalles'"
                     has-feedback
-                    label="Reseña biográfica del Intérprete"
+                    label="Reseña Biográfica del Intérprete"
                     prop="reseñaBiogInterp"
                   >
                     <a-input
                       :disabled="disabled"
-                      style="width: 100%; height: 150px"
+                      style="width: 100%; height: 150px; margin-top: 4px"
                       v-model="interp_modal.reseñaBiogInterp"
                       type="textarea"
                     />
                   </a-form-model-item>
                   <a-form-model-item
                     v-else
-                    label="Reseña biográfica del Interprete"
+                    label="Reseña Biográfica del Interprete"
                   >
                     <div class="description">
                       <a-mentions
+                        style="margin-top: 2px"
                         readonly
                         :placeholder="interp_modal.reseñaBiogInterp"
                       >
@@ -373,7 +374,7 @@ export default {
             trigger: "change",
           },
           {
-            pattern: "^[ a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()]*$",
+            pattern: "^[ a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ\n,.;:¿?!¡()]*$",
             message: "Caracter no válido",
             trigger: "change",
           },

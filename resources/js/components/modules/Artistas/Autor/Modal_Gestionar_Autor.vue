@@ -129,7 +129,7 @@
                       :validate-status="show_error"
                       prop="codigAutr"
                       has-feedback
-                      label="Código"
+                      label="Código:"
                       :help="show_used_error"
                     >
                       <a-input
@@ -141,7 +141,7 @@
                     </a-form-model-item>
                     <a-form-model-item
                       v-if="action_modal === 'editar'"
-                      label="Código"
+                      label="Código:"
                     >
                       <a-input
                         addon-before="AUTR-"
@@ -151,7 +151,7 @@
                     </a-form-model-item>
                     <a-form-model-item
                       v-if="action_modal === 'detalles'"
-                      label="Código"
+                      label="Código:"
                     >
                       <a-mentions
                         readonly
@@ -167,7 +167,7 @@
                       :validate-status="show_error"
                       prop="ciAutr"
                       has-feedback
-                      label="Carnet de identidad(CI)"
+                      label="# Identidad (CI):"
                       :help="show_used_error"
                     >
                       <a-input
@@ -177,7 +177,7 @@
                     </a-form-model-item>
                     <a-form-model-item
                       v-if="action_modal === 'editar'"
-                      label="Carnet de identidad(CI)"
+                      label="# Identidad (CI):"
                     >
                       <a-input
                         :disabled="action_modal === 'editar'"
@@ -186,7 +186,7 @@
                     </a-form-model-item>
                     <a-form-model-item
                       v-if="action_modal === 'detalles'"
-                      label="Carnet de identidad(CI)"
+                      label="# Identidad (CI):"
                     >
                       <a-mentions readonly :placeholder="author_modal.ciAutr">
                       </a-mentions>
@@ -198,14 +198,14 @@
                         v-if="action_modal !== 'detalles'"
                         prop="nombresAutr"
                         has-feedback
-                        label="Nombre"
+                        label="Nombres:"
                       >
                         <a-input
                           :disabled="disabled"
                           v-model="author_modal.nombresAutr"
                         />
                       </a-form-model-item>
-                      <a-form-model-item v-else label="Nombre">
+                      <a-form-model-item v-else label="Nombres:">
                         <a-mentions
                           readonly
                           :placeholder="author_modal.nombresAutr"
@@ -216,7 +216,7 @@
                     <a-form-model-item
                       v-if="action_modal !== 'detalles'"
                       has-feedback
-                      label="Sexo"
+                      label="Sexo:"
                       prop="sexoAutr"
                     >
                       <a-select
@@ -235,7 +235,7 @@
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
-                    <a-form-model-item v-else label="Sexo">
+                    <a-form-model-item v-else label="Sexo:">
                       <a-mentions readonly :placeholder="author_modal.sexoAutr">
                       </a-mentions>
                     </a-form-model-item>
@@ -246,14 +246,14 @@
                         v-if="action_modal !== 'detalles'"
                         prop="apellidosAutr"
                         has-feedback
-                        label="Apellidos"
+                        label="Apellidos:"
                       >
                         <a-input
                           :disabled="disabled"
                           v-model="author_modal.apellidosAutr"
                         />
                       </a-form-model-item>
-                      <a-form-model-item v-else label="Apellidos">
+                      <a-form-model-item v-else label="Apellidos:">
                         <a-mentions
                           readonly
                           :placeholder="author_modal.apellidosAutr"
@@ -269,23 +269,24 @@
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
                         has-feedback
-                        label="Reseña biográfica del Autor"
+                        label="Reseña Biográfica del Autor"
                         prop="reseñaBiogAutr"
                         id="resenha"
                       >
                         <a-input
                           :disabled="disabled"
-                          style="width: 100%; height: 150px"
+                          style="width: 100%; height: 150px; margin-top: 4px"
                           v-model="author_modal.reseñaBiogAutr"
                           type="textarea"
                         />
                       </a-form-model-item>
                       <a-form-model-item
                         v-else
-                        label="Reseña biográfica del Autor"
+                        label="Reseña Biográfica del Autor"
                       >
                         <div class="description">
                           <a-mentions
+                          style=" margin-top: 2px"
                             readonly
                             :placeholder="author_modal.reseñaBiogAutr"
                           >
@@ -318,7 +319,7 @@
                           v-model="obrasCatEditAutr"
                           :value="obrasCatEditAutr"
                         >
-                          ¿El Autor tiene Obras en el Catalgo Editorial de
+                          ¿El Autor tiene Obras en el Catálgo Editorial de
                           Bismusic?
                         </a-checkbox>
                       </a-form-model-item>
@@ -366,6 +367,7 @@
                                   :key="tema.id"
                                   v-bind="index === 0 ? formItemLayout : {}"
                                   class="list-item"
+                                  style="margin-bottom: 0px"
                                 >
                                   <a-row>
                                     <a-col span="22">
@@ -392,7 +394,7 @@
                             <a-row style="margin-top: 20px">
                               <a-col span="24">
                                 <div class="section-title">
-                                  <h5>Selector de Temas</h5>
+                                  <h5>Selector de Temas:</h5>
                                 </div>
                                 <div class="custom-form-item">
                                   <a-form-model
@@ -400,7 +402,9 @@
                                     :layout="'horizontal'"
                                     :model="author_modal"
                                   >
-                                    <a-form-model-item>
+                                    <a-form-model-item
+                                      style="margin-bottom: 0px"
+                                    >
                                       <a-select
                                         placeholder="Titulo"
                                         option-filter-prop="children"
@@ -745,7 +749,7 @@ export default {
             trigger: "change",
           },
           {
-            pattern: "^[a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()]*$",
+            pattern: "^[a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ\n,.;:¿?!¡()]*$",
             message: "Caracter no válido",
             trigger: "change",
           },

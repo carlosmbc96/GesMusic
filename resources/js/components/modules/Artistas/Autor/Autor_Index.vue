@@ -120,44 +120,44 @@
                 <e-column
                   field="codigAutr"
                   headerText="Código"
-                  width="115"
+                  width="100"
                   textAlign="Left"
                 />
                 <e-column
                   field="ciAutr"
-                  headerText="Carnet de Identidad"
-                  width="130"
+                  headerText="# Identidad"
+                  width="120"
                   textAlign="Left"
                 />
                 <e-column
                   field="nombresAutr"
-                  headerText="Nombre"
+                  headerText="Nombres"
                   width="120"
                   textAlign="Left"
                 />
                 <e-column
                   field="apellidosAutr"
                   headerText="Apellidos"
-                  width="128"
+                  width="135"
                   textAlign="Left"
                 />
                 <e-column
                   field="sexoAutr"
                   headerText="Sexo"
-                  width="110"
+                  width="90"
                   textAlign="Left"
                 />
                 <e-column
                   :displayAsCheckBox="true"
                   field="fallecidoAutr"
                   headerText="Fallecido"
-                  width="125"
+                  width="100"
                   textAlign="Center"
                   type="boolean"
                 />
                 <e-column
                   headerText="Estado"
-                  width="115"
+                  width="95"
                   :template="status_template"
                   :visible="true"
                   textAlign="Center"

@@ -121,44 +121,38 @@
                 <e-column
                   field="isrcTrk"
                   headerText="ISRC"
-                  width="115"
+                  width="120"
                   textAlign="Left"
                 />
                 <e-column
                   field="tituloTrk"
                   headerText="Título"
-                  width="98"
+                  width="130"
                   textAlign="Left"
                 />
                 <e-column
                   field="duracionTrk"
                   headerText="Duración"
-                  width="100"
+                  width="90"
                   textAlign="Left"
                 />
                 <e-column
                   field="generoTrk"
                   headerText="Género"
-                  width="95"
-                  textAlign="Left"
-                />
-                <e-column
-                  field="subgeneroTrk"
-                  headerText="Subgénero"
-                  width="110"
+                  width="120"
                   textAlign="Left"
                 />
                 <e-column
                   :displayAsCheckBox="true"
                   field="bonusTrk"
-                  headerText="Bonus"
+                  headerText="Bonus Track"
                   width="87"
                   textAlign="Center"
                   type="boolean"
                 />
                 <e-column
                   headerText="Estado"
-                  width="115"
+                  width="80"
                   :template="status_template"
                   :visible="true"
                   textAlign="Center"
@@ -1126,18 +1120,18 @@ export default {
         },
       };
       if (args === "pdf") {
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[6].visible = false;
         this.$refs.gridObj.pdfExport(pdfExportProperties);
       } else if (args === "excel") {
         excelExportProperties.fileName = "Reporte_Track.xlsx";
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[6].visible = false;
         this.$refs.gridObj.excelExport(excelExportProperties);
       } else if (args === "csv") {
         excelExportProperties.fileName = "Reporte_Tracks.csv";
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[6].visible = false;
         this.$refs.gridObj.csvExport(excelExportProperties);
       } else if (args === "print") {
-        this.$refs.gridObj.getColumns()[7].visible = false;
+        this.$refs.gridObj.getColumns()[6].visible = false;
         this.$refs.gridObj.print(pdfExportProperties);
       }
     },
@@ -1145,10 +1139,10 @@ export default {
      * Métodos para volver a mostrar las columnas 3 y 4 luego de exportar
      */
     pdf_export_complete(args) {
-      this.$refs.gridObj.getColumns()[7].visible = true;
+      this.$refs.gridObj.getColumns()[6].visible = true;
     },
     excel_export_complete(args) {
-      this.$refs.gridObj.getColumns()[7].visible = true;
+      this.$refs.gridObj.getColumns()[6].visible = true;
     },
   },
   components: {

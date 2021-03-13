@@ -250,4 +250,11 @@ class FonogramaController extends Controller
         ]);
         return response()->json($fonograma);
     }
+
+    public function get($id)  // RestoreLog | Método que Restaura un Registro Específico, eliminado de forma Lógica del Modelo:Empresa
+    {
+        $fonograma = Fonograma::findOrFail($id);
+        $fonograma->tracks;
+        return response()->json($fonograma);
+    }
 }

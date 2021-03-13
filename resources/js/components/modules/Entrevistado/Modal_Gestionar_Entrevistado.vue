@@ -276,6 +276,11 @@ export default {
         callback(new Error("Inserte el código"));
       } else callback();
     };
+    let code_0000 = (rule, value, callback) => {
+			if (value === "0000") {
+				callback(new Error("El código no puede ser 0000"));
+			} else callback();
+		};
     return {
       active_tab: "1",
       tab_1: false,
@@ -304,6 +309,10 @@ export default {
         codigEntrv: [
           {
             validator: code_required,
+            trigger: "change",
+          },
+          {
+            validator: code_0000,
             trigger: "change",
           },
           {

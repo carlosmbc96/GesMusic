@@ -66,6 +66,7 @@ Route::post('/fonogramas/nomencladores', 'FonogramaController@nomenclators');
 Route::post('/fonogramas/tracks', 'FonogramaController@fonogramaTracks');
 Route::post('/fonogramas/actualizarRelacionesTrk', 'FonogramaController@actualizarRelacionesTrk');
 Route::post('/fonogramas/editarDuracion', 'FonogramaController@updateDuration');
+Route::get('/fonograma/{id}', 'FonogramaController@get');
 
 // RUTAS DEL RECURSO: AUDIOVISUAL
 Route::get('/audiovisuales/restaurar/{id}', 'AudiovisualController@restoreLog');

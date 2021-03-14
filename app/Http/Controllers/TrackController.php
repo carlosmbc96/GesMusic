@@ -89,7 +89,7 @@ class TrackController extends Controller
                     "track_id" => $track->id
                 ]);
             }
-           /*  $this->crearDirectorios($fonogramas, $request->isrcTrk); */
+            /*  $this->crearDirectorios($fonogramas, $request->isrcTrk); */
         }
         $track->save();
         return response()->json($track);
@@ -176,6 +176,22 @@ class TrackController extends Controller
         }
         $track->restore();
         return response()->json($track);
+    }
+    public function restoreLogList(Request $request)
+    {
+        $tracks_list = [];
+        if ($request->id_tracks) {
+            for ($i = 0; $i < count($request->id_tracks); $i++) {
+                $track = Track::onlyTrashed()->findOrFail($request->id_tracks[$i]);
+                array_push($tracks_list, $track);
+                $temas = $track->temas()->withTrashed()->get();
+                foreach ($temas as $tema) {
+                    $tema->restore();
+                }
+                $track->restore();
+            }
+            return response()->json($tracks_list);
+        }
     }
     public function crearDirectorios($fonogramas)
     {

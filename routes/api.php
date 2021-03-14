@@ -112,6 +112,7 @@ Route::get('/tracks/restaurar/{id}', 'TrackController@restoreLog');
 Route::post('/tracks/fonogramaTracks', 'TrackController@tracksRelacionados');
 Route::post('/tracks/autores', 'TrackController@autores');
 Route::post('/tracks/interpretes', 'TrackController@interpretes');
+Route::post('/tracks/restoreLogReverse', 'TrackController@restoreLogList');
 
 // RUTAS DEL RECURSO: AUTOR
 Route::get('/autores/restaurar/{id}', 'AutorController@restoreLog');

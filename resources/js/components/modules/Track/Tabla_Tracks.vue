@@ -486,24 +486,25 @@ export default {
 												@click="order_up(parseInt(data.index))"
 												style="height: 12px"
 												type="link"
-												v-if="parseInt(data.index) !== 0 && !this.$parent.$parent.$parent.detalles_prop"
+                        v-if="!this.$parent.$parent.$parent.detalles_prop"
+                        :class="parseInt(data.index) === 0 || this.$parent.$parent.$parent.detalles_prop ? 'not-active' : ''"
 											>
-												<a-icon  class="icon-up" style="font-size: 25px; color: rgb(76, 196, 177)" type="caret-up" />
+												<a-icon  class="icon-up" :style="parseInt(data.index) === 0 || this.$parent.$parent.$parent.detalles_prop ? 'font-size: 25px; color: transparent' : 'font-size: 25px; color: rgb(76, 196, 177)'" type="caret-up" />
 											</a-button>
 										</a-row>
-									  <label>{{ parseInt(data.index) + 1 }}</label>
-										<a-row style="height: 20px" class="icon-down">
+									  <label style="margin-bottom: 0px">{{ parseInt(data.index) + 1 }}</label>
+										<a-row class="icon-down">
                       <a-button
                         class="icon-down"
 												@click="order_down(parseInt(data.index))"
 												style="height: 12px"
 												type="link"
-												v-if="
-													parseInt(data.index) !==
-														$parent.$parent.$parent.tracks_list.length - 1 && !this.$parent.$parent.$parent.detalles_prop
-												"
+                        v-if="!this.$parent.$parent.$parent.detalles_prop"
+                        :class="parseInt(data.index) ===
+														$parent.$parent.$parent.tracks_list.length - 1 || this.$parent.$parent.$parent.detalles_prop ? 'not-active' : ''"
 											>
-												<a-icon class="icon-down" style="font-size: 25px; color: rgb(76, 196, 177)" type="caret-down" />
+												<a-icon class="icon-down" :style="parseInt(data.index) ===
+														$parent.$parent.$parent.tracks_list.length - 1 || this.$parent.$parent.$parent.detalles_prop ? 'font-size: 25px; color: transparent' : 'font-size: 25px; color: rgb(76, 196, 177)'" type="caret-down" />
 											</a-button>
 										</a-row>
 									</a-col>
@@ -750,6 +751,10 @@ export default {
 </script>
 
 <style>
+#tabla_tracks .not-active {
+  pointer-events: none;
+  cursor: default;
+}
 #tabla_tracks .e-headercontent,
 #tabla_tracks .e-sortfilter,
 #tabla_tracks thead,

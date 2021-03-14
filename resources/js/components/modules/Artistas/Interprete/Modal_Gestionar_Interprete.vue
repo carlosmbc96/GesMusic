@@ -198,7 +198,7 @@
               <a-button
                 v-if="
                   action_modal !== 'crear' &&
-                  action_modal !== 'crear_interpretes'
+                  action_modal !== 'crear_interprete'
                 "
                 :disabled="disabled"
                 style="float: right"

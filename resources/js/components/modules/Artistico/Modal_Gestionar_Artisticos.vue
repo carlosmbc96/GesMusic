@@ -197,12 +197,16 @@
                   has-feedback
                 >
                   <a-select
+                    :getPopupContainer="(trigger) => trigger.parentNode"
                     option-filter-prop="children"
                     :filter-option="filter_option"
                     show-search
                     v-model="artisticos_modal.interprete_id"
                     :disabled="disabled"
                   >
+                    <template slot="notFoundContent">
+                      <a-empty description="Sin resultados" />
+                    </template>
                     <a-select-option
                       v-for="interprete in interpretes"
                       :key="interprete.id"
@@ -248,10 +252,10 @@ export default {
       } else callback();
     };
     let code_0000 = (rule, value, callback) => {
-			if (value === "0000") {
-				callback(new Error("El código no puede ser 0000"));
-			} else callback();
-		};
+      if (value === "0000") {
+        callback(new Error("El código no puede ser 0000"));
+      } else callback();
+    };
     return {
       interpretes: [],
       action_cancel_title: "",
@@ -405,9 +409,13 @@ export default {
           if (valid) {
             return this.confirm();
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              3
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });

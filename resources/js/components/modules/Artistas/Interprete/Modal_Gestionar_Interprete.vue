@@ -147,6 +147,9 @@
                       :disabled="disabled"
                       v-model="roles_interp_modal"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="nomenclator in roles"
                         :key="nomenclator.id"
@@ -290,10 +293,10 @@ export default {
       } else callback();
     };
     let code_0000 = (rule, value, callback) => {
-			if (value === "0000") {
-				callback(new Error("El código no puede ser 0000"));
-			} else callback();
-		};
+      if (value === "0000") {
+        callback(new Error("El código no puede ser 0000"));
+      } else callback();
+    };
     return {
       steps: [
         {
@@ -448,9 +451,13 @@ export default {
             }
             this.active_tab = siguienteTab;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              3
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -518,9 +525,13 @@ export default {
           if (valid) {
             return this.confirm();
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              3
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });

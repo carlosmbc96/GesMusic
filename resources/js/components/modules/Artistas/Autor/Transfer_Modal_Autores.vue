@@ -1,6 +1,11 @@
 <template>
   <div>
-    <a-modal :closable="false" width="60%" :visible="show" id="transfer_modal_autores">
+    <a-modal
+      :closable="false"
+      width="60%"
+      :visible="show"
+      id="transfer_modal_autores"
+    >
       <template slot="footer">
         <a-popconfirm
           :getPopupContainer="(trigger) => trigger.parentNode"
@@ -56,6 +61,9 @@
           :show-select-all="false"
           @change="onChange"
         >
+          <template slot="notFoundContent">
+            <a-empty description="Sin resultados" />
+          </template>
           <template
             slot="children"
             slot-scope="{

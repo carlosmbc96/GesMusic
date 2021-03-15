@@ -136,32 +136,32 @@
                   textAlign="Left"
                 />
                 <e-column
+                  field="generoAud"
+                  headerText="Género Audiovisual"
+                  width="140"
+                  textAlign="Left"
+                />
+                <e-column
+                  field="clasifAud"
+                  headerText="Clasificación"
+                  width="140"
+                  textAlign="Left"
+                />
+                <e-column
                   field="añoFinAud"
                   headerText="Año"
                   width="90"
                   textAlign="Left"
                 />
                 <e-column
-                  field="clasifAud"
-                  headerText="Clasificación"
-                  width="150"
-                  textAlign="Left"
-                />
-                <e-column
                   field="paisGrabAud"
                   headerText="País"
-                  width="100"
-                  textAlign="Left"
-                />
-                <e-column
-                  :template="idiomas_template"
-                  headerText="Idiomas"
-                  width="110"
+                  width="90"
                   textAlign="Left"
                 />
                 <e-column
                   headerText="Estado"
-                  width="118"
+                  width="110"
                   :template="status_template"
                   :visible="true"
                   textAlign="Center"

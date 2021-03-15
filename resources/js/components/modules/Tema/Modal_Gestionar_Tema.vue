@@ -99,6 +99,9 @@
                       style="width: 50% !important"
                       :disabled="disabled"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="track in tracks"
                         :key="track.id"
@@ -116,6 +119,9 @@
                       v-model="tema_modal.track_id"
                       :disabled="disabled"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="track in tracks"
                         :key="track.id"
@@ -224,6 +230,9 @@
                       :disabled="disabled"
                       v-model="tema_modal.sociedadGestionTem"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="nomenclator in list_nomenclators"
                         :key="nomenclator.id"
@@ -278,7 +287,11 @@
                     v-if="action_modal === 'detalles'"
                   >
                     <div class="description">
-                      <a-mentions style="margin-top: 2px" readonly :placeholder="tema_modal.descripTem">
+                      <a-mentions
+                        style="margin-top: 2px"
+                        readonly
+                        :placeholder="tema_modal.descripTem"
+                      >
                       </a-mentions>
                     </div>
                   </a-form-model-item>
@@ -374,10 +387,10 @@ export default {
       } else callback();
     };
     let code_0000 = (rule, value, callback) => {
-			if (value === "0000") {
-				callback(new Error("El código no puede ser 0000"));
-			} else callback();
-		};
+      if (value === "0000") {
+        callback(new Error("El código no puede ser 0000"));
+      } else callback();
+    };
     return {
       vista_editar: true,
       detalles: true,
@@ -546,9 +559,13 @@ export default {
             }
             this.active_tab = siguienteTab;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Track, por favor antes de continuar revísela!",
-              3
+            this.$toast.warning(
+              "Hay problemas en la pestaña Track,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -562,9 +579,13 @@ export default {
             }
             this.active_tab = siguienteTab;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              4
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -578,9 +599,13 @@ export default {
             this.tab_1 = false;
             this.active_tab = tabAnterior;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              4
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -606,9 +631,9 @@ export default {
           });
         }
       } else {
-				if (this.$refs.general_form !== undefined) {
-        	this.$refs.general_form.resetFields();
-				}
+        if (this.$refs.general_form !== undefined) {
+          this.$refs.general_form.resetFields();
+        }
         this.show = false;
         this.tabs_list = [];
         this.$emit("close_modal", this.show);
@@ -620,14 +645,18 @@ export default {
       }
       if (!this.used) {
         if (this.active_tab !== "1") {
-					console.log("ok");
+          console.log("ok");
           this.$refs.general_form.validate((valid) => {
             if (valid) {
               return this.confirm();
             } else {
-              this.$message.warning(
-                "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-                4
+              this.$toast.warning(
+                "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+                "¡Atención!",
+                {
+                  timeout: 4000,
+                  id: "question",
+                }
               );
             }
           });
@@ -696,7 +725,7 @@ export default {
             this.handle_cancel();
           })
           .catch((error) => {
-						console.log(error);
+            console.log(error);
             this.text_button = "Editar";
             this.spinning = false;
             this.waiting = false;

@@ -226,6 +226,9 @@
                         :disabled="disabled"
                         v-model="author_modal.sexoAutr"
                       >
+                        <template slot="notFoundContent">
+                          <a-empty description="Sin resultados" />
+                        </template>
                         <a-select-option
                           v-for="nomenclator in list_nomenclators"
                           :key="nomenclator.id"
@@ -286,7 +289,7 @@
                       >
                         <div class="description">
                           <a-mentions
-                          style=" margin-top: 2px"
+                            style="margin-top: 2px"
                             readonly
                             :placeholder="author_modal.reseñaBiogAutr"
                           >
@@ -406,13 +409,21 @@
                                       style="margin-bottom: 0px"
                                     >
                                       <a-select
-                                        placeholder="Titulo"
+                                        placeholder="Título"
+                                        :getPopupContainer="
+                                          (trigger) => trigger.parentNode
+                                        "
                                         option-filter-prop="children"
                                         :filter-option="filter_option"
                                         show-search
                                         v-model="author_modal.temas"
                                         :disabled="disabled"
                                       >
+                                        <template slot="notFoundContent">
+                                          <a-empty
+                                            description="Sin resultados"
+                                          />
+                                        </template>
                                         <a-select-option
                                           v-for="tema in $store.getters
                                             .getAllTemasFormGetters"
@@ -496,842 +507,858 @@
             </a-col>
           </a-row>
 
-					<div>
-						<a-steps :current="current" @change="onChange">
-							<a-step
-								v-for="item in steps"
-								:key="item.title"
-								:title="item.title"
-							/>
-						</a-steps>
-						<br />
-						<div>
-							<tabla_audiovisuales
-								v-if="current === 0"
-								:detalles_prop="detalles_autor"
-								@reload="reload_parent"
-								:entity="author_modal"
-								entity_relation="autores"
-								:vista_editar="vista_editar"
-								@close_modal="show = $event"
-							/>
-							<tabla_tracks
-								v-else-if="current === 1"
-								:detalles_prop="detalles_autor"
-								@reload="reload_parent"
-								:entity="author_modal"
-								entity_relation="autores"
-								:vista_editar="vista_editar"
-								@close_modal="show = $event"
-							/>
-							<tabla_temas
-								v-else
-								:detalles_prop="detalles"
-								@reload="reload_parent"
-								:entity="author_modal"
-								entity_relation="autores"
-								:vista_editar="vista_editar"
-								@close_modal="show = $event"
-							/>
-						</div>
-						<br />
-					</div>
-					<a-row>
-						<a-button
-							:disabled="disabled"
-							style="float: left"
-							type="default"
-							@click="atras('1')"
-						>
-							<a-icon type="left" />
-							Atrás
-						</a-button>
-					</a-row>
-				</a-tab-pane>
-			</a-tabs>
-		</a-modal>
+          <div>
+            <a-steps :current="current" @change="onChange">
+              <a-step
+                v-for="item in steps"
+                :key="item.title"
+                :title="item.title"
+              />
+            </a-steps>
+            <br />
+            <div>
+              <tabla_audiovisuales
+                v-if="current === 0"
+                :detalles_prop="detalles_autor"
+                @reload="reload_parent"
+                :entity="author_modal"
+                entity_relation="autores"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_tracks
+                v-else-if="current === 1"
+                :detalles_prop="detalles_autor"
+                @reload="reload_parent"
+                :entity="author_modal"
+                entity_relation="autores"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+              <tabla_temas
+                v-else
+                :detalles_prop="detalles"
+                @reload="reload_parent"
+                :entity="author_modal"
+                entity_relation="autores"
+                :vista_editar="vista_editar"
+                @close_modal="show = $event"
+              />
+            </div>
+            <br />
+          </div>
+          <a-row>
+            <a-button
+              :disabled="disabled"
+              style="float: left"
+              type="default"
+              @click="atras('1')"
+            >
+              <a-icon type="left" />
+              Atrás
+            </a-button>
+          </a-row>
+        </a-tab-pane>
+      </a-tabs>
+    </a-modal>
 
-		<modal_management_temas
-			:tema="tema"
-			v-if="visible_management_tema && tracks_not_empty"
-			:action="action_management_temas"
-			@close_modal="visible_management_tema = $event"
-			:temas_list="$store.getters.getAllTemasStaticsFormGetters"
-		/>
-		<help
-			@close="reset"
-			v-if="show_help"
-			:content="content"
-			:type="type"
-		></help>
-	</div>
+    <modal_management_temas
+      :tema="tema"
+      v-if="visible_management_tema && tracks_not_empty"
+      :action="action_management_temas"
+      @close_modal="visible_management_tema = $event"
+      :temas_list="$store.getters.getAllTemasStaticsFormGetters"
+    />
+    <help
+      @close="reset"
+      v-if="show_help"
+      :content="content"
+      :type="type"
+    ></help>
+  </div>
 </template>
 
 <script>
 import help from "../../Help";
 export default {
-	props: ["action", "author", "autors_list"],
-	data() {
-		let validate_codig_unique = (rule, value, callback) => {
-			this.autors_list.forEach(element => {
-				if (element.codigAutr.substr(5) === value.replace(/ /g, "")) {
-					callback(new Error("Código usado"));
-				}
-			});
-			callback();
-		};
-		let validate_ci_unique = (rule, value, callback) => {
-			this.autors_list.forEach(element => {
-				if (element.ciAutr === value.replace(/ /g, "")) {
-					callback(new Error("CI duplicado"));
-				}
-			});
-			callback();
-		};
-		let code_required = (rule, value, callback) => {
-			if (value === "") {
-				callback(new Error("Inserte el código"));
-			} else callback();
-		};
-		let code_0000 = (rule, value, callback) => {
-			if (value === "0000") {
-				callback(new Error("El código no puede ser 0000"));
-			} else callback();
-		};
-		return {
-			steps: [
-				{
-					title: "Audiovisuales"
-				},
-				{
-					title: "Tracks"
-				},
-				{
-					title: "Temas"
-				}
-			],
-			tema: {},
-			tracks_not_empty: true,
-			show_help: false,
-			active_tab: "1",
-			tab_1: false,
-			tab_2: true,
-			content: "",
-			type: "",
-			current: 0,
-			detalles: false,
-			detalles_autor: true,
-			vista_editar: true,
-			action_cancel_title: "",
-			action_title: "",
-			show: true,
-			used: false,
-			disabled: false,
-			waiting: false,
-			text_button: "",
-			text_header_button: "",
-			spinning: false,
-			author_modal: {},
-			disabled: false,
-			activated: true,
-			file_list: [],
-			tabs_list: [],
-			preview_image: "",
-			valid_image: true,
-			preview_visible: false,
-			show_error: "",
-			show_used_error: "",
-			action_modal: this.action,
-			fallecidoAutr: false,
-			obrasCatEditAutr: false,
-			list_nomenclators: [],
-			action_management_temas: "crear_tema",
-			visible_management_tema: false,
-			codigo: "",
-			formItemLayout: {
-				wrapperCol: {
-					xs: { span: 24, offset: 0 },
-					sm: { span: 20, offset: 4 }
-				}
-			},
-			rules: {
-				codigAutr: [
-					{
-						validator: code_required,
-						trigger: "change"
-					},
-					{
-						validator: code_0000,
-						trigger: "change"
-					},
-					{
-						whitespace: true,
-						message: "Espacio no válido",
-						trigger: "change"
-					},
-					{
-						pattern: "^[0-9]*$",
-						message: "Solo dígitos",
-						trigger: "change"
-					},
-					{
-						validator: validate_codig_unique,
-						trigger: "change"
-					},
-					{
-						len: 4,
-						message: "Formato de 4 dígitos",
-						trigger: "change"
-					}
-				],
-				ciAutr: [
-					{
-						required: true,
-						message: "Campo requerido",
-						trigger: "change"
-					},
-					{
-						whitespace: true,
-						message: "Espacio no válido",
-						trigger: "change"
-					},
-					{
-						validator: validate_ci_unique,
-						trigger: "change"
-					},
-					{
-						len: 11,
-						message: "Formato de 11 dígitos",
-						trigger: "change"
-					},
-					{
-						pattern: "^[0-9]*$",
-						message: "Caracter no válido",
-						trigger: "change"
-					}
-				],
-				nombresAutr: [
-					{
-						required: true,
-						message: "Campo requerido",
-						trigger: "change"
-					},
-					{
-						whitespace: true,
-						message: "Espacio no válido",
-						trigger: "change"
-					},
-					{
-						pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z ]*$",
-						message: "Caracter no válido",
-						trigger: "change"
-					}
-				],
-				apellidosAutr: [
-					{
-						required: true,
-						message: "Campo requerido",
-						trigger: "change"
-					},
-					{
-						whitespace: true,
-						message: "Espacio no válido",
-						trigger: "change"
-					},
-					{
-						pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z ]*$",
-						message: "Caracter no válido",
-						trigger: "change"
-					}
-				],
-				sexoAutr: [
-					{
-						required: true,
-						message: "Campo reuqerido",
-						trigger: "change"
-					}
-				],
-				reseñaBiogAutr: [
-					{
-						whitespace: true,
-						message: "Espacio no válido",
-						trigger: "change"
-					},
-					{
-						pattern: "^[a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()]*$",
-						message: "Caracter no válido",
-						trigger: "change"
-					}
-				]
-			}
-		};
-	},
-	created() {
-		this.load_nomenclators();
-		this.set_action();
-		if (this.action_modal === "crear" || this.action_modal === "crear_autor") {
-			this.codigo = this.generar_codigo(this.autors_list);
-		}
-	},
-	computed: {
-		active() {
-			if (this.text_button === "Editar") {
-				let same_photo = false;
-				if (this.file_list[0]) {
-					same_photo = this.file_list[0].uid !== this.author_modal.id;
-				}
-				return (
-					(same_photo || this.file_list.length === 0 || !this.compare_object) &&
-					this.valid_image
-				);
-			} else
-				return (
-					this.author_modal.ciAutr &&
-					this.author_modal.nombresAutr &&
-					this.author_modal.apellidosAutr &&
-					this.author_modal.sexoAutr &&
-					this.valid_image
-				);
-		},
-		/*
-		 *Método que compara los campos editables del producto para saber si se ha modificado
-		 */
-		compare_object() {
-			this.author_modal.fallecidoAutr = this.fallecidoAutr === true ? 1 : 0;
-			this.author_modal.obrasCatEditAutr =
-				this.obrasCatEditAutr === true ? 1 : 0;
-			if (this.active_tab === "2") {
-				return false;
-			} else {
-				return (
-					this.author_modal.nombresAutr === this.author.nombresAutr &&
-					this.author_modal.apellidosAutr === this.author.apellidosAutr &&
-					this.author_modal.sexoAutr === this.author.sexoAutr &&
-					this.author_modal.fallecidoAutr === this.author.fallecidoAutr &&
-					this.author_modal.obrasCatEditAutr === this.author.obrasCatEditAutr &&
-					this.author_modal.reseñaBiogAutr === this.author.reseñaBiogAutr
-				);
-			}
-		}
-	},
-	methods: {
-		reset() {
-			this.show_help = false;
-			this.content = "";
-			this.type = "";
-		},
-		filter_option(input, option) {
-			return (
-				option.componentOptions.children[0].text
-					.toLowerCase()
-					.indexOf(input.toLowerCase()) >= 0
-			);
-		},
-		onChange(current) {
-			this.current = current;
-		},
-		reload_parent() {
-			this.$emit("refresh");
-		},
-		handle_cancel(e) {
-			if (e === "cancelar") {
-				this.$refs.general_form.resetFields();
-				this.show = false;
-				if (this.$store.getters.getCreatedTemasFormGetters.length !== 0) {
-					for (
-						let index = 0;
-						index < this.$store.getters.getCreatedTemasFormGetters.length;
-						index++
-					) {
-						axios
-							.delete(
-								`temas/eliminar/${this.$store.getters.getCreatedTemasFormGetters[index].id}`
-							)
-							.then(ress => {})
-							.catch(err => {
-								console.log(err);
-								this.$toast.error("Ha ocurrido un error", "¡Error!", {
-									timeout: 2000
-								});
-							});
-					}
-				}
-				this.$store.state["temas"] = [];
-				this.$store.state["created_temas"] = [];
-				this.$store.state["all_temas"] = [];
-				this.$store.state["all_temas_statics"] = [];
-				this.$emit("close_modal", this.show);
-				if (this.action_modal !== "detalles") {
-					this.$toast.success(this.action_close, "¡Éxito!", {
-						timeout: 2000,
-						color: "orange"
-					});
-				}
-			} else {
-				this.$refs.general_form.resetFields();
-				this.show = false;
-				this.$emit("close_modal", this.show);
-			}
-		},
-		validate() {
-			if (this.author_modal.codigAutr === undefined) {
-				this.author_modal.codigAutr = this.codigo;
-			}
-			if (!this.used) {
-				this.$refs.general_form.validate(valid => {
-					if (valid) {
-						return this.confirm();
-					} else {
-						this.$message.warning(
-							"Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-							4
-						);
-					}
-				});
-			}
-		},
-		confirm() {
-			this.spinning = true;
-			this.waiting = true;
-			let form_data = this.prepare_create();
-			if (this.action_modal === "editar") {
-				this.text_button = "Editando...";
-				axios
-					.post(`/autores/editar`, form_data, {
-						headers: {
-							"Content-Type": "multipart/form-data"
-						}
-					})
-					.then(response => {
-						this.text_button = "Editar";
-						this.spinning = false;
-						this.waiting = false;
-						this.handle_cancel();
-						this.$emit("actualizar");
-						this.$toast.success(
-							"Se ha modificado el Autor correctamente",
-							"¡Éxito!",
-							{ timeout: 2000 }
-						);
-					})
-					.catch(error => {
-						this.text_button = "Editar";
-						this.spinning = false;
-						this.waiting = false;
-						this.handle_cancel();
-						this.$toast.error("Ha ocurrido un error", "¡Error!", {
-							timeout: 2000
-						});
-					});
-			} else {
-				axios
-					.post("/autores", form_data, {
-						headers: {
-							"Content-Type": "multipart/form-data"
-						}
-					})
-					.then(res => {
-						axios
-							.post("/autores/temas", {
-								temas: this.getTemasID(),
-								id: res.data.id
-							})
-							.then(res => {
-								this.$store.state["temas"] = [];
-								this.$store.state["all_temas_statics"] = [];
-								this.$store.state["all_temas"] = [];
-								this.$store.state["created_temas"] = [];
-							})
-							.catch(error => {
-								this.$toast.error("Ha ocurrido un error", "¡Error!", {
-									timeout: 2000
-								});
-							});
-						if (this.action_modal === "crear_autor") {
-							let autores = [];
-							axios
-								.post("/autores/listar")
-								.then(response => {
-									let prod = response.data;
-									prod.forEach(element => {
-										if (!element.deleted_at) {
-											autores.push(element);
-										}
-									});
-									this.$store.state["autores"].push(
-										autores[autores.length - 1]
-									);
-									this.$store.state["created_autores"].push(
-										autores[autores.length - 1]
-									);
-									this.$store.state["all_autores_statics"].push(
-										autores[autores.length - 1]
-									);
-								})
-								.catch(error => {
-									console.log(error);
-								});
-						}
-						this.text_button = "Creando...";
-						this.spinning = false;
-						this.waiting = false;
-						this.handle_cancel();
-						this.$emit("actualizar");
-						this.$toast.success(
-							"Se ha creado el Autor correctamente",
-							"¡Éxito!",
-							{ timeout: 2000 }
-						);
-					})
-					.catch(err => {
-						this.text_button = "Crear";
-						this.spinning = false;
-						this.waiting = false;
-						this.handle_cancel();
-						this.$toast.error("Ha ocurrido un error", "¡Error!", {
-							timeout: 2000
-						});
-					});
-			}
-		},
-		atras(tabAnterior) {
-			if (this.active_tab === "2") {
-				this.tab_2 = true;
-				this.tab_1 = false;
-				this.active_tab = tabAnterior;
-			}
-		},
-		siguiente(tab, siguienteTab) {
-			if (tab === "tab_1") {
-				this.$refs.general_form.validate(valid => {
-					if (valid) {
-						this.tab_2 = false;
-						this.tab_1 = true;
-						if (this.tabs_list.indexOf(tab) === -1) {
-							this.tabs_list.push(tab);
-						}
-						this.active_tab = siguienteTab;
-					} else {
-						this.$message.warning(
-							"Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-							4
-						);
-					}
-				});
-			}
-		},
-		prepare_create() {
-			this.author_modal.fallecidoAutr = this.fallecidoAutr === false ? 0 : 1;
-			this.author_modal.obrasCatEditAutr =
-				this.obrasCatEditAutr === false ? 0 : 1;
-			if (this.author_modal.reseñaBiogAutr === undefined) {
-				this.author_modal.reseñaBiogAutr = "";
-			}
-			let form_data = new FormData();
-			if (this.action_modal === "editar" || this.action_modal === "detalles") {
-				form_data.append("id", this.author_modal.id);
-			}
-			if (this.author_modal.codigAutr === undefined) {
-				this.author_modal.codigAutr = this.codigo;
-			}
-			this.author_modal.codigAutr = "AUTR-" + this.author_modal.codigAutr;
-			form_data.append("codigAutr", this.author_modal.codigAutr);
-			form_data.append("ciAutr", this.author_modal.ciAutr);
-			form_data.append("nombresAutr", this.author_modal.nombresAutr);
-			form_data.append("apellidosAutr", this.author_modal.apellidosAutr);
-			form_data.append("sexoAutr", this.author_modal.sexoAutr);
-			form_data.append("reseñaBiogAutr", this.author_modal.reseñaBiogAutr);
-			form_data.append("fallecidoAutr", this.author_modal.fallecidoAutr);
-			form_data.append("obrasCatEditAutr", this.author_modal.obrasCatEditAutr);
-			if (this.author_modal.audiovisuales_autrs) {
-				this.relation = "audiovisuales";
-				form_data.append("type_relation", this.relation);
-				form_data.append(
-					"audiovisual_id",
-					this.author_modal.audiovisuales_autrs
-				);
-			} else if (this.author_modal.tracks_autrs) {
-				this.relation = "tracks";
-				form_data.append("type_relation", this.relation);
-				form_data.append("track_id", this.author_modal.tracks_autrs);
-			} else if (this.author_modal.temas_autrs) {
-				this.relation = "temas";
-				form_data.append("type_relation", this.relation);
-				form_data.append("tema_id", this.author_modal.temas_autrs);
-			}
+  props: ["action", "author", "autors_list"],
+  data() {
+    let validate_codig_unique = (rule, value, callback) => {
+      this.autors_list.forEach((element) => {
+        if (element.codigAutr.substr(5) === value.replace(/ /g, "")) {
+          callback(new Error("Código usado"));
+        }
+      });
+      callback();
+    };
+    let validate_ci_unique = (rule, value, callback) => {
+      this.autors_list.forEach((element) => {
+        if (element.ciAutr === value.replace(/ /g, "")) {
+          callback(new Error("CI duplicado"));
+        }
+      });
+      callback();
+    };
+    let code_required = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Inserte el código"));
+      } else callback();
+    };
+    let code_0000 = (rule, value, callback) => {
+      if (value === "0000") {
+        callback(new Error("El código no puede ser 0000"));
+      } else callback();
+    };
+    return {
+      steps: [
+        {
+          title: "Audiovisuales",
+        },
+        {
+          title: "Tracks",
+        },
+        {
+          title: "Temas",
+        },
+      ],
+      tema: {},
+      tracks_not_empty: true,
+      show_help: false,
+      active_tab: "1",
+      tab_1: false,
+      tab_2: true,
+      content: "",
+      type: "",
+      current: 0,
+      detalles: false,
+      detalles_autor: true,
+      vista_editar: true,
+      action_cancel_title: "",
+      action_title: "",
+      show: true,
+      used: false,
+      disabled: false,
+      waiting: false,
+      text_button: "",
+      text_header_button: "",
+      spinning: false,
+      author_modal: {},
+      disabled: false,
+      activated: true,
+      file_list: [],
+      tabs_list: [],
+      preview_image: "",
+      valid_image: true,
+      preview_visible: false,
+      show_error: "",
+      show_used_error: "",
+      action_modal: this.action,
+      fallecidoAutr: false,
+      obrasCatEditAutr: false,
+      list_nomenclators: [],
+      action_management_temas: "crear_tema",
+      visible_management_tema: false,
+      codigo: "",
+      formItemLayout: {
+        wrapperCol: {
+          xs: { span: 24, offset: 0 },
+          sm: { span: 20, offset: 4 },
+        },
+      },
+      rules: {
+        codigAutr: [
+          {
+            validator: code_required,
+            trigger: "change",
+          },
+          {
+            validator: code_0000,
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+          {
+            pattern: "^[0-9]*$",
+            message: "Solo dígitos",
+            trigger: "change",
+          },
+          {
+            validator: validate_codig_unique,
+            trigger: "change",
+          },
+          {
+            len: 4,
+            message: "Formato de 4 dígitos",
+            trigger: "change",
+          },
+        ],
+        ciAutr: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+          {
+            validator: validate_ci_unique,
+            trigger: "change",
+          },
+          {
+            len: 11,
+            message: "Formato de 11 dígitos",
+            trigger: "change",
+          },
+          {
+            pattern: "^[0-9]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+        nombresAutr: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+          {
+            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z ]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+        apellidosAutr: [
+          {
+            required: true,
+            message: "Campo requerido",
+            trigger: "change",
+          },
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+          {
+            pattern: "^[-üáéíóúÁÉÍÓÚñÑa-zA-Z ]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+        sexoAutr: [
+          {
+            required: true,
+            message: "Campo reuqerido",
+            trigger: "change",
+          },
+        ],
+        reseñaBiogAutr: [
+          {
+            whitespace: true,
+            message: "Espacio no válido",
+            trigger: "change",
+          },
+          {
+            pattern: "^[a-zA-Z0-9 üáéíóúÁÉÍÓÚñÑ,.;:¿?!¡()]*$",
+            message: "Caracter no válido",
+            trigger: "change",
+          },
+        ],
+      },
+    };
+  },
+  created() {
+    this.load_nomenclators();
+    this.set_action();
+    if (this.action_modal === "crear" || this.action_modal === "crear_autor") {
+      this.codigo = this.generar_codigo(this.autors_list);
+    }
+  },
+  computed: {
+    active() {
+      if (this.text_button === "Editar") {
+        let same_photo = false;
+        if (this.file_list[0]) {
+          same_photo = this.file_list[0].uid !== this.author_modal.id;
+        }
+        return (
+          (same_photo || this.file_list.length === 0 || !this.compare_object) &&
+          this.valid_image
+        );
+      } else
+        return (
+          this.author_modal.ciAutr &&
+          this.author_modal.nombresAutr &&
+          this.author_modal.apellidosAutr &&
+          this.author_modal.sexoAutr &&
+          this.valid_image
+        );
+    },
+    /*
+     *Método que compara los campos editables del producto para saber si se ha modificado
+     */
+    compare_object() {
+      this.author_modal.fallecidoAutr = this.fallecidoAutr === true ? 1 : 0;
+      this.author_modal.obrasCatEditAutr =
+        this.obrasCatEditAutr === true ? 1 : 0;
+      if (this.active_tab === "2") {
+        return false;
+      } else {
+        return (
+          this.author_modal.nombresAutr === this.author.nombresAutr &&
+          this.author_modal.apellidosAutr === this.author.apellidosAutr &&
+          this.author_modal.sexoAutr === this.author.sexoAutr &&
+          this.author_modal.fallecidoAutr === this.author.fallecidoAutr &&
+          this.author_modal.obrasCatEditAutr === this.author.obrasCatEditAutr &&
+          this.author_modal.reseñaBiogAutr === this.author.reseñaBiogAutr
+        );
+      }
+    },
+  },
+  methods: {
+    reset() {
+      this.show_help = false;
+      this.content = "";
+      this.type = "";
+    },
+    filter_option(input, option) {
+      return (
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      );
+    },
+    onChange(current) {
+      this.current = current;
+    },
+    reload_parent() {
+      this.$emit("refresh");
+    },
+    handle_cancel(e) {
+      if (e === "cancelar") {
+        this.$refs.general_form.resetFields();
+        this.show = false;
+        if (this.$store.getters.getCreatedTemasFormGetters.length !== 0) {
+          for (
+            let index = 0;
+            index < this.$store.getters.getCreatedTemasFormGetters.length;
+            index++
+          ) {
+            axios
+              .delete(
+                `temas/eliminar/${this.$store.getters.getCreatedTemasFormGetters[index].id}`
+              )
+              .then((ress) => {})
+              .catch((err) => {
+                console.log(err);
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+          }
+        }
+        this.$store.state["temas"] = [];
+        this.$store.state["created_temas"] = [];
+        this.$store.state["all_temas"] = [];
+        this.$store.state["all_temas_statics"] = [];
+        this.$emit("close_modal", this.show);
+        if (this.action_modal !== "detalles") {
+          this.$toast.success(this.action_close, "¡Éxito!", {
+            timeout: 2000,
+            color: "orange",
+          });
+        }
+      } else {
+        this.$refs.general_form.resetFields();
+        this.show = false;
+        this.$emit("close_modal", this.show);
+      }
+    },
+    validate() {
+      if (this.author_modal.codigAutr === undefined) {
+        this.author_modal.codigAutr = this.codigo;
+      }
+      if (!this.used) {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            return this.confirm();
+          } else {
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
+            );
+          }
+        });
+      }
+    },
+    confirm() {
+      this.spinning = true;
+      this.waiting = true;
+      let form_data = this.prepare_create();
+      if (this.action_modal === "editar") {
+        this.text_button = "Editando...";
+        axios
+          .post(`/autores/editar`, form_data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            this.text_button = "Editar";
+            this.spinning = false;
+            this.waiting = false;
+            this.handle_cancel();
+            this.$emit("actualizar");
+            this.$toast.success(
+              "Se ha modificado el Autor correctamente",
+              "¡Éxito!",
+              { timeout: 2000 }
+            );
+          })
+          .catch((error) => {
+            this.text_button = "Editar";
+            this.spinning = false;
+            this.waiting = false;
+            this.handle_cancel();
+            this.$toast.error("Ha ocurrido un error", "¡Error!", {
+              timeout: 2000,
+            });
+          });
+      } else {
+        axios
+          .post("/autores", form_data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            axios
+              .post("/autores/temas", {
+                temas: this.getTemasID(),
+                id: res.data.id,
+              })
+              .then((res) => {
+                this.$store.state["temas"] = [];
+                this.$store.state["all_temas_statics"] = [];
+                this.$store.state["all_temas"] = [];
+                this.$store.state["created_temas"] = [];
+              })
+              .catch((error) => {
+                this.$toast.error("Ha ocurrido un error", "¡Error!", {
+                  timeout: 2000,
+                });
+              });
+            if (this.action_modal === "crear_autor") {
+              let autores = [];
+              axios
+                .post("/autores/listar")
+                .then((response) => {
+                  let prod = response.data;
+                  prod.forEach((element) => {
+                    if (!element.deleted_at) {
+                      autores.push(element);
+                    }
+                  });
+                  this.$store.state["autores"].push(
+                    autores[autores.length - 1]
+                  );
+                  this.$store.state["created_autores"].push(
+                    autores[autores.length - 1]
+                  );
+                  this.$store.state["all_autores_statics"].push(
+                    autores[autores.length - 1]
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }
+            this.text_button = "Creando...";
+            this.spinning = false;
+            this.waiting = false;
+            this.handle_cancel();
+            this.$emit("actualizar");
+            this.$toast.success(
+              "Se ha creado el Autor correctamente",
+              "¡Éxito!",
+              { timeout: 2000 }
+            );
+          })
+          .catch((err) => {
+            this.text_button = "Crear";
+            this.spinning = false;
+            this.waiting = false;
+            this.handle_cancel();
+            this.$toast.error("Ha ocurrido un error", "¡Error!", {
+              timeout: 2000,
+            });
+          });
+      }
+    },
+    atras(tabAnterior) {
+      if (this.active_tab === "2") {
+        this.tab_2 = true;
+        this.tab_1 = false;
+        this.active_tab = tabAnterior;
+      }
+    },
+    siguiente(tab, siguienteTab) {
+      if (tab === "tab_1") {
+        this.$refs.general_form.validate((valid) => {
+          if (valid) {
+            this.tab_2 = false;
+            this.tab_1 = true;
+            if (this.tabs_list.indexOf(tab) === -1) {
+              this.tabs_list.push(tab);
+            }
+            this.active_tab = siguienteTab;
+          } else {
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
+            );
+          }
+        });
+      }
+    },
+    prepare_create() {
+      this.author_modal.fallecidoAutr = this.fallecidoAutr === false ? 0 : 1;
+      this.author_modal.obrasCatEditAutr =
+        this.obrasCatEditAutr === false ? 0 : 1;
+      if (this.author_modal.reseñaBiogAutr === undefined) {
+        this.author_modal.reseñaBiogAutr = "";
+      }
+      let form_data = new FormData();
+      if (this.action_modal === "editar" || this.action_modal === "detalles") {
+        form_data.append("id", this.author_modal.id);
+      }
+      if (this.author_modal.codigAutr === undefined) {
+        this.author_modal.codigAutr = this.codigo;
+      }
+      this.author_modal.codigAutr = "AUTR-" + this.author_modal.codigAutr;
+      form_data.append("codigAutr", this.author_modal.codigAutr);
+      form_data.append("ciAutr", this.author_modal.ciAutr);
+      form_data.append("nombresAutr", this.author_modal.nombresAutr);
+      form_data.append("apellidosAutr", this.author_modal.apellidosAutr);
+      form_data.append("sexoAutr", this.author_modal.sexoAutr);
+      form_data.append("reseñaBiogAutr", this.author_modal.reseñaBiogAutr);
+      form_data.append("fallecidoAutr", this.author_modal.fallecidoAutr);
+      form_data.append("obrasCatEditAutr", this.author_modal.obrasCatEditAutr);
+      if (this.author_modal.audiovisuales_autrs) {
+        this.relation = "audiovisuales";
+        form_data.append("type_relation", this.relation);
+        form_data.append(
+          "audiovisual_id",
+          this.author_modal.audiovisuales_autrs
+        );
+      } else if (this.author_modal.tracks_autrs) {
+        this.relation = "tracks";
+        form_data.append("type_relation", this.relation);
+        form_data.append("track_id", this.author_modal.tracks_autrs);
+      } else if (this.author_modal.temas_autrs) {
+        this.relation = "temas";
+        form_data.append("type_relation", this.relation);
+        form_data.append("tema_id", this.author_modal.temas_autrs);
+      }
 
-			if (this.file_list.length !== 0) {
-				if (this.file_list[0].uid !== this.author_modal.id) {
-					if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
-						form_data.append("fotoAutr", this.file_list[0].originFileObj);
-					}
-				}
-			} else form_data.append("img_default", true);
-			this.text_button = "Creando...";
-			return form_data;
-		},
-		set_action() {
-			if (this.action_modal === "editar") {
-				if (this.author.deleted_at !== null) {
-					this.disabled = true;
-					this.activated = false;
-				}
-				this.text_header_button = "Editar";
-				this.text_button = "Editar";
-				this.action_cancel_title = "¿Desea cancelar la edición del Autor?";
-				this.action_title = "¿Desea guardar los cambios en el Autor?";
-				this.action_close = "La edición del Autor se canceló correctamente";
-				this.author.reseñaBiogAutr =
-					this.author.reseñaBiogAutr === null ? "" : this.author.reseñaBiogAutr;
-				this.author_modal = { ...this.author };
-				this.author_modal.codigAutr = this.author.codigAutr.substr(5);
-				this.fallecidoAutr =
-					this.author_modal.fallecidoAutr === 0 ? false : true;
-				this.obrasCatEditAutr =
-					this.author_modal.obrasCatEditAutr === 0 ? false : true;
-				if (this.author_modal.fotoAutr !== null) {
-					if (
-						this.author_modal.fotoAutr !==
-						"/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
-					) {
-						this.file_list.push({
-							uid: this.author_modal.id,
-							name: this.author_modal.fotoAutr.split("/")[
-								this.author_modal.fotoAutr.split("/").length - 1
-							],
-							url: this.author_modal.fotoAutr
-						});
-					} else
-						this.file_list.push({
-							uid: this.author_modal.id,
-							name: "Logo ver vertical_Ltr Negras.png",
-							url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
-						});
-				}
-			} else if (this.action_modal === "detalles") {
-				this.detalles = true;
-				if (this.author.deleted_at !== null) {
-					this.disabled = true;
-					this.activated = false;
-				}
-				this.text_header_button = "Detalles";
-				this.text_button = "Detalles";
-				this.author.reseñaBiogAutr =
-					this.author.reseñaBiogAutr === null ? "" : this.author.reseñaBiogAutr;
-				this.author_modal = { ...this.author };
-				if (this.author_modal.fotoAutr !== null) {
-					if (
-						this.author_modal.fotoAutr !==
-						"/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
-					) {
-						this.file_list.push({
-							uid: this.author_modal.id,
-							name: this.author_modal.fotoAutr.split("/")[
-								this.author_modal.fotoAutr.split("/").length - 1
-							],
-							url: this.author_modal.fotoAutr
-						});
-					} else
-						this.file_list.push({
-							uid: this.author_modal.id,
-							name: "Logo ver vertical_Ltr Negras.png",
-							url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
-						});
-				}
-			} else {
-				this.author_modal = { ...this.author };
-				this.file_list.push({
-					uid: 1,
-					name: "Logo ver vertical_Ltr Negras.png",
-					url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
-				});
-				this.text_button = "Crear";
-				this.text_header_button = "Crear";
-				this.action_cancel_title = "¿Desea cancelar la creación del Autor?";
-				this.action_title = "¿Desea crear el Autor?";
-				this.action_close = "La creación del Autor se canceló correctamente";
-			}
-		},
-		remove_image() {
-			this.file_list.pop();
-			this.preview_image = "";
-			this.valid_image = true;
-		},
-		preview_cancel() {
-			this.preview_visible = false;
-		},
-		handle_preview(file) {
-			this.preview_image = file.url || file.thumbUrl;
-			this.preview_visible = true;
-		},
-		handle_change({ fileList }) {
-			this.file_list = fileList;
-		},
-		before_upload(file) {
-			const isJpgOrPng =
-				file.type === "image/jpeg" ||
-				file.type === "image/png" ||
-				file.type === "image/jpg";
-			if (!isJpgOrPng) {
-				this.valid_image = false;
-				this.$message.error("Sólo puedes subir imágenes como foto del artísta");
-			} else this.$message.success("Foto cargada correctamente");
-			return false;
-		},
-		load_nomenclators() {
-			axios
-				.post("/autores/nomencladores")
-				.then(response => {
-					let i = 0;
-					const length = response.data.length;
-					for (i; i < length; i++) {
-						this.list_nomenclators.push(response.data[i]);
-					}
-				})
-				.catch(error => {
-					this.$toast.error("Ha ocurrido un error", "¡Error!", {
-						timeout: 2000
-					});
-				});
-			axios
-				.post("/temas/listar")
-				.then(response => {
-					let prod = response.data;
-					prod.forEach(element => {
-						if (!element.deleted_at) {
-							if (this.action_modal === "crear") {
-								this.$store.state["all_temas"].push(element);
-							}
-							this.$store.state["all_temas_statics"].push(element);
-						}
-					});
-				})
-				.catch(error => {
-					console.log(error);
-				});
-		},
-		//Metodos para generar el codigo
-		//Este es el único método que varia de un módulo a otro
-		crear_arr_codig(arr) {
-			let answer = [];
-			for (let i = 0; i < arr.length; i++) {
-				answer.push(parseInt(arr[i].codigAutr.substr(5, 8)));
-			}
-			return answer;
-		},
-		//Método de ordenamiento en burbuja
-		ordenamiento_burbuja(arr) {
-			const l = arr.length;
-			for (let i = 0; i < l; i++) {
-				for (let j = 0; j < l - 1 - i; j++) {
-					if (arr[j] > arr[j + 1]) {
-						[arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-					}
-				}
-			}
-			return arr;
-		},
-		generar_codigo(arr) {
-			let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
-			let answer = 1;
-			for (let i = 0; i < list.length; i++) {
-				if (list[0] !== 1) {
-					answer = 1;
-					break;
-				}
-				if (i === list.length - 1) {
-					answer = list[i] + 1;
-					break;
-				}
-				if (!(list[i] + 1 === list[i + 1])) {
-					answer = list[i] + 1;
-					break;
-				}
-			}
-			return this.crear_codigo(answer);
-		},
-		crear_codigo(number) {
-			switch (number.toString().length) {
-				case 1:
-					return "000" + number;
-				case 2:
-					return "00" + number;
-				case 3:
-					return "0" + number;
-				case 4:
-					return number.toString();
-				default:
-					break;
-			}
-		},
-		//Fin de metodos para generar el codigo
+      if (this.file_list.length !== 0) {
+        if (this.file_list[0].uid !== this.author_modal.id) {
+          if (this.file_list[0].name !== "Logo ver vertical_Ltr Negras.png") {
+            form_data.append("fotoAutr", this.file_list[0].originFileObj);
+          }
+        }
+      } else form_data.append("img_default", true);
+      this.text_button = "Creando...";
+      return form_data;
+    },
+    set_action() {
+      if (this.action_modal === "editar") {
+        if (this.author.deleted_at !== null) {
+          this.disabled = true;
+          this.activated = false;
+        }
+        this.text_header_button = "Editar";
+        this.text_button = "Editar";
+        this.action_cancel_title = "¿Desea cancelar la edición del Autor?";
+        this.action_title = "¿Desea guardar los cambios en el Autor?";
+        this.action_close = "La edición del Autor se canceló correctamente";
+        this.author.reseñaBiogAutr =
+          this.author.reseñaBiogAutr === null ? "" : this.author.reseñaBiogAutr;
+        this.author_modal = { ...this.author };
+        this.author_modal.codigAutr = this.author.codigAutr.substr(5);
+        this.fallecidoAutr =
+          this.author_modal.fallecidoAutr === 0 ? false : true;
+        this.obrasCatEditAutr =
+          this.author_modal.obrasCatEditAutr === 0 ? false : true;
+        if (this.author_modal.fotoAutr !== null) {
+          if (
+            this.author_modal.fotoAutr !==
+            "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
+          ) {
+            this.file_list.push({
+              uid: this.author_modal.id,
+              name: this.author_modal.fotoAutr.split("/")[
+                this.author_modal.fotoAutr.split("/").length - 1
+              ],
+              url: this.author_modal.fotoAutr,
+            });
+          } else
+            this.file_list.push({
+              uid: this.author_modal.id,
+              name: "Logo ver vertical_Ltr Negras.png",
+              url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+            });
+        }
+      } else if (this.action_modal === "detalles") {
+        this.detalles = true;
+        if (this.author.deleted_at !== null) {
+          this.disabled = true;
+          this.activated = false;
+        }
+        this.text_header_button = "Detalles";
+        this.text_button = "Detalles";
+        this.author.reseñaBiogAutr =
+          this.author.reseñaBiogAutr === null ? "" : this.author.reseñaBiogAutr;
+        this.author_modal = { ...this.author };
+        if (this.author_modal.fotoAutr !== null) {
+          if (
+            this.author_modal.fotoAutr !==
+            "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png"
+          ) {
+            this.file_list.push({
+              uid: this.author_modal.id,
+              name: this.author_modal.fotoAutr.split("/")[
+                this.author_modal.fotoAutr.split("/").length - 1
+              ],
+              url: this.author_modal.fotoAutr,
+            });
+          } else
+            this.file_list.push({
+              uid: this.author_modal.id,
+              name: "Logo ver vertical_Ltr Negras.png",
+              url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+            });
+        }
+      } else {
+        this.author_modal = { ...this.author };
+        this.file_list.push({
+          uid: 1,
+          name: "Logo ver vertical_Ltr Negras.png",
+          url: "/BisMusic/Imagenes/Logo ver vertical_Ltr Negras.png",
+        });
+        this.text_button = "Crear";
+        this.text_header_button = "Crear";
+        this.action_cancel_title = "¿Desea cancelar la creación del Autor?";
+        this.action_title = "¿Desea crear el Autor?";
+        this.action_close = "La creación del Autor se canceló correctamente";
+      }
+    },
+    remove_image() {
+      this.file_list.pop();
+      this.preview_image = "";
+      this.valid_image = true;
+      this.$toast.success("Foto eliminada correctamente!", "¡Éxito!", {
+          timeout: 2000,
+        });
+    },
+    preview_cancel() {
+      this.preview_visible = false;
+    },
+    handle_preview(file) {
+      this.preview_image = file.url || file.thumbUrl;
+      this.preview_visible = true;
+    },
+    handle_change({ fileList }) {
+      this.file_list = fileList;
+    },
+    before_upload(file) {
+      const isJpgOrPng =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "image/jpg";
+      if (!isJpgOrPng) {
+        this.valid_image = false;
+        this.$toast.warning("Solo se pueden subir imágenes!", "¡Atención!", {
+          timeout: 2000,
+        });
+      } else
+        this.$toast.success("Foto cargado correctamente!", "¡Éxito!", {
+          timeout: 2000,
+        });
+      return false;
+    },
+    load_nomenclators() {
+      axios
+        .post("/autores/nomencladores")
+        .then((response) => {
+          let i = 0;
+          const length = response.data.length;
+          for (i; i < length; i++) {
+            this.list_nomenclators.push(response.data[i]);
+          }
+        })
+        .catch((error) => {
+          this.$toast.error("Ha ocurrido un error", "¡Error!", {
+            timeout: 2000,
+          });
+        });
+      axios
+        .post("/temas/listar")
+        .then((response) => {
+          let prod = response.data;
+          prod.forEach((element) => {
+            if (!element.deleted_at) {
+              if (this.action_modal === "crear") {
+                this.$store.state["all_temas"].push(element);
+              }
+              this.$store.state["all_temas_statics"].push(element);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    //Metodos para generar el codigo
+    //Este es el único método que varia de un módulo a otro
+    crear_arr_codig(arr) {
+      let answer = [];
+      for (let i = 0; i < arr.length; i++) {
+        answer.push(parseInt(arr[i].codigAutr.substr(5, 8)));
+      }
+      return answer;
+    },
+    //Método de ordenamiento en burbuja
+    ordenamiento_burbuja(arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) {
+        for (let j = 0; j < l - 1 - i; j++) {
+          if (arr[j] > arr[j + 1]) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+      return arr;
+    },
+    generar_codigo(arr) {
+      let list = this.ordenamiento_burbuja(this.crear_arr_codig(arr));
+      let answer = 1;
+      for (let i = 0; i < list.length; i++) {
+        if (list[0] !== 1) {
+          answer = 1;
+          break;
+        }
+        if (i === list.length - 1) {
+          answer = list[i] + 1;
+          break;
+        }
+        if (!(list[i] + 1 === list[i + 1])) {
+          answer = list[i] + 1;
+          break;
+        }
+      }
+      return this.crear_codigo(answer);
+    },
+    crear_codigo(number) {
+      switch (number.toString().length) {
+        case 1:
+          return "000" + number;
+        case 2:
+          return "00" + number;
+        case 3:
+          return "0" + number;
+        case 4:
+          return number.toString();
+        default:
+          break;
+      }
+    },
+    //Fin de metodos para generar el codigo
 
-		add_tema() {
-			if (this.author_modal.temas !== undefined) {
-				this.$store.state["temas"].push(
-					this.get_tema(this.author_modal.temas).tema
-				);
-				this.$store.state["all_temas"].splice(
-					this.get_tema(this.author_modal.temas).index,
-					1
-				);
-				this.author_modal.temas = undefined;
-			}
-		},
+    add_tema() {
+      if (this.author_modal.temas !== undefined) {
+        this.$store.state["temas"].push(
+          this.get_tema(this.author_modal.temas).tema
+        );
+        this.$store.state["all_temas"].splice(
+          this.get_tema(this.author_modal.temas).index,
+          1
+        );
+        this.author_modal.temas = undefined;
+      }
+    },
 
-		remove_tema(item) {
-			let index = this.$store.getters.getTemasFormGetters.indexOf(item);
-			this.$store.state["temas"].splice(index, 1);
-			this.$store.state["all_temas"].push(item);
-		},
+    remove_tema(item) {
+      let index = this.$store.getters.getTemasFormGetters.indexOf(item);
+      this.$store.state["temas"].splice(index, 1);
+      this.$store.state["all_temas"].push(item);
+    },
 
-		new_tema() {
-			axios.post("/tracks/listar").then(response => {
-				if (response.data.length === 0) {
-					this.content =
-						"No se puede crear Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
-					this.type = "info";
-					this.show_help = true;
-					this.tracks_not_empty = false;
-				} else {
-					this.visible_management_tema = true;
-					this.tema.editar_track = false;
-				}
-			});
-		},
+    new_tema() {
+      axios.post("/tracks/listar").then((response) => {
+        if (response.data.length === 0) {
+          this.content =
+            "No se puede crear Temas sin Tracks existentes, vaya al módulo de Tracks y cree al menos un Track!";
+          this.type = "info";
+          this.show_help = true;
+          this.tracks_not_empty = false;
+        } else {
+          this.visible_management_tema = true;
+          this.tema.editar_track = false;
+        }
+      });
+    },
 
-		get_tema(id) {
-			for (
-				let index = 0;
-				index < this.$store.getters.getAllTemasFormGetters.length;
-				index++
-			) {
-				if (this.$store.getters.getAllTemasFormGetters[index].id === id) {
-					return {
-						tema: this.$store.getters.getAllTemasFormGetters[index],
-						index: index
-					};
-				}
-			}
-			return -1;
-		},
+    get_tema(id) {
+      for (
+        let index = 0;
+        index < this.$store.getters.getAllTemasFormGetters.length;
+        index++
+      ) {
+        if (this.$store.getters.getAllTemasFormGetters[index].id === id) {
+          return {
+            tema: this.$store.getters.getAllTemasFormGetters[index],
+            index: index,
+          };
+        }
+      }
+      return -1;
+    },
 
-		getTemasID() {
-			let answer = [];
-			let all_temas = this.$store.getters.getTemasFormGetters;
-			for (let index = 0; index < all_temas.length; index++) {
-				answer.push(all_temas[index].id);
-			}
-			return answer;
-		}
-	},
-	components: {
-		help,
-		tabla_audiovisuales: () => import("../../Audiovisual/Tabla_Audiovisuales"),
-		tabla_temas: () => import("../../Tema/Tabla_Temas"),
-		tabla_tracks: () => import("../../Track/Tabla_Tracks"),
-		modal_management_temas: () => import("../../Tema/Modal_Gestionar_Tema")
-	}
+    getTemasID() {
+      let answer = [];
+      let all_temas = this.$store.getters.getTemasFormGetters;
+      for (let index = 0; index < all_temas.length; index++) {
+        answer.push(all_temas[index].id);
+      }
+      return answer;
+    },
+  },
+  components: {
+    help,
+    tabla_audiovisuales: () => import("../../Audiovisual/Tabla_Audiovisuales"),
+    tabla_temas: () => import("../../Tema/Tabla_Temas"),
+    tabla_tracks: () => import("../../Track/Tabla_Tracks"),
+    modal_management_temas: () => import("../../Tema/Modal_Gestionar_Tema"),
+  },
 };
 </script>
 
@@ -1343,45 +1370,45 @@ export default {
 .ant-upload-select,
 .ant-upload-select-picture-card,
 .ant-upload-list-picture-card-container {
-	width: 170px !important;
-	height: 170px !important;
+  width: 170px !important;
+  height: 170px !important;
 }
 #modal_gestionar_autores .ant-select-search input {
-	border-color: rgb(255, 255, 255) !important;
+  border-color: rgb(255, 255, 255) !important;
 }
 #modal_gestionar_autores textarea {
-	height: 150px !important;
+  height: 150px !important;
 }
 #modal_gestionar_autores .ant-form-item-control {
-	width: 85%;
+  width: 85%;
 }
 #modal_gestionar_autores .custom-form-item .ant-form-item-control {
-	width: 100% !important;
+  width: 100% !important;
 }
 #modal_gestionar_autores #resenha .ant-form-item-control {
-	width: 100% !important;
+  width: 100% !important;
 }
 #modal_gestionar_autores .ant-mentions textarea {
-	height: 32px !important;
+  height: 32px !important;
 }
 #modal_gestionar_autores .description textarea {
-	height: 150px !important;
+  height: 150px !important;
 }
 #modal_gestionar_autores .ant-col-sm-offset-4 {
-	margin-left: 0px !important;
+  margin-left: 0px !important;
 }
 #modal_gestionar_autores .dynamic-delete-button {
-	cursor: pointer;
-	position: relative;
-	margin-left: 4px;
-	padding: 0 8px;
-	top: 2px;
-	font-size: 18px;
-	color: white;
-	background-color: rgb(243, 107, 100);
-	transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+  margin-left: 4px;
+  padding: 0 8px;
+  top: 2px;
+  font-size: 18px;
+  color: white;
+  background-color: rgb(243, 107, 100);
+  transition: all 0.3s;
 }
 #modal_gestionar_autores .ant-col-sm-20 {
-	width: 100%;
+  width: 100%;
 }
 </style>

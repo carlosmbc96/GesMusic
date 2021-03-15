@@ -100,6 +100,9 @@
                       style="width: 50% !important"
                       :disabled="disabled"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="fonogram in fonograms"
                         :key="fonogram.codigFong"
@@ -116,6 +119,9 @@
                       v-model="track_modal.fonogramas_tracks"
                       :disabled="disabled"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="fonogram in fonograms"
                         :key="fonogram.id"
@@ -313,6 +319,7 @@
                       label="Duración:"
                     >
                       <a-time-picker
+                        :getPopupContainer="(trigger) => trigger.parentNode"
                         placeholder="hh:mm:ss"
                         :default-open-value="moment('00:00:00', 'HH:mm:ss')"
                         :disabled="disabled"
@@ -344,6 +351,9 @@
                         :disabled="disabled"
                         v-model="track_modal.paisgrabTrk"
                       >
+                        <template slot="notFoundContent">
+                          <a-empty description="Sin resultados" />
+                        </template>
                         <a-select-option
                           v-for="nomenclator in paises"
                           :key="nomenclator.id"
@@ -396,6 +406,9 @@
                         :disabled="disabled"
                         v-model="track_modal.generoTrk"
                       >
+                        <template slot="notFoundContent">
+                          <a-empty description="Sin resultados" />
+                        </template>
                         <a-select-option
                           v-for="nomenclator in generos"
                           :key="nomenclator.id"
@@ -424,6 +437,9 @@
                         :disabled="disabled"
                         v-model="track_modal.moodTrk"
                       >
+                        <template slot="notFoundContent">
+                          <a-empty description="Sin resultados" />
+                        </template>
                         <a-select-option
                           v-for="nomenclator in moods"
                           :key="nomenclator.id"
@@ -434,7 +450,7 @@
                       </a-select>
                     </a-form-model-item>
                     <a-form-model-item
-                      label="Estados de ánimo del Track"
+                      label="Estados de Ánimo"
                       v-if="action_modal === 'detalles'"
                     >
                       <a-mentions readonly :placeholder="track_modal.moodTrk">
@@ -447,10 +463,16 @@
                       prop="gestionTrk"
                     >
                       <a-select
+                        option-filter-prop="children"
+                        :filter-option="filter_option"
+                        show-search
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         :disabled="disabled"
                         v-model="track_modal.gestionTrk"
                       >
+                        <template slot="notFoundContent">
+                          <a-empty description="Sin resultados" />
+                        </template>
                         <a-select-option
                           v-for="nomenclator in gestiones"
                           :key="nomenclator.id"
@@ -577,7 +599,7 @@
                   <a-row style="margin-top: 20px">
                     <a-col span="24">
                       <div class="section-title">
-                        <h5>Selector de Autores</h5>
+                        <h5>Selector de Autores:</h5>
                       </div>
                       <a-form-model
                         ref="formularioAgregarAutor"
@@ -586,13 +608,17 @@
                       >
                         <a-form-model-item>
                           <a-select
-                            placeholder="Nombre completo"
+                            :getPopupContainer="(trigger) => trigger.parentNode"
+                            placeholder="Nombres y Apellidos"
                             option-filter-prop="children"
                             :filter-option="filter_option"
                             show-search
                             v-model="track_modal.autores"
                             :disabled="disabled"
                           >
+                            <template slot="notFoundContent">
+                              <a-empty description="Sin resultados" />
+                            </template>
                             <a-select-option
                               v-for="autor in $store.getters
                                 .getAllAutoresFormGetters"
@@ -710,7 +736,7 @@
                   <a-row style="margin-top: 20px">
                     <a-col span="24">
                       <div class="section-title">
-                        <h5>Selector de Interpretes</h5>
+                        <h5>Selector de Intérpretes:</h5>
                       </div>
                       <a-form-model
                         ref="formularioAgregarInterprete"
@@ -719,13 +745,17 @@
                       >
                         <a-form-model-item has-feedback>
                           <a-select
-                            placeholder="Nombre completo"
+                            :getPopupContainer="(trigger) => trigger.parentNode"
+                            placeholder="Nombres y Apellidos"
                             option-filter-prop="children"
                             :filter-option="filter_option"
                             show-search
                             v-model="track_modal.interpretes"
                             :disabled="disabled"
                           >
+                            <template slot="notFoundContent">
+                              <a-empty description="Sin resultados" />
+                            </template>
                             <a-select-option
                               v-for="interprete in $store.getters
                                 .getAllInterpretesFormGetters"
@@ -1201,9 +1231,13 @@ export default {
             }
             this.active_tab = siguienteTab;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              4
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -1292,9 +1326,13 @@ export default {
               if (valid) {
                 return this.confirm();
               } else
-                this.$message.warning(
-                  "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-                  4
+                this.$toast.warning(
+                  "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+                  "¡Atención!",
+                  {
+                    timeout: 4000,
+                    id: "question",
+                  }
                 );
             });
           } else return this.confirm();
@@ -1309,9 +1347,13 @@ export default {
             this.tab_1 = false;
             this.active_tab = tabAnterior;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              4
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -1480,7 +1522,14 @@ export default {
           this.spinning = false;
           this.waiting = false;
           this.isrc_validation = "duplicated-isrc-error";
-          this.$message.error("El código ISRC utilizado ya existe.");
+          this.$toast.warning(
+            "El código ISRC utilizado ya existe!",
+            "¡Atención!",
+            {
+              timeout: 4000,
+              id: "question",
+            }
+          );
         }
       }
     },

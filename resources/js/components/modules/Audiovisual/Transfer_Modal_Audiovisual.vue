@@ -1,6 +1,11 @@
 <template>
   <div>
-    <a-modal :closable="false" width="60%" :visible="show" id="transfer_modal_audiovisuales">
+    <a-modal
+      :closable="false"
+      width="60%"
+      :visible="show"
+      id="transfer_modal_audiovisuales"
+    >
       <template slot="footer">
         <a-popconfirm
           :getPopupContainer="(trigger) => trigger.parentNode"
@@ -93,6 +98,9 @@
               "
             />
           </template>
+          <template slot="notFoundContent">
+            <a-empty description="Sin resultados" />
+          </template>
         </a-transfer>
       </a-spin>
     </a-modal>
@@ -109,7 +117,6 @@ export default {
       config: {
         itemUnit: "audiovisual",
         itemsUnit: "audiovisuales",
-        notFoundContent: "La lista está vacía",
         searchPlaceholder: "Buscar",
       },
       mockData: [],

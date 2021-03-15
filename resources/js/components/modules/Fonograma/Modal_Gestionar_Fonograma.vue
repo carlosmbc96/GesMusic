@@ -90,6 +90,9 @@
                       style="width: 50% !important"
                       :disabled="disabled"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="product in products"
                         :key="product.codigProd"
@@ -106,6 +109,9 @@
                       v-model="fonogram_modal.productos_fongs"
                       :disabled="disabled"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="product in products"
                         :key="product.id"
@@ -262,6 +268,9 @@
                           :disabled="disabled"
                           v-model="fonogram_modal.añoFong"
                         >
+                          <template slot="notFoundContent">
+                            <a-empty description="Sin resultados" />
+                          </template>
                           <a-select-option
                             v-for="nomenclator in anhos"
                             :key="nomenclator.id"
@@ -292,6 +301,9 @@
                           :disabled="disabled"
                           v-model="fonogram_modal.clasficacionFong"
                         >
+                          <template slot="notFoundContent">
+                            <a-empty description="Sin resultados" />
+                          </template>
                           <a-select-option
                             v-for="nomenclator in clasficaciones"
                             :key="nomenclator.id"
@@ -370,6 +382,9 @@
                         :disabled="disabled"
                         v-model="fonogram_modal.nacioDueñoDerchFong"
                       >
+                        <template slot="notFoundContent">
+                          <a-empty description="Sin resultados" />
+                        </template>
                         <a-select-option
                           v-for="nomenclator in paises"
                           :key="nomenclator.id"
@@ -400,6 +415,9 @@
                         :disabled="disabled"
                         v-model="fonogram_modal.derechosFong"
                       >
+                        <template slot="notFoundContent">
+                          <a-empty description="Sin resultados" />
+                        </template>
                         <a-select-option
                           v-for="nomenclator in paises"
                           :key="nomenclator.id"
@@ -680,12 +698,16 @@
                       <a-form-model-item style="margin-bottom: 0px !important">
                         <a-select
                           placeholder="ISRC"
+                          :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
                           show-search
                           v-model="fonogram_modal.tracks"
                           :disabled="disabled"
                         >
+                          <template slot="notFoundContent">
+                            <a-empty description="Sin resultados" />
+                          </template>
                           <a-select-option
                             v-for="track in $store.getters
                               .getAllTracksFormGetters"
@@ -699,12 +721,16 @@
                       <a-form-model-item style="margin-bottom: 0px !important">
                         <a-select
                           placeholder="Título:"
+                          :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
                           show-search
                           v-model="fonogram_modal.tracks"
                           :disabled="disabled"
                         >
+                          <template slot="notFoundContent">
+                            <a-empty description="Sin resultados" />
+                          </template>
                           <a-select-option
                             v-for="track in $store.getters
                               .getAllTracksFormGetters"
@@ -1067,9 +1093,13 @@ export default {
             }
             this.active_tab = siguienteTab;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              4
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -1145,9 +1175,13 @@ export default {
               if (valid) {
                 return this.confirm();
               } else {
-                this.$message.warning(
-                  "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-                  4
+                this.$toast.warning(
+                  "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+                  "¡Atención!",
+                  {
+                    timeout: 4000,
+                    id: "question",
+                  }
                 );
               }
             });
@@ -1163,9 +1197,13 @@ export default {
             this.tab_1 = false;
             this.active_tab = tabAnterior;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              4
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -1471,6 +1509,9 @@ export default {
       this.file_list.pop();
       this.preview_image = "";
       this.valid_image = true;
+      this.$toast.success("Identificador eliminado correctamente!", "¡Éxito!", {
+          timeout: 2000,
+        });
     },
     preview_cancel() {
       this.preview_visible = false;
@@ -1502,10 +1543,13 @@ export default {
         file.type === "image/jpg";
       if (!isJpgOrPng) {
         this.valid_image = false;
-        this.$message.error(
-          "Sólo puedes subir imágenes como portadilla del fonograma"
-        );
-      } else this.$message.success("Portadilla cargada correctamente");
+        this.$toast.warning("Solo se pueden subir imágenes!", "¡Atención!", {
+          timeout: 2000,
+        });
+      } else
+        this.$toast.success("Identificador cargado correctamente!", "¡Éxito!", {
+          timeout: 2000,
+        });
       return false;
     },
     load_nomenclators() {

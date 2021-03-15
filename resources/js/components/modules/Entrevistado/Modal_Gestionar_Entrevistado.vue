@@ -121,7 +121,7 @@
                     <img style="width: 100%" :src="preview_image" />
                   </a-modal>
                 </a-col>
-                <a-col span="11">
+                <a-col span="6">
                   <a-form-model-item
                     v-if="
                       action_modal === 'crear' ||
@@ -191,6 +191,9 @@
                       :disabled="disabled"
                       v-model="entrevistados_modal.sexoEntrv"
                     >
+                      <template slot="notFoundContent">
+                        <a-empty description="Sin resultados" />
+                      </template>
                       <a-select-option
                         v-for="nomenclator in list_nomenclators"
                         :key="nomenclator.id"
@@ -317,10 +320,10 @@ export default {
       } else callback();
     };
     let code_0000 = (rule, value, callback) => {
-			if (value === "0000") {
-				callback(new Error("El código no puede ser 0000"));
-			} else callback();
-		};
+      if (value === "0000") {
+        callback(new Error("El código no puede ser 0000"));
+      } else callback();
+    };
     return {
       active_tab: "1",
       tab_1: false,
@@ -442,7 +445,8 @@ export default {
       } else
         return (
           this.entrevistados_modal.nombreApellidosEntrv &&
-          this.entrevistados_modal.sexoEntrv && this.valid_image
+          this.entrevistados_modal.sexoEntrv &&
+          this.valid_image
         );
     },
     /*
@@ -474,9 +478,13 @@ export default {
             }
             this.active_tab = siguienteTab;
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              3
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });
@@ -486,6 +494,9 @@ export default {
       this.file_list.pop();
       this.preview_image = "";
       this.valid_image = true;
+      this.$toast.success("Foto eliminada correctamente!", "¡Éxito!", {
+          timeout: 2000,
+        });
     },
     preview_cancel() {
       this.preview_visible = false;
@@ -504,8 +515,13 @@ export default {
         file.type === "image/jpg";
       if (!isJpgOrPng) {
         this.valid_image = false;
-        this.$message.error("Sólo puedes subir imágenes como foto del artísta");
-      } else this.$message.success("Foto cargada correctamente");
+        this.$toast.warning("Solo se pueden subir imágenes!", "¡Atención!", {
+          timeout: 2000,
+        });
+      } else
+        this.$toast.success("Foto cargado correctamente!", "¡Éxito!", {
+          timeout: 2000,
+        });
       return false;
     },
     atras(tabAnterior) {
@@ -554,9 +570,13 @@ export default {
           if (valid) {
             return this.confirm();
           } else {
-            this.$message.warning(
-              "Hay problemas en la pestaña Generales, por favor antes de continuar revísela!",
-              3
+            this.$toast.warning(
+              "Hay problemas en la pestaña Generales,<br> por favor antes de continuar revísela!",
+              "¡Atención!",
+              {
+                timeout: 4000,
+                id: "question",
+              }
             );
           }
         });

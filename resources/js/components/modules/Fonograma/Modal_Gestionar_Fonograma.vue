@@ -84,6 +84,7 @@
                 <a-col span="12">
                   <a-form-model-item label="Código:" has-feedback>
                     <a-select
+                      :loading="loading_nomenclators"
                       :showArrow="true"
                       mode="multiple"
                       v-model="fonogram_modal.productos_fongs"
@@ -104,6 +105,7 @@
                   </a-form-model-item>
                   <a-form-model-item label="Nombre:">
                     <a-select
+                      :loading="loading_nomenclators"
                       :showArrow="true"
                       mode="multiple"
                       v-model="fonogram_modal.productos_fongs"
@@ -261,6 +263,7 @@
                         prop="añoFong"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -294,6 +297,7 @@
                         prop="clasficacionFong"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -375,6 +379,7 @@
                       prop="nacioDueñoDerchFong"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
@@ -408,6 +413,7 @@
                       prop="derechosFong"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
@@ -896,6 +902,7 @@ export default {
       clasficaciones: [],
       paises: [],
       action_cancel_title: "",
+      loading_nomenclators: true,
       products: [],
       anhos: [],
       action_title: "",
@@ -1111,6 +1118,19 @@ export default {
           }
           this.active_tab = siguienteTab;
         }
+      }
+    },
+    build_pretty_isrc(array) {
+      for (let index = 0; index < array.length; index++) {
+        array[index].isrcTrk = array[index].isrcTrk.replace(/-/g, "")
+        array[index].isrcTrk =
+          array[index].isrcTrk.substr(0, 2) +
+          "-" +
+          array[index].isrcTrk.substr(2, 3) +
+          "-" +
+          array[index].isrcTrk.substr(5, 2) +
+          "-" +
+          array[index].isrcTrk.substr(7);
       }
     },
     onChange(current) {
@@ -1510,8 +1530,8 @@ export default {
       this.preview_image = "";
       this.valid_image = true;
       this.$toast.success("Identificador eliminado correctamente!", "¡Éxito!", {
-          timeout: 2000,
-        });
+        timeout: 2000,
+      });
     },
     preview_cancel() {
       this.preview_visible = false;
@@ -1577,6 +1597,7 @@ export default {
               this.$store.state["all_tracks_statics"].push(element);
             }
           });
+          this.build_pretty_isrc(this.$store.state["all_tracks"]);
         })
         .catch((error) => {
           console.log(error);
@@ -1588,6 +1609,7 @@ export default {
           this.clasficaciones = this.list_nomenclators[0][0];
           this.paises = this.list_nomenclators[1][0];
           this.anhos = this.list_nomenclators[2][0];
+          this.loading_nomenclators = false;
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
@@ -1645,6 +1667,7 @@ export default {
       ).format("HH:mm:ss");
       this.$store.state["tracks"].splice(index, 1);
       this.$store.state["all_tracks"].push(item);
+      this.build_pretty_isrc([item]);
     },
 
     new_track() {

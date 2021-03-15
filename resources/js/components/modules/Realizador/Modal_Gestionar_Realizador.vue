@@ -183,7 +183,7 @@
                     prop="sexoRealiz"
                   >
                     <a-select
-                      notFoundContent="Sin resultados"
+                      :loading="loading_nomenclators"
                       :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       show-search
@@ -332,6 +332,7 @@ export default {
       valid_image: true,
       preview_visible: false,
       vista_editar: true,
+      loading_nomenclators: true,
       detalles: true,
       action_cancel_title: "",
       action_title: "",
@@ -606,8 +607,8 @@ export default {
       this.preview_image = "";
       this.valid_image = true;
       this.$toast.success("Foto eliminada correctamente!", "¡Éxito!", {
-          timeout: 2000,
-        });
+        timeout: 2000,
+      });
     },
     preview_cancel() {
       this.preview_visible = false;
@@ -851,6 +852,7 @@ export default {
           for (i; i < length; i++) {
             this.list_nomenclators.push(response.data[i]);
           }
+          this.loading_nomenclators = false;
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {

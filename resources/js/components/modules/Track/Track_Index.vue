@@ -119,7 +119,7 @@
             >
               <e-columns>
                 <e-column
-                  field="isrcTrk"
+                  field="isrc_pretty"
                   headerText="ISRC"
                   width="120"
                   textAlign="Left"
@@ -845,6 +845,7 @@ export default {
       row_selected: {}, //* Fila de la tabla seleccionada | Track seleccionado
       tracks_list: [],
       temas_childs: [],
+      isrc_transformed: "",
       visible_details: false, //* variable para visualizar el modal de detalles del Track
       visible_management: false, //* variable para visualizar el modal de gestión del Track
       action_management: "", //* variable contiene la acción a realizar en el modal de gestión | Insertar o Editar
@@ -915,6 +916,16 @@ export default {
           this.tracks_list = response.data;
           this.series_data = [];
           this.tracks_list.forEach((track) => {
+            this.isrc_transformed = track.isrcTrk;
+            this.isrc_transformed =
+              this.isrc_transformed.substr(0, 2) +
+              "-" +
+              this.isrc_transformed.substr(2, 3) +
+              "-" +
+              this.isrc_transformed.substr(5, 2) +
+              "-" +
+              this.isrc_transformed.substr(7);
+            track.isrc_pretty = this.isrc_transformed;
             let index = this.series_data.findIndex(
               (serie) => serie.generos === track.generoTrk
             );

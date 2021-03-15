@@ -94,6 +94,7 @@
                     prop="fonogramas"
                   >
                     <a-select
+                      :loading="loading_nomenclators"
                       :showArrow="true"
                       mode="multiple"
                       v-model="track_modal.fonogramas_tracks"
@@ -114,6 +115,7 @@
                   </a-form-model-item>
                   <a-form-model-item label="Título:">
                     <a-select
+                      :loading="loading_nomenclators"
                       :showArrow="true"
                       mode="multiple"
                       v-model="track_modal.fonogramas_tracks"
@@ -344,6 +346,7 @@
                       prop="paisgrabTrk"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
@@ -399,6 +402,7 @@
                       prop="generoTrk"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
@@ -432,6 +436,8 @@
                       prop="moodTrk"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
+                        :showArrow="true"
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         mode="multiple"
                         :disabled="disabled"
@@ -463,6 +469,7 @@
                       prop="gestionTrk"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
                         option-filter-prop="children"
                         :filter-option="filter_option"
                         show-search
@@ -986,6 +993,7 @@ export default {
       text_button: "",
       text_header_button: "",
       spinning: false,
+      loading_nomenclators: true,
       track_modal: {},
       paises: [],
       generos: [],
@@ -1747,6 +1755,7 @@ export default {
           this.paises = this.list_nomenclators[3][0];
           this.gestiones = this.list_nomenclators[2][0];
           this.roles_interp = this.list_nomenclators[4][0];
+          this.loading_nomenclators = false;
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {

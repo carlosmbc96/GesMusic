@@ -130,6 +130,7 @@
                       label="Año del Proyecto"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         :disabled="disabled"
                         v-model="project_modal.añoProy"
@@ -358,6 +359,7 @@ export default {
       } else callback();
     };
     return {
+      loading_nomenclators: true,
       active_tab: "1",
       detalles: false,
       action_cancel_title: "",
@@ -551,6 +553,7 @@ export default {
             this.list_nomenclators.push(response.data[i]);
           }
           this.list_nomenclators.push(response.data);
+          this.loading_nomenclators = false;
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {
@@ -812,8 +815,8 @@ export default {
       this.preview_image = "";
       this.valid_image = true;
       this.$toast.success("Identificador eliminado correctamente!", "¡Éxito!", {
-          timeout: 2000,
-        });
+        timeout: 2000,
+      });
     },
     preview_cancel() {
       this.preview_visible = false;

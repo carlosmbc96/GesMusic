@@ -124,7 +124,7 @@
                   textAlign="Left"
                 />
                 <e-column
-                  field="isrcAud"
+                  field="isrc_pretty"
                   headerText="ISRC"
                   width="105"
                   textAlign="Left"
@@ -811,6 +811,7 @@ export default {
         };
       },
       spinning: false,
+      isrc_transformed: "",
       export_view: false, //* Vista del panel de exportaciones
       audiovisuals_list: [], //* Lista de Audiovisuales que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | Audiovisual seleccionado
@@ -886,6 +887,18 @@ export default {
           this.audiovisuals_list = response.data;
           this.series_data = [];
           this.audiovisuals_list.forEach((audiovisual) => {
+            if (audiovisual.isrcAud) {
+              this.isrc_transformed = audiovisual.isrcAud;
+              this.isrc_transformed =
+                this.isrc_transformed.substr(0, 2) +
+                "-" +
+                this.isrc_transformed.substr(2, 3) +
+                "-" +
+                this.isrc_transformed.substr(5, 2) +
+                "-" +
+                this.isrc_transformed.substr(7);
+              audiovisual.isrc_pretty = this.isrc_transformed;
+            }
             let index = this.series_data.findIndex(
               (serie) =>
                 serie.years === parseInt(audiovisual.añoFinAud.toString())

@@ -92,6 +92,7 @@
                     prop="productos_audvs"
                   >
                     <a-select
+                      :loading="loading_nomenclators"
                       mode="multiple"
                       :showArrow="true"
                       v-model="audiovisual_modal.productos_audvs"
@@ -112,6 +113,7 @@
                   </a-form-model-item>
                   <a-form-model-item label="Nombre:">
                     <a-select
+                      :loading="loading_nomenclators"
                       mode="multiple"
                       :showArrow="true"
                       v-model="audiovisual_modal.productos_audvs"
@@ -214,6 +216,7 @@
                                 prop="generoAud"
                               >
                                 <a-select
+                                  :loading="loading_nomenclators"
                                   :getPopupContainer="
                                     (trigger) => trigger.parentNode
                                   "
@@ -611,6 +614,7 @@
                             prop="clasifAud"
                           >
                             <a-select
+                              :loading="loading_nomenclators"
                               :getPopupContainer="
                                 (trigger) => trigger.parentNode
                               "
@@ -649,6 +653,7 @@
                             prop="paisGrabAud"
                           >
                             <a-select
+                              :loading="loading_nomenclators"
                               :getPopupContainer="
                                 (trigger) => trigger.parentNode
                               "
@@ -687,6 +692,8 @@
                             prop="idiomaAud"
                           >
                             <a-select
+                              :loading="loading_nomenclators"
+                              :showArrow="true"
                               :getPopupContainer="
                                 (trigger) => trigger.parentNode
                               "
@@ -824,6 +831,7 @@
                             prop="añoFinAud"
                           >
                             <a-select
+                              :loading="loading_nomenclators"
                               :getPopupContainer="
                                 (trigger) => trigger.parentNode
                               "
@@ -862,6 +870,8 @@
                             prop="subtitulosAud"
                           >
                             <a-select
+                              :loading="loading_nomenclators"
+                              :showArrow="true"
                               :getPopupContainer="
                                 (trigger) => trigger.parentNode
                               "
@@ -944,6 +954,7 @@
                         label="Nacionalidad:"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -980,6 +991,7 @@
                         prop="derechosAud"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -1138,6 +1150,7 @@
                               >
                                 <a-form-model-item>
                                   <a-select
+                                    :loading="loading_nomenclators"
                                     :getPopupContainer="
                                       (trigger) => trigger.parentNode
                                     "
@@ -1282,6 +1295,7 @@
                               >
                                 <a-form-model-item has-feedback>
                                   <a-select
+                                    :loading="loading_nomenclators"
                                     :getPopupContainer="
                                       (trigger) => trigger.parentNode
                                     "
@@ -1422,6 +1436,7 @@
                               >
                                 <a-form-model-item>
                                   <a-select
+                                    :loading="loading_nomenclators"
                                     :getPopupContainer="
                                       (trigger) => trigger.parentNode
                                     "
@@ -1526,6 +1541,7 @@
                                     <label>Roles</label>
                                   </div>
                                   <a-select
+                                    :loading="loading_nomenclators"
                                     :getPopupContainer="
                                       (trigger) => trigger.parentNode
                                     "
@@ -1571,6 +1587,7 @@
                               >
                                 <a-form-model-item has-feedback>
                                   <a-select
+                                    :loading="loading_nomenclators"
                                     :getPopupContainer="
                                       (trigger) => trigger.parentNode
                                     "
@@ -1840,6 +1857,7 @@ export default {
           title: "Productos",
         },
       ],
+      loading_nomenclators: true,
       compare_realizadores: [],
       compare_entrevistados: [],
       vista_editar: true,
@@ -2684,7 +2702,6 @@ export default {
             "¡Atención!",
             {
               timeout: 4000,
-              id: "question",
             }
           );
         }
@@ -2824,8 +2841,8 @@ export default {
       if (this.is_isrc()) {
         form_data.append("isrcAud", this.audiovisual_modal.isrcAud);
       } else {
-        this.codigo = this.audiovisual_modal.codigAud;
         if (this.audiovisual_modal.codigAud === undefined) {
+          this.codigo = "AUDV-" + this.codigo;
           form_data.append("codigAud", this.codigo);
         } else {
           this.audiovisual_modal.codigAud =
@@ -3100,8 +3117,8 @@ export default {
       this.preview_image = "";
       this.valid_image = true;
       this.$toast.success("Identificador eliminado correctamente!", "¡Éxito!", {
-          timeout: 2000,
-        });
+        timeout: 2000,
+      });
     },
     preview_cancel() {
       this.preview_visible = false;
@@ -3224,6 +3241,7 @@ export default {
           this.subtitulos = this.list_nomenclators[5][0];
           this.nacionalidades = this.list_nomenclators[6][0];
           this.roles_interp = this.list_nomenclators[7][0];
+          this.loading_nomenclators = false;
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {

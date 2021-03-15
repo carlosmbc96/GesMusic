@@ -92,6 +92,7 @@
                 <a-col span="12">
                   <a-form-model-item label="ISRC:" prop="track_id" has-feedback>
                     <a-select
+                      :loading="loading_nomenclators"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -113,6 +114,7 @@
                   </a-form-model-item>
                   <a-form-model-item label="Nombre:">
                     <a-select
+                      :loading="loading_nomenclators"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -224,6 +226,7 @@
                     prop="sociedadGestionTem"
                   >
                     <a-select
+                      :loading="loading_nomenclators"
                       :getPopupContainer="(trigger) => trigger.parentNode"
                       option-filter-prop="children"
                       show-search
@@ -404,6 +407,7 @@ export default {
       tracks: [],
       text_button: "",
       text_header_button: "",
+      loading_nomenclators: true,
       tema_modal: {},
       disabled: false,
       activated: true,
@@ -896,6 +900,7 @@ export default {
           for (i; i < length; i++) {
             this.list_nomenclators.push(response.data[i]);
           }
+          this.loading_nomenclators = false;
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {

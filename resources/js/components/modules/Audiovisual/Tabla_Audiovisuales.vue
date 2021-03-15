@@ -27,9 +27,9 @@
             textAlign="Left"
           />
           <e-column
-            field="isrcAud"
+            field="isrc_pretty"
             headerText="ISRC"
-            width="120"
+            width="140"
             textAlign="Left"
           />
           <e-column
@@ -41,7 +41,7 @@
           <e-column
             field="generoAud"
             headerText="Género Audiovisual"
-            width="130"
+            width="120"
             textAlign="Left"
           />
           <e-column
@@ -575,6 +575,7 @@ export default {
       export_view: false, //* Vista del panel de exportaciones
       spinning: false,
       visible_transfer: false,
+      isrc_transformed: "",
       status: "",
       detalles: this.detalles_prop,
       audiovisuals_list: [], //* Lista de Audiovisuales que es cargada en la tabla
@@ -653,6 +654,18 @@ export default {
                 });
               }
               if (pertenece) {
+                if (audiovisual.isrcAud) {
+                  this.isrc_transformed = audiovisual.isrcAud;
+                  this.isrc_transformed =
+                    this.isrc_transformed.substr(0, 2) +
+                    "-" +
+                    this.isrc_transformed.substr(2, 3) +
+                    "-" +
+                    this.isrc_transformed.substr(5, 2) +
+                    "-" +
+                    this.isrc_transformed.substr(7);
+                  audiovisual.isrc_pretty = this.isrc_transformed;
+                }
                 this.audiovisuals_list.push(audiovisual);
               }
               pertenece = false;

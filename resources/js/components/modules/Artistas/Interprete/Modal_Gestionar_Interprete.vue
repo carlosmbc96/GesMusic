@@ -142,6 +142,7 @@
                     label="Roles"
                   >
                     <a-select
+                      :loading="loading_nomenclators"
                       :getPopupContainer="(trigger) => trigger.parentNode"
                       mode="multiple"
                       :disabled="disabled"
@@ -312,6 +313,7 @@ export default {
       tab_2: true,
       tabs_list: [],
       roles_interp_modal: [],
+      loading_nomenclators: true,
       roles: [],
       detalles: true,
       vista_editar: true,
@@ -489,6 +491,7 @@ export default {
         .then((response) => {
           this.list_nomenclators = response.data;
           this.roles = this.list_nomenclators;
+          this.loading_nomenclators = false;
         })
         .catch((error) => {
           this.$toast.error("Ha ocurrido un error", "¡Error!", {

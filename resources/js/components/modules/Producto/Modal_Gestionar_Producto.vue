@@ -90,6 +90,7 @@
                     has-feedback
                   >
                     <a-select
+                      :loading="loading_nomenclators"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -111,6 +112,7 @@
                   </a-form-model-item>
                   <a-form-model-item label="Nombre">
                     <a-select
+                      :loading="loading_nomenclators"
                       option-filter-prop="children"
                       :filter-option="filter_option"
                       show-search
@@ -211,6 +213,7 @@
                         prop="añoProd"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -317,6 +320,7 @@
                         prop="genMusicPro"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -386,6 +390,7 @@
                           prop="estadodigProd"
                         >
                           <a-select
+                            :loading="loading_nomenclators"
                             :getPopupContainer="(trigger) => trigger.parentNode"
                             option-filter-prop="children"
                             :filter-option="filter_option"
@@ -437,6 +442,7 @@
                         prop="statusComProd"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -507,6 +513,8 @@
                         v-if="action_modal !== 'detalles'"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
+                          :showArrow="true"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           :disabled="disabled"
                           mode="multiple"
@@ -538,6 +546,7 @@
                         prop="sellodiscProd"
                       >
                         <a-select
+                          :loading="loading_nomenclators"
                           :getPopupContainer="(trigger) => trigger.parentNode"
                           option-filter-prop="children"
                           :filter-option="filter_option"
@@ -828,6 +837,7 @@
                       prop="estadodigProd"
                     >
                       <a-select
+                        :loading="loading_nomenclators"
                         :getPopupContainer="(trigger) => trigger.parentNode"
                         option-filter-prop="children"
                         :filter-option="filter_option"
@@ -1020,6 +1030,7 @@ export default {
         },
       ],
       current: 0,
+      loading_nomenclators: true,
       vista_editar: true,
       action_cancel_title: "",
       action_title: "",
@@ -1264,6 +1275,7 @@ export default {
         this.status = this.list_nomenclators[3][0];
         this.destinos = this.list_nomenclators[4][0];
         this.sellos = this.list_nomenclators[5][0];
+        this.loading_nomenclators = false;
       })
       .catch((error) => {});
     if (this.action_modal === "editar") {
@@ -1682,8 +1694,8 @@ export default {
       this.preview_image = "";
       this.valid_image = true;
       this.$toast.success("Identificador eliminado correctamente!", "¡Éxito!", {
-          timeout: 2000,
-        });
+        timeout: 2000,
+      });
     },
     preview_cancel() {
       this.preview_visible = false;

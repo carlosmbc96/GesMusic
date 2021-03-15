@@ -28,7 +28,7 @@
             textAlign="Center"
           />
           <e-column
-            field="isrcTrk"
+            field="isrc_pretty"
             headerText="ISRC"
             width="130"
             textAlign="Left"
@@ -623,6 +623,7 @@ export default {
       },
       status: "",
       order: "",
+      isrc_transformed: "",
       export_view: false, //* Vista del panel de exportaciones
       tracks_list: [], //* Lista de tracks que es cargada en la tabla
       row_selected: {}, //* Fila de la tabla seleccionada | fonograma seleccionado
@@ -685,6 +686,16 @@ export default {
                   });
                 }
                 if (pertenece) {
+                  this.isrc_transformed = track.isrcTrk;
+                  this.isrc_transformed =
+                    this.isrc_transformed.substr(0, 2) +
+                    "-" +
+                    this.isrc_transformed.substr(2, 3) +
+                    "-" +
+                    this.isrc_transformed.substr(5, 2) +
+                    "-" +
+                    this.isrc_transformed.substr(7);
+                  track.isrc_pretty = this.isrc_transformed;
                   this.tracks_list.push(track);
                 }
                 pertenece = false;
@@ -696,6 +707,18 @@ export default {
             .post("/tracks/fonogramaTracks", { idFong: this.entity.id })
             .then((response) => {
               this.tracks_list = response.data;
+              this.tracks_list.forEach((track) => {
+                this.isrc_transformed = track.isrcTrk;
+                this.isrc_transformed =
+                  this.isrc_transformed.substr(0, 2) +
+                  "-" +
+                  this.isrc_transformed.substr(2, 3) +
+                  "-" +
+                  this.isrc_transformed.substr(5, 2) +
+                  "-" +
+                  this.isrc_transformed.substr(7);
+                track.isrc_pretty = this.isrc_transformed;
+              });
               this.change_spin();
             });
         }

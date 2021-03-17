@@ -417,23 +417,66 @@
                   </div>
                   <a-row style="margin-bottom: 30px">
                     <a-col span="11">
-                      <a-form-model-item
-                        v-if="action_modal !== 'detalles'"
-                        prop="codigBarProd"
-                        has-feedback
-                        label="Código de Barra:"
+                      <label v-if="action_modal === 'crear'"
+                        >Código de Barra:</label
                       >
-                        <a-input
-                          :disabled="disabled"
-                          v-model="product_modal.codigBarProd"
-                        />
-                      </a-form-model-item>
-                      <a-form-model-item label="Código de Barra:" v-else>
-                        <a-mentions
-                          readonly
-                          :placeholder="product.codigBarProd"
+                      <a-row v-if="action_modal === 'crear'">
+                        <a-col span="4">
+                          <a-form-model-item
+                            prop="codigBarProd1"
+                            has-feedback
+                            class="isrc"
+                          >
+                            <a-input
+                              placeholder="X"
+                              v-model="product_modal.codigBarProd1"
+                            />
+                          </a-form-model-item>
+                        </a-col>
+                        <a-col
+                          span="1"
+                          style="margin-top: 5px; text-align: center"
+                          >-</a-col
                         >
+                        <a-col span="9">
+                          <a-form-model-item
+                            prop="codigBarProd2"
+                            has-feedback
+                            class="isrc"
+                          >
+                            <a-input
+                              placeholder="XXXXXX"
+                              v-model="product_modal.codigBarProd2"
+                            />
+                          </a-form-model-item>
+                        </a-col>
+                        <a-col
+                          span="1"
+                          style="margin-top: 5px; text-align: center"
+                          >-</a-col
+                        >
+                        <a-col span="9">
+                          <a-form-model-item
+                            prop="codigBarProd3"
+                            has-feedback
+                            class="isrc"
+                          >
+                            <a-input
+                              placeholder="XXXXXX"
+                              v-model="product_modal.codigBarProd3"
+                            />
+                          </a-form-model-item>
+                        </a-col>
+                      </a-row>
+                      <a-form-model-item
+                        label="Código de Barra:"
+                        v-else-if="action_modal === 'detalles'"
+                      >
+                        <a-mentions readonly :placeholder="pretty_bar_code">
                         </a-mentions>
+                      </a-form-model-item>
+                      <a-form-model-item v-else label="Código de Barra:">
+                        <a-input :disabled="true" v-model="pretty_bar_code" />
                       </a-form-model-item>
                       <a-form-model-item
                         v-if="action_modal !== 'detalles'"
@@ -1016,7 +1059,7 @@ export default {
     let code_0000 = (rule, value, callback) => {
       if (value !== undefined) {
         if (value === "0000") {
-          callback(new Error("El código no puede ser 0000"));
+          callback(new Error("Código inválido"));
         } else callback();
       } else callback();
     };
@@ -1062,6 +1105,7 @@ export default {
       anhos: [],
       estados: [],
       status: [],
+      pretty_bar_code: "",
       generos: [],
       destinos: [],
       sellos: [],
@@ -1208,20 +1252,39 @@ export default {
             trigger: "change",
           },
         ],
-        codigBarProd: [
-          {
-            len: 13,
-            message: "Formato de 13 dígitos",
-            trigger: "change",
-          },
-          {
-            whitespace: true,
-            message: "Espacio no válido",
-            trigger: "change",
-          },
+        codigBarProd1: [
           {
             pattern: "^[0-9]*$",
-            message: "Solo dígitos",
+            message: " ",
+            trigger: "change",
+          },
+          {
+            len: 1,
+            message: " ",
+            trigger: "change",
+          },
+        ],
+        codigBarProd2: [
+          {
+            pattern: "^[0-9]*$",
+            message: " ",
+            trigger: "change",
+          },
+          {
+            len: 6,
+            message: " ",
+            trigger: "change",
+          },
+        ],
+        codigBarProd3: [
+          {
+            pattern: "^[0-9]*$",
+            message: " ",
+            trigger: "change",
+          },
+          {
+            len: 6,
+            message: " ",
             trigger: "change",
           },
         ],
@@ -1293,6 +1356,9 @@ export default {
         this.disabled = true;
         this.activated = false;
       }
+      this.pretty_bar_code = this.build_pretty_codigBarProd(
+        this.product.codigBarProd
+      );
       this.product_modal = { ...this.product };
       this.product_modal.codigProd = this.product.codigProd.substr(5);
       if (this.product_modal.identificadorProd !== null) {
@@ -1414,6 +1480,9 @@ export default {
     } else if (this.action_modal === "detalles") {
       this.active_tab = "2";
       this.detalles = true;
+      this.pretty_bar_code = this.build_pretty_codigBarProd(
+        this.product.codigBarProd
+      );
       this.producto = { ...this.product };
       if (this.producto.interpretesProd !== null) {
         this.producto.interpretesProd = this.producto.interpretesProd.split(
@@ -1861,6 +1930,9 @@ export default {
         if (this.product_modal.genMusicPro === null) {
           this.product_modal.genMusicPro = "";
         }
+        if (this.product_modal.genMusicPro === null) {
+          this.product_modal.genMusicPro = "";
+        }
         if (this.product_modal.codigBarProd === null) {
           this.product_modal.codigBarProd = "";
         }
@@ -1985,8 +2057,17 @@ export default {
         if (this.product_modal.estadodigProd === undefined) {
           this.product_modal.estadodigProd = "";
         }
-        if (this.product_modal.codigBarProd === undefined) {
+        if (
+          this.product_modal.codigBarProd1 === undefined ||
+          this.product_modal.codigBarProd2 === undefined ||
+          this.product_modal.codigBarProd3 === undefined
+        ) {
           this.product_modal.codigBarProd = "";
+        } else {
+          this.product_modal.codigBarProd =
+            this.product_modal.codigBarProd1 +
+            this.product_modal.codigBarProd2 +
+            this.product_modal.codigBarProd3;
         }
         if (this.product_modal.genMusicPro === undefined) {
           this.product_modal.genMusicPro = "";
@@ -2105,6 +2186,17 @@ export default {
               timeout: 2000,
             });
           });
+      }
+    },
+    build_pretty_codigBarProd(bar_code) {
+      if (bar_code !== null) {
+        return (
+          bar_code.substr(0, 1) +
+          "-" +
+          bar_code.substr(1, 6) +
+          "-" +
+          bar_code.substr(7)
+        );
       }
     },
     /*
@@ -2456,6 +2548,12 @@ export default {
 }
 #modal_gestionar_productos .ant-col-sm-offset-4 {
   margin-left: 0 !important;
+}
+#modal_gestionar_productos .isrc .ant-form-item-children-icon {
+  display: none !important;
+}
+#modal_gestionar_productos .isrc .ant-input {
+  padding-right: 0px !important;
 }
 #modal_gestionar_productos .ant-col-sm-20 {
   width: 100% !important;

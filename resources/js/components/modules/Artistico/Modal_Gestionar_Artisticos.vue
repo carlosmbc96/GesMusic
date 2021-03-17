@@ -253,7 +253,7 @@ export default {
     };
     let code_0000 = (rule, value, callback) => {
       if (value === "0000") {
-        callback(new Error("El código no puede ser 0000"));
+        callback(new Error("Código inválido"));
       } else callback();
     };
     return {

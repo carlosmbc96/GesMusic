@@ -1825,7 +1825,7 @@ export default {
     };
     let code_0000 = (rule, value, callback) => {
       if (value === "0000") {
-        callback(new Error("El código no puede ser 0000"));
+        callback(new Error("Código inválido"));
       } else callback();
     };
     let code_00000 = (rule, value, callback) => {
@@ -3052,6 +3052,7 @@ export default {
         this.audiovisual_modal.realizadores = undefined;
         this.audiovisual_modal.entrevistados = undefined;
       } else if (this.action_modal === "detalles") {
+        this.text_header_button = "Detalles";
         this.action_cancel_title = "¿Desea cerrar la vista de detalles?";
         this.action_title = "¿Desea guardar los cambios en el Audiovisual?";
         this.action_close = "La vista de detalles fue cerrada correctamente";

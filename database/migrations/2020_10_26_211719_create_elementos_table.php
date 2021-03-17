@@ -20,9 +20,9 @@ class CreateElementosTable extends Migration
             $table->timestamps();  // Fecha de Creación y Actualización del Registro
 
             // Relaciones
-            $table->foreignId('producto_id')->references('id')->on('productos');
-            $table->foreignId('audiovisual_id')->references('id')->on('audiovisuales');
-            $table->foreignId('fonograma_id')->references('id')->on('fonogramas');
+            $table->foreignId('producto_id')->nullable()->references('id')->on('productos');
+            $table->foreignId('audiovisual_id')->nullable()->references('id')->on('audiovisuales');
+            $table->foreignId('fonograma_id')->nullable()->references('id')->on('fonogramas');
         });
     }
 

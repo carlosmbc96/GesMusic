@@ -2035,10 +2035,10 @@ export default {
   font-size: 14px;
   font-weight: 400;
 }
-.isrc .ant-form-item-children-icon {
+#modal_gestionar_tracks .isrc .ant-form-item-children-icon {
   display: none !important;
 }
-.isrc .ant-input {
+#modal_gestionar_tracks .isrc .ant-input {
   padding-right: 0px !important;
 }
 .ant-time-picker {
